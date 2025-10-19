@@ -1,8 +1,9 @@
 // API Configuration
 const API_CONFIG = {
     development: 'http://localhost:8000',
-    production: 'https://rtb-document-planner.onrender.com'
+    production: 'https://leonardus437.pythonanywhere.com'  // Your PythonAnywhere backend
 };
+
 
 // Detect environment
 const isProduction = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
