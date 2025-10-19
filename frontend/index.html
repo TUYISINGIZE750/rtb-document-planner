@@ -221,6 +221,7 @@
     <script src="user-registration.js"></script>
     <script src="chat-widget.js"></script>
     <script src="subscription-modal.js"></script>
+    <script src="subscription-tracker.js"></script>
     <script src="config.js"></script>
     <script>
         // Prevent back button access after logout for teachers
@@ -347,11 +348,14 @@
                     </div>
                     
                     ${!limits.is_premium && (sessionPlansRemaining === 0 || schemesRemaining === 0) ? `
-                        <div style="margin-top: 1rem; padding: 0.75rem; background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 0.5rem; text-align: center;">
-                            <p style="color: #92400e; font-weight: 600; margin: 0; font-size: 0.8rem;">
-                                <i class="fas fa-exclamation-triangle"></i> Upgrade to continue downloading
+                        <div style="margin-top: 1rem; padding: 1rem; background: linear-gradient(135deg, #fee2e2, #fecaca); border-radius: 0.5rem; text-align: center; border: 2px solid #ef4444;">
+                            <p style="color: #991b1b; font-weight: 700; margin: 0; font-size: 0.9rem;">
+                                <i class="fas fa-exclamation-triangle"></i> Download Limit Reached!
                             </p>
-                            <button onclick="showSubscriptionModal()" style="margin-top: 0.5rem; padding: 0.5rem 1rem; background: #f59e0b; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-weight: 600; font-size: 0.8rem;">
+                            <p style="color: #991b1b; margin: 0.5rem 0; font-size: 0.75rem;">
+                                You've used all your free downloads. Upgrade to continue creating documents.
+                            </p>
+                            <button onclick="showSubscriptionModal()" style="margin-top: 0.5rem; padding: 0.75rem 1.5rem; background: #ef4444; color: white; border: none; border-radius: 0.5rem; cursor: pointer; font-weight: 700; font-size: 0.85rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                                 <i class="fas fa-crown"></i> Upgrade Now
                             </button>
                         </div>
@@ -366,7 +370,19 @@
                                 Create unlimited session plans and schemes of work
                             </p>
                         </div>
-                    ` : ''}
+                    ` : `
+                        <div style="margin-top: 1rem; padding: 0.75rem; background: linear-gradient(135deg, #f3f4f6, #e5e7eb); border-radius: 0.5rem; text-align: center;">
+                            <p style="color: #374151; font-weight: 600; margin: 0; font-size: 0.8rem;">
+                                <i class="fas fa-info-circle" style="color: #6b7280;"></i> Free Account Status
+                            </p>
+                            <p style="color: #6b7280; margin: 0.25rem 0 0 0; font-size: 0.7rem;">
+                                Upgrade for unlimited access and premium features
+                            </p>
+                            <button onclick="showSubscriptionModal()" style="margin-top: 0.5rem; padding: 0.5rem 1rem; background: #6366f1; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-weight: 600; font-size: 0.8rem;">
+                                <i class="fas fa-arrow-up"></i> View Plans
+                            </button>
+                        </div>
+                    `}
                 </div>
             `;
             

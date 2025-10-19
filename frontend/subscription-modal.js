@@ -174,24 +174,29 @@ function selectPlan(planType, price) {
                 </div>
                 
                 <div class="payment-instructions">
+                    <div class="payment-highlight">
+                        <h3><i class="fas fa-mobile-alt"></i> Mobile Money Payment Details</h3>
+                        <div class="payment-card">
+                            <div class="payment-row">
+                                <div class="payment-label"><i class="fas fa-phone"></i> Phone Number:</div>
+                                <div class="payment-value">+250789751597</div>
+                            </div>
+                            <div class="payment-row">
+                                <div class="payment-label"><i class="fas fa-user"></i> Account Name:</div>
+                                <div class="payment-value">Leonard TUYISINGIZE</div>
+                            </div>
+                            <div class="payment-row">
+                                <div class="payment-label"><i class="fas fa-money-bill-wave"></i> Amount to Send:</div>
+                                <div class="payment-value amount">${price.toLocaleString()} RWF</div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div class="payment-step">
                         <div class="step-number">1</div>
                         <div class="step-content">
-                            <h4>Send Mobile Money Payment</h4>
-                            <div class="payment-details">
-                                <div class="payment-info">
-                                    <i class="fas fa-phone"></i>
-                                    <span>Phone Number: <strong>+250796014801</strong></span>
-                                </div>
-                                <div class="payment-info">
-                                    <i class="fas fa-user"></i>
-                                    <span>Account Name: <strong>Leonard TUYISINGIZE</strong></span>
-                                </div>
-                                <div class="payment-info">
-                                    <i class="fas fa-money-bill"></i>
-                                    <span>Amount: <strong>${price.toLocaleString()} RWF</strong></span>
-                                </div>
-                            </div>
+                            <h4>Send Payment via Mobile Money</h4>
+                            <p>Use MTN Mobile Money, Airtel Money, or any mobile money service to send the exact amount above.</p>
                         </div>
                     </div>
                     
@@ -223,7 +228,18 @@ function selectPlan(planType, price) {
                 
                 <div class="payment-note">
                     <i class="fas fa-info-circle"></i>
-                    <p><strong>Note:</strong> Please ensure you send the exact amount to the phone number above. Your account will be activated once payment is confirmed.</p>
+                    <p><strong>Important:</strong> Send exactly <strong>${price.toLocaleString()} RWF</strong> to <strong>+250789751597</strong> (Leonard TUYISINGIZE). Your account will be activated by admin after payment confirmation.</p>
+                </div>
+                
+                <div class="payment-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p><strong>Payment Instructions:</strong></p>
+                    <ul>
+                        <li>Send to: <strong>+250789751597</strong></li>
+                        <li>Name: <strong>Leonard TUYISINGIZE</strong></li>
+                        <li>Amount: <strong>${price.toLocaleString()} RWF</strong></li>
+                        <li>Wait for admin activation after payment</li>
+                    </ul>
                 </div>
             </div>
         </div>
