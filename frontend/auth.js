@@ -28,7 +28,7 @@ async function registerUser(name, phone, email, institution, password) {
     const userId = 'USER_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
     
     try {
-        const response = await fetch('http://localhost:8000/users/register', {
+        const response = await fetch(`${API_BASE}/users/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ user_id: userId, name, phone, email, institution, password, role: 'user' })
@@ -53,7 +53,7 @@ async function loginUser(phone, password, remember) {
         clearLogoutMarkers();
         clearLogoutFlag();
         
-        const response = await fetch('http://localhost:8000/users/login', {
+        const response = await fetch(`${API_BASE}/users/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ phone, password })
@@ -121,7 +121,7 @@ async function validateSessionWithBackend() {
     try {
         const session = getCurrentSession();
         if (!session) return false;
-        const response = await fetch(`http://localhost:8000/users/${encodeURIComponent(session.phone)}`);
+        const response = await fetch(`${API_BASE}/users/${encodeURIComponent(session.phone)}`);
         if (!response.ok) {
             return false;
         }
@@ -400,7 +400,7 @@ function canAccessUserPages() {
 async function getAllUsers() {
     if (!isAdmin()) return [];
     try {
-        const response = await fetch('http://localhost:8000/users/');
+        const response = await fetch(`${API_BASE}/users/`);
         if (response.ok) {
             return await response.json();
         }
