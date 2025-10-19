@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Admin Access</title>
+</head>
+<body>
+    <h1>Admin Access Test</h1>
+    <div id="status">Testing...</div>
+    
+    <script>
+        const AUTH_KEY = 'rtb_auth_session';
+        
+        // Test admin login and redirect
+        async function testAdminAccess() {
+            const statusDiv = document.getElementById('status');
+            
+            try {
+                // Clear any existing session
+                localStorage.removeItem(AUTH_KEY);
+                localStorage.removeItem('rtb_logged_out');
+                sessionStorage.removeItem('rtb_logged_out');
+                
+                // Login as admin
+                const response = await fetch('http://localhost:8000/users/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        phone: '+250789751597', 
+                        password: 'admin123' 
+                    })
+                });
+                
+                if (response.ok) {
+                    const user = await response.json();
+                    
+                    // Create session
+                    const session = {
+                        ...user,
+                        loggedInAt: new Date().toISOString(),
+                        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+                    };
+                    
+                    localStorage.setItem(AUTH_KEY, JSON.stringify(session));
+                    
+                    statusDiv.innerHTML = `
+                        <p>✓ Admin login successful!</p>
+                        <p>Name: ${user.name}</p>
+                        <p>Role: ${user.role}</p>
+                        <p><a href="admin.html">Go to Admin Dashboard</a></p>
+                    `;
+                } else {
+                    statusDiv.innerHTML = '✗ Login failed: ' + response.statusText;
+                }
+            } catch (error) {
+                statusDiv.innerHTML = '✗ Error: ' + error.message;
+            }
+        }
+        
+        testAdminAccess();
+    </script>
+</body>
+</html>

@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RTB Document Planner</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            text-align: center;
+            max-width: 800px;
+            padding: 3rem;
+        }
+        
+        h1 {
+            color: white;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        p {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.25rem;
+            margin-bottom: 3rem;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .card-btn {
+            background: white;
+            border: none;
+            border-radius: 1rem;
+            padding: 2rem 1.5rem;
+            width: 250px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            text-decoration: none;
+            display: block;
+        }
+        
+        .card-btn:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        .card-btn i {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #6366f1, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.75rem;
+        }
+        
+        .card-btn h2 {
+            color: #1e293b;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+        
+        .card-btn p {
+            color: #64748b;
+            font-size: 0.8rem;
+            margin: 0;
+        }
+        
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 -4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .footer-info {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .footer-item {
+            color: #64748b;
+        }
+        
+        .footer-item i {
+            color: #6366f1;
+            margin-right: 0.25rem;
+        }
+        
+        .copyright {
+            color: #94a3b8;
+            font-size: 0.75rem;
+        }
+        
+        .subscription-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.25rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .status-item {
+            text-align: center;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .status-item.session-plans {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+        
+        .status-item.schemes {
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            color: white;
+        }
+        
+        .status-item.premium {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+        
+        .status-number {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+        
+        .status-label {
+            font-size: 0.75rem;
+            opacity: 0.9;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 2px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: white;
+            border-radius: 2px;
+            transition: width 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div style="position: absolute; top: 2rem; right: 2rem;">
+            <div id="userMenu"></div>
+        </div>
+        <h1><i class="fas fa-graduation-cap"></i> RTB Document Planner</h1>
+        <p>Professional TVET Session Plans & Schemes of Work Generator</p>
+        
+        <!-- Subscription Status -->
+        <div id="subscriptionStatus" style="display: none; margin-bottom: 2rem;"></div>
+        
+        <div class="buttons">
+            <a href="#" onclick="checkLimitsAndRedirect('session_plan', 'wizard.html')" class="card-btn">
+                <i class="fas fa-chalkboard-teacher"></i>
+                <h2>Session Plan</h2>
+                <p>Create RTB-formatted session plans</p>
+            </a>
+            
+            <a href="#" onclick="checkLimitsAndRedirect('scheme', 'scheme-wizard.html')" class="card-btn">
+                <i class="fas fa-clipboard-list"></i>
+                <h2>Scheme of Work</h2>
+                <p>Generate comprehensive schemes</p>
+            </a>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <div class="copyright">© 2025 RTB Document Planner | Developed for TVET Excellence</div>
+    </div>
+    <link rel="stylesheet" href="subscription-modal.css">
+    <script src="auth.js"></script>
+    <script src="notifications.js"></script>
+    <script src="user-registration.js"></script>
+    <script src="chat-widget.js"></script>
+    <script src="subscription-modal.js"></script>
+    <script src="config.js"></script>
+    <script>
+        // Prevent back button access after logout for teachers
+        (function() {
+            function preventBackAfterLogout() {
+                if (localStorage.getItem('rtb_logged_out') || sessionStorage.getItem('rtb_logged_out')) {
+                    window.location.replace('login-select.html');
+                    return;
+                }
+            }
+            
+            window.addEventListener('pageshow', function(event) {
+                if (event.persisted) {
+                    preventBackAfterLogout();
+                }
+            });
+            
+            window.addEventListener('popstate', function() {
+                preventBackAfterLogout();
+            });
+            
+            preventBackAfterLogout();
+        })();
+    </script>
+    <script>
+        // Show user menu and subscription status
+        const session = getCurrentSession();
+        const userMenu = document.getElementById('userMenu');
+        
+        if (session) {
+            userMenu.innerHTML = `
+                <div style="background: white; padding: 1rem 1.5rem; border-radius: 2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 1rem;">
+                    <span style="color: #333; font-weight: 600;"><i class="fas fa-user-circle" style="color: #6366f1;"></i> ${session.name}</span>
+                    ${session.role === 'admin' ? '<a href="admin.html" style="padding: 0.5rem 1rem; background: #6366f1; color: white; text-decoration: none; border-radius: 0.5rem; font-weight: 600;"><i class="fas fa-shield-alt"></i> Admin</a>' : ''}
+                    <button onclick="logoutUser()" style="padding: 0.5rem 1rem; background: #ef4444; color: white; border: none; border-radius: 0.5rem; cursor: pointer; font-weight: 600;"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </div>
+            `;
+            
+            // Load subscription status for teachers
+            if (session.role !== 'admin') {
+                loadSubscriptionStatus();
+            }
+        } else {
+            userMenu.innerHTML = `
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <a href="login-select.html" style="padding: 0.75rem 1.5rem; background: white; color: #333; text-decoration: none; border-radius: 2rem; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"><i class="fas fa-sign-in-alt"></i> Sign In</a>
+                    <a href="register.html" style="padding: 0.75rem 1.5rem; background: #6366f1; color: white; text-decoration: none; border-radius: 2rem; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"><i class="fas fa-user-plus"></i> Register</a>
+                </div>
+            `;
+        }
+        
+        async function loadSubscriptionStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/user-limits/${encodeURIComponent(session.phone)}`);
+                if (response.ok) {
+                    const limits = await response.json();
+                    displaySubscriptionStatus(limits);
+                }
+            } catch (error) {
+                console.error('Error loading subscription status:', error);
+            }
+        }
+        
+        function displaySubscriptionStatus(limits) {
+            const statusContainer = document.getElementById('subscriptionStatus');
+            
+            const sessionPlansUsed = limits.session_plans_downloaded;
+            const sessionPlansTotal = limits.is_premium ? '∞' : limits.session_plans_limit;
+            const sessionPlansRemaining = limits.is_premium ? '∞' : Math.max(0, limits.session_plans_limit - sessionPlansUsed);
+            const sessionPlansProgress = limits.is_premium ? 0 : (limits.session_plans_limit > 0 ? (sessionPlansUsed / limits.session_plans_limit) * 100 : 0);
+            
+            const schemesUsed = limits.schemes_downloaded;
+            const schemesTotal = limits.is_premium ? '∞' : limits.schemes_limit;
+            const schemesRemaining = limits.is_premium ? '∞' : Math.max(0, limits.schemes_limit - schemesUsed);
+            const schemesProgress = limits.is_premium ? 0 : (limits.schemes_limit > 0 ? (schemesUsed / limits.schemes_limit) * 100 : 0);
+            
+            const subscriptionType = limits.is_premium ? 'Premium Account' : 'Free Account';
+            const subscriptionIcon = limits.is_premium ? 'fa-crown' : 'fa-user';
+            
+            statusContainer.innerHTML = `
+                <div class="subscription-card">
+                    <div style="text-align: center; margin-bottom: 1rem;">
+                        <h3 style="color: #1e293b; margin-bottom: 0.25rem; font-size: 1.125rem;">
+                            <i class="fas ${subscriptionIcon}" style="color: ${limits.is_premium ? '#f59e0b' : '#6366f1'};"></i>
+                            ${subscriptionType}
+                        </h3>
+                        <p style="color: #64748b; font-size: 0.8rem; margin: 0;">Track your downloads</p>
+                    </div>
+                    
+                    <div class="status-grid">
+                        <div class="status-item session-plans">
+                            <div class="status-number">${sessionPlansRemaining}</div>
+                            <div class="status-label">Session Plans Remaining</div>
+                            ${!limits.is_premium ? `
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: ${100 - sessionPlansProgress}%"></div>
+                                </div>
+                                <div style="margin-top: 0.25rem; font-size: 0.7rem; opacity: 0.8;">
+                                    Used: ${sessionPlansUsed}/${sessionPlansTotal}
+                                </div>
+                            ` : `
+                                <div style="margin-top: 0.25rem; font-size: 0.7rem; opacity: 0.8;">
+                                    Downloaded: ${sessionPlansUsed}
+                                </div>
+                            `}
+                        </div>
+                        
+                        <div class="status-item schemes">
+                            <div class="status-number">${schemesRemaining}</div>
+                            <div class="status-label">Schemes Remaining</div>
+                            ${!limits.is_premium ? `
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: ${100 - schemesProgress}%"></div>
+                                </div>
+                                <div style="margin-top: 0.25rem; font-size: 0.7rem; opacity: 0.8;">
+                                    Used: ${schemesUsed}/${schemesTotal}
+                                </div>
+                            ` : `
+                                <div style="margin-top: 0.25rem; font-size: 0.7rem; opacity: 0.8;">
+                                    Downloaded: ${schemesUsed}
+                                </div>
+                            `}
+                        </div>
+                    </div>
+                    
+                    ${!limits.is_premium && (sessionPlansRemaining === 0 || schemesRemaining === 0) ? `
+                        <div style="margin-top: 1rem; padding: 0.75rem; background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 0.5rem; text-align: center;">
+                            <p style="color: #92400e; font-weight: 600; margin: 0; font-size: 0.8rem;">
+                                <i class="fas fa-exclamation-triangle"></i> Upgrade to continue downloading
+                            </p>
+                            <button onclick="showSubscriptionModal()" style="margin-top: 0.5rem; padding: 0.5rem 1rem; background: #f59e0b; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-weight: 600; font-size: 0.8rem;">
+                                <i class="fas fa-crown"></i> Upgrade Now
+                            </button>
+                        </div>
+                    ` : ''}
+                    
+                    ${limits.is_premium ? `
+                        <div style="margin-top: 1rem; padding: 0.75rem; background: linear-gradient(135deg, #dcfce7, #bbf7d0); border-radius: 0.5rem; text-align: center;">
+                            <p style="color: #166534; font-weight: 600; margin: 0; font-size: 0.8rem;">
+                                <i class="fas fa-crown" style="color: #f59e0b;"></i> Premium Account - Unlimited Downloads
+                            </p>
+                            <p style="color: #166534; margin: 0.25rem 0 0 0; font-size: 0.7rem;">
+                                Create unlimited session plans and schemes of work
+                            </p>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+            
+            statusContainer.style.display = 'block';
+        }
+        
+        // Check limits before redirecting to creation pages
+        async function checkLimitsAndRedirect(type, url) {
+            const canProceed = await checkDownloadLimits(type);
+            if (canProceed) {
+                window.location.href = url;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scheme of Work  - RTB</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="subscription-modal.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; flex-direction: column; }
+        .header { background: rgba(255, 255, 255, 0.95); padding: 1.5rem 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: relative; text-align: center; }
+        .header h1 { background: linear-gradient(135deg, #6366f1, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 2rem; font-weight: 700; }
+        .main-container { flex: 1; display: flex; max-width: 1400px; width: 100%; margin: 2rem auto; gap: 2rem; padding: 0 2rem; height: calc(100vh - 200px); }
+        .sidebar { width: 300px; background: white; border-radius: 1rem; padding: 2rem; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow-y: auto; }
+        .step-item { display: flex; align-items: center; gap: 1rem; padding: 1rem; margin: 0.5rem 0; border-radius: 0.5rem; cursor: pointer; transition: all 0.3s; }
+        .step-item:hover { background: #f1f5f9; }
+        .step-item.active { background: linear-gradient(135deg, #6366f1, #4f46e5); color: white; }
+        .step-number { width: 32px; height: 32px; border-radius: 50%; background: #e2e8f0; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.875rem; }
+        .step-item.active .step-number { background: white; color: #6366f1; }
+        .step-item.completed .step-number { background: #10b981; color: white; }
+        .step-title { font-size: 0.875rem; font-weight: 500; }
+        .content-area { flex: 1; background: white; border-radius: 1rem; padding: 3rem; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow-y: auto; max-height: calc(100vh - 200px); }
+        .step-content { display: none; }
+        .step-content.active { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin: 2rem 0; }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group.full-width { grid-column: 1 / -1; }
+        label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: #334155; font-size: 0.875rem; }
+        input, textarea, select { width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 0.5rem; font-size: 1rem; transition: all 0.3s; font-family: inherit; }
+        input:focus, textarea:focus, select:focus { outline: none; border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1); }
+        .btn-group { display: flex; gap: 1rem; margin-top: 2rem; padding-top: 2rem; border-top: 2px solid #e2e8f0; }
+        .btn { padding: 0.875rem 2rem; border: none; border-radius: 0.5rem; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; gap: 0.5rem; }
+        .btn-primary { background: linear-gradient(135deg, #6366f1, #4f46e5); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3); }
+        .btn-secondary { background: #e2e8f0; color: #334155; }
+        .btn-success { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+        h2 { font-size: 1.875rem; color: #1e293b; margin-bottom: 0.5rem; }
+        .step-description { color: #64748b; margin-bottom: 2rem; }
+        .notification { position: fixed; top: 2rem; right: 2rem; padding: 1rem 1.5rem; border-radius: 0.5rem; color: white; font-weight: 500; box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 1000; transform: translateX(400px); transition: transform 0.3s; }
+        .notification.show { transform: translateX(0); }
+        .notification.success { background: linear-gradient(135deg, #10b981, #059669); }
+        .notification.error { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        .progress-bar { height: 4px; background: #e2e8f0; border-radius: 2px; margin-bottom: 2rem; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #6366f1, #06b6d4); transition: width 0.3s; }
+        .footer { background: rgba(255, 255, 255, 0.95); padding: 2rem; text-align: center; box-shadow: 0 -4px 6px rgba(0,0,0,0.1); margin-top: 2rem; }
+        .footer-content { max-width: 1200px; margin: 0 auto; }
+        .footer h3 { color: #1e293b; font-size: 1.25rem; margin-bottom: 1rem; }
+        .footer-info { display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+        .footer-item { text-align: left; }
+        .footer-item strong { display: block; color: #6366f1; font-size: 0.875rem; margin-bottom: 0.25rem; }
+        .footer-item span { color: #64748b; font-size: 0.875rem; }
+        .copyright { color: #94a3b8; font-size: 0.875rem; padding-top: 1rem; border-top: 1px solid #e2e8f0; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="index.html" class="btn btn-secondary" style="position: absolute; left: 2rem; top: 50%; transform: translateY(-50%); text-decoration: none;"><i class="fas fa-arrow-left"></i> Back</a>
+        <h1><i class="fas fa-clipboard-list"></i> RTB Document Planner</h1>
+    </div>
+    
+    <div class="main-container">
+        <div class="sidebar">
+            <h3 style="margin-bottom: 1.5rem; color: #1e293b; font-size: 1.125rem;">Steps</h3>
+            <div class="step-item active" onclick="goToStep(1)">
+                <div class="step-number">1</div>
+                <div class="step-title">Institution Info</div>
+            </div>
+            <div class="step-item" onclick="goToStep(2)">
+                <div class="step-number">2</div>
+                <div class="step-title">Module Overview</div>
+            </div>
+            <div class="step-item" onclick="goToStep(3)">
+                <div class="step-number">3</div>
+                <div class="step-title">Term 1</div>
+            </div>
+            <div class="step-item" onclick="goToStep(4)">
+                <div class="step-number">4</div>
+                <div class="step-title">Term 2</div>
+            </div>
+            <div class="step-item" onclick="goToStep(5)">
+                <div class="step-number">5</div>
+                <div class="step-title">Term 3</div>
+            </div>
+            <div class="step-item" onclick="goToStep(6)">
+                <div class="step-number">6</div>
+                <div class="step-title">Assessment</div>
+            </div>
+            <div class="step-item" onclick="goToStep(7)">
+                <div class="step-number">7</div>
+                <div class="step-title">Sign-Offs</div>
+            </div>
+            <div class="step-item" onclick="goToStep(8)">
+                <div class="step-number">8</div>
+                <div class="step-title">Review</div>
+            </div>
+        </div>
+        
+        <div class="content-area">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 12.5%"></div>
+            </div>
+            
+            <form id="wizardForm">
+                <!-- Step 1: Institution -->
+                <div class="step-content active" data-step="1">
+                    <h2>Institutional & Module Information</h2>
+                    <p class="step-description">Basic details about your institution and module</p>
+                    
+                    <div class="form-grid">
+                        <div class="form-group"><label>Province</label><input type="text" name="province" placeholder="e.g., Kigali City" required></div>
+                        <div class="form-group"><label>District</label><input type="text" name="district" placeholder="e.g., Gasabo" required></div>
+                        <div class="form-group"><label>Sector</label><input type="text" name="sector" placeholder="e.g., ICT & MULTIMEDIA" required></div>
+                        <div class="form-group"><label>School</label><input type="text" name="school" placeholder="e.g., IPRC Kigali" required></div>
+                        <div class="form-group"><label>Department/Trade</label><input type="text" name="trade" placeholder="e.g., Software Development" required></div>
+                        <div class="form-group"><label>Qualification Title</label><input type="text" name="qualification_title" placeholder="e.g., Diploma in Software Development" required></div>
+                        <div class="form-group"><label>RQF Level</label><select name="rqf_level" required><option value="">Select</option><option value="Level 1">Level 1</option><option value="Level 2">Level 2</option><option value="Level 3">Level 3</option><option value="Level 4">Level 4</option><option value="Level 5">Level 5</option></select></div>
+                        <div class="form-group"><label>Module Code & Title</label><input type="text" name="module_code_title" placeholder="e.g., CSA-M01: C Programming" required></div>
+                        <div class="form-group"><label>School Year</label><input type="text" name="school_year" placeholder="e.g., 2024-2025" required></div>
+                        <div class="form-group"><label>Term(s)</label><input type="text" name="terms" placeholder="e.g., Term 1, 2, 3" required></div>
+                        <div class="form-group"><label>Module Hours</label><input type="number" name="module_hours" placeholder="e.g., 120" required></div>
+                        <div class="form-group"><label>Number of Classes</label><input type="number" name="number_of_classes" placeholder="e.g., 3" required></div>
+                        <div class="form-group"><label>Class Name</label><input type="text" name="class_name" placeholder="e.g., L4CSA-A" required></div>
+                        <div class="form-group"><label>Cohort Size</label><input type="number" name="cohort_size" placeholder="e.g., 30" required></div>
+                        <div class="form-group"><label>Trainer Name</label><input type="text" name="trainer_name" placeholder="e.g., John Doe" required></div>
+                        <div class="form-group"><label>Trainer Position</label><input type="text" name="trainer_position" placeholder="e.g., Senior Instructor" required></div>
+                    </div>
+                    <div class="btn-group"><button type="button" class="btn btn-primary" onclick="nextStep()">Next <i class="fas fa-arrow-right"></i></button></div>
+                </div>
+                
+                <!-- Step 2: Module Overview -->
+                <div class="step-content" data-step="2">
+                    <h2>Module Overview</h2>
+                    <p class="step-description">Describe the module's purpose and requirements</p>
+                    
+                    <div class="form-group"><label>Module Rationale</label><textarea name="module_rationale" rows="2" placeholder="Why is this module important?" required></textarea></div>
+                    <div class="form-group"><label>Entry Requirements</label><textarea name="entry_requirements" rows="2" placeholder="Prerequisites..." required></textarea></div>
+                    <div class="form-group"><label>Competency Codes & LOs</label><textarea name="competency_codes" rows="2" placeholder="List competency codes..." required></textarea></div>
+                    <div class="form-group"><label>Indicative Content Scope</label><textarea name="indicative_scope" rows="2" placeholder="Overview of content..." required></textarea></div>
+                    <div class="form-grid">
+                        <div class="form-group"><label>Standards Alignment</label><input type="text" name="standards_alignment" placeholder="e.g., REB TVET standards" required></div>
+                        <div class="form-group"><label>Cross-cutting Issues</label><input type="text" name="cross_cutting_issues" placeholder="e.g., Safety, ethics" required></div>
+                        <div class="form-group"><label>Key Skills</label><input type="text" name="key_skills" placeholder="e.g., Problem-solving" required></div>
+                        <div class="form-group"><label>Delivery Approach</label><input type="text" name="delivery_approach" placeholder="e.g., Blended learning" required></div>
+                    </div>
+                    <div class="btn-group"><button type="button" class="btn btn-secondary" onclick="prevStep()"><i class="fas fa-arrow-left"></i> Previous</button><button type="button" class="btn btn-primary" onclick="nextStep()">Next <i class="fas fa-arrow-right"></i></button></div>
+                </div>
+                
+                <!-- Step 3: Term 1 -->
+                <div class="step-content" data-step="3">
+                    <h2>Term 1 Planning</h2>
+                    <p class="step-description">Define learning outcomes and content for Term 1</p>
+                    
+                    <div class="form-group"><label>Weeks & Dates</label><input type="text" name="term1_weeks" placeholder="e.g., Week 1-12 (Jan-Mar 2025)" required></div>
+                    <div class="form-group"><label>Learning Outcomes (LOs)</label><textarea name="term1_learning_outcomes" rows="4" placeholder="LO1: First outcome&#10;LO2: Second outcome" required></textarea></div>
+                    <div class="form-group"><label>Duration (hours)</label><input type="text" name="term1_duration" placeholder="e.g., 40 hours" required></div>
+                    <div class="form-group"><label>Indicative Content (ICs)</label><textarea name="term1_indicative_contents" rows="4" placeholder="IC1: First content&#10;IC2: Second content" required></textarea></div>
+                    
+                    <div class="btn-group"><button type="button" class="btn btn-secondary" onclick="prevStep()"><i class="fas fa-arrow-left"></i> Previous</button><button type="button" class="btn btn-primary" onclick="nextStep()">Next <i class="fas fa-arrow-right"></i></button></div>
+                </div>
+                
+                <!-- Step 4: Term 2 -->
+                <div class="step-content" data-step="4">
+                    <h2>Term 2 Planning</h2>
+                    <p class="step-description">Define learning outcomes and content for Term 2</p>
+                    
+                    <div class="form-group"><label>Weeks & Dates</label><input type="text" name="term2_weeks" placeholder="e.g., Week 13-24 (Apr-Jun 2025)" required></div>
+                    <div class="form-group"><label>Learning Outcomes (LOs)</label><textarea name="term2_learning_outcomes" rows="4" placeholder="LO3: Third outcome&#10;LO4: Fourth outcome" required></textarea></div>
+                    <div class="form-group"><label>Duration (hours)</label><input type="text" name="term2_duration" placeholder="e.g., 40 hours" required></div>
+                    <div class="form-group"><label>Indicative Content (ICs)</label><textarea name="term2_indicative_contents" rows="4" placeholder="IC3: Third content&#10;IC4: Fourth content" required></textarea></div>
+                    
+                    <div class="btn-group"><button type="button" class="btn btn-secondary" onclick="prevStep()"><i class="fas fa-arrow-left"></i> Previous</button><button type="button" class="btn btn-primary" onclick="nextStep()">Next <i class="fas fa-arrow-right"></i></button></div>
+                </div>
+                
+                <!-- Step 5: Term 3 -->
+                <div class="step-content" data-step="5">
+                    <h2>Term 3 Planning</h2>
+                    <p class="step-description">Define learning outcomes and content for Term 3</p>
+                    
+                    <div class="form-group"><label>Weeks & Dates</label><input type="text" name="term3_weeks" placeholder="e.g., Week 25-36 (Jul-Sep 2025)" required></div>
+                    <div class="form-group"><label>Learning Outcomes (LOs)</label><textarea name="term3_learning_outcomes" rows="4" placeholder="LO5: Fifth outcome&#10;LO6: Sixth outcome" required></textarea></div>
+                    <div class="form-group"><label>Duration (hours)</label><input type="text" name="term3_duration" placeholder="e.g., 40 hours" required></div>
+                    <div class="form-group"><label>Indicative Content (ICs)</label><textarea name="term3_indicative_contents" rows="4" placeholder="IC5: Fifth content&#10;IC6: Sixth content" required></textarea></div>
+                    
+                    <div class="btn-group"><button type="button" class="btn btn-secondary" onclick="prevStep()"><i class="fas fa-arrow-left"></i> Previous</button><button type="button" class="btn btn-primary" onclick="nextStep()">Next <i class="fas fa-arrow-right"></i></button></div>
+                </div>
+                
+                <!-- Step 6: Assessment -->
+                <div class="step-content" data-step="6">
+                    <h2>Assessment & Resources</h2>
+                    <p class="step-description">Define assessment methods and resource requirements</p>
+                    
+                    <div class="form-group"><label>Formative Assessment Plan</label><textarea name="formative_assessment" rows="3" placeholder="Ongoing assessment methods..." required></textarea></div>
+                    <div class="form-group"><label>Summative Assessment Plan</label><textarea name="summative_assessment" rows="3" placeholder="Final assessment methods..." required></textarea></div>
+                    <div class="form-group"><label>Resource Inventory</label><textarea name="resource_inventory" rows="3" placeholder="Complete list of resources..." required></textarea></div>
+                    <div class="form-group"><label>Health & Safety</label><textarea name="health_safety" rows="3" placeholder="Safety considerations..." required></textarea></div>
+                    
+                    <div class="btn-group"><button type="button" class="btn btn-secondary" onclick="prevStep()"><i class="fas fa-arrow-left"></i> Previous</button><button type="button" class="btn btn-primary" onclick="nextStep()">Next <i class="fas fa-arrow-right"></i></button></div>
+                </div>
+                
+                <!-- Step 7: Sign-Offs -->
+                <div class="step-content" data-step="7">
+                    <h2>Sign-Offs</h2>
+                    <p class="step-description">Approval and verification details</p>
+                    
+                    <div class="form-grid">
+                        <div class="form-group"><label>Director of Studies (DOS) Name</label><input type="text" name="dos_name" placeholder="e.g., Jane Smith" required></div>
+                        <div class="form-group"><label>School Manager Name</label><input type="text" name="manager_name" placeholder="e.g., Robert Johnson" required></div>
+                    </div>
+                    
+                    <div class="btn-group"><button type="button" class="btn btn-secondary" onclick="prevStep()"><i class="fas fa-arrow-left"></i> Previous</button><button type="button" class="btn btn-primary" onclick="nextStep()">Next <i class="fas fa-arrow-right"></i></button></div>
+                </div>
+                
+                <!-- Step 8: Review -->
+                <div class="step-content" data-step="8">
+                    <h2>Review & Generate</h2>
+                    <p class="step-description">Review your scheme of work and generate the document</p>
+                    
+                    <div id="reviewContent" style="background: #f8fafc; padding: 2rem; border-radius: 0.5rem; margin: 2rem 0;">
+                        <p style="color: #64748b;">Your scheme details will appear here...</p>
+                    </div>
+                    
+                    <div class="btn-group"><button type="button" class="btn btn-secondary" onclick="prevStep()"><i class="fas fa-arrow-left"></i> Previous</button><button type="submit" class="btn btn-success"><i class="fas fa-magic"></i> Generate Scheme of Work</button></div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script src="auth.js"></script>
+    <script>
+        // No session check - let users access freely
+        console.log('Scheme wizard page loaded');
+    </script>
+    <script src="subscription-modal.js"></script>
+    <script src="notifications.js"></script>
+    <script src="user-registration.js"></script>
+    <script>
+        const API_BASE = 'http://localhost:8000';
+        let currentStep = 1;
+        const totalSteps = 8;
+        
+        function goToStep(step) {
+            if (step < 1 || step > totalSteps) return;
+            document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.step-item').forEach(el => el.classList.remove('active'));
+            document.querySelector(`.step-content[data-step="${step}"]`).classList.add('active');
+            document.querySelectorAll('.step-item')[step - 1].classList.add('active');
+            currentStep = step;
+            updateProgress();
+            if (step === 8) showReview();
+        }
+        
+        function nextStep() {
+            if (validateCurrentStep()) {
+                document.querySelectorAll('.step-item')[currentStep - 1].classList.add('completed');
+                goToStep(currentStep + 1);
+            }
+        }
+        
+        function prevStep() { goToStep(currentStep - 1); }
+        
+        function validateCurrentStep() {
+            const currentContent = document.querySelector(`.step-content[data-step="${currentStep}"]`);
+            const inputs = currentContent.querySelectorAll('input[required], select[required], textarea[required]');
+            for (let input of inputs) {
+                if (!input.value.trim()) {
+                    input.focus();
+                    showNotification('Please fill in all required fields', 'error');
+                    return false;
+                }
+            }
+            return true;
+        }
+        
+        function updateProgress() {
+            const progress = (currentStep / totalSteps) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+        
+        function showReview() {
+            const formData = new FormData(document.getElementById('wizardForm'));
+            const data = Object.fromEntries(formData);
+            const reviewHTML = `
+                <h3 style="margin-bottom: 1rem; color: #1e293b;">Scheme of Work Summary</h3>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; font-size: 0.875rem;">
+                    <div><strong>School:</strong> ${data.school}</div>
+                    <div><strong>Sector:</strong> ${data.sector}</div>
+                    <div><strong>Module:</strong> ${data.module_code_title}</div>
+                    <div><strong>Level:</strong> ${data.rqf_level}</div>
+                    <div><strong>Trainer:</strong> ${data.trainer_name}</div>
+                    <div><strong>Year:</strong> ${data.school_year}</div>
+                </div>
+            `;
+            document.getElementById('reviewContent').innerHTML = reviewHTML;
+        }
+        
+        document.getElementById('wizardForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
+            submitBtn.disabled = true;
+            
+            try {
+                const formData = new FormData(e.target);
+                const data = Object.fromEntries(formData);
+                const response = await fetch(`${API_BASE}/schemes-of-work/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.ok) {
+                    const scheme = await response.json();
+                    console.log('Created scheme:', scheme); // Debug log
+                    showNotification('Scheme of work created successfully!', 'success');
+                    
+                    // Ensure we have a valid ID
+                    if (scheme && scheme.id) {
+                        await checkDownloadLimits('scheme', scheme.id);
+                    } else {
+                        showNotification('Error: Invalid scheme ID received', 'error');
+                    }
+                } else{
+                    const errorText = await response.text();
+                    console.error('Create error:', errorText);
+                    showNotification('Error creating scheme', 'error');
+                }
+            } catch (error) {
+                showNotification('Network error: ' + error.message, 'error');
+            } finally {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+        
+        async function checkDownloadLimits(type, id) {
+            console.log('Checking limits for:', type, 'ID:', id); // Debug log
+            
+            if (!id || id === 'undefined' || id === undefined) {
+                showNotification('Error: Invalid document ID', 'error');
+                return;
+            }
+            
+            const session = getCurrentSession();
+            if (!session) {
+                showNotification('Please login to download documents', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/user-limits/${encodeURIComponent(session.phone)}`);
+                if (response.ok) {
+                    const limits = await response.json();
+                    
+                    if (type === 'session_plan') {
+                        if (limits.is_premium || limits.session_plans_remaining > 0) {
+                            downloadSessionPlan(id);
+                            if (!limits.is_premium) {
+                                showNotification(`Download successful! ${limits.session_plans_remaining - 1} session plans remaining`, 'success');
+                            }
+                        } else {
+                            showSubscriptionModal('session_plans');
+                        }
+                    } else if (type === 'scheme') {
+                        if (limits.is_premium || limits.schemes_remaining > 0) {
+                            downloadScheme(id);
+                            if (!limits.is_premium) {
+                                showNotification(`Download successful! ${limits.schemes_remaining - 1} schemes remaining`, 'success');
+                            }
+                        } else {
+                            showSubscriptionModal('schemes');
+                        }
+                    }
+                } else {
+                    showNotification('Error checking download limits', 'error');
+                }
+            } catch (error) {
+                showNotification('Network error: ' + error.message, 'error');
+            }
+        }
+        
+        function downloadScheme(id) {
+            if (!id || id === 'undefined') {
+                showNotification('Error: Invalid scheme ID', 'error');
+                return;
+            }
+            const session = getCurrentSession();
+            const phone = session ? encodeURIComponent(session.phone) : '';
+            const link = document.createElement('a');
+            link.href = `${API_BASE}/schemes-of-work/${id}/download?phone=${phone}`;
+            link.download = `scheme_of_work_${id}.docx`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        function updateDownloadCounter() {
+            const remaining = getRemainingDownloads();
+            if (!remaining.isPremium) {
+                showNotification(`Free downloads remaining: ${remaining.sessionPlans} session plans, ${remaining.schemes} schemes`, 'success');
+            }
+        }
+        
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${message}`;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.classList.add('show'), 100);
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => document.body.removeChild(notification), 300);
+            }, 3000);
+        }
+    </script>
+    <script src="chat-widget.js"></script>
+    
+    <div class="footer">
+        <div class="footer-content">
+            
+            
+            <div class="copyright">
+                © 2025 RTB Document Planner. All rights reserved. | Developed for TVET Excellence
+            </div>
+        </div>
+    </div>
+</body>
+</html>

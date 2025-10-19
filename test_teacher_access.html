@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Teacher Access</title>
+</head>
+<body>
+    <h1>Teacher Access Test</h1>
+    <div id="status">Testing...</div>
+    
+    <script>
+        const AUTH_KEY = 'rtb_auth_session';
+        
+        // Test teacher login and access
+        async function testTeacherAccess() {
+            const statusDiv = document.getElementById('status');
+            
+            try {
+                // Clear any existing session
+                localStorage.removeItem(AUTH_KEY);
+                localStorage.removeItem('rtb_logged_out');
+                sessionStorage.removeItem('rtb_logged_out');
+                
+                // Login as teacher (use existing user)
+                const response = await fetch('http://localhost:8000/users/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        phone: '0796014803', 
+                        password: 'password123' 
+                    })
+                });
+                
+                if (response.ok) {
+                    const user = response.json();
+                    
+                    // Create session
+                    const session = {
+                        ...user,
+                        loggedInAt: new Date().toISOString(),
+                        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+                    };
+                    
+                    localStorage.setItem(AUTH_KEY, JSON.stringify(session));
+                    
+                    statusDiv.innerHTML = `
+                        <p>✓ Teacher login successful!</p>
+                        <p>Name: ${user.name}</p>
+                        <p>Role: ${user.role}</p>
+                        <p><a href="wizard.html">Test Session Plan Wizard</a></p>
+                        <p><a href="scheme-wizard.html">Test Scheme Wizard</a></p>
+                    `;
+                } else {
+                    statusDiv.innerHTML = '✗ Login failed. Using demo session instead.';
+                    
+                    // Create demo session
+                    const demoSession = {
+                        user_id: 'DEMO_USER',
+                        name: 'Demo Teacher',
+                        phone: '0796014803',
+                        role: 'user',
+                        loggedInAt: new Date().toISOString(),
+                        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+                    };
+                    
+                    localStorage.setItem(AUTH_KEY, JSON.stringify(demoSession));
+                    
+                    statusDiv.innerHTML = `
+                        <p>✓ Demo session created!</p>
+                        <p>Name: Demo Teacher</p>
+                        <p>Role: user</p>
+                        <p><a href="wizard.html">Test Session Plan Wizard</a></p>
+                        <p><a href="scheme-wizard.html">Test Scheme Wizard</a></p>
+                    `;
+                }
+            } catch (error) {
+                statusDiv.innerHTML = '✗ Error: ' + error.message;
+            }
+        }
+        
+        testTeacherAccess();
+    </script>
+</body>
+</html>

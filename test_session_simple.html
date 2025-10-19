@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Session Test</title>
+</head>
+<body>
+    <h1>Session Management Test</h1>
+    <div id="status"></div>
+    <br>
+    <button onclick="createSession()">Create Session</button>
+    <button onclick="checkSession()">Check Session</button>
+    <button onclick="clearSession()">Clear Session</button>
+    <br><br>
+    <a href="wizard.html">Test Wizard Access</a> | 
+    <a href="scheme-wizard.html">Test Scheme Access</a>
+    
+    <script>
+        const AUTH_KEY = 'rtb_auth_session';
+        
+        function createSession() {
+            const session = {
+                user_id: 'TEST_USER',
+                name: 'Test Teacher',
+                phone: '0796014803',
+                role: 'user',
+                loggedInAt: new Date().toISOString(),
+                expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+            };
+            
+            localStorage.setItem(AUTH_KEY, JSON.stringify(session));
+            localStorage.removeItem('rtb_logged_out');
+            
+            document.getElementById('status').innerHTML = '✓ Session created: ' + session.name;
+        }
+        
+        function checkSession() {
+            const session = localStorage.getItem(AUTH_KEY);
+            const loggedOut = localStorage.getItem('rtb_logged_out');
+            
+            if (loggedOut) {
+                document.getElementById('status').innerHTML = '✗ User was logged out';
+                return;
+            }
+            
+            if (session) {
+                const parsed = JSON.parse(session);
+                document.getElementById('status').innerHTML = '✓ Session exists: ' + parsed.name;
+            } else {
+                document.getElementById('status').innerHTML = '✗ No session found';
+            }
+        }
+        
+        function clearSession() {
+            localStorage.removeItem(AUTH_KEY);
+            localStorage.setItem('rtb_logged_out', Date.now().toString());
+            document.getElementById('status').innerHTML = '✓ Session cleared';
+        }
+        
+        // Auto-check on load
+        checkSession();
+    </script>
+</body>
+</html>
