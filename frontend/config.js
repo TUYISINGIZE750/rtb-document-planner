@@ -4,10 +4,10 @@ const API_CONFIG = {
     production: 'https://leonardus437.pythonanywhere.com'  // Your PythonAnywhere backend
 };
 
+// Detect environment - both localhost and Vercel should use production API
+const isLocalDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const API_BASE = isLocalDevelopment ? API_CONFIG.development : API_CONFIG.production;
 
-// Detect environment
-const isProduction = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
-const API_BASE = isProduction ? API_CONFIG.production : API_CONFIG.development;
-
-console.log('Environment:', isProduction ? 'production' : 'development');
+console.log('Environment:', isLocalDevelopment ? 'local development' : 'production');
 console.log('API Base URL:', API_BASE);
+console.log('Current hostname:', window.location.hostname);
