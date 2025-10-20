@@ -211,7 +211,7 @@
                     // Use setTimeout to ensure session is saved
                     setTimeout(() => {
                         if (session && session.role === 'admin') {
-                            window.location.replace('admin.html');
+                            window.location.replace('admin-new.html');
                         } else {
                             window.location.replace('index.html');
                         }
@@ -260,7 +260,7 @@
                     
                     // Redirect based on role
                     if (user.role === 'admin') {
-                        window.location.replace('admin.html');
+                        window.location.replace('admin-fixed.html');
                     } else {
                         window.location.replace('index.html');
                     }

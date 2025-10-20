@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard - RTB Planner</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f1f5f9; display: flex; min-height: 100vh; }
+        .sidebar { width: 260px; background: #1e293b; color: white; padding: 2rem 0; position: fixed; height: 100vh; }
+        .sidebar h1 { padding: 0 1.5rem; font-size: 1.5rem; margin-bottom: 2rem; }
+        .nav-item { padding: 1rem 1.5rem; cursor: pointer; display: flex; align-items: center; gap: 0.75rem; }
+        .nav-item:hover { background: rgba(255,255,255,0.1); }
+        .nav-item.active { background: rgba(99,102,241,0.2); }
+        .main-content { margin-left: 260px; flex: 1; padding: 2rem; }
+        .header { background: white; padding: 1.5rem 2rem; border-radius: 1rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card { background: white; padding: 1.5rem; border-radius: 1rem; }
+        .stat-card h3 { color: #64748b; font-size: 0.875rem; margin-bottom: 0.5rem; }
+        .stat-card .value { font-size: 2rem; font-weight: 700; color: #1e293b; }
+        .card { background: white; padding: 2rem; border-radius: 1rem; margin-bottom: 2rem; }
+        .section { display: none; }
+        .section.active { display: block; }
+        .user-item { padding: 1rem; border: 1px solid #e2e8f0; border-radius: 0.5rem; margin-bottom: 0.75rem; display: flex; justify-content: space-between; align-items: center; }
+        .btn { padding: 0.5rem 1rem; border: none; border-radius: 0.5rem; cursor: pointer; font-weight: 600; background: #6366f1; color: white; }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h1><i class="fas fa-shield-alt"></i> Admin</h1>
+        <div class="nav-item active" onclick="showSection('dashboard')">
+            <i class="fas fa-chart-line"></i> Dashboard
+        </div>
+        <div class="nav-item" onclick="showSection('users')">
+            <i class="fas fa-users"></i> Users
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <h2>Admin Dashboard</h2>
+            <button onclick="window.location.href='direct-login.html'" style="padding: 0.5rem 1rem; background: #ef4444; color: white; border: none; border-radius: 0.5rem; cursor: pointer;">
+                Logout
+            </button>
+        </div>
+
+        <div id="dashboard" class="section active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Total Users</h3>
+                    <div class="value" id="totalUsers">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Premium Users</h3>
+                    <div class="value" id="premiumUsers">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Active Users</h3>
+                    <div class="value" id="activeUsers">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Downloads</h3>
+                    <div class="value" id="totalDownloads">0</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="users" class="section">
+            <div class="card">
+                <h2>All Users</h2>
+                <div id="userList">Loading...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://leonardus437.pythonanywhere.com';
+        console.log('Admin Dashboard - API:', API_BASE);
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            event.target.closest('.nav-item').classList.add('active');
+            
+            if (sectionId === 'users') loadUsers();
+            if (sectionId === 'dashboard') loadStats();
+        }
+
+        async function loadUsers() {
+            try {
+                const response = await fetch(`${API_BASE}/users/`);
+                const users = await response.json();
+                
+                document.getElementById('userList').innerHTML = users.map(user => `
+                    <div class="user-item">
+                        <div>
+                            <strong>${user.name}</strong> (${user.phone})<br>
+                            <small>${user.institution} - ${user.role} - ${user.is_premium ? 'Premium' : 'Free'}</small>
+                        </div>
+                        <button class="btn">Details</button>
+                    </div>
+                `).join('');
+            } catch (error) {
+                document.getElementById('userList').innerHTML = `Error: ${error.message}`;
+            }
+        }
+
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_BASE}/stats`);
+                const stats = await response.json();
+                
+                document.getElementById('totalUsers').textContent = stats.total_users;
+                document.getElementById('premiumUsers').textContent = stats.premium_users;
+                document.getElementById('activeUsers').textContent = stats.active_users;
+                document.getElementById('totalDownloads').textContent = stats.total_downloads;
+            } catch (error) {
+                console.error('Stats error:', error);
+            }
+        }
+
+        // Load initial data
+        loadStats();
+    </script>
+</body>
+</html>
