@@ -1,5 +1,5 @@
 // Authentication system with admin role protection
-console.log('✅ auth.js loaded successfully (v1.0.1-ts-20250103T120000Z-CDN-FRESH)');
+console.log('✅ auth.js loaded successfully (v1.0.1-ts-20250120T105300Z-CACHE-BUSTED)');
 
 // DEFENSIVE: Ensure config.js has loaded and API_BASE is defined
 if (typeof API_BASE === 'undefined') {

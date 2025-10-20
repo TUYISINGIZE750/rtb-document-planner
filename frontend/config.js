@@ -5,10 +5,12 @@ if (!window.connectionManager) {
     document.head.appendChild(script);
 }
 
-// API Configuration with enhanced fallback
+// ===== IMPORTANT: UPDATE THIS FOR YOUR DEPLOYMENT =====
+// Change the production URL to your PythonAnywhere domain
 const API_CONFIG = {
     development: 'http://localhost:8000',
     production: 'https://leonardus437.pythonanywhere.com'
+    // If using custom domain or different backend, update production URL above
 };
 
 // Enhanced environment detection - detects local development including network access
@@ -38,10 +40,11 @@ if (isLocalDevelopment) {
     API_BASE = API_CONFIG.production;
 }
 
-console.log('✅ config.js loaded successfully (v1.0.1-ts-20250103T120000Z-CDN-FRESH)');
+console.log('✅ config.js loaded successfully (v1.0.2-ts-20250120T105300Z-CACHE-BUSTED)');
 console.log('Environment:', isLocalDevelopment ? 'local development' : 'production');
 console.log('API Base URL:', API_BASE);
-console.log('Timestamp Bust:', '20250103T120000Z');
+console.log('Frontend Domain:', window.location.hostname);
+console.log('Timestamp Bust:', '20250120T105300Z');
 
 // Enhanced API connectivity test
 async function testAPIConnection() {

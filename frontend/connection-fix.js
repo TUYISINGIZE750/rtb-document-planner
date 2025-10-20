@@ -53,10 +53,12 @@ class ConnectionManager {
 // Global connection manager instance
 window.connectionManager = new ConnectionManager();
 
-// Enhanced API configuration with fallback
+// ===== IMPORTANT: UPDATE THIS FOR YOUR DEPLOYMENT =====
+// Change the production URL to your PythonAnywhere domain
 const API_CONFIG = {
     development: 'http://localhost:8000',
     production: 'https://leonardus437.pythonanywhere.com'
+    // If using custom domain or different backend, update production URL above
 };
 
 // Enhanced environment detection - detects local development including network access
@@ -144,6 +146,15 @@ document.addEventListener('DOMContentLoaded', () => {
     testAPIConnection();
 });
 
-console.log('Connection manager initialized');
+// Enhanced logging for debugging
+console.log('🔌 Connection manager initialized');
 console.log('Environment:', isLocalDevelopment ? 'local development' : 'production');
 console.log('API Base URL:', API_BASE);
+console.log('Frontend URL:', window.location.href);
+console.log('---');
+console.log('💡 If connection fails:');
+console.log('   1. Check that PythonAnywhere backend is running');
+console.log('   2. Verify API_BASE URL is correct in config.js');
+console.log('   3. Check browser console Network tab for CORS errors');
+console.log('   4. Test backend directly:', API_BASE + '/');
+console.log('---');
