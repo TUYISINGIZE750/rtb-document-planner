@@ -30,6 +30,7 @@ async function registerUser(name, phone, email, institution, password) {
     try {
         const response = await fetch(`${API_BASE}/users/register`, {
             method: 'POST',
+            mode: 'cors',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ user_id: userId, name, phone, email, institution, password, role: 'user' })
         });
@@ -41,7 +42,8 @@ async function registerUser(name, phone, email, institution, password) {
             return { success: false, message: error.detail };
         }
     } catch (error) {
-        return { success: false, message: 'Network error' };
+        console.error('Registration network error:', error);
+        return { success: false, message: 'Connection failed. Please check your internet connection and try again.' };
     }
 }
 
@@ -55,6 +57,7 @@ async function loginUser(phone, password, remember) {
         
         const response = await fetch(`${API_BASE}/users/login`, {
             method: 'POST',
+            mode: 'cors',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ phone, password })
         });
@@ -77,7 +80,8 @@ async function loginUser(phone, password, remember) {
             return { success: false, message: 'Incorrect phone number or password' };
         }
     } catch (error) {
-        return { success: false, message: 'Network error' };
+        console.error('Login network error:', error);
+        return { success: false, message: 'Connection failed. Please check your internet connection and try again.' };
     }
 }
 

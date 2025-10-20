@@ -14,32 +14,23 @@ import time
 
 app = FastAPI(title="RTB Document Planner", version="1.0.0")
 
-import os
-
-# Get environment variables
-PORT = int(os.getenv("PORT", 8000))
-ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
-
-# Configure CORS - Allow all origins for now to fix network errors
-allowed_origins = [
-    "https://rtb-document-planner.vercel.app",
-    "https://*.vercel.app", 
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "*"  # Allow all origins temporarily
-]
-
+# CORS Configuration - Allow all origins to prevent network errors
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins to fix network errors
-    allow_credentials=False,  # Set to False when using wildcard
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["*"],
     allow_headers=["*"],
 )
 
+# Add OPTIONS handler for preflight requests
+@app.options("/{path:path}")
+async def options_handler(path: str):
+    return {"message": "OK"}
+
 @app.get("/")
 def read_root():
-    return {"message": "RTB Document Planner API", "status": "online"}
+    return {"message": "RTB Document Planner API", "status": "online", "cors": "enabled"}
 
 @app.get("/health")
 def health_check(db: Session = Depends(get_db)):
