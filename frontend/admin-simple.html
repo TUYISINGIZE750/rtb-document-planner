@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Simple Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 2rem; }
+        .card { background: white; padding: 1rem; margin: 1rem 0; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background: #d4edda; }
+        .error { background: #f8d7da; }
+    </style>
+</head>
+<body>
+    <h1>Admin Dashboard - Simple Test</h1>
+    
+    <div class="card">
+        <h3>API Base</h3>
+        <p id="apiBase">Loading...</p>
+    </div>
+    
+    <div class="card">
+        <h3>Users Data</h3>
+        <pre id="usersData">Loading...</pre>
+    </div>
+    
+    <div class="card">
+        <h3>Stats Data</h3>
+        <pre id="statsData">Loading...</pre>
+    </div>
+
+    <script>
+        const API_BASE = 'https://leonardus437.pythonanywhere.com';
+        document.getElementById('apiBase').textContent = API_BASE;
+
+        async function loadData() {
+            try {
+                // Load users
+                const usersResponse = await fetch(`${API_BASE}/users/`);
+                const users = await usersResponse.json();
+                document.getElementById('usersData').textContent = JSON.stringify(users, null, 2);
+                
+                // Load stats
+                const statsResponse = await fetch(`${API_BASE}/stats`);
+                const stats = await statsResponse.json();
+                document.getElementById('statsData').textContent = JSON.stringify(stats, null, 2);
+                
+            } catch (error) {
+                document.getElementById('usersData').textContent = 'Error: ' + error.message;
+                document.getElementById('statsData').textContent = 'Error: ' + error.message;
+            }
+        }
+
+        loadData();
+    </script>
+</body>
+</html>
