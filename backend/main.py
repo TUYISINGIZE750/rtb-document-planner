@@ -20,22 +20,20 @@ import os
 PORT = int(os.getenv("PORT", 8000))
 ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
 
-# Configure CORS for production
-if ENVIRONMENT == "production":
-    allowed_origins = [
-        "https://rtb-document-planner.vercel.app",
-        "https://*.vercel.app",
-        "https://rtb-document-planner.onrender.com",
-        "https://*.onrender.com"
-    ]
-else:
-    allowed_origins = ["http://localhost:5173", "http://127.0.0.1:5173", "*"]
+# Configure CORS - Allow all origins for now to fix network errors
+allowed_origins = [
+    "https://rtb-document-planner.vercel.app",
+    "https://*.vercel.app", 
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "*"  # Allow all origins temporarily
+]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins,
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE"],
+    allow_origins=["*"],  # Allow all origins to fix network errors
+    allow_credentials=False,  # Set to False when using wildcard
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
