@@ -251,6 +251,8 @@
         const session = getCurrentSession();
         const userMenu = document.getElementById('userMenu');
         
+        console.log('Current session:', session);
+        
         if (session) {
             userMenu.innerHTML = `
                 <div style="background: white; padding: 1rem 1.5rem; border-radius: 2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 1rem;">
@@ -275,10 +277,20 @@
         
         async function loadSubscriptionStatus() {
             try {
+                console.log('Loading subscription status for:', session.phone);
+                console.log('API URL:', `${API_BASE}/user-limits/${encodeURIComponent(session.phone)}`);
+                
                 const response = await fetch(`${API_BASE}/user-limits/${encodeURIComponent(session.phone)}`);
+                console.log('Response status:', response.status);
+                
                 if (response.ok) {
                     const limits = await response.json();
+                    console.log('Limits received:', limits);
                     displaySubscriptionStatus(limits);
+                } else {
+                    console.error('Failed to load subscription status:', response.status, response.statusText);
+                    const errorText = await response.text();
+                    console.error('Error response:', errorText);
                 }
             } catch (error) {
                 console.error('Error loading subscription status:', error);

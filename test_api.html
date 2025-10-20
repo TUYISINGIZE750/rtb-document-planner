@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+</head>
+<body>
+    <h1>API Connection Test</h1>
+    <div id="results"></div>
+    
+    <script>
+        const API_BASE = 'https://leonardus437.pythonanywhere.com';
+        
+        async function testAPI() {
+            const results = document.getElementById('results');
+            
+            // Test 1: Root endpoint
+            try {
+                const response = await fetch(`${API_BASE}/`);
+                const data = await response.json();
+                results.innerHTML += `<p>✅ Root endpoint: ${JSON.stringify(data)}</p>`;
+            } catch (error) {
+                results.innerHTML += `<p>❌ Root endpoint error: ${error.message}</p>`;
+            }
+            
+            // Test 2: Health endpoint
+            try {
+                const response = await fetch(`${API_BASE}/health`);
+                const data = await response.json();
+                results.innerHTML += `<p>✅ Health endpoint: ${JSON.stringify(data)}</p>`;
+            } catch (error) {
+                results.innerHTML += `<p>❌ Health endpoint error: ${error.message}</p>`;
+            }
+            
+            // Test 3: User limits endpoint (with a test phone number)
+            try {
+                const response = await fetch(`${API_BASE}/user-limits/+250789751597`);
+                if (response.ok) {
+                    const data = await response.json();
+                    results.innerHTML += `<p>✅ User limits endpoint: ${JSON.stringify(data)}</p>`;
+                } else {
+                    results.innerHTML += `<p>⚠️ User limits endpoint: ${response.status} - ${response.statusText}</p>`;
+                }
+            } catch (error) {
+                results.innerHTML += `<p>❌ User limits endpoint error: ${error.message}</p>`;
+            }
+        }
+        
+        testAPI();
+    </script>
+</body>
+</html>
