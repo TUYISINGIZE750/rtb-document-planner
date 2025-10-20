@@ -173,11 +173,9 @@
     <script src="config.js?t=20250120T105300Z"></script>
     <script src="auth.js?t=20250120T105300Z"></script>
     <script>
-        const AUTH_KEY = 'rtb_auth_session';
-        
         // Clear any existing session on login page load
-        localStorage.removeItem(AUTH_KEY);
-        sessionStorage.removeItem(AUTH_KEY);
+        localStorage.removeItem('rtb_auth_session');
+        sessionStorage.removeItem('rtb_auth_session');
         
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -203,17 +201,30 @@
             btn.disabled = true;
             btn.textContent = 'Signing in...';
             
-            const result = await loginUser(phone, password, remember);
-            
-            if (result.success) {
-                const session = getCurrentSession();
-                if (session.role === 'admin') {
-                    window.location.href = 'admin.html';
+            try {
+                const result = await loginUser(phone, password, remember);
+                
+                if (result.success) {
+                    const session = getCurrentSession();
+                    console.log('Login successful, redirecting...', session);
+                    
+                    // Use setTimeout to ensure session is saved
+                    setTimeout(() => {
+                        if (session && session.role === 'admin') {
+                            window.location.replace('admin.html');
+                        } else {
+                            window.location.replace('index.html');
+                        }
+                    }, 100);
                 } else {
-                    window.location.href = 'index.html';
+                    document.getElementById('phoneError').textContent = result.message;
+                    document.getElementById('phoneError').classList.add('show');
+                    btn.disabled = false;
+                    btn.textContent = 'Sign In';
                 }
-            } else {
-                document.getElementById('phoneError').textContent = result.message;
+            } catch (error) {
+                console.error('Login error:', error);
+                document.getElementById('phoneError').textContent = 'An error occurred. Please try again.';
                 document.getElementById('phoneError').classList.add('show');
                 btn.disabled = false;
                 btn.textContent = 'Sign In';

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Backend Connection Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test { margin: 10px 0; padding: 10px; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .loading { background: #fff3cd; color: #856404; }
+    </style>
+</head>
+<body>
+    <h1>RTB Planner - Backend Connection Test</h1>
+    <div id="results"></div>
+    
+    <script src="config.js"></script>
+    <script>
+        async function testConnection() {
+            const results = document.getElementById('results');
+            
+            // Test 1: Basic API connection
+            results.innerHTML += '<div class="test loading">Testing API connection...</div>';
+            try {
+                const response = await fetch(`${API_BASE}/`, {
+                    method: 'GET',
+                    mode: 'cors',
+                    credentials: 'omit'
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    results.innerHTML += `<div class="test success">✅ API Connection: SUCCESS - ${JSON.stringify(data)}</div>`;
+                } else {
+                    results.innerHTML += `<div class="test error">❌ API Connection: FAILED - Status ${response.status}</div>`;
+                }
+            } catch (error) {
+                results.innerHTML += `<div class="test error">❌ API Connection: ERROR - ${error.message}</div>`;
+            }
+            
+            // Test 2: CORS headers (check response headers from GET request)
+            results.innerHTML += '<div class="test loading">Testing CORS headers...</div>';
+            try {
+                const response = await fetch(`${API_BASE}/`, {
+                    method: 'GET',
+                    mode: 'cors',
+                    credentials: 'omit'
+                });
+                
+                // Check if we can make cross-origin requests successfully
+                if (response.ok) {
+                    results.innerHTML += `<div class="test success">✅ CORS Headers: SUCCESS - Cross-origin requests working</div>`;
+                } else {
+                    results.innerHTML += `<div class="test error">❌ CORS Headers: Failed with status ${response.status}</div>`;
+                }
+            } catch (error) {
+                results.innerHTML += `<div class="test error">❌ CORS Test: ERROR - ${error.message}</div>`;
+            }
+            
+            // Test 3: User login endpoint (actual functionality test)
+            results.innerHTML += '<div class="test loading">Testing user login...</div>';
+            try {
+                const response = await fetch(`${API_BASE}/users/login`, {
+                    method: 'GET',
+                    mode: 'cors',
+                    credentials: 'omit',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    results.innerHTML += `<div class="test success">✅ User Login: SUCCESS - User: ${data.name}</div>`;
+                } else {
+                    results.innerHTML += `<div class="test error">❌ User Login: Status ${response.status}</div>`;
+                }
+            } catch (error) {
+                results.innerHTML += `<div class="test error">❌ User Login: ERROR - ${error.message}</div>`;
+            }
+            
+            // Test 4: User limits endpoint
+            results.innerHTML += '<div class="test loading">Testing user limits...</div>';
+            try {
+                const response = await fetch(`${API_BASE}/user-limits/+250788123456`, {
+                    method: 'GET',
+                    mode: 'cors',
+                    credentials: 'omit',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    results.innerHTML += `<div class="test success">✅ User Limits: SUCCESS - Plans: ${data.session_plans_limit}, Schemes: ${data.schemes_limit}</div>`;
+                } else {
+                    results.innerHTML += `<div class="test error">❌ User Limits: Status ${response.status}</div>`;
+                }
+            } catch (error) {
+                results.innerHTML += `<div class="test error">❌ User Limits: ERROR - ${error.message}</div>`;
+            }
+            
+            results.innerHTML += '<div class="test success"><strong>🎉 Integration Test Complete!</strong><br>If all tests show SUCCESS, your system is 100% live and ready for users!</div>';
+        }
+        
+        // Run tests on page load
+        testConnection();
+    </script>
+</body>
+</html>

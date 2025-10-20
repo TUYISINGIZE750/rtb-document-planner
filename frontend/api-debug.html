@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Debug - RTB Planner</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 2rem; max-width: 800px; margin: 0 auto; }
+        .test { margin: 1rem 0; padding: 1rem; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background: #d4edda; border-color: #c3e6cb; }
+        .error { background: #f8d7da; border-color: #f5c6cb; }
+        .loading { background: #fff3cd; border-color: #ffeaa7; }
+        button { padding: 0.5rem 1rem; margin: 0.5rem 0; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        pre { background: #f8f9fa; padding: 1rem; border-radius: 3px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>🔧 API Debug Tool</h1>
+    <p>Testing API endpoints to diagnose admin dashboard issues...</p>
+    
+    <div id="config-info"></div>
+    
+    <button onclick="runAllTests()">🚀 Run All Tests</button>
+    <button onclick="clearResults()">🗑️ Clear Results</button>
+    
+    <div id="results"></div>
+
+    <script src="config.js?t=20250120T140000Z"></script>
+    <script>
+        function addTest(title, status, details) {
+            const div = document.createElement('div');
+            div.className = `test ${status}`;
+            div.innerHTML = `
+                <h3>${title}</h3>
+                <pre>${details}</pre>
+            `;
+            document.getElementById('results').appendChild(div);
+        }
+
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+        }
+
+        async function testEndpoint(name, url) {
+            try {
+                addTest(`Testing ${name}`, 'loading', `Fetching: ${url}`);
+                
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Cache-Control': 'no-cache'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    addTest(`✅ ${name} Success`, 'success', 
+                        `Status: ${response.status}\nURL: ${url}\nResponse:\n${JSON.stringify(data, null, 2)}`);
+                    return true;
+                } else {
+                    addTest(`❌ ${name} Failed`, 'error', 
+                        `Status: ${response.status} ${response.statusText}\nURL: ${url}`);
+                    return false;
+                }
+            } catch (error) {
+                addTest(`❌ ${name} Error`, 'error', 
+                    `URL: ${url}\nError: ${error.message}`);
+                return false;
+            }
+        }
+
+        async function runAllTests() {
+            clearResults();
+            
+            // Show config info
+            document.getElementById('config-info').innerHTML = `
+                <div class="test">
+                    <h3>📋 Configuration</h3>
+                    <pre>API Base: ${API_BASE}
+Environment: ${window.location.hostname === 'localhost' ? 'Local' : 'Production'}
+Current URL: ${window.location.href}</pre>
+                </div>
+            `;
+            
+            // Test endpoints
+            await testEndpoint('Root API', `${API_BASE}/`);
+            await testEndpoint('Users List', `${API_BASE}/users/`);
+            await testEndpoint('Statistics', `${API_BASE}/stats`);
+            await testEndpoint('User Limits', `${API_BASE}/user-limits/+250789751597`);
+            
+            addTest('🏁 Tests Complete', 'success', 'All API tests finished. Check results above.');
+        }
+
+        // Auto-run tests on load
+        setTimeout(() => {
+            runAllTests();
+        }, 1000);
+    </script>
+</body>
+</html>

@@ -478,8 +478,8 @@
 
     <!-- Config MUST load first before any auth functions -->
     <!-- Cache-busting timestamp forces CDN/browser to fetch fresh code -->
-    <script src="config.js?t=20250120T105300Z"></script>
-    <script src="auth.js?t=20250120T105300Z"></script>
+    <script src="config.js?t=20250120T140000Z"></script>
+    <script src="auth.js?t=20250120T140000Z"></script>
     <script>
         (function () {
             const SESSION_POLL_INTERVAL = 5000;
@@ -608,7 +608,7 @@
             
             try {
                 // Get user from backend
-                const response = await fetch('http://localhost:8000/users/');
+                const response = await fetch(`${API_BASE}/users/`);
                 const allUsers = await response.json();
                 const user = allUsers.find(u => u.user_id === userId);
                 
@@ -624,8 +624,16 @@
                     // Activate user via backend API
                     const sessionPlans = selectedPackage.sessions === 'unlimited' ? -1 : selectedPackage.sessions;
                     const schemes = selectedPackage.schemes === 'unlimited' ? -1 : selectedPackage.schemes;
-                    const activateResponse = await fetch(`http://localhost:8000/users/${user.phone}/activate?session_plans=${sessionPlans}&schemes=${schemes}`, {
-                        method: 'PUT'
+                    const activateResponse = await fetch(`${API_BASE}/users/${user.phone}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            session_plans_limit: sessionPlans,
+                            schemes_limit: schemes,
+                            is_active: true
+                        })
                     });
                     
                     if (activateResponse.ok) {
@@ -667,7 +675,7 @@
                 
                 if (userSelect) {
                     // Send to specific user
-                    const allUsersResponse = await fetch('http://localhost:8000/users/');
+                    const allUsersResponse = await fetch(`${API_BASE}/users/`);
                     const allUsers = await allUsersResponse.json();
                     const selectedUser = allUsers.find(u => u.user_id === userSelect);
                     
@@ -676,7 +684,7 @@
                         return;
                     }
                     
-                    response = await fetch('http://localhost:8000/notifications/', {
+                    response = await fetch(`${API_BASE}/notifications/`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -697,7 +705,7 @@
                     }
                 } else {
                     // Send to all users (bulk notification)
-                    response = await fetch('http://localhost:8000/notifications/bulk', {
+                    response = await fetch(`${API_BASE}/notifications/bulk`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -740,7 +748,7 @@
                 
                 while (retryCount < maxRetries) {
                     try {
-                        const response = await fetch('http://localhost:8000/users/', {
+                        const response = await fetch(`${API_BASE}/users/`, {
                             method: 'GET',
                             headers: {
                                 'Cache-Control': 'no-cache',
@@ -894,7 +902,7 @@
 
         async function viewUserDetails(userId) {
             try {
-                const response = await fetch('http://localhost:8000/users/');
+                const response = await fetch(`${API_BASE}/users/`);
                 const allUsers = await response.json();
                 const user = allUsers.find(u => u.user_id === userId);
                 
@@ -912,22 +920,18 @@
 
         async function refreshStats() {
             try {
-                const [usersRes, sessionPlansRes, schemesRes] = await Promise.all([
-                    fetch('http://localhost:8000/users/'),
-                    fetch('http://localhost:8000/session-plans/'),
-                    fetch('http://localhost:8000/schemes-of-work/')
+                const [usersRes, statsRes] = await Promise.all([
+                    fetch(`${API_BASE}/users/`),
+                    fetch(`${API_BASE}/stats`)
                 ]);
                 
                 const users = usersRes.ok ? await usersRes.json() : [];
-                const sessionPlans = sessionPlansRes.ok ? await sessionPlansRes.json() : [];
-                const schemes = schemesRes.ok ? await schemesRes.json() : [];
+                const stats = statsRes.ok ? await statsRes.json() : {};
                 
-                const premiumUsers = users.filter(u => u.is_premium).length;
-                
-                document.getElementById('totalUsers').textContent = users.length;
-                document.getElementById('premiumUsers').textContent = premiumUsers;
-                document.getElementById('totalSessionPlans').textContent = sessionPlans.length;
-                document.getElementById('totalSchemes').textContent = schemes.length;
+                document.getElementById('totalUsers').textContent = stats.total_users || users.length;
+                document.getElementById('premiumUsers').textContent = stats.premium_users || users.filter(u => u.is_premium).length;
+                document.getElementById('totalSessionPlans').textContent = stats.total_downloads || 0;
+                document.getElementById('totalSchemes').textContent = stats.total_downloads || 0;
             } catch (error) {
                 console.error('Error fetching stats:', error);
                 document.getElementById('totalUsers').textContent = 'Error';
@@ -939,7 +943,7 @@
 
         async function loadSettings() {
             try {
-                const response = await fetch('http://localhost:8000/settings');
+                const response = await fetch(`${API_BASE}/settings`);
                 if (response.ok) {
                     const settings = await response.json();
                     document.getElementById('freeSessionPlans').value = settings.free_session_plans || 2;
@@ -971,7 +975,7 @@
                     unlimited_price: parseInt(document.getElementById('unlimitedPrice').value)
                 };
                 
-                const response = await fetch('http://localhost:8000/settings', {
+                const response = await fetch(`${API_BASE}/settings`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(settings)

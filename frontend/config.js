@@ -1,22 +1,14 @@
-// Load connection manager first
-if (!window.connectionManager) {
-    const script = document.createElement('script');
-    script.src = 'connection-fix.js';
-    document.head.appendChild(script);
-}
-
-// ===== IMPORTANT: UPDATE THIS FOR YOUR DEPLOYMENT =====
-// Change the production URL to your PythonAnywhere domain
+// ===== PRODUCTION DEPLOYMENT CONFIGURATION =====
 const API_CONFIG = {
     development: 'http://localhost:8000',
     production: 'https://leonardus437.pythonanywhere.com'
-    // Backend hosted on PythonAnywhere, Frontend on Netlify with custom domain
 };
 
-// Netlify deployment configuration
-const NETLIFY_CONFIG = {
-    customDomain: 'your-custom-domain.com', // Replace with your actual domain
-    netlifyDomain: 'your-app.netlify.app'   // Replace with your Netlify subdomain
+// Netlify + PythonAnywhere Integration
+const DEPLOYMENT_CONFIG = {
+    frontend: 'https://schemesession.netlify.app',
+    backend: 'https://leonardus437.pythonanywhere.com',
+    environment: 'production'
 };
 
 // Enhanced environment detection - detects local development including network access
@@ -46,48 +38,36 @@ if (isLocalDevelopment) {
     API_BASE = API_CONFIG.production;
 }
 
-console.log('✅ config.js loaded successfully (v1.0.3-netlify-20250120T120000Z)');
+console.log('✅ config.js loaded successfully (v1.0.4-netlify-20250120T140000Z)');
 console.log('Environment:', isLocalDevelopment ? 'local development' : 'production');
 console.log('API Base URL:', API_BASE);
 console.log('Frontend Domain:', window.location.hostname);
 console.log('Deployment:', isLocalDevelopment ? 'Local' : 'Netlify + PythonAnywhere');
-console.log('Timestamp Bust:', '20250120T120000Z');
+console.log('Timestamp Bust:', '20250120T140000Z');
 
-// Enhanced API connectivity test
+// API connectivity test
 async function testAPIConnection() {
-    if (!window.connectionManager) {
-        console.warn('Connection manager not loaded, using fallback');
-        try {
-            const response = await fetch(`${API_BASE}/`, { 
-                method: 'GET',
-                mode: 'cors',
-                credentials: 'omit',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                }
-            });
-            if (response.ok) {
-                console.log('✅ API connection successful (fallback)');
-                return true;
-            }
-        } catch (error) {
-            console.error('❌ API connection failed (fallback):', error);
-            return false;
-        }
-        return false;
-    }
-    
     try {
-        const response = await window.connectionManager.makeRequest(`${API_BASE}/`);
-        const data = await response.json();
-        console.log('✅ API connection successful:', data);
-        return true;
+        const response = await fetch(`${API_BASE}/`, { 
+            method: 'GET',
+            mode: 'cors',
+            credentials: 'omit',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        });
+        if (response.ok) {
+            const data = await response.json();
+            console.log('✅ API connection successful:', data);
+            return true;
+        }
     } catch (error) {
-        console.error('❌ API connection failed:', error.message);
+        console.error('❌ API connection failed:', error);
         return false;
     }
+    return false;
 }
 
-// Initialize with delay to ensure connection manager loads
+// Initialize API test
 setTimeout(testAPIConnection, 100);

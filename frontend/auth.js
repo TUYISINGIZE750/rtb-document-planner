@@ -43,71 +43,84 @@ async function registerUser(name, phone, email, institution, password) {
     const apiBase = (typeof API_BASE !== 'undefined') ? API_BASE : (window.API_BASE || 'https://leonardus437.pythonanywhere.com');
     
     try {
-        if (window.connectionManager) {
-            await window.registerUser(userData);
-            return { success: true };
-        } else {
-            // Fallback method
-            const response = await fetch(`${apiBase}/users/register`, {
-                method: 'POST',
-                mode: 'cors',
-                credentials: 'omit',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify(userData)
-            });
-            
-            if (!response.ok) {
-                const error = await response.json().catch(() => ({ detail: 'Registration failed' }));
-                return { success: false, message: error.detail || 'Registration failed' };
+        const response = await fetch(`${apiBase}/users/register`, {
+            method: 'POST',
+            mode: 'cors',
+            credentials: 'omit',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(userData)
+        });
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            let errorMessage = 'Registration failed';
+            try {
+                const errorJson = JSON.parse(errorText);
+                errorMessage = errorJson.detail || errorJson.message || 'Registration failed';
+            } catch (e) {
+                if (response.status === 400) {
+                    errorMessage = 'Phone number already registered';
+                }
             }
-            
-            return { success: true };
+            return { success: false, message: errorMessage };
         }
+        
+        return { success: true };
     } catch (error) {
-        console.error('Registration network error:', error.message);
-        if (error.message.includes('400') || error.message.includes('already registered')) {
-            return { success: false, message: 'Phone number already registered' };
-        }
-        return { success: false, message: 'Connection failed. Please check your internet connection and try again.' };
+        console.error('Registration error:', error);
+        return { success: false, message: 'Unable to connect to server. Please try again.' };
     }
 }
 
 // Login user with robust connection
 async function loginUser(phone, password, remember) {
+    // Ensure API_BASE is available
+    const apiBase = (typeof API_BASE !== 'undefined') ? API_BASE : (window.API_BASE || 'https://leonardus437.pythonanywhere.com');
+    
+    console.log('🔐 Login attempt:', { phone, apiBase });
+    
     try {
         // Clear any existing session data first
         clearSessionStorage();
         clearLogoutMarkers();
         clearLogoutFlag();
         
-        let user;
-        if (window.connectionManager) {
-            user = await authenticateUser(phone, password);
-        } else {
-            // Fallback method
-            const response = await fetch(`${API_BASE}/users/login`, {
-                method: 'POST',
-                mode: 'cors',
-                credentials: 'omit',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({ phone, password })
-            });
-            
-            if (!response.ok) {
+        console.log('📡 Sending login request...');
+        const response = await fetch(`${apiBase}/users/login`, {
+            method: 'POST',
+            mode: 'cors',
+            credentials: 'omit',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ phone, password })
+        });
+        
+        console.log('📥 Response status:', response.status);
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('❌ Login failed:', errorText);
+            let errorMessage = 'Login failed';
+            try {
+                const errorJson = JSON.parse(errorText);
+                errorMessage = errorJson.detail || errorJson.message || 'Incorrect phone number or password';
+            } catch (e) {
                 if (response.status === 401) {
-                    return { success: false, message: 'Incorrect phone number or password' };
+                    errorMessage = 'Incorrect phone number or password';
+                } else if (response.status === 404) {
+                    errorMessage = 'User not found. Please register first.';
                 }
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
-            
-            user = await response.json();
+            return { success: false, message: errorMessage };
         }
+        
+        const user = await response.json();
+        console.log('✅ User data received:', { ...user, password: '***' });
         
         const expiryTime = remember ? 30 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000;
         const session = { 
@@ -117,16 +130,16 @@ async function loginUser(phone, password, remember) {
             remember,
             sessionId: 'SESSION_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9)
         };
+        
         localStorage.setItem(AUTH_KEY, JSON.stringify(session));
-        // Clear logout flags on successful login
+        console.log('💾 Session saved to localStorage');
+        console.log('👤 User role:', user.role);
+        
         clearLogoutFlag();
         return { success: true, role: user.role };
     } catch (error) {
-        console.error('Login network error:', error.message);
-        if (error.message.includes('401') || error.message.includes('Unauthorized')) {
-            return { success: false, message: 'Incorrect phone number or password' };
-        }
-        return { success: false, message: 'Connection failed. Please check your internet connection and try again.' };
+        console.error('❌ Login error:', error);
+        return { success: false, message: 'Unable to connect to server. Please try again.' };
     }
 }
 
