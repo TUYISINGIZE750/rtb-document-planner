@@ -1,33 +1,166 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Version Test</title>
+    <title>RTB - Config Loading Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        h2 {
+            margin-top: 0;
+        }
+        
+        .status-box {
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid;
+        }
+        
+        .status-box.success {
+            background: #e8f5e9;
+            border-color: #4CAF50;
+        }
+        
+        .status-box.error {
+            background: #ffebee;
+            border-color: #f44336;
+        }
+        
+        .status-box.success h2 {
+            color: #2e7d32;
+        }
+        
+        .status-box.error h2 {
+            color: #c62828;
+        }
+        
+        .info-line {
+            margin: 10px 0;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        
+        .code {
+            font-family: 'Courier New', monospace;
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        
+        .diagnostic-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .diagnostic-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .diagnostic-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .diagnostic-list li strong {
+            color: #667eea;
+        }
+    </style>
 </head>
 <body>
-    <h1>Testing Config Loading</h1>
-    <div id="output"></div>
+    <div class="container">
+        <h1>🔍 RTB Config Loading Test</h1>
+        <div id="output"></div>
+    </div>
     
-    <script src="config.js?v=1.0.1&t=1"></script>
-    <script src="auth.js?v=1.0.1&t=1"></script>
+    <!-- Config MUST load first before any auth functions -->
+    <!-- Aggressive cache-busting timestamp -->
+    <script src="config.js?t=20250103T120000Z"></script>
+    <script src="auth.js?t=20250103T120000Z"></script>
     <script>
+        // Give scripts time to execute
         setTimeout(() => {
             const output = document.getElementById('output');
             
-            if (typeof API_BASE !== 'undefined') {
+            const checks = {
+                configLoaded: typeof API_BASE !== 'undefined',
+                authLoaded: typeof registerUser === 'function',
+                apiBaseValue: typeof API_BASE !== 'undefined' ? API_BASE : (window.API_BASE || 'NOT DEFINED'),
+                timestamp: '20250103T120000Z'
+            };
+            
+            const allGood = checks.configLoaded && checks.authLoaded;
+            
+            if (allGood) {
                 output.innerHTML = `
-                    <h2 style="color: green">✅ SUCCESS!</h2>
-                    <p><strong>API_BASE defined:</strong> ${API_BASE}</p>
-                    <p><strong>Environment:</strong> ${window.location.hostname}</p>
-                    <p><strong>Scripts loaded successfully!</strong></p>
+                    <div class="status-box success">
+                        <h2>✅ SUCCESS - All Systems Ready!</h2>
+                        <ul class="diagnostic-list">
+                            <li><strong>config.js:</strong> ✅ Loaded (API_BASE is defined)</li>
+                            <li><strong>auth.js:</strong> ✅ Loaded (registerUser available)</li>
+                            <li><strong>API Endpoint:</strong> <span class="code">${checks.apiBaseValue}</span></li>
+                            <li><strong>Cache Buster:</strong> <span class="code">${checks.timestamp}</span></li>
+                            <li><strong>Environment:</strong> ${window.location.hostname}</li>
+                        </ul>
+                        <div class="info-line" style="margin-top: 20px; color: green; font-weight: bold;">
+                            ✨ You can now proceed to register.html or login.html
+                        </div>
+                    </div>
                 `;
             } else {
+                let errorMessage = [];
+                if (!checks.configLoaded) {
+                    errorMessage.push('• config.js did NOT load properly');
+                    errorMessage.push('  → API_BASE is undefined');
+                }
+                if (!checks.authLoaded) {
+                    errorMessage.push('• auth.js did NOT load properly');
+                    errorMessage.push('  → registerUser function is not available');
+                }
+                
                 output.innerHTML = `
-                    <h2 style="color: red">❌ FAILED!</h2>
-                    <p><strong>API_BASE is NOT defined</strong></p>
-                    <p>config.js may not have loaded before auth.js</p>
+                    <div class="status-box error">
+                        <h2>❌ FAILED - Script Loading Issue</h2>
+                        <p><strong>Problems detected:</strong></p>
+                        <pre style="background: #fff3cd; padding: 10px; border-radius: 4px; color: #856404;">
+${errorMessage.join('\n')}
+                        </pre>
+                        <p><strong>Troubleshooting:</strong></p>
+                        <ul class="diagnostic-list">
+                            <li>Check browser console (F12 → Console tab) for errors</li>
+                            <li>Hard refresh the page: <span class="code">Ctrl+Shift+R</span></li>
+                            <li>Clear browser cache and try again</li>
+                            <li>Check that Vercel deployment completed</li>
+                        </ul>
+                    </div>
                 `;
             }
-        }, 100);
+            
+            // Also log to console
+            console.log('=== RTB Config Test Results ===');
+            console.log('config.js loaded:', checks.configLoaded);
+            console.log('auth.js loaded:', checks.authLoaded);
+            console.log('API_BASE:', checks.apiBaseValue);
+            console.log('Cache timestamp:', checks.timestamp);
+        }, 200);
     </script>
 </body>
 </html>
