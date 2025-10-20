@@ -10,12 +10,43 @@
   ],
   "headers": [
     {
-      "source": "/(.*)",
+      "source": "/config\\.js",
       "headers": [
         {
           "key": "Cache-Control",
-          "value": "public, max-age=3600, must-revalidate"
+          "value": "public, max-age=0, no-cache, must-revalidate"
         },
+        {
+          "key": "Pragma",
+          "value": "no-cache"
+        }
+      ]
+    },
+    {
+      "source": "/auth\\.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, no-cache, must-revalidate"
+        },
+        {
+          "key": "Pragma",
+          "value": "no-cache"
+        }
+      ]
+    },
+    {
+      "source": ".*\\.html$",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=300, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
         {
           "key": "Access-Control-Allow-Origin",
           "value": "*"
