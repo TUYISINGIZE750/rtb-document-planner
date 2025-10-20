@@ -476,8 +476,9 @@
         </div>
     </div>
 
-    <script src="config.js"></script>
-    <script src="auth.js"></script>
+    <!-- Config MUST load first before any auth functions -->
+    <script src="config.js?v=1.0.1"></script>
+    <script src="auth.js?v=1.0.1"></script>
     <script>
         (function () {
             const SESSION_POLL_INTERVAL = 5000;
