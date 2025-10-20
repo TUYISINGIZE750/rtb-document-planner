@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard - Redirecting...</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 3rem; background: #f1f5f9; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .btn { display: inline-block; padding: 1rem 2rem; background: #6366f1; color: white; text-decoration: none; border-radius: 0.5rem; margin: 0.5rem; font-weight: 600; }
+        .btn:hover { background: #4f46e5; }
+        .status { margin: 1rem 0; padding: 1rem; border-radius: 0.5rem; }
+        .success { background: #dcfce7; color: #166534; }
+        .error { background: #fee2e2; color: #991b1b; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Admin Dashboard - Cache Fix</h1>
+        <p>Fixing browser cache issues with admin dashboard...</p>
+        
+        <div id="status" class="status">Testing API connection...</div>
+        
+        <div>
+            <a href="admin-fixed.html" class="btn">
+                <i class="fas fa-shield-alt"></i> Open Fixed Admin Dashboard
+            </a>
+            <a href="api-debug.html" class="btn">
+                <i class="fas fa-bug"></i> API Debug Tool
+            </a>
+        </div>
+        
+        <div style="margin-top: 2rem; font-size: 0.875rem; color: #64748b;">
+            <p><strong>If you're still seeing localhost errors:</strong></p>
+            <ol style="text-align: left; max-width: 400px; margin: 0 auto;">
+                <li>Press <kbd>Ctrl+Shift+R</kbd> (hard refresh)</li>
+                <li>Clear browser cache completely</li>
+                <li>Try incognito/private mode</li>
+                <li>Use the "Fixed Admin Dashboard" link above</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://leonardus437.pythonanywhere.com';
+        
+        async function testAPI() {
+            const statusDiv = document.getElementById('status');
+            
+            try {
+                statusDiv.textContent = 'Testing API connection...';
+                statusDiv.className = 'status';
+                
+                const response = await fetch(`${API_BASE}/`);
+                const data = await response.json();
+                
+                statusDiv.innerHTML = `
+                    <strong>✅ API Connection Successful!</strong><br>
+                    Backend: ${API_BASE}<br>
+                    Status: ${data.status}<br>
+                    Users: ${data.users_count}<br>
+                    Version: ${data.version}
+                `;
+                statusDiv.className = 'status success';
+                
+                // Auto-redirect after 3 seconds
+                setTimeout(() => {
+                    window.location.href = 'admin-fixed.html';
+                }, 3000);
+                
+            } catch (error) {
+                statusDiv.innerHTML = `
+                    <strong>❌ API Connection Failed</strong><br>
+                    Error: ${error.message}<br>
+                    Backend: ${API_BASE}
+                `;
+                statusDiv.className = 'status error';
+            }
+        }
+        
+        // Test API on load
+        testAPI();
+    </script>
+</body>
+</html>
