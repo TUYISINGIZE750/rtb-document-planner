@@ -38,6 +38,7 @@ if (isLocalDevelopment) {
     API_BASE = API_CONFIG.production;
 }
 
+console.log('✅ config.js loaded successfully (v1.0.1-vercel-fixed)');
 console.log('Environment:', isLocalDevelopment ? 'local development' : 'production');
 console.log('API Base URL:', API_BASE);
 
