@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard - RTB Planner</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 2rem; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header { background: white; padding: 2rem; border-radius: 8px; margin-bottom: 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
+        .stat-card { background: white; padding: 1.5rem; border-radius: 8px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .stat-value { font-size: 2rem; font-weight: bold; color: #333; }
+        .stat-label { color: #666; margin-top: 0.5rem; }
+        .users-section { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .user-item { padding: 1rem; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .user-info { flex: 1; }
+        .user-name { font-weight: bold; }
+        .user-details { color: #666; font-size: 0.9rem; }
+        .btn { padding: 0.5rem 1rem; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .status { padding: 1rem; margin: 1rem 0; border-radius: 4px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛡️ Admin Dashboard</h1>
+            <p>Backend: <strong>https://leonardus437.pythonanywhere.com</strong></p>
+            <div id="connectionStatus" class="status">Testing connection...</div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="totalUsers">-</div>
+                <div class="stat-label">Total Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="premiumUsers">-</div>
+                <div class="stat-label">Premium Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="activeUsers">-</div>
+                <div class="stat-label">Active Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalDownloads">-</div>
+                <div class="stat-label">Total Downloads</div>
+            </div>
+        </div>
+
+        <div class="users-section">
+            <h2>👥 All Users</h2>
+            <div id="usersList">Loading users...</div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://leonardus437.pythonanywhere.com';
+        
+        async function testConnection() {
+            const statusDiv = document.getElementById('connectionStatus');
+            try {
+                const response = await fetch(`${API_BASE}/`);
+                const data = await response.json();
+                statusDiv.innerHTML = `✅ Connected - ${data.message} (v${data.version})`;
+                statusDiv.className = 'status success';
+                return true;
+            } catch (error) {
+                statusDiv.innerHTML = `❌ Connection Failed: ${error.message}`;
+                statusDiv.className = 'status error';
+                return false;
+            }
+        }
+
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_BASE}/stats`);
+                const stats = await response.json();
+                
+                document.getElementById('totalUsers').textContent = stats.total_users;
+                document.getElementById('premiumUsers').textContent = stats.premium_users;
+                document.getElementById('activeUsers').textContent = stats.active_users;
+                document.getElementById('totalDownloads').textContent = stats.total_downloads;
+            } catch (error) {
+                console.error('Stats error:', error);
+            }
+        }
+
+        async function loadUsers() {
+            const usersList = document.getElementById('usersList');
+            try {
+                const response = await fetch(`${API_BASE}/users/`);
+                const users = await response.json();
+                
+                if (users.length === 0) {
+                    usersList.innerHTML = '<p>No users found</p>';
+                    return;
+                }
+                
+                usersList.innerHTML = users.map(user => `
+                    <div class="user-item">
+                        <div class="user-info">
+                            <div class="user-name">${user.name} ${user.role === 'admin' ? '👑' : ''}</div>
+                            <div class="user-details">
+                                📞 ${user.phone} | 🏫 ${user.institution}<br>
+                                📊 Plans: ${user.session_plans_downloaded}/${user.session_plans_limit} | 
+                                📚 Schemes: ${user.schemes_downloaded}/${user.schemes_limit} |
+                                ${user.is_premium ? '⭐ Premium' : '🆓 Free'}
+                            </div>
+                        </div>
+                        <button class="btn" onclick="alert('User: ${user.name}\\nPhone: ${user.phone}\\nRole: ${user.role}\\nActive: ${user.is_active}')">
+                            Details
+                        </button>
+                    </div>
+                `).join('');
+                
+            } catch (error) {
+                usersList.innerHTML = `
+                    <div class="status error">
+                        <strong>Error loading users:</strong> ${error.message}<br>
+                        <button class="btn" onclick="loadUsers()" style="margin-top: 1rem;">🔄 Retry</button>
+                    </div>
+                `;
+            }
+        }
+
+        // Initialize
+        async function init() {
+            const connected = await testConnection();
+            if (connected) {
+                await loadStats();
+                await loadUsers();
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>

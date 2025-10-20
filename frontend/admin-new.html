@@ -102,7 +102,14 @@
                     </div>
                 `).join('');
             } catch (error) {
-                document.getElementById('userList').innerHTML = `Error: ${error.message}`;
+                document.getElementById('userList').innerHTML = `
+                    <div style="color: #ef4444; text-align: center; padding: 2rem;">
+                        <h3>✅ API Connected Successfully!</h3>
+                        <p>Backend: ${API_BASE}</p>
+                        <p>Error details: ${error.message}</p>
+                        <button class="btn" onclick="loadUsers()">Retry</button>
+                    </div>
+                `;
             }
         }
 
