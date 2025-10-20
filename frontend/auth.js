@@ -23,31 +23,45 @@ function initUsersDB() {
     }
 }
 
-// Register new user
+// Register new user with robust connection
 async function registerUser(name, phone, email, institution, password) {
     const userId = 'USER_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    const userData = { user_id: userId, name, phone, email, institution, password, role: 'user' };
     
     try {
-        const response = await fetch(`${API_BASE}/users/register`, {
-            method: 'POST',
-            mode: 'cors',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ user_id: userId, name, phone, email, institution, password, role: 'user' })
-        });
-        
-        if (response.ok) {
+        if (window.connectionManager) {
+            await window.registerUser(userData);
             return { success: true };
         } else {
-            const error = await response.json();
-            return { success: false, message: error.detail };
+            // Fallback method
+            const response = await fetch(`${API_BASE}/users/register`, {
+                method: 'POST',
+                mode: 'cors',
+                credentials: 'omit',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(userData)
+            });
+            
+            if (!response.ok) {
+                const error = await response.json().catch(() => ({ detail: 'Registration failed' }));
+                return { success: false, message: error.detail || 'Registration failed' };
+            }
+            
+            return { success: true };
         }
     } catch (error) {
-        console.error('Registration network error:', error);
+        console.error('Registration network error:', error.message);
+        if (error.message.includes('400') || error.message.includes('already registered')) {
+            return { success: false, message: 'Phone number already registered' };
+        }
         return { success: false, message: 'Connection failed. Please check your internet connection and try again.' };
     }
 }
 
-// Login user
+// Login user with robust connection
 async function loginUser(phone, password, remember) {
     try {
         // Clear any existing session data first
@@ -55,32 +69,49 @@ async function loginUser(phone, password, remember) {
         clearLogoutMarkers();
         clearLogoutFlag();
         
-        const response = await fetch(`${API_BASE}/users/login`, {
-            method: 'POST',
-            mode: 'cors',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ phone, password })
-        });
-        
-        if (response.ok) {
-            const user = await response.json();
-            const expiryTime = remember ? 30 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000;
-            const session = { 
-                ...user, 
-                loggedInAt: new Date().toISOString(),
-                expiresAt: new Date(Date.now() + expiryTime).toISOString(),
-                remember,
-                sessionId: 'SESSION_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9)
-            };
-            localStorage.setItem(AUTH_KEY, JSON.stringify(session));
-            // Clear logout flags on successful login
-            clearLogoutFlag();
-            return { success: true, role: user.role };
+        let user;
+        if (window.connectionManager) {
+            user = await authenticateUser(phone, password);
         } else {
+            // Fallback method
+            const response = await fetch(`${API_BASE}/users/login`, {
+                method: 'POST',
+                mode: 'cors',
+                credentials: 'omit',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ phone, password })
+            });
+            
+            if (!response.ok) {
+                if (response.status === 401) {
+                    return { success: false, message: 'Incorrect phone number or password' };
+                }
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            
+            user = await response.json();
+        }
+        
+        const expiryTime = remember ? 30 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000;
+        const session = { 
+            ...user, 
+            loggedInAt: new Date().toISOString(),
+            expiresAt: new Date(Date.now() + expiryTime).toISOString(),
+            remember,
+            sessionId: 'SESSION_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9)
+        };
+        localStorage.setItem(AUTH_KEY, JSON.stringify(session));
+        // Clear logout flags on successful login
+        clearLogoutFlag();
+        return { success: true, role: user.role };
+    } catch (error) {
+        console.error('Login network error:', error.message);
+        if (error.message.includes('401') || error.message.includes('Unauthorized')) {
             return { success: false, message: 'Incorrect phone number or password' };
         }
-    } catch (error) {
-        console.error('Login network error:', error);
         return { success: false, message: 'Connection failed. Please check your internet connection and try again.' };
     }
 }

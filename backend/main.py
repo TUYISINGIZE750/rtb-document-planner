@@ -14,23 +14,61 @@ import time
 
 app = FastAPI(title="RTB Document Planner", version="1.0.0")
 
-# CORS Configuration - Allow all origins to prevent network errors
+# Enhanced CORS Configuration for cross-device compatibility
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_credentials=False,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "PATCH"],
+    allow_headers=[
+        "*",
+        "Accept",
+        "Accept-Language",
+        "Content-Language",
+        "Content-Type",
+        "Authorization",
+        "X-Requested-With",
+        "Origin",
+        "Access-Control-Request-Method",
+        "Access-Control-Request-Headers"
+    ],
+    expose_headers=["*"],
+    max_age=86400,
 )
 
-# Add OPTIONS handler for preflight requests
+# Add middleware for security headers and OPTIONS handling
+@app.middleware("http")
+async def add_security_headers(request, call_next):
+    # Handle preflight OPTIONS requests
+    if request.method == "OPTIONS":
+        from fastapi import Response
+        response = Response()
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS, HEAD, PATCH"
+        response.headers["Access-Control-Allow-Headers"] = "*"
+        response.headers["Access-Control-Max-Age"] = "86400"
+        return response
+    
+    response = await call_next(request)
+    
+    # Add security headers
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    
+    return response
+
+# Fallback OPTIONS handler
 @app.options("/{path:path}")
 async def options_handler(path: str):
     return {"message": "OK"}
 
 @app.get("/")
 def read_root():
-    return {"message": "RTB Document Planner API", "status": "online", "cors": "enabled"}
+    from fastapi import Response
+    response_data = {"message": "RTB Document Planner API", "status": "online", "cors": "enabled"}
+    return response_data
 
 @app.get("/health")
 def health_check(db: Session = Depends(get_db)):

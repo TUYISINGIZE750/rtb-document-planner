@@ -216,13 +216,14 @@
         <div class="copyright">© 2025 RTB Document Planner | Developed for TVET Excellence</div>
     </div>
     <link rel="stylesheet" href="subscription-modal.css">
+    <script src="connection-fix.js"></script>
+    <script src="config.js"></script>
     <script src="auth.js"></script>
     <script src="notifications.js"></script>
     <script src="user-registration.js"></script>
     <script src="chat-widget.js"></script>
     <script src="subscription-modal.js"></script>
     <script src="subscription-tracker.js"></script>
-    <script src="config.js"></script>
     <script>
         // Prevent back button access after logout for teachers
         (function() {
@@ -278,23 +279,51 @@
         async function loadSubscriptionStatus() {
             try {
                 console.log('Loading subscription status for:', session.phone);
-                console.log('API URL:', `${API_BASE}/user-limits/${encodeURIComponent(session.phone)}`);
                 
-                const response = await fetch(`${API_BASE}/user-limits/${encodeURIComponent(session.phone)}`);
-                console.log('Response status:', response.status);
-                
-                if (response.ok) {
-                    const limits = await response.json();
-                    console.log('Limits received:', limits);
-                    displaySubscriptionStatus(limits);
+                let limits;
+                if (window.connectionManager) {
+                    limits = await fetchUserLimits(session.phone);
                 } else {
-                    console.error('Failed to load subscription status:', response.status, response.statusText);
-                    const errorText = await response.text();
-                    console.error('Error response:', errorText);
+                    // Fallback method
+                    const response = await fetch(`${API_BASE}/user-limits/${encodeURIComponent(session.phone)}`, {
+                        method: 'GET',
+                        mode: 'cors',
+                        credentials: 'omit',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    
+                    limits = await response.json();
                 }
+                
+                console.log('Limits received:', limits);
+                displaySubscriptionStatus(limits);
             } catch (error) {
-                console.error('Error loading subscription status:', error);
+                console.error('Error loading subscription status:', error.message);
+                // Show fallback UI for connection issues
+                showConnectionError();
             }
+        }
+        
+        function showConnectionError() {
+            const statusContainer = document.getElementById('subscriptionStatus');
+            statusContainer.innerHTML = `
+                <div class="subscription-card" style="text-align: center; padding: 2rem;">
+                    <i class="fas fa-wifi" style="font-size: 2rem; color: #ef4444; margin-bottom: 1rem;"></i>
+                    <h3 style="color: #ef4444; margin-bottom: 0.5rem;">Connection Issue</h3>
+                    <p style="color: #64748b; margin-bottom: 1rem;">Unable to load subscription status. Please check your internet connection.</p>
+                    <button onclick="loadSubscriptionStatus()" style="padding: 0.75rem 1.5rem; background: #6366f1; color: white; border: none; border-radius: 0.5rem; cursor: pointer; font-weight: 600;">
+                        <i class="fas fa-refresh"></i> Retry
+                    </button>
+                </div>
+            `;
+            statusContainer.style.display = 'block';
         }
         
         function displaySubscriptionStatus(limits) {
@@ -401,7 +430,7 @@
             statusContainer.style.display = 'block';
         }
         
-        // Check download limits function
+        // Check download limits function with robust connection
         async function checkDownloadLimits(type) {
             const session = getCurrentSession();
             if (!session) {
@@ -410,29 +439,47 @@
             }
             
             try {
-                const response = await fetch(`${API_BASE}/user-limits/${encodeURIComponent(session.phone)}`);
-                if (response.ok) {
-                    const limits = await response.json();
+                let limits;
+                if (window.connectionManager) {
+                    limits = await fetchUserLimits(session.phone);
+                } else {
+                    // Fallback method
+                    const response = await fetch(`${API_BASE}/user-limits/${encodeURIComponent(session.phone)}`, {
+                        method: 'GET',
+                        mode: 'cors',
+                        credentials: 'omit',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        }
+                    });
                     
-                    if (type === 'session_plan') {
-                        const remaining = limits.is_premium ? 999 : Math.max(0, limits.session_plans_limit - limits.session_plans_downloaded);
-                        if (remaining <= 0) {
-                            showSubscriptionModal();
-                            return false;
-                        }
-                    } else if (type === 'scheme') {
-                        const remaining = limits.is_premium ? 999 : Math.max(0, limits.schemes_limit - limits.schemes_downloaded);
-                        if (remaining <= 0) {
-                            showSubscriptionModal();
-                            return false;
-                        }
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                     }
-                    return true;
+                    
+                    limits = await response.json();
                 }
+                
+                if (type === 'session_plan') {
+                    const remaining = limits.is_premium ? 999 : Math.max(0, limits.session_plans_limit - limits.session_plans_downloaded);
+                    if (remaining <= 0) {
+                        showSubscriptionModal();
+                        return false;
+                    }
+                } else if (type === 'scheme') {
+                    const remaining = limits.is_premium ? 999 : Math.max(0, limits.schemes_limit - limits.schemes_downloaded);
+                    if (remaining <= 0) {
+                        showSubscriptionModal();
+                        return false;
+                    }
+                }
+                return true;
             } catch (error) {
-                console.error('Error checking limits:', error);
+                console.error('Error checking limits:', error.message);
+                // Allow access on connection error to prevent blocking users
+                return true;
             }
-            return true;
         }
         
         // Check limits before redirecting to creation pages
