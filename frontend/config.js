@@ -38,9 +38,10 @@ if (isLocalDevelopment) {
     API_BASE = API_CONFIG.production;
 }
 
-console.log('✅ config.js loaded successfully (v1.0.1-vercel-fixed)');
+console.log('✅ config.js loaded successfully (v1.0.1-ts-20250103T120000Z-CDN-FRESH)');
 console.log('Environment:', isLocalDevelopment ? 'local development' : 'production');
 console.log('API Base URL:', API_BASE);
+console.log('Timestamp Bust:', '20250103T120000Z');
 
 // Enhanced API connectivity test
 async function testAPIConnection() {

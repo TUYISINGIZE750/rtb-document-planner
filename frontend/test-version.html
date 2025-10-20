@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Version Test</title>
+</head>
+<body>
+    <h1>Testing Config Loading</h1>
+    <div id="output"></div>
+    
+    <script src="config.js?v=1.0.1&t=1"></script>
+    <script src="auth.js?v=1.0.1&t=1"></script>
+    <script>
+        setTimeout(() => {
+            const output = document.getElementById('output');
+            
+            if (typeof API_BASE !== 'undefined') {
+                output.innerHTML = `
+                    <h2 style="color: green">✅ SUCCESS!</h2>
+                    <p><strong>API_BASE defined:</strong> ${API_BASE}</p>
+                    <p><strong>Environment:</strong> ${window.location.hostname}</p>
+                    <p><strong>Scripts loaded successfully!</strong></p>
+                `;
+            } else {
+                output.innerHTML = `
+                    <h2 style="color: red">❌ FAILED!</h2>
+                    <p><strong>API_BASE is NOT defined</strong></p>
+                    <p>config.js may not have loaded before auth.js</p>
+                `;
+            }
+        }, 100);
+    </script>
+</body>
+</html>

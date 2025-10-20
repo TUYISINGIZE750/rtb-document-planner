@@ -1,5 +1,5 @@
 // Authentication system with admin role protection
-console.log('✅ auth.js loaded successfully (v1.0.1-vercel-fixed)');
+console.log('✅ auth.js loaded successfully (v1.0.1-ts-20250103T120000Z-CDN-FRESH)');
 
 const AUTH_KEY = 'rtb_auth_session';
 const USERS_KEY = 'rtb_users_db';
