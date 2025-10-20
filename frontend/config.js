@@ -38,12 +38,12 @@ if (isLocalDevelopment) {
     API_BASE = API_CONFIG.production;
 }
 
-console.log('✅ config.js loaded successfully (v1.0.4-netlify-20250120T140000Z)');
+console.log('✅ config.js loaded successfully (v1.0.5-FORCE-REFRESH-20250120T150000Z)');
 console.log('Environment:', isLocalDevelopment ? 'local development' : 'production');
 console.log('API Base URL:', API_BASE);
 console.log('Frontend Domain:', window.location.hostname);
 console.log('Deployment:', isLocalDevelopment ? 'Local' : 'Netlify + PythonAnywhere');
-console.log('Timestamp Bust:', '20250120T140000Z');
+console.log('FORCE REFRESH - API_BASE should be:', API_BASE);
 
 // API connectivity test
 async function testAPIConnection() {
