@@ -10,7 +10,13 @@ if (!window.connectionManager) {
 const API_CONFIG = {
     development: 'http://localhost:8000',
     production: 'https://leonardus437.pythonanywhere.com'
-    // If using custom domain or different backend, update production URL above
+    // Backend hosted on PythonAnywhere, Frontend on Netlify with custom domain
+};
+
+// Netlify deployment configuration
+const NETLIFY_CONFIG = {
+    customDomain: 'your-custom-domain.com', // Replace with your actual domain
+    netlifyDomain: 'your-app.netlify.app'   // Replace with your Netlify subdomain
 };
 
 // Enhanced environment detection - detects local development including network access
@@ -40,11 +46,12 @@ if (isLocalDevelopment) {
     API_BASE = API_CONFIG.production;
 }
 
-console.log('✅ config.js loaded successfully (v1.0.2-ts-20250120T105300Z-CACHE-BUSTED)');
+console.log('✅ config.js loaded successfully (v1.0.3-netlify-20250120T120000Z)');
 console.log('Environment:', isLocalDevelopment ? 'local development' : 'production');
 console.log('API Base URL:', API_BASE);
 console.log('Frontend Domain:', window.location.hostname);
-console.log('Timestamp Bust:', '20250120T105300Z');
+console.log('Deployment:', isLocalDevelopment ? 'Local' : 'Netlify + PythonAnywhere');
+console.log('Timestamp Bust:', '20250120T120000Z');
 
 // Enhanced API connectivity test
 async function testAPIConnection() {
