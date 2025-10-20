@@ -168,8 +168,9 @@
         © 2025 RTB Document Planner. All rights reserved. | Developed for TVET Excellence
     </div>
 
+    <script src="config.js"></script>
+    <script src="auth.js"></script>
     <script>
-        const API_BASE = 'http://localhost:8000';
         const AUTH_KEY = 'rtb_auth_session';
         
         // Clear any existing session on login page load
@@ -200,23 +201,42 @@
             btn.disabled = true;
             btn.textContent = 'Signing in...';
             
-            try {
-                const response = await fetch(`${API_BASE}/users/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ phone, password })
-                });
+            const result = await loginUser(phone, password, remember);
+            
+            if (result.success) {
+                const session = getCurrentSession();
+                if (session.role === 'admin') {
+                    window.location.href = 'admin.html';
+                } else {
+                    window.location.href = 'index.html';
+                }
+            } else {
+                document.getElementById('phoneError').textContent = result.message;
+                document.getElementById('phoneError').classList.add('show');
+                btn.disabled = false;
+                btn.textContent = 'Sign In';
+            }
+        });
+        
+        // Original inline fallback code (commented for reference)
+        /*
+        try {
+            const response = await fetch(`${API_BASE}/users/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phone, password })
+            });
+            
+            if (response.ok) {
+                const user = await response.json();
                 
-                if (response.ok) {
-                    const user = await response.json();
-                    
-                    // Create session with expiry
-                    const session = {
-                        ...user,
-                        loggedInAt: new Date().toISOString(),
-                        expiresAt: new Date(Date.now() + (remember ? 30 : 1) * 24 * 60 * 60 * 1000).toISOString(),
-                        remember
-                    };
+                // Create session with expiry
+                const session = {
+                    ...user,
+                    loggedInAt: new Date().toISOString(),
+                    expiresAt: new Date(Date.now() + (remember ? 30 : 1) * 24 * 60 * 60 * 1000).toISOString(),
+                    remember
+                };
                     
                     // Clear any old session data
                     localStorage.clear();
@@ -245,6 +265,7 @@
                 btn.textContent = 'Sign In';
             }
         });
+        */
     </script>
     
 

@@ -59,11 +59,32 @@ const API_CONFIG = {
     production: 'https://leonardus437.pythonanywhere.com'
 };
 
-const isLocalDevelopment = window.location.hostname === 'localhost' || 
-                          window.location.hostname === '127.0.0.1' ||
-                          window.location.port === '5173';
+// Enhanced environment detection - detects local development including network access
+function detectEnvironment() {
+    const hostname = window.location.hostname;
+    const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1';
+    const isLocalIP = /^(192\.168|10\.|172\.(1[6-9]|2[0-9]|3[01]))/.test(hostname);
+    const isDevelopmentPort = window.location.port === '5173';
+    
+    return isLocalhost || isLocalIP || isDevelopmentPort;
+}
 
-const API_BASE = isLocalDevelopment ? API_CONFIG.development : API_CONFIG.production;
+const isLocalDevelopment = detectEnvironment();
+
+// Build API_BASE - uses local machine IP for network access
+let API_BASE;
+if (isLocalDevelopment) {
+    // For local development, replace localhost with the actual hostname to support network access
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        // User is accessing via localhost - use localhost
+        API_BASE = API_CONFIG.development;
+    } else {
+        // User is accessing via network IP - use same IP for backend
+        API_BASE = `http://${window.location.hostname}:8000`;
+    }
+} else {
+    API_BASE = API_CONFIG.production;
+}
 
 // Test API connectivity with robust error handling
 async function testAPIConnection() {

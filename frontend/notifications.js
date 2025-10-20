@@ -15,13 +15,13 @@ async function getNotifications() {
         if (!session) return [];
         
         // Get user ID from backend
-        const usersResponse = await fetch('http://localhost:8000/users/');
+        const usersResponse = await fetch(`${API_BASE}/users/`);
         const users = await usersResponse.json();
         const user = users.find(u => u.user_id === session.user_id);
         
         if (!user) return [];
         
-        const response = await fetch(`http://localhost:8000/notifications/user/${user.id}`);
+        const response = await fetch(`${API_BASE}/notifications/user/${user.id}`);
         if (response.ok) {
             return await response.json();
         }
@@ -34,7 +34,7 @@ async function getNotifications() {
 // Mark notification as read
 async function markNotificationAsRead(notificationId) {
     try {
-        await fetch(`http://localhost:8000/notifications/${notificationId}/read`, {
+        await fetch(`${API_BASE}/notifications/${notificationId}/read`, {
             method: 'PUT'
         });
     } catch (error) {
@@ -48,13 +48,13 @@ async function getUnreadCount() {
         const session = getCurrentSession();
         if (!session) return 0;
         
-        const usersResponse = await fetch('http://localhost:8000/users/');
+        const usersResponse = await fetch(`${API_BASE}/users/`);
         const users = await usersResponse.json();
         const user = users.find(u => u.user_id === session.user_id);
         
         if (!user) return 0;
         
-        const response = await fetch(`http://localhost:8000/notifications/unread/${user.id}`);
+        const response = await fetch(`${API_BASE}/notifications/unread/${user.id}`);
         if (response.ok) {
             const result = await response.json();
             return result.unread_count;

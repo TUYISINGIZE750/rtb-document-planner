@@ -17,7 +17,16 @@ app = FastAPI(title="RTB Document Planner", version="1.0.0")
 # Enhanced CORS Configuration for cross-device compatibility
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "*",  # Allow all for flexibility
+        "http://localhost:5173",
+        "http://localhost:3000",
+        "http://127.0.0.1:5173",
+        "http://127.0.0.1:3000",
+        "https://rtb-document-planner.vercel.app",
+        "https://www.rtb-document-planner.vercel.app",
+        "https://leonardus437.pythonanywhere.com",
+    ],
     allow_credentials=False,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "PATCH"],
     allow_headers=[
@@ -259,7 +268,7 @@ class BulkNotificationCreate(BaseModel):
     title: str
     message: str
     type: str = 'info'
-    user_ids: Optional[List[int]] = None  # If None, send to all users
+    user_ids: Optional[List[int]] = None
 
 class SettingsUpdate(BaseModel):
     free_session_plans: int = 2
@@ -290,7 +299,6 @@ def login_user(credentials: UserLogin, db: Session = Depends(get_db)):
     if not user:
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
-    # Update last login time
     user.updated_at = func.now()
     db.commit()
     
@@ -625,4 +633,5 @@ def send_auto_notification(user_id: int, title: str, message: str, notification_
 
 if __name__ == "__main__":
     import uvicorn
+    PORT = int(os.environ.get("PORT", 8000))
     uvicorn.run(app, host="0.0.0.0", port=PORT)
