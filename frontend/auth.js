@@ -1,6 +1,15 @@
 // Authentication system with admin role protection
 console.log('✅ auth.js loaded successfully (v1.0.1-ts-20250103T120000Z-CDN-FRESH)');
 
+// DEFENSIVE: Ensure config.js has loaded and API_BASE is defined
+if (typeof API_BASE === 'undefined') {
+    console.error('⚠️ CRITICAL: API_BASE is not defined! config.js may not have loaded.');
+    console.error('This is a script loading order issue - config.js must load BEFORE auth.js');
+    // Fallback API_BASE for production
+    window.API_BASE = 'https://leonardus437.pythonanywhere.com';
+    console.log('Using fallback API_BASE:', window.API_BASE);
+}
+
 const AUTH_KEY = 'rtb_auth_session';
 const USERS_KEY = 'rtb_users_db';
 const LOGOUT_FLAG_KEY = 'rtb_logged_out';
@@ -30,13 +39,16 @@ async function registerUser(name, phone, email, institution, password) {
     const userId = 'USER_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
     const userData = { user_id: userId, name, phone, email, institution, password, role: 'user' };
     
+    // Ensure API_BASE is available (fallback safety)
+    const apiBase = (typeof API_BASE !== 'undefined') ? API_BASE : (window.API_BASE || 'https://leonardus437.pythonanywhere.com');
+    
     try {
         if (window.connectionManager) {
             await window.registerUser(userData);
             return { success: true };
         } else {
             // Fallback method
-            const response = await fetch(`${API_BASE}/users/register`, {
+            const response = await fetch(`${apiBase}/users/register`, {
                 method: 'POST',
                 mode: 'cors',
                 credentials: 'omit',
