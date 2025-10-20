@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RTB Diagnostic - Config & Auth Loading Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+            text-align: center;
+        }
+        
+        .diagnostic-section {
+            margin-bottom: 25px;
+            padding: 15px;
+            border-radius: 8px;
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+        }
+        
+        .diagnostic-section h2 {
+            color: #667eea;
+            font-size: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .diagnostic-section h2 .status {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .diagnostic-section h2 .status.success {
+            background: #4CAF50;
+        }
+        
+        .diagnostic-section h2 .status.error {
+            background: #f44336;
+        }
+        
+        .diagnostic-section h2 .status.warning {
+            background: #ff9800;
+        }
+        
+        .diagnostic-value {
+            font-family: 'Courier New', monospace;
+            background: white;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 8px 0;
+            word-break: break-all;
+            font-size: 13px;
+            border: 1px solid #ddd;
+        }
+        
+        .diagnostic-value.error {
+            background: #ffebee;
+            color: #c62828;
+            border-color: #ef5350;
+        }
+        
+        .diagnostic-value.success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-color: #81c784;
+        }
+        
+        .test-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 15px;
+            width: 100%;
+            transition: background 0.3s;
+        }
+        
+        .test-button:hover {
+            background: #764ba2;
+        }
+        
+        .test-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .api-test-result {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .api-test-result.show {
+            display: block;
+        }
+        
+        .api-test-result.success {
+            background: #e8f5e9;
+            border: 1px solid #81c784;
+            color: #2e7d32;
+        }
+        
+        .api-test-result.error {
+            background: #ffebee;
+            border: 1px solid #ef5350;
+            color: #c62828;
+        }
+        
+        .console-output {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 12px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+        
+        .console-output .log {
+            margin: 4px 0;
+            padding: 2px 0;
+        }
+        
+        .console-output .log.error {
+            color: #f48771;
+        }
+        
+        .console-output .log.success {
+            color: #6a9955;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 RTB Diagnostic Test</h1>
+        
+        <div class="diagnostic-section">
+            <h2>
+                <span class="status" id="configStatus">?</span>
+                config.js Loading
+            </h2>
+            <div class="diagnostic-value" id="configInfo">Checking...</div>
+        </div>
+        
+        <div class="diagnostic-section">
+            <h2>
+                <span class="status" id="authStatus">?</span>
+                auth.js Loading
+            </h2>
+            <div class="diagnostic-value" id="authInfo">Checking...</div>
+        </div>
+        
+        <div class="diagnostic-section">
+            <h2>
+                <span class="status" id="apiBaseStatus">?</span>
+                API_BASE Variable
+            </h2>
+            <div class="diagnostic-value" id="apiBaseInfo">Checking...</div>
+        </div>
+        
+        <div class="diagnostic-section">
+            <h2>
+                <span class="status" id="registerStatus">?</span>
+                registerUser Function
+            </h2>
+            <div class="diagnostic-value" id="registerInfo">Checking...</div>
+        </div>
+        
+        <div class="diagnostic-section">
+            <h2>Backend API Connection Test</h2>
+            <button class="test-button" id="testBtn" onclick="testAPIConnection()">
+                Test Connection to PythonAnywhere
+            </button>
+            <div class="api-test-result" id="testResult"></div>
+        </div>
+        
+        <div class="diagnostic-section">
+            <h2>Console Logs</h2>
+            <div class="console-output" id="consoleLogs"></div>
+        </div>
+    </div>
+
+    <!-- Config MUST load first before any auth functions -->
+    <!-- Aggressive cache-busting timestamp -->
+    <script src="config.js?t=20250103T120000Z"></script>
+    <script src="auth.js?t=20250103T120000Z"></script>
+    
+    <script>
+        const consoleLogs = [];
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        
+        console.log = function(...args) {
+            originalLog(...args);
+            consoleLogs.push({type: 'log', message: args.join(' ')});
+            updateConsoleLogs();
+        };
+        
+        console.error = function(...args) {
+            originalError(...args);
+            consoleLogs.push({type: 'error', message: args.join(' ')});
+            updateConsoleLogs();
+        };
+        
+        console.warn = function(...args) {
+            originalWarn(...args);
+            consoleLogs.push({type: 'warn', message: args.join(' ')});
+            updateConsoleLogs();
+        };
+        
+        function updateConsoleLogs() {
+            const output = document.getElementById('consoleLogs');
+            output.innerHTML = consoleLogs.map(log => 
+                `<div class="log ${log.type}">${escapeHtml(log.message)}</div>`
+            ).join('');
+            output.scrollTop = output.scrollHeight;
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function setStatus(elementId, success, message) {
+            const element = document.getElementById(elementId);
+            const statusSpan = element.querySelector('.status');
+            
+            if (success === true) {
+                statusSpan.textContent = '✓';
+                statusSpan.className = 'status success';
+                element.nextElementSibling.textContent = message;
+                element.nextElementSibling.className = 'diagnostic-value success';
+            } else if (success === false) {
+                statusSpan.textContent = '✗';
+                statusSpan.className = 'status error';
+                element.nextElementSibling.textContent = message;
+                element.nextElementSibling.className = 'diagnostic-value error';
+            } else {
+                statusSpan.textContent = '!';
+                statusSpan.className = 'status warning';
+                element.nextElementSibling.textContent = message;
+                element.nextElementSibling.className = 'diagnostic-value';
+            }
+        }
+        
+        function performDiagnostics() {
+            // Check config.js
+            const configLoaded = typeof API_BASE !== 'undefined';
+            setStatus('configStatus', configLoaded, 
+                configLoaded ? `✅ config.js loaded (API_BASE is defined)` : `❌ config.js failed - API_BASE undefined`
+            );
+            
+            // Check auth.js
+            const authLoaded = typeof registerUser === 'function';
+            setStatus('authStatus', authLoaded, 
+                authLoaded ? `✅ auth.js loaded (registerUser function available)` : `❌ auth.js failed - registerUser undefined`
+            );
+            
+            // Check API_BASE value
+            let apiBaseValue = 'undefined';
+            if (typeof API_BASE !== 'undefined') {
+                apiBaseValue = API_BASE;
+            } else if (window.API_BASE) {
+                apiBaseValue = window.API_BASE + ' (fallback)';
+            }
+            
+            const apiBaseDefined = apiBaseValue !== 'undefined';
+            setStatus('apiBaseStatus', apiBaseDefined, 
+                `API_BASE = "${apiBaseValue}"`
+            );
+            
+            // Check registerUser function
+            let registerInfo = 'Not defined';
+            if (typeof registerUser === 'function') {
+                registerInfo = `✅ Function available - Ready to use`;
+            } else if (typeof window.registerUser === 'function') {
+                registerInfo = `⚠️ Available via window.registerUser (fallback)`;
+            }
+            
+            const registerDefined = registerInfo.startsWith('✅');
+            setStatus('registerStatus', registerDefined, registerInfo);
+        }
+        
+        async function testAPIConnection() {
+            const btn = document.getElementById('testBtn');
+            const result = document.getElementById('testResult');
+            
+            btn.disabled = true;
+            result.textContent = '🔄 Testing connection...';
+            result.className = 'api-test-result show';
+            
+            try {
+                const apiUrl = (typeof API_BASE !== 'undefined') ? API_BASE : (window.API_BASE || 'https://leonardus437.pythonanywhere.com');
+                
+                const response = await fetch(`${apiUrl}/health`, {
+                    method: 'GET',
+                    mode: 'cors',
+                    headers: {'Accept': 'application/json'}
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    result.textContent = `✅ SUCCESS: Backend is reachable\nStatus: ${JSON.stringify(data, null, 2)}`;
+                    result.className = 'api-test-result show success';
+                } else {
+                    result.textContent = `⚠️ Backend responded but with error: ${response.status} ${response.statusText}`;
+                    result.className = 'api-test-result show warning';
+                }
+            } catch (error) {
+                result.textContent = `❌ ERROR: ${error.message}\n\nThis might be a CORS issue or the backend is unreachable.`;
+                result.className = 'api-test-result show error';
+            } finally {
+                btn.disabled = false;
+            }
+        }
+        
+        // Run diagnostics when page loads
+        window.addEventListener('load', function() {
+            setTimeout(performDiagnostics, 500);
+        });
+    </script>
+</body>
+</html>
