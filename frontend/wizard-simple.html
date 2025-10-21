@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RTB Session Plan Generator - Simple Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 2rem; }
+        .form-group { margin-bottom: 1rem; }
+        label { display: block; margin-bottom: 0.5rem; font-weight: bold; }
+        input, select, textarea { width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px; }
+        button { background: #007bff; color: white; padding: 1rem 2rem; border: none; border-radius: 4px; cursor: pointer; }
+        button:disabled { background: #ccc; }
+        .notification { padding: 1rem; margin: 1rem 0; border-radius: 4px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>RTB Session Plan Generator - Simple Test</h1>
+    
+    <form id="sessionPlanForm">
+        <div class="form-group">
+            <label>Sector:</label>
+            <input type="text" name="sector" value="ICT & MULTIMEDIA" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Trade:</label>
+            <input type="text" name="trade" value="Software Development" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Level:</label>
+            <select name="rqf_level" required>
+                <option value="Level 4">Level 4</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label>Date:</label>
+            <input type="date" name="date" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Teacher Name:</label>
+            <input type="text" name="trainer_name" value="Test Teacher" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Term:</label>
+            <select name="term" required>
+                <option value="Term 1">Term 1</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label>Module Title:</label>
+            <input type="text" name="module_code_title" value="Programming Fundamentals" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Week:</label>
+            <input type="text" name="week" value="Week 1" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Class Size:</label>
+            <input type="number" name="number_of_trainees" value="25" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Class Name:</label>
+            <input type="text" name="class_name" value="L4CSA-A" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Topic:</label>
+            <input type="text" name="topic_of_session" value="Variables and Data Types" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Learning Outcomes:</label>
+            <textarea name="learning_outcomes" required>Students will understand variables and data types</textarea>
+        </div>
+        
+        <div class="form-group">
+            <label>Indicative Contents:</label>
+            <textarea name="indicative_contents" required>Introduction to variables, data types, examples</textarea>
+        </div>
+        
+        <div class="form-group">
+            <label>Range:</label>
+            <input type="text" name="session_range" value="Basic to intermediate">
+        </div>
+        
+        <div class="form-group">
+            <label>Facilitation Technique:</label>
+            <select name="facilitation_techniques" required>
+                <option value="Brainstorming">Brainstorming</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label>Duration (minutes):</label>
+            <input type="number" name="duration" value="90" required>
+        </div>
+        
+        <button type="submit" id="submitBtn">Generate Session Plan</button>
+    </form>
+    
+    <div id="result"></div>
+
+    <script>
+        const API_BASE = 'https://leonardus437.pythonanywhere.com';
+        
+        // Set today's date
+        document.querySelector('input[name="date"]').valueAsDate = new Date();
+        
+        document.getElementById('sessionPlanForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const resultDiv = document.getElementById('result');
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Creating...';
+            resultDiv.innerHTML = '';
+            
+            try {
+                const formData = new FormData(e.target);
+                const data = Object.fromEntries(formData);
+                
+                console.log('Sending data:', data);
+                
+                const response = await fetch(`${API_BASE}/session-plans`, {
+                    method: 'POST',
+                    mode: 'cors',
+                    credentials: 'omit',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                console.log('Response status:', response.status);
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('Success:', result);
+                    
+                    resultDiv.innerHTML = `
+                        <div class="notification success">
+                            ✅ Session plan created successfully! ID: ${result.id}
+                            <br><br>
+                            <a href="${API_BASE}/session-plans/${result.id}/download?phone=%2B250789751597" 
+                               download="session_plan_${result.id}.txt" 
+                               style="background: #28a745; color: white; padding: 0.5rem 1rem; text-decoration: none; border-radius: 4px;">
+                               📥 Download Session Plan
+                            </a>
+                        </div>
+                    `;
+                } else {
+                    const errorText = await response.text();
+                    console.error('API Error:', response.status, errorText);
+                    resultDiv.innerHTML = `
+                        <div class="notification error">
+                            ❌ Error: ${response.status} - ${errorText}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Network error:', error);
+                resultDiv.innerHTML = `
+                    <div class="notification error">
+                        ❌ Network Error: ${error.message}
+                        <br><br>
+                        <strong>Possible causes:</strong>
+                        <ul>
+                            <li>Internet connection issues</li>
+                            <li>CORS policy blocking the request</li>
+                            <li>Backend server is down</li>
+                            <li>Firewall blocking the request</li>
+                        </ul>
+                    </div>
+                `;
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Generate Session Plan';
+            }
+        });
+    </script>
+</body>
+</html>

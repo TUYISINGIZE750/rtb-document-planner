@@ -328,7 +328,22 @@
                     showNotification('Scheme of work created successfully!', 'success');
                     
                     if (scheme && scheme.id) {
-                        await checkDownloadLimits('scheme', scheme.id);
+                        // Try to download directly, fallback to login prompt if needed
+                        let session;
+                        try {
+                            session = getCurrentSession();
+                        } catch (error) {
+                            session = null;
+                        }
+                        
+                        if (session) {
+                            await checkDownloadLimits('scheme', scheme.id);
+                        } else {
+                            showNotification('Scheme created! Please login to download.', 'success');
+                            setTimeout(() => {
+                                window.location.href = 'login.html';
+                            }, 2000);
+                        }
                     } else {
                         showNotification('Error: Invalid scheme ID received', 'error');
                     }

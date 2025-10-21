@@ -569,7 +569,16 @@
                     showNotification('Session plan created successfully!', 'success');
                     
                     if (plan && plan.id) {
-                        await checkDownloadLimits('session_plan', plan.id);
+                        // Try to download directly, fallback to login prompt if needed
+                        const session = getCurrentSession();
+                        if (session) {
+                            await checkDownloadLimits('session_plan', plan.id);
+                        } else {
+                            showNotification('Session plan created! Please login to download.', 'success');
+                            setTimeout(() => {
+                                window.location.href = 'login.html';
+                            }, 2000);
+                        }
                     } else {
                         showNotification('Error: Invalid plan ID received', 'error');
                     }
@@ -599,7 +608,15 @@
                 return;
             }
             
-            const session = getCurrentSession();
+            let session;
+            try {
+                session = getCurrentSession();
+            } catch (error) {
+                console.error('Session error:', error);
+                showNotification('Please login to download documents', 'error');
+                return;
+            }
+            
             if (!session) {
                 showNotification('Please login to download documents', 'error');
                 return;
@@ -649,7 +666,13 @@
                 showNotification('Error: Invalid session plan ID', 'error');
                 return;
             }
-            const session = getCurrentSession();
+            let session;
+            try {
+                session = getCurrentSession();
+            } catch (error) {
+                console.error('Session error in download:', error);
+                session = null;
+            }
             const phone = session ? encodeURIComponent(session.phone) : '';
             const link = document.createElement('a');
             link.href = `${API_BASE}/session-plans/${id}/download?phone=${phone}`;
