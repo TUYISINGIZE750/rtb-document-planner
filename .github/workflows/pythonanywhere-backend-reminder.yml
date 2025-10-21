@@ -1,0 +1,23 @@
+name: PythonAnywhere Manual Deploy Reminder
+
+on:
+  push:
+    paths:
+      - 'backend/**'
+    branches: [ main, master ]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate reminder message
+        run: |
+          cat <<'EOF'
+          Backend changes detected. Please update PythonAnywhere manually:
+          1. Log in at https://www.pythonanywhere.com/user/leonardus437/
+          2. Open a Bash console.
+          3. Run:
+             workon rtb-document-planner || source /home/leonardus437/rtb-document-planner/venv/bin/activate
+             python pythonanywhere_update.py
+          4. Reload the web app at https://www.pythonanywhere.com/user/leonardus437/webapps/#leonardus437_pythonanywhere_com
+          EOF
