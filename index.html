@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RTB Document Planner - FIXED</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .container { max-width: 800px; width: 100%; padding: 2rem; }
+        .header { text-align: center; margin-bottom: 3rem; }
+        .header h1 { color: white; font-size: 3rem; font-weight: 700; margin-bottom: 1rem; text-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        .header p { color: rgba(255,255,255,0.9); font-size: 1.2rem; }
+        .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 3rem; }
+        .card { background: white; border-radius: 1rem; padding: 2rem; box-shadow: 0 10px 25px rgba(0,0,0,0.2); transition: transform 0.3s, box-shadow 0.3s; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+        .card-icon { font-size: 3rem; color: #6366f1; margin-bottom: 1rem; }
+        .card h3 { font-size: 1.5rem; color: #1e293b; margin-bottom: 1rem; }
+        .card p { color: #64748b; margin-bottom: 2rem; line-height: 1.6; }
+        .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.875rem 2rem; background: linear-gradient(135deg, #6366f1, #4f46e5); color: white; text-decoration: none; border-radius: 0.5rem; font-weight: 600; transition: all 0.3s; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3); }
+        .login-section { text-align: center; }
+        .login-btn { background: linear-gradient(135deg, #10b981, #059669); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-graduation-cap"></i> RTB Document Planner</h1>
+            <p>Professional TVET Session Plans & Schemes of Work Generator - FIXED VERSION</p>
+        </div>
+        
+        <div class="cards">
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-clipboard-list"></i></div>
+                <h3>Session Plans</h3>
+                <p>Create professional RTB-compliant session plans with step-by-step guidance and automatic formatting.</p>
+                <a href="wizard-fixed.html" class="btn">
+                    <i class="fas fa-magic"></i> Create Session Plan
+                </a>
+            </div>
+            
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-calendar-alt"></i></div>
+                <h3>Schemes of Work</h3>
+                <p>Generate comprehensive schemes of work covering full academic terms with detailed learning outcomes.</p>
+                <a href="scheme-wizard-fixed.html" class="btn">
+                    <i class="fas fa-calendar-plus"></i> Create Scheme of Work
+                </a>
+            </div>
+        </div>
+        
+        <div class="login-section">
+            <a href="login.html" class="btn login-btn">
+                <i class="fas fa-sign-in-alt"></i> Login / Register
+            </a>
+        </div>
+    </div>
+</body>
+</html>
