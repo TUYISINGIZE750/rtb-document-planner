@@ -551,16 +551,23 @@
                 
                 const response = await fetch(`${API_BASE}/session-plans/`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    mode: 'cors',
+                    credentials: 'omit',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
                     body: JSON.stringify(data)
                 });
                 
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+                
                 if (response.ok) {
                     const plan = await response.json();
-                    console.log('Created plan:', plan); // Debug log
+                    console.log('Created plan:', plan);
                     showNotification('Session plan created successfully!', 'success');
                     
-                    // Ensure we have a valid ID
                     if (plan && plan.id) {
                         await checkDownloadLimits('session_plan', plan.id);
                     } else {
@@ -568,11 +575,16 @@
                     }
                 } else {
                     const errorText = await response.text();
-                    console.error('Create error:', errorText);
-                    showNotification('Error creating session plan', 'error');
+                    console.error('API Error:', response.status, errorText);
+                    showNotification(`Error creating session plan: ${response.status} - ${errorText}`, 'error');
                 }
             } catch (error) {
-                showNotification('Network error: ' + error.message, 'error');
+                console.error('Network error details:', error);
+                if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                    showNotification('Connection failed: Please check your internet connection and try again', 'error');
+                } else {
+                    showNotification('Network error: ' + error.message, 'error');
+                }
             } finally {
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;
@@ -594,7 +606,14 @@
             }
             
             try {
-                const response = await fetch(`${API_BASE}/user-limits/${encodeURIComponent(session.phone)}`);
+                const response = await fetch(`${API_BASE}/user-limits/${encodeURIComponent(session.phone)}`, {
+                    method: 'GET',
+                    mode: 'cors',
+                    credentials: 'omit',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
                 if (response.ok) {
                     const limits = await response.json();
                     

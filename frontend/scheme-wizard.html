@@ -310,28 +310,40 @@
                 const data = Object.fromEntries(formData);
                 const response = await fetch(`${API_BASE}/schemes-of-work/`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    mode: 'cors',
+                    credentials: 'omit',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
                     body: JSON.stringify(data)
                 });
                 
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+                
                 if (response.ok) {
                     const scheme = await response.json();
-                    console.log('Created scheme:', scheme); // Debug log
+                    console.log('Created scheme:', scheme);
                     showNotification('Scheme of work created successfully!', 'success');
                     
-                    // Ensure we have a valid ID
                     if (scheme && scheme.id) {
                         await checkDownloadLimits('scheme', scheme.id);
                     } else {
                         showNotification('Error: Invalid scheme ID received', 'error');
                     }
-                } else{
+                } else {
                     const errorText = await response.text();
-                    console.error('Create error:', errorText);
-                    showNotification('Error creating scheme', 'error');
+                    console.error('API Error:', response.status, errorText);
+                    showNotification(`Error creating scheme: ${response.status} - ${errorText}`, 'error');
                 }
             } catch (error) {
-                showNotification('Network error: ' + error.message, 'error');
+                console.error('Network error details:', error);
+                if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                    showNotification('Connection failed: Please check your internet connection and try again', 'error');
+                } else {
+                    showNotification('Network error: ' + error.message, 'error');
+                }
             } finally {
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;
@@ -353,7 +365,14 @@
             }
             
             try {
-                const response = await fetch(`${API_BASE}/user-limits/${encodeURIComponent(session.phone)}`);
+                const response = await fetch(`${API_BASE}/user-limits/${encodeURIComponent(session.phone)}`, {
+                    method: 'GET',
+                    mode: 'cors',
+                    credentials: 'omit',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
                 if (response.ok) {
                     const limits = await response.json();
                     
