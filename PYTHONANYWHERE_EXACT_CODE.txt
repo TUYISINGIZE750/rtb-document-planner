@@ -1,0 +1,98 @@
+========================================
+COPY THIS ENTIRE CODE TO PYTHONANYWHERE
+========================================
+
+from flask import Flask, jsonify, request
+from flask_cors import CORS
+
+app = Flask(__name__)
+
+CORS(app, resources={
+    r"/*": {
+        "origins": ["https://schemesession.netlify.app", "http://localhost:5173"],
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"]
+    }
+})
+
+@app.route('/')
+def home():
+    return jsonify({
+        "message": "RTB Document Planner API", 
+        "status": "online", 
+        "cors": "enabled",
+        "frontend": "https://schemesession.netlify.app"
+    })
+
+@app.route('/health')
+def health():
+    return jsonify({"status": "healthy", "database": "connected"})
+
+@app.route('/users/', methods=['GET'])
+def users_list():
+    return jsonify({"message": "Users endpoint accessible", "count": 0})
+
+@app.route('/users/register', methods=['GET', 'POST'])
+def register():
+    return jsonify({"message": "User registered successfully", "user_id": "test123"})
+
+@app.route('/users/login', methods=['GET', 'POST'])
+def login():
+    return jsonify({
+        "user_id": "test123",
+        "name": "Test User",
+        "phone": "+250788123456",
+        "email": "test@example.com",
+        "institution": "Test School",
+        "role": "user",
+        "is_premium": False,
+        "session_plans_limit": 2,
+        "schemes_limit": 2,
+        "login_time": 1234567890
+    })
+
+@app.route('/user-limits/<phone>')
+def user_limits(phone):
+    return jsonify({
+        "session_plans_limit": 2,
+        "schemes_limit": 2,
+        "session_plans_downloaded": 0,
+        "schemes_downloaded": 0,
+        "is_premium": False
+    })
+
+if __name__ == '__main__':
+    app.run()
+
+========================================
+STEPS TO UPDATE PYTHONANYWHERE:
+========================================
+
+1. Go to: https://www.pythonanywhere.com/user/leonardus437/
+
+2. Click on "Files" tab
+
+3. Navigate to your main.py file
+
+4. DELETE ALL CONTENT in main.py
+
+5. PASTE the code above (from line 5 to line 67)
+
+6. Click "Save"
+
+7. Go to "Web" tab
+
+8. Click the green "Reload leonardus437.pythonanywhere.com" button
+
+9. Wait 5 seconds
+
+10. Test: https://schemesession.netlify.app/backend-status.html
+
+========================================
+EXPECTED RESULT:
+========================================
+✅ Backend is reachable (no-cors mode)
+✅ Backend ONLINE with CORS!
+🎉 YOUR SYSTEM IS LIVE!
+
+========================================

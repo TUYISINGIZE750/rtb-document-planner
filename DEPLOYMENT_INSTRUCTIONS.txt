@@ -1,0 +1,136 @@
+================================================================================
+FINAL DEPLOYMENT INSTRUCTIONS - FOLLOW EXACTLY
+================================================================================
+
+STEP 1: UPDATE PYTHONANYWHERE BACKEND
+--------------------------------------
+
+1. Go to: https://www.pythonanywhere.com/user/leonardus437/
+
+2. Click "Files" tab
+
+3. Navigate to your main.py file
+
+4. Click "Edit"
+
+5. SELECT ALL (Ctrl+A) and DELETE everything
+
+6. Open the file: FINAL_PYTHONANYWHERE_CODE.py (in your local project)
+
+7. COPY ALL content from FINAL_PYTHONANYWHERE_CODE.py
+
+8. PASTE into PythonAnywhere main.py editor
+
+9. Click "Save" button
+
+10. Go to "Web" tab
+
+11. Click the GREEN "Reload leonardus437.pythonanywhere.com" button
+
+12. Wait 10 seconds
+
+
+STEP 2: VERIFY BACKEND IS WORKING
+----------------------------------
+
+1. Open new browser tab
+
+2. Go to: https://leonardus437.pythonanywhere.com/
+
+3. You should see:
+   {
+     "message": "RTB Document Planner API",
+     "status": "online",
+     "cors": "enabled",
+     "frontend": "https://schemesession.netlify.app",
+     "version": "2.0"
+   }
+
+4. If you see this, backend is working!
+
+
+STEP 3: TEST FULL INTEGRATION
+------------------------------
+
+1. Go to: https://schemesession.netlify.app/backend-status.html
+
+2. You should see:
+   ✅ Backend is reachable (no-cors mode)
+   ✅ Backend ONLINE with CORS!
+   🎉 YOUR SYSTEM IS LIVE!
+
+3. If you see this, CORS is working!
+
+
+STEP 4: TEST REGISTRATION
+--------------------------
+
+1. Go to: https://schemesession.netlify.app/register.html
+
+2. Fill in the form:
+   - Name: Test User
+   - Phone: +250788123456
+   - Institution: Test School
+   - Password: test123
+
+3. Click "Sign Up"
+
+4. You should see: "Account created successfully!"
+
+5. If you see this, registration is working!
+
+
+STEP 5: TEST LOGIN
+-------------------
+
+1. Go to: https://schemesession.netlify.app/login.html
+
+2. Enter:
+   - Phone: +250788123456
+   - Password: test123
+
+3. Click "Sign In"
+
+4. You should be redirected to the main app
+
+5. If this works, login is working!
+
+
+================================================================================
+TROUBLESHOOTING
+================================================================================
+
+If backend status shows "Failed to fetch":
+- Check PythonAnywhere web app is running (green indicator)
+- Verify you saved main.py correctly
+- Make sure you clicked "Reload" button
+- Wait 10 seconds and try again
+
+If registration shows "Connection failed":
+- Verify backend status test passes first
+- Check browser console for errors (F12)
+- Make sure you're using https://schemesession.netlify.app
+
+================================================================================
+WHAT THIS CODE DOES
+================================================================================
+
+✅ Enables CORS for Netlify frontend
+✅ Handles OPTIONS preflight requests
+✅ Stores users in memory (users_db dictionary)
+✅ Provides registration endpoint
+✅ Provides login endpoint
+✅ Provides user limits endpoint
+✅ Returns proper error messages
+✅ Works with any device worldwide
+
+================================================================================
+YOUR LIVE URLS
+================================================================================
+
+Frontend: https://schemesession.netlify.app
+Backend: https://leonardus437.pythonanywhere.com
+Test Page: https://schemesession.netlify.app/backend-status.html
+System Test: https://schemesession.netlify.app/system-test.html
+
+================================================================================

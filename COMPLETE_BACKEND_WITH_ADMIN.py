@@ -10,7 +10,7 @@ CORS(app,
 
 users_db = {}
 
-# Pre-load admin
+# Pre-load admin account
 users_db['+250789751597'] = {
     'user_id': 'ADMIN_001',
     'name': 'Administrator',
@@ -38,13 +38,21 @@ def after_request(response):
 def home():
     if request.method == 'OPTIONS':
         return '', 204
-    return jsonify({"message": "RTB Document Planner API", "status": "online", "cors": "enabled", "environment": "local", "users_count": len(users_db)})
+    return jsonify({
+        "message": "RTB Document Planner API", 
+        "status": "online", 
+        "cors": "enabled", 
+        "version": "2.2",
+        "users_count": len(users_db)
+    })
 
 @app.route('/users/', methods=['GET', 'OPTIONS'])
 def get_all_users():
+    """Get all users - Admin only"""
     if request.method == 'OPTIONS':
         return '', 204
     
+    # Return list of all users (without passwords)
     users_list = []
     for phone, user in users_db.items():
         user_data = {
@@ -67,6 +75,7 @@ def get_all_users():
 
 @app.route('/users/<phone>', methods=['GET', 'PUT', 'OPTIONS'])
 def manage_user(phone):
+    """Get or update specific user"""
     if request.method == 'OPTIONS':
         return '', 204
     
@@ -89,12 +98,14 @@ def manage_user(phone):
             return jsonify({"detail": "User not found"}), 404
     
     elif request.method == 'PUT':
+        # Update user
         if phone not in users_db:
             return jsonify({"detail": "User not found"}), 404
         
         data = request.get_json()
         user = users_db[phone]
         
+        # Update allowed fields
         if 'is_active' in data:
             user['is_active'] = data['is_active']
         if 'is_premium' in data:
@@ -106,27 +117,6 @@ def manage_user(phone):
         
         users_db[phone] = user
         return jsonify({"message": "User updated successfully"}), 200
-
-@app.route('/stats', methods=['GET', 'OPTIONS'])
-def get_stats():
-    if request.method == 'OPTIONS':
-        return '', 204
-    
-    total_users = len(users_db)
-    active_users = sum(1 for u in users_db.values() if u.get('is_active', True))
-    premium_users = sum(1 for u in users_db.values() if u.get('is_premium', False))
-    total_downloads = sum(
-        u.get('session_plans_downloaded', 0) + u.get('schemes_downloaded', 0) 
-        for u in users_db.values()
-    )
-    
-    return jsonify({
-        "total_users": total_users,
-        "active_users": active_users,
-        "premium_users": premium_users,
-        "total_downloads": total_downloads,
-        "free_users": total_users - premium_users
-    }), 200
 
 @app.route('/users/register', methods=['POST', 'OPTIONS'])
 def register():
@@ -158,6 +148,7 @@ def register():
         'session_plans_downloaded': 0,
         'schemes_downloaded': 0
     }
+    
     return jsonify({"message": "User registered successfully"}), 201
 
 @app.route('/users/login', methods=['POST', 'OPTIONS'])
@@ -197,26 +188,45 @@ def login():
 
 @app.route('/user-limits/<phone>')
 def user_limits(phone):
-    return jsonify({"session_plans_limit": 2, "schemes_limit": 2, "session_plans_downloaded": 0, "schemes_downloaded": 0, "is_premium": False})
+    if phone in users_db:
+        user = users_db[phone]
+        return jsonify({
+            "session_plans_limit": user.get('session_plans_limit', 2),
+            "schemes_limit": user.get('schemes_limit', 2),
+            "session_plans_downloaded": user.get('session_plans_downloaded', 0),
+            "schemes_downloaded": user.get('schemes_downloaded', 0),
+            "is_premium": user.get('is_premium', False)
+        })
+    
+    return jsonify({
+        "session_plans_limit": 2,
+        "schemes_limit": 2,
+        "session_plans_downloaded": 0,
+        "schemes_downloaded": 0,
+        "is_premium": False
+    })
+
+@app.route('/stats', methods=['GET', 'OPTIONS'])
+def get_stats():
+    """Get system statistics for admin dashboard"""
+    if request.method == 'OPTIONS':
+        return '', 204
+    
+    total_users = len(users_db)
+    active_users = sum(1 for u in users_db.values() if u.get('is_active', True))
+    premium_users = sum(1 for u in users_db.values() if u.get('is_premium', False))
+    total_downloads = sum(
+        u.get('session_plans_downloaded', 0) + u.get('schemes_downloaded', 0) 
+        for u in users_db.values()
+    )
+    
+    return jsonify({
+        "total_users": total_users,
+        "active_users": active_users,
+        "premium_users": premium_users,
+        "total_downloads": total_downloads,
+        "free_users": total_users - premium_users
+    }), 200
 
 if __name__ == '__main__':
-    # Pre-load admin
-    users_db['+250789751597'] = {
-        'user_id': 'ADMIN_001',
-        'name': 'Administrator',
-        'phone': '+250789751597',
-        'email': 'admin@rtb.rw',
-        'institution': 'RTB',
-        'password': 'admin123',
-        'role': 'admin',
-        'is_premium': True,
-        'session_plans_limit': 999,
-        'schemes_limit': 999
-    }
-    
-    print("🚀 Starting RTB Document Planner Backend...")
-    print("📍 Backend running at: http://localhost:8000")
-    print("🌐 Frontend should run at: http://localhost:5173")
-    print("✅ CORS enabled for all origins")
-    print("👤 Admin: +250789751597 / admin123")
-    app.run(host='0.0.0.0', port=8000, debug=True)
+    app.run()

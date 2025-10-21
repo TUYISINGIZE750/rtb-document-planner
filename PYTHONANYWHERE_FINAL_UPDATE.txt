@@ -1,0 +1,40 @@
+URGENT: UPDATE PYTHONANYWHERE BACKEND WITH COMPLETE CODE
+========================================================
+
+The frontend is now fixed to use production API only, but the PythonAnywhere backend 
+needs to be updated with the complete code that includes session plans and schemes endpoints.
+
+STEPS TO UPDATE PYTHONANYWHERE:
+1. Go to https://www.pythonanywhere.com/user/leonardus437/
+2. Click "Files" tab
+3. Navigate to your main.py file
+4. Replace ALL content with the code from FINAL_COMPLETE_BACKEND.py
+5. Click "Save"
+6. Go to "Web" tab
+7. Click "Reload leonardus437.pythonanywhere.com"
+
+WHAT THIS FIXES:
+- ✅ Admin dashboard will show real data (2 users, 1 premium, etc.)
+- ✅ Session plan generation will work
+- ✅ Scheme of work generation will work
+- ✅ No more "Failed to fetch" errors
+- ✅ No more "localhost:8000" references
+
+FRONTEND CHANGES DEPLOYED:
+- ✅ config.js now uses production API only
+- ✅ admin.html redirects to working version
+- ✅ All pages use https://leonardus437.pythonanywhere.com
+
+AFTER UPDATE, TEST:
+1. Visit: https://schemesession.netlify.app/system-status.html
+2. Should show all green checkmarks
+3. Admin dashboard should show real data
+4. Session plans and schemes should generate successfully
+
+The backend code in FINAL_COMPLETE_BACKEND.py includes:
+- All user management endpoints
+- Session plans endpoints (/session-plans)
+- Schemes of work endpoints (/schemes-of-work)
+- Statistics endpoint (/stats)
+- Proper CORS configuration
+- Admin account pre-loaded
