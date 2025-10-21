@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RTB Admin Dashboard - Final 2024</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f5f5; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; text-align: center; }
+        .header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card { background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; }
+        .stat-number { font-size: 2.5rem; font-weight: bold; color: #667eea; margin-bottom: 0.5rem; }
+        .stat-label { color: #666; }
+        .dashboard { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; }
+        .users-section { background: white; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); padding: 2rem; }
+        .search-box { width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 1rem; }
+        .user-item { display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-bottom: 1px solid #eee; }
+        .user-info h4 { color: #333; margin-bottom: 0.25rem; }
+        .user-info p { color: #666; font-size: 0.9rem; }
+        .status { padding: 0.25rem 0.75rem; border-radius: 15px; font-size: 0.8rem; font-weight: bold; }
+        .admin { background: #dc3545; color: white; }
+        .premium { background: #28a745; color: white; }
+        .regular { background: #6c757d; color: white; }
+        .btn { padding: 0.5rem 1rem; margin: 0 0.25rem; border: none; border-radius: 5px; cursor: pointer; font-size: 0.8rem; }
+        .btn-warning { background: #ffc107; color: #212529; }
+        .btn-success { background: #28a745; color: white; }
+        .actions { background: white; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); padding: 2rem; }
+        .action-item { padding: 1rem; border-bottom: 1px solid #eee; cursor: pointer; }
+        .action-item:hover { background: #f8f9fa; }
+        .loading { text-align: center; padding: 2rem; color: #666; }
+        .error { background: #f8d7da; color: #721c24; padding: 1rem; border-radius: 5px; margin: 1rem 0; }
+        .version { position: fixed; bottom: 10px; right: 10px; background: #667eea; color: white; padding: 0.5rem; border-radius: 5px; font-size: 0.8rem; }
+        @media (max-width: 768px) { .dashboard { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="version">Final 2024 ✅</div>
+    
+    <div class="header">
+        <h1>🎯 RTB Admin Dashboard</h1>
+        <p>Complete System Management - Final 2024 Version</p>
+    </div>
+
+    <div class="container">
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="totalUsers">0</div>
+                <div class="stat-label">👥 Total Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="premiumUsers">0</div>
+                <div class="stat-label">⭐ Premium Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="activeUsers">0</div>
+                <div class="stat-label">✅ Active Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalDownloads">0</div>
+                <div class="stat-label">📥 Downloads</div>
+            </div>
+        </div>
+
+        <div class="dashboard">
+            <div class="users-section">
+                <h2>👥 User Management</h2>
+                <input type="text" class="search-box" placeholder="🔍 Search users..." id="searchBox">
+                <div id="usersList">
+                    <div class="loading">Loading users from production API...</div>
+                </div>
+            </div>
+
+            <div class="actions">
+                <h3>⚡ Quick Actions</h3>
+                <div class="action-item" onclick="refreshData()">
+                    🔄 Refresh All Data
+                </div>
+                <div class="action-item" onclick="exportUsers()">
+                    📊 Export User Data
+                </div>
+                <div class="action-item" onclick="viewLogs()">
+                    📋 View System Logs
+                </div>
+                <div class="action-item" onclick="manageSettings()">
+                    ⚙️ System Settings
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API = 'https://leonardus437.pythonanywhere.com';
+        let users = [];
+        
+        console.log('🚀 Final 2024 Admin Dashboard Loading...');
+        
+        async function loadData() {
+            try {
+                console.log('📊 Loading statistics...');
+                const statsRes = await fetch(`${API}/stats`);
+                const stats = await statsRes.json();
+                
+                document.getElementById('totalUsers').textContent = stats.total_users || 0;
+                document.getElementById('premiumUsers').textContent = stats.premium_users || 0;
+                document.getElementById('activeUsers').textContent = stats.active_users || 0;
+                document.getElementById('totalDownloads').textContent = stats.total_downloads || 0;
+                
+                console.log('👥 Loading users...');
+                const usersRes = await fetch(`${API}/users/`);
+                users = await usersRes.json();
+                
+                displayUsers(users);
+                
+            } catch (error) {
+                console.error('❌ Error:', error);
+                document.getElementById('usersList').innerHTML = `
+                    <div class="error">
+                        <strong>Connection Error:</strong> ${error.message}<br>
+                        <button onclick="loadData()" style="margin-top: 10px; padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">🔄 Retry</button>
+                    </div>
+                `;
+            }
+        }
+        
+        function displayUsers(userList) {
+            const container = document.getElementById('usersList');
+            
+            if (!userList || userList.length === 0) {
+                container.innerHTML = '<div class="loading">No users found</div>';
+                return;
+            }
+            
+            const html = userList.map(user => {
+                let statusClass = 'regular';
+                let statusText = 'Regular';
+                
+                if (user.role === 'admin') {
+                    statusClass = 'admin';
+                    statusText = 'Admin';
+                } else if (user.is_premium) {
+                    statusClass = 'premium';
+                    statusText = 'Premium';
+                }
+                
+                return `
+                    <div class="user-item">
+                        <div class="user-info">
+                            <h4>${user.name || 'Unknown'}</h4>
+                            <p>📱 ${user.phone} | 🏢 ${user.institution || 'N/A'}</p>
+                            <p>📄 Plans: ${user.session_plans_downloaded || 0} | Schemes: ${user.schemes_downloaded || 0}</p>
+                        </div>
+                        <div>
+                            <span class="status ${statusClass}">${statusText}</span>
+                            ${user.role !== 'admin' ? `
+                                <button class="btn btn-warning" onclick="toggleStatus('${user.phone}')">
+                                    ${user.is_active ? '⏸️ Deactivate' : '▶️ Activate'}
+                                </button>
+                                <button class="btn btn-success" onclick="togglePremium('${user.phone}')">
+                                    ${user.is_premium ? '⭐ Remove Premium' : '💎 Make Premium'}
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            container.innerHTML = html;
+        }
+        
+        async function toggleStatus(phone) {
+            const user = users.find(u => u.phone === phone);
+            try {
+                await fetch(`${API}/users/${phone}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ is_active: !user.is_active })
+                });
+                loadData();
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+        
+        async function togglePremium(phone) {
+            const user = users.find(u => u.phone === phone);
+            try {
+                await fetch(`${API}/users/${phone}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        is_premium: !user.is_premium,
+                        session_plans_limit: !user.is_premium ? 999 : 2,
+                        schemes_limit: !user.is_premium ? 999 : 2
+                    })
+                });
+                loadData();
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+        
+        function refreshData() { loadData(); }
+        
+        function exportUsers() {
+            const csv = [
+                ['Name', 'Phone', 'Institution', 'Role', 'Premium', 'Active'],
+                ...users.map(u => [u.name, u.phone, u.institution || '', u.role, u.is_premium ? 'Yes' : 'No', u.is_active ? 'Yes' : 'No'])
+            ].map(row => row.join(',')).join('\n');
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'users.csv';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        function viewLogs() { alert('System logs feature coming soon!'); }
+        function manageSettings() { alert('Settings feature coming soon!'); }
+        
+        // Search
+        document.getElementById('searchBox').addEventListener('input', function(e) {
+            const term = e.target.value.toLowerCase();
+            const filtered = users.filter(u => 
+                (u.name || '').toLowerCase().includes(term) ||
+                (u.phone || '').toLowerCase().includes(term) ||
+                (u.institution || '').toLowerCase().includes(term)
+            );
+            displayUsers(filtered);
+        });
+        
+        // Load on start
+        loadData();
+    </script>
+</body>
+</html>
