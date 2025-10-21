@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RTB Admin Dashboard - Fresh 2024</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f0f2f5; }
+        .header { background: #1877f2; color: white; padding: 1rem; text-align: center; }
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .stat-card { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center; }
+        .stat-number { font-size: 2.5rem; font-weight: bold; color: #1877f2; }
+        .stat-label { color: #65676b; margin-top: 0.5rem; }
+        .users-section { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .user-item { display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-bottom: 1px solid #e4e6ea; }
+        .user-info h4 { color: #1c1e21; }
+        .user-info p { color: #65676b; font-size: 0.9rem; }
+        .status { padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
+        .admin { background: #ff3040; color: white; }
+        .premium { background: #42b883; color: white; }
+        .regular { background: #8b949e; color: white; }
+        .loading { text-align: center; padding: 3rem; color: #65676b; }
+        .error { color: #ff3040; text-align: center; padding: 2rem; background: #fff5f5; border-radius: 8px; margin: 1rem 0; }
+        .version { position: fixed; bottom: 10px; right: 10px; background: #1877f2; color: white; padding: 0.5rem; border-radius: 4px; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+    <div class="version">Fresh 2024 - No Cache</div>
+    
+    <div class="header">
+        <h1>🎯 RTB Admin Dashboard</h1>
+        <p>Fresh Version 2024 - Production API Only</p>
+    </div>
+
+    <div class="container">
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="totalUsers">...</div>
+                <div class="stat-label">Total Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="premiumUsers">...</div>
+                <div class="stat-label">Premium Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="activeUsers">...</div>
+                <div class="stat-label">Active Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalDownloads">...</div>
+                <div class="stat-label">Downloads</div>
+            </div>
+        </div>
+
+        <div class="users-section">
+            <h2>👥 All Registered Users</h2>
+            <div id="usersList">
+                <div class="loading">Loading users from production API...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // HARDCODED PRODUCTION API - NO LOCALHOST DETECTION
+        const PRODUCTION_API = 'https://leonardus437.pythonanywhere.com';
+        
+        console.log('🚀 Fresh 2024 Admin Dashboard Loading...');
+        console.log('📡 API Base:', PRODUCTION_API);
+        
+        async function loadDashboard() {
+            try {
+                console.log('📊 Loading statistics...');
+                
+                // Load stats
+                const statsResponse = await fetch(`${PRODUCTION_API}/stats`);
+                console.log('📈 Stats response:', statsResponse.status);
+                
+                if (statsResponse.ok) {
+                    const stats = await statsResponse.json();
+                    console.log('✅ Stats data:', stats);
+                    
+                    document.getElementById('totalUsers').textContent = stats.total_users || 0;
+                    document.getElementById('premiumUsers').textContent = stats.premium_users || 0;
+                    document.getElementById('activeUsers').textContent = stats.active_users || 0;
+                    document.getElementById('totalDownloads').textContent = stats.total_downloads || 0;
+                } else {
+                    throw new Error(`Stats failed: ${statsResponse.status}`);
+                }
+                
+                console.log('👥 Loading users...');
+                
+                // Load users
+                const usersResponse = await fetch(`${PRODUCTION_API}/users/`);
+                console.log('👤 Users response:', usersResponse.status);
+                
+                if (usersResponse.ok) {
+                    const users = await usersResponse.json();
+                    console.log('✅ Users data:', users);
+                    displayUsers(users);
+                } else {
+                    throw new Error(`Users failed: ${usersResponse.status}`);
+                }
+                
+            } catch (error) {
+                console.error('❌ Dashboard error:', error);
+                
+                document.getElementById('usersList').innerHTML = `
+                    <div class="error">
+                        <h3>❌ Connection Error</h3>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                        <p><strong>API:</strong> ${PRODUCTION_API}</p>
+                        <p><strong>Solution:</strong> Update PythonAnywhere backend with FINAL_COMPLETE_BACKEND.py</p>
+                        <button onclick="location.reload()" style="margin-top: 1rem; padding: 0.5rem 1rem; background: #1877f2; color: white; border: none; border-radius: 4px; cursor: pointer;">🔄 Retry</button>
+                    </div>
+                `;
+                
+                // Show error in stats
+                ['totalUsers', 'premiumUsers', 'activeUsers', 'totalDownloads'].forEach(id => {
+                    document.getElementById(id).textContent = 'Error';
+                });
+            }
+        }
+        
+        function displayUsers(users) {
+            const usersList = document.getElementById('usersList');
+            
+            if (!users || users.length === 0) {
+                usersList.innerHTML = '<div class="loading">No users found in database</div>';
+                return;
+            }
+            
+            const usersHtml = users.map(user => {
+                let statusClass = 'regular';
+                let statusText = 'Regular';
+                
+                if (user.role === 'admin') {
+                    statusClass = 'admin';
+                    statusText = 'Admin';
+                } else if (user.is_premium) {
+                    statusClass = 'premium';
+                    statusText = 'Premium';
+                }
+                
+                return `
+                    <div class="user-item">
+                        <div class="user-info">
+                            <h4>${user.name || 'Unknown User'}</h4>
+                            <p>📱 ${user.phone} | 🏢 ${user.institution || 'N/A'}</p>
+                        </div>
+                        <div class="status ${statusClass}">${statusText}</div>
+                    </div>
+                `;
+            }).join('');
+            
+            usersList.innerHTML = usersHtml;
+        }
+        
+        // Load dashboard immediately
+        document.addEventListener('DOMContentLoaded', loadDashboard);
+        
+        console.log('🎯 Fresh 2024 Admin Dashboard Initialized');
+    </script>
+</body>
+</html>
