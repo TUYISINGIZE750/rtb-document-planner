@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Admin Dashboard - RTB Planner (WORKING)</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f8f9fa; padding: 2rem; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header { background: white; padding: 2rem; border-radius: 8px; margin-bottom: 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
+        .stat-card { background: white; padding: 1.5rem; border-radius: 8px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .stat-value { font-size: 2rem; font-weight: bold; color: #333; margin-bottom: 0.5rem; }
+        .stat-label { color: #666; }
+        .users-section { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .user-item { padding: 1rem; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .user-info h4 { margin-bottom: 0.25rem; }
+        .user-details { color: #666; font-size: 0.9rem; }
+        .btn { padding: 0.5rem 1rem; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; margin: 0.25rem; }
+        .status { padding: 1rem; margin: 1rem 0; border-radius: 4px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .loading { background: #fff3cd; color: #856404; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛡️ Admin Dashboard (WORKING VERSION)</h1>
+            <p><strong>Backend:</strong> https://leonardus437.pythonanywhere.com</p>
+            <div id="connectionStatus" class="status loading">🔄 Testing connection...</div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="totalUsers">-</div>
+                <div class="stat-label">👥 Total Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="premiumUsers">-</div>
+                <div class="stat-label">⭐ Premium Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="activeUsers">-</div>
+                <div class="stat-label">✅ Active Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalDownloads">-</div>
+                <div class="stat-label">📥 Total Downloads</div>
+            </div>
+        </div>
+
+        <div class="users-section">
+            <h2>👥 All Registered Users</h2>
+            <button class="btn" onclick="refreshData()">🔄 Refresh Data</button>
+            <div id="usersList">Loading users...</div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://leonardus437.pythonanywhere.com';
+        
+        console.log('🚀 WORKING ADMIN DASHBOARD');
+        console.log('🌐 API Base:', API_BASE);
+
+        async function testConnection() {
+            const statusDiv = document.getElementById('connectionStatus');
+            try {
+                console.log('🔍 Testing connection to:', API_BASE);
+                const response = await fetch(`${API_BASE}/`, {
+                    method: 'GET',
+                    cache: 'no-cache',
+                    headers: { 'Cache-Control': 'no-cache' }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('✅ Connection successful:', data);
+                
+                statusDiv.innerHTML = `✅ Connected - ${data.message} (v${data.version}) - ${data.users_count} users`;
+                statusDiv.className = 'status success';
+                return true;
+            } catch (error) {
+                console.error('❌ Connection failed:', error);
+                statusDiv.innerHTML = `❌ Connection Failed: ${error.message}`;
+                statusDiv.className = 'status error';
+                return false;
+            }
+        }
+
+        async function loadStats() {
+            try {
+                console.log('📊 Loading stats from:', `${API_BASE}/stats`);
+                const response = await fetch(`${API_BASE}/stats`, {
+                    method: 'GET',
+                    cache: 'no-cache',
+                    headers: { 'Cache-Control': 'no-cache' }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const stats = await response.json();
+                console.log('✅ Stats loaded:', stats);
+                
+                document.getElementById('totalUsers').textContent = stats.total_users || 0;
+                document.getElementById('premiumUsers').textContent = stats.premium_users || 0;
+                document.getElementById('activeUsers').textContent = stats.active_users || 0;
+                document.getElementById('totalDownloads').textContent = stats.total_downloads || 0;
+                
+            } catch (error) {
+                console.error('❌ Stats error:', error);
+                document.getElementById('totalUsers').textContent = 'Error';
+                document.getElementById('premiumUsers').textContent = 'Error';
+                document.getElementById('activeUsers').textContent = 'Error';
+                document.getElementById('totalDownloads').textContent = 'Error';
+            }
+        }
+
+        async function loadUsers() {
+            const usersList = document.getElementById('usersList');
+            try {
+                console.log('👥 Loading users from:', `${API_BASE}/users/`);
+                const response = await fetch(`${API_BASE}/users/`, {
+                    method: 'GET',
+                    cache: 'no-cache',
+                    headers: { 'Cache-Control': 'no-cache' }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const users = await response.json();
+                console.log('✅ Users loaded:', users);
+                
+                if (users.length === 0) {
+                    usersList.innerHTML = '<div class="status error">No users found in database</div>';
+                    return;
+                }
+                
+                usersList.innerHTML = users.map((user, index) => `
+                    <div class="user-item">
+                        <div class="user-info">
+                            <h4>${user.name || 'Unknown User'} ${user.role === 'admin' ? '👑' : ''}</h4>
+                            <div class="user-details">
+                                📞 ${user.phone || 'No Phone'} | 
+                                🏫 ${user.institution || 'No Institution'} | 
+                                ${user.is_premium ? '⭐ Premium' : '🆓 Free'}<br>
+                                📊 Plans: ${user.session_plans_downloaded || 0}/${user.session_plans_limit || 0} | 
+                                📚 Schemes: ${user.schemes_downloaded || 0}/${user.schemes_limit || 0} |
+                                ${user.is_active ? '✅ Active' : '❌ Inactive'}
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+                
+            } catch (error) {
+                console.error('❌ Users error:', error);
+                usersList.innerHTML = `
+                    <div class="status error">
+                        <strong>❌ Error loading users:</strong> ${error.message}<br>
+                        <button class="btn" onclick="loadUsers()" style="margin-top: 1rem;">🔄 Retry</button>
+                    </div>
+                `;
+            }
+        }
+
+        async function refreshData() {
+            document.getElementById('connectionStatus').innerHTML = '🔄 Refreshing...';
+            document.getElementById('connectionStatus').className = 'status loading';
+            
+            const connected = await testConnection();
+            if (connected) {
+                await loadStats();
+                await loadUsers();
+            }
+        }
+
+        // Initialize on page load
+        async function init() {
+            console.log('🚀 Initializing Working Admin Dashboard');
+            
+            const connected = await testConnection();
+            if (connected) {
+                await loadStats();
+                await loadUsers();
+            }
+        }
+
+        // Start initialization
+        init();
+    </script>
+</body>
+</html>
