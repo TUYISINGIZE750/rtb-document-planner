@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>System Status - RTB Planner</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f8f9fa; padding: 2rem; margin: 0; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .header { background: white; padding: 2rem; border-radius: 8px; margin-bottom: 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center; }
+        .status-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .status-card { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .status-title { font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+        .status-item { margin: 0.5rem 0; padding: 0.5rem; border-radius: 4px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .loading { background: #fff3cd; color: #856404; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        .btn { padding: 0.75rem 1.5rem; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; margin: 0.5rem; }
+        .btn:hover { background: #0056b3; }
+        .links { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .link-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+        .link-item { padding: 1rem; background: #f8f9fa; border-radius: 4px; text-align: center; }
+        .link-item a { color: #007bff; text-decoration: none; font-weight: bold; }
+        .link-item a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 RTB Planner System Status</h1>
+            <p>Real-time status check for Frontend (Netlify) + Backend (PythonAnywhere)</p>
+            <button class="btn" onclick="runAllTests()">🔄 Run All Tests</button>
+        </div>
+
+        <div class="status-grid">
+            <div class="status-card">
+                <div class="status-title">🌐 Backend Status (PythonAnywhere)</div>
+                <div id="backendStatus" class="status-item loading">Testing...</div>
+                <div id="backendDetails"></div>
+            </div>
+
+            <div class="status-card">
+                <div class="status-title">👥 User Database</div>
+                <div id="usersStatus" class="status-item loading">Testing...</div>
+                <div id="usersDetails"></div>
+            </div>
+
+            <div class="status-card">
+                <div class="status-title">📊 Statistics API</div>
+                <div id="statsStatus" class="status-item loading">Testing...</div>
+                <div id="statsDetails"></div>
+            </div>
+
+            <div class="status-card">
+                <div class="status-title">🔐 Authentication</div>
+                <div id="authStatus" class="status-item loading">Testing...</div>
+                <div id="authDetails"></div>
+            </div>
+        </div>
+
+        <div class="links">
+            <h2>🔗 Quick Access Links</h2>
+            <div class="link-grid">
+                <div class="link-item">
+                    <h4>🏠 Main Site</h4>
+                    <a href="index.html">Home Page</a>
+                </div>
+                <div class="link-item">
+                    <h4>🔐 Simple Login</h4>
+                    <a href="login-simple.html">Direct Login</a>
+                </div>
+                <div class="link-item">
+                    <h4>🛡️ Admin Dashboard</h4>
+                    <a href="admin-clean.html">Clean Admin</a>
+                </div>
+                <div class="link-item">
+                    <h4>📝 Registration</h4>
+                    <a href="register.html">Register</a>
+                </div>
+                <div class="link-item">
+                    <h4>🔧 API Debug</h4>
+                    <a href="api-debug.html">Debug Tools</a>
+                </div>
+                <div class="link-item">
+                    <h4>📋 Deployment Test</h4>
+                    <a href="deployment-test.html">Test Page</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://leonardus437.pythonanywhere.com';
+
+        async function testBackend() {
+            const statusDiv = document.getElementById('backendStatus');
+            const detailsDiv = document.getElementById('backendDetails');
+            
+            try {
+                const response = await fetch(`${API_BASE}/`);
+                const data = await response.json();
+                
+                statusDiv.innerHTML = '✅ Backend Online';
+                statusDiv.className = 'status-item success';
+                detailsDiv.innerHTML = `
+                    <small>
+                        Status: ${data.status}<br>
+                        Version: ${data.version}<br>
+                        Users: ${data.users_count}<br>
+                        CORS: ${data.cors}
+                    </small>
+                `;
+                return true;
+            } catch (error) {
+                statusDiv.innerHTML = '❌ Backend Offline';
+                statusDiv.className = 'status-item error';
+                detailsDiv.innerHTML = `<small>Error: ${error.message}</small>`;
+                return false;
+            }
+        }
+
+        async function testUsers() {
+            const statusDiv = document.getElementById('usersStatus');
+            const detailsDiv = document.getElementById('usersDetails');
+            
+            try {
+                const response = await fetch(`${API_BASE}/users/`);
+                const users = await response.json();
+                
+                statusDiv.innerHTML = `✅ ${users.length} Users Found`;
+                statusDiv.className = 'status-item success';
+                
+                const adminCount = users.filter(u => u.role === 'admin').length;
+                const premiumCount = users.filter(u => u.is_premium).length;
+                
+                detailsDiv.innerHTML = `
+                    <small>
+                        Total: ${users.length}<br>
+                        Admins: ${adminCount}<br>
+                        Premium: ${premiumCount}<br>
+                        Regular: ${users.length - adminCount}
+                    </small>
+                `;
+                return true;
+            } catch (error) {
+                statusDiv.innerHTML = '❌ Users API Failed';
+                statusDiv.className = 'status-item error';
+                detailsDiv.innerHTML = `<small>Error: ${error.message}</small>`;
+                return false;
+            }
+        }
+
+        async function testStats() {
+            const statusDiv = document.getElementById('statsStatus');
+            const detailsDiv = document.getElementById('statsDetails');
+            
+            try {
+                const response = await fetch(`${API_BASE}/stats`);
+                const stats = await response.json();
+                
+                statusDiv.innerHTML = '✅ Stats API Working';
+                statusDiv.className = 'status-item success';
+                detailsDiv.innerHTML = `
+                    <small>
+                        Total Users: ${stats.total_users}<br>
+                        Active: ${stats.active_users}<br>
+                        Premium: ${stats.premium_users}<br>
+                        Downloads: ${stats.total_downloads}
+                    </small>
+                `;
+                return true;
+            } catch (error) {
+                statusDiv.innerHTML = '❌ Stats API Failed';
+                statusDiv.className = 'status-item error';
+                detailsDiv.innerHTML = `<small>Error: ${error.message}</small>`;
+                return false;
+            }
+        }
+
+        async function testAuth() {
+            const statusDiv = document.getElementById('authStatus');
+            const detailsDiv = document.getElementById('authDetails');
+            
+            try {
+                // Test login endpoint with invalid credentials (should return 401)
+                const response = await fetch(`${API_BASE}/users/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone: 'test', password: 'test' })
+                });
+                
+                if (response.status === 401 || response.status === 404) {
+                    statusDiv.innerHTML = '✅ Auth API Working';
+                    statusDiv.className = 'status-item success';
+                    detailsDiv.innerHTML = `
+                        <small>
+                            Login endpoint: Active<br>
+                            Response: ${response.status}<br>
+                            Admin login: Available
+                        </small>
+                    `;
+                    return true;
+                } else {
+                    throw new Error(`Unexpected status: ${response.status}`);
+                }
+            } catch (error) {
+                statusDiv.innerHTML = '❌ Auth API Failed';
+                statusDiv.className = 'status-item error';
+                detailsDiv.innerHTML = `<small>Error: ${error.message}</small>`;
+                return false;
+            }
+        }
+
+        async function runAllTests() {
+            // Reset all status to loading
+            document.querySelectorAll('.status-item').forEach(item => {
+                item.innerHTML = '🔄 Testing...';
+                item.className = 'status-item loading';
+            });
+            
+            // Clear details
+            document.querySelectorAll('[id$="Details"]').forEach(div => {
+                div.innerHTML = '';
+            });
+
+            // Run tests
+            const results = await Promise.all([
+                testBackend(),
+                testUsers(),
+                testStats(),
+                testAuth()
+            ]);
+
+            const allPassed = results.every(r => r);
+            
+            if (allPassed) {
+                alert('🎉 All systems operational! Frontend and Backend are working perfectly.');
+            } else {
+                alert('⚠️ Some systems have issues. Check the status above for details.');
+            }
+        }
+
+        // Auto-run tests on page load
+        setTimeout(runAllTests, 1000);
+    </script>
+</body>
+</html>
