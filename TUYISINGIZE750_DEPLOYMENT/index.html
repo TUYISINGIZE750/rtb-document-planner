@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RTB Document Planner</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f8f9fa; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 4rem 0; text-align: center; }
+        .header h1 { font-size: 3.5rem; margin-bottom: 1rem; font-weight: 700; }
+        .header p { font-size: 1.3rem; opacity: 0.9; max-width: 600px; margin: 0 auto; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 3rem 2rem; }
+        .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2.5rem; margin: 4rem 0; }
+        .feature { background: white; padding: 2.5rem; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); text-align: center; transition: transform 0.3s; }
+        .feature:hover { transform: translateY(-5px); }
+        .feature-icon { font-size: 4rem; margin-bottom: 1.5rem; }
+        .feature h3 { color: #333; margin-bottom: 1rem; font-size: 1.5rem; }
+        .feature p { color: #666; line-height: 1.7; font-size: 1.1rem; }
+        .cta { text-align: center; margin: 4rem 0; }
+        .btn { display: inline-block; padding: 1.2rem 2.5rem; margin: 0.8rem; border-radius: 8px; font-weight: 600; text-decoration: none; font-size: 1.1rem; transition: all 0.3s; }
+        .btn-primary { background: #667eea; color: white; }
+        .btn-primary:hover { background: #5a6fd8; transform: translateY(-2px); }
+        .btn-secondary { background: #28a745; color: white; }
+        .btn-secondary:hover { background: #218838; transform: translateY(-2px); }
+        .btn-admin { background: #dc3545; color: white; }
+        .btn-admin:hover { background: #c82333; transform: translateY(-2px); }
+        .status { position: fixed; top: 20px; right: 20px; background: #28a745; color: white; padding: 10px 20px; border-radius: 25px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="status">✅ LIVE & WORKING</div>
+    
+    <div class="header">
+        <h1>🎯 RTB Document Planner</h1>
+        <p>Professional TVET Session Plans & Schemes of Work Generator for Rwanda Technical Board</p>
+    </div>
+
+    <div class="container">
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">📄</div>
+                <h3>Session Plans</h3>
+                <p>Create RTB-compliant session plans with professional formatting, learning objectives, and comprehensive content structure that meets all technical education standards.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">📋</div>
+                <h3>Schemes of Work</h3>
+                <p>Generate detailed schemes of work covering entire terms with proper learning objectives, assessments, and progression tracking for TVET programs.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">👥</div>
+                <h3>Admin Dashboard</h3>
+                <p>Complete user management system with subscription controls, usage analytics, and comprehensive administrative tools for system oversight.</p>
+            </div>
+        </div>
+
+        <div class="cta">
+            <a href="register.html" class="btn btn-primary">📝 Register as Teacher</a>
+            <a href="login.html" class="btn btn-secondary">🔑 Teacher Login</a>
+            <a href="admin.html" class="btn btn-admin">👑 Admin Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>

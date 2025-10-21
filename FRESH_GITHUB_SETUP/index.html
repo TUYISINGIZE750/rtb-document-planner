@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RTB Document Planner</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f8f9fa; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3rem 0; text-align: center; }
+        .header h1 { font-size: 3rem; margin-bottom: 1rem; }
+        .header p { font-size: 1.2rem; opacity: 0.9; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+        .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin: 3rem 0; }
+        .feature { background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; }
+        .feature h3 { color: #333; margin-bottom: 1rem; }
+        .feature p { color: #666; line-height: 1.6; }
+        .cta { text-align: center; margin: 3rem 0; }
+        .btn { display: inline-block; padding: 1rem 2rem; background: #667eea; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; margin: 0.5rem; }
+        .btn:hover { background: #5a6fd8; }
+        .admin-btn { background: #dc3545; }
+        .admin-btn:hover { background: #c82333; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎯 RTB Document Planner</h1>
+        <p>Professional TVET Session Plans & Schemes of Work Generator for Rwanda Technical Board</p>
+    </div>
+
+    <div class="container">
+        <div class="features">
+            <div class="feature">
+                <h3>📄 Session Plans</h3>
+                <p>Create RTB-compliant session plans with professional formatting and comprehensive content structure.</p>
+            </div>
+            <div class="feature">
+                <h3>📋 Schemes of Work</h3>
+                <p>Generate detailed schemes of work covering entire terms with proper learning objectives and assessments.</p>
+            </div>
+            <div class="feature">
+                <h3>👥 User Management</h3>
+                <p>Complete admin dashboard for managing users, subscriptions, and monitoring system usage.</p>
+            </div>
+        </div>
+
+        <div class="cta">
+            <a href="register.html" class="btn">📝 Register as Teacher</a>
+            <a href="login.html" class="btn">🔑 Login</a>
+            <a href="admin.html" class="btn admin-btn">👑 Admin Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>

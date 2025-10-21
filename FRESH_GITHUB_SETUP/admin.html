@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RTB Admin Dashboard</title>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial; margin: 0; background: #f0f2f5; }
+        .header { background: #1877f2; color: white; padding: 30px; text-align: center; }
+        .container { max-width: 1200px; margin: 20px auto; padding: 20px; }
+        .stats { display: flex; gap: 20px; margin-bottom: 30px; }
+        .stat { background: white; padding: 25px; border-radius: 8px; flex: 1; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .stat-number { font-size: 36px; font-weight: bold; color: #1877f2; margin-bottom: 8px; }
+        .stat-label { color: #65676b; font-size: 14px; }
+        .main { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
+        .users { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .search { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 20px; font-size: 16px; }
+        .user { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #f0f2f5; }
+        .user-info h4 { margin: 0 0 5px 0; color: #1c1e21; }
+        .user-info p { margin: 0; color: #65676b; font-size: 14px; }
+        .status { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .admin-status { background: #e74c3c; color: white; }
+        .premium-status { background: #27ae60; color: white; }
+        .regular-status { background: #95a5a6; color: white; }
+        .btn { padding: 8px 16px; margin: 0 4px; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; }
+        .btn-toggle { background: #f39c12; color: white; }
+        .btn-premium { background: #27ae60; color: white; }
+        .actions { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .action { padding: 15px; border-bottom: 1px solid #f0f2f5; cursor: pointer; }
+        .action:hover { background: #f8f9fa; }
+        .loading { text-align: center; padding: 40px; color: #65676b; }
+        .error { background: #ffebee; color: #c62828; padding: 20px; border-radius: 6px; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎯 RTB Admin Dashboard</h1>
+        <p>Complete User Management System</p>
+    </div>
+
+    <div class="container">
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-number" id="totalUsers">0</div>
+                <div class="stat-label">Total Users</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number" id="premiumUsers">0</div>
+                <div class="stat-label">Premium Users</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number" id="activeUsers">0</div>
+                <div class="stat-label">Active Users</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number" id="downloads">0</div>
+                <div class="stat-label">Downloads</div>
+            </div>
+        </div>
+
+        <div class="main">
+            <div class="users">
+                <h2>User Management</h2>
+                <input type="text" class="search" placeholder="Search users..." id="searchInput">
+                <div id="userList">
+                    <div class="loading">Loading users...</div>
+                </div>
+            </div>
+
+            <div class="actions">
+                <h3>Quick Actions</h3>
+                <div class="action" onclick="refreshAll()">🔄 Refresh Data</div>
+                <div class="action" onclick="exportData()">📊 Export Users</div>
+                <div class="action" onclick="viewStats()">📈 View Statistics</div>
+                <div class="action" onclick="systemSettings()">⚙️ Settings</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API = 'https://leonardus437.pythonanywhere.com';
+        let allUsers = [];
+        
+        async function loadAll() {
+            try {
+                const statsResponse = await fetch(API + '/stats');
+                const stats = await statsResponse.json();
+                
+                document.getElementById('totalUsers').textContent = stats.total_users;
+                document.getElementById('premiumUsers').textContent = stats.premium_users;
+                document.getElementById('activeUsers').textContent = stats.active_users;
+                document.getElementById('downloads').textContent = stats.total_downloads;
+                
+                const usersResponse = await fetch(API + '/users/');
+                allUsers = await usersResponse.json();
+                
+                showUsers(allUsers);
+                
+            } catch (error) {
+                document.getElementById('userList').innerHTML = `
+                    <div class="error">
+                        <strong>Error:</strong> ${error.message}<br>
+                        <button onclick="loadAll()" style="margin-top: 10px; padding: 8px 16px; background: #1877f2; color: white; border: none; border-radius: 4px;">Retry</button>
+                    </div>
+                `;
+            }
+        }
+        
+        function showUsers(users) {
+            const container = document.getElementById('userList');
+            
+            if (!users.length) {
+                container.innerHTML = '<div class="loading">No users found</div>';
+                return;
+            }
+            
+            const html = users.map(user => {
+                let statusClass = 'regular-status';
+                let statusText = 'Regular';
+                
+                if (user.role === 'admin') {
+                    statusClass = 'admin-status';
+                    statusText = 'Admin';
+                } else if (user.is_premium) {
+                    statusClass = 'premium-status';
+                    statusText = 'Premium';
+                }
+                
+                return `
+                    <div class="user">
+                        <div class="user-info">
+                            <h4>${user.name}</h4>
+                            <p>${user.phone} | ${user.institution || 'N/A'}</p>
+                        </div>
+                        <div>
+                            <span class="status ${statusClass}">${statusText}</span>
+                            ${user.role !== 'admin' ? `
+                                <button class="btn btn-toggle" onclick="toggleActive('${user.phone}')">
+                                    ${user.is_active ? 'Deactivate' : 'Activate'}
+                                </button>
+                                <button class="btn btn-premium" onclick="togglePremium('${user.phone}')">
+                                    ${user.is_premium ? 'Remove Premium' : 'Make Premium'}
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            container.innerHTML = html;
+        }
+        
+        async function toggleActive(phone) {
+            const user = allUsers.find(u => u.phone === phone);
+            try {
+                await fetch(`${API}/users/${phone}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ is_active: !user.is_active })
+                });
+                loadAll();
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+        
+        async function togglePremium(phone) {
+            const user = allUsers.find(u => u.phone === phone);
+            try {
+                await fetch(`${API}/users/${phone}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        is_premium: !user.is_premium,
+                        session_plans_limit: !user.is_premium ? 999 : 2,
+                        schemes_limit: !user.is_premium ? 999 : 2
+                    })
+                });
+                loadAll();
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+        
+        function refreshAll() { loadAll(); }
+        
+        function exportData() {
+            const csv = [
+                ['Name', 'Phone', 'Institution', 'Role', 'Premium', 'Active'],
+                ...allUsers.map(u => [u.name, u.phone, u.institution || '', u.role, u.is_premium ? 'Yes' : 'No', u.is_active ? 'Yes' : 'No'])
+            ].map(row => row.join(',')).join('\n');
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'rtb_users.csv';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        function viewStats() { alert('Statistics view coming soon!'); }
+        function systemSettings() { alert('Settings coming soon!'); }
+        
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const term = e.target.value.toLowerCase();
+            const filtered = allUsers.filter(u => 
+                u.name.toLowerCase().includes(term) ||
+                u.phone.toLowerCase().includes(term) ||
+                (u.institution || '').toLowerCase().includes(term)
+            );
+            showUsers(filtered);
+        });
+        
+        loadAll();
+    </script>
+</body>
+</html>
