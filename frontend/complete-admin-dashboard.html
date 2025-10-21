@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RTB Admin Dashboard - Complete</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f8f9fa; }
+        
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem 0; }
+        .header-content { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+        .header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .header p { opacity: 0.9; font-size: 1.1rem; }
+        
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 3rem; }
+        .stat-card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; transition: transform 0.2s; }
+        .stat-card:hover { transform: translateY(-2px); }
+        .stat-icon { font-size: 3rem; margin-bottom: 1rem; }
+        .stat-number { font-size: 2.5rem; font-weight: bold; margin-bottom: 0.5rem; }
+        .stat-label { color: #6c757d; font-size: 1rem; }
+        
+        .dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; }
+        
+        .users-section { background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); overflow: hidden; }
+        .section-header { background: #f8f9fa; padding: 1.5rem; border-bottom: 1px solid #dee2e6; }
+        .section-title { font-size: 1.5rem; font-weight: 600; color: #495057; }
+        .section-content { padding: 1.5rem; }
+        
+        .search-box { width: 100%; padding: 0.75rem; border: 1px solid #ced4da; border-radius: 8px; margin-bottom: 1rem; font-size: 1rem; }
+        
+        .user-item { display: flex; align-items: center; justify-content: space-between; padding: 1rem; border-bottom: 1px solid #f1f3f4; transition: background 0.2s; }
+        .user-item:hover { background: #f8f9fa; }
+        .user-item:last-child { border-bottom: none; }
+        
+        .user-info { flex: 1; }
+        .user-name { font-weight: 600; color: #212529; margin-bottom: 0.25rem; }
+        .user-details { color: #6c757d; font-size: 0.9rem; }
+        
+        .user-actions { display: flex; gap: 0.5rem; align-items: center; }
+        .status-badge { padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 500; }
+        .status-admin { background: #dc3545; color: white; }
+        .status-premium { background: #28a745; color: white; }
+        .status-regular { background: #6c757d; color: white; }
+        .status-inactive { background: #ffc107; color: #212529; }
+        
+        .btn { padding: 0.5rem 1rem; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9rem; transition: all 0.2s; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-warning { background: #ffc107; color: #212529; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+        
+        .quick-actions { background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .action-item { padding: 1rem; border-bottom: 1px solid #f1f3f4; cursor: pointer; transition: background 0.2s; }
+        .action-item:hover { background: #f8f9fa; }
+        .action-item:last-child { border-bottom: none; }
+        .action-icon { font-size: 1.5rem; margin-right: 1rem; }
+        
+        .loading { text-align: center; padding: 3rem; color: #6c757d; }
+        .error { background: #f8d7da; color: #721c24; padding: 1rem; border-radius: 8px; margin: 1rem 0; }
+        
+        @media (max-width: 768px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <h1>🎯 RTB Admin Dashboard</h1>
+            <p>Complete system management and user administration</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-number" id="totalUsers">0</div>
+                <div class="stat-label">Total Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⭐</div>
+                <div class="stat-number" id="premiumUsers">0</div>
+                <div class="stat-label">Premium Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-number" id="activeUsers">0</div>
+                <div class="stat-label">Active Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📥</div>
+                <div class="stat-number" id="totalDownloads">0</div>
+                <div class="stat-label">Total Downloads</div>
+            </div>
+        </div>
+
+        <!-- Main Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Users Management -->
+            <div class="users-section">
+                <div class="section-header">
+                    <div class="section-title">👥 User Management</div>
+                </div>
+                <div class="section-content">
+                    <input type="text" class="search-box" placeholder="🔍 Search by name, phone, or institution..." id="searchBox">
+                    <div id="usersList">
+                        <div class="loading">Loading users...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <div class="section-header">
+                    <div class="section-title">⚡ Quick Actions</div>
+                </div>
+                <div class="action-item" onclick="refreshData()">
+                    <span class="action-icon">🔄</span>
+                    <strong>Refresh Data</strong><br>
+                    <small>Reload all statistics and users</small>
+                </div>
+                <div class="action-item" onclick="exportUsers()">
+                    <span class="action-icon">📊</span>
+                    <strong>Export Users</strong><br>
+                    <small>Download user data as CSV</small>
+                </div>
+                <div class="action-item" onclick="viewSystemLogs()">
+                    <span class="action-icon">📋</span>
+                    <strong>System Logs</strong><br>
+                    <small>View recent system activity</small>
+                </div>
+                <div class="action-item" onclick="manageSubscriptions()">
+                    <span class="action-icon">💳</span>
+                    <strong>Subscriptions</strong><br>
+                    <small>Manage premium subscriptions</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://leonardus437.pythonanywhere.com';
+        let allUsers = [];
+        
+        async function loadDashboard() {
+            try {
+                console.log('Loading dashboard data...');
+                
+                // Load statistics
+                const statsResponse = await fetch(`${API_BASE}/stats`);
+                if (statsResponse.ok) {
+                    const stats = await statsResponse.json();
+                    updateStatistics(stats);
+                } else {
+                    throw new Error(`Stats API error: ${statsResponse.status}`);
+                }
+                
+                // Load users
+                const usersResponse = await fetch(`${API_BASE}/users/`);
+                if (usersResponse.ok) {
+                    const users = await usersResponse.json();
+                    allUsers = users;
+                    displayUsers(users);
+                } else {
+                    throw new Error(`Users API error: ${usersResponse.status}`);
+                }
+                
+            } catch (error) {
+                console.error('Dashboard error:', error);
+                document.getElementById('usersList').innerHTML = `
+                    <div class="error">
+                        <strong>❌ Error loading data:</strong> ${error.message}<br>
+                        <button class="btn btn-primary" onclick="loadDashboard()">🔄 Retry</button>
+                    </div>
+                `;
+            }
+        }
+        
+        function updateStatistics(stats) {
+            document.getElementById('totalUsers').textContent = stats.total_users || 0;
+            document.getElementById('premiumUsers').textContent = stats.premium_users || 0;
+            document.getElementById('activeUsers').textContent = stats.active_users || 0;
+            document.getElementById('totalDownloads').textContent = stats.total_downloads || 0;
+        }
+        
+        function displayUsers(users) {
+            const usersList = document.getElementById('usersList');
+            
+            if (!users || users.length === 0) {
+                usersList.innerHTML = '<div class="loading">No users found</div>';
+                return;
+            }
+            
+            const usersHtml = users.map(user => {
+                let statusClass = 'status-regular';
+                let statusText = 'Regular';
+                
+                if (user.role === 'admin') {
+                    statusClass = 'status-admin';
+                    statusText = 'Admin';
+                } else if (user.is_premium) {
+                    statusClass = 'status-premium';
+                    statusText = 'Premium';
+                } else if (!user.is_active) {
+                    statusClass = 'status-inactive';
+                    statusText = 'Inactive';
+                }
+                
+                return `
+                    <div class="user-item">
+                        <div class="user-info">
+                            <div class="user-name">${user.name || 'Unknown User'}</div>
+                            <div class="user-details">
+                                📱 ${user.phone} | 🏢 ${user.institution || 'N/A'} | 
+                                📄 ${user.session_plans_downloaded || 0} plans, ${user.schemes_downloaded || 0} schemes
+                            </div>
+                        </div>
+                        <div class="user-actions">
+                            <span class="status-badge ${statusClass}">${statusText}</span>
+                            ${user.role !== 'admin' ? `
+                                <button class="btn btn-warning" onclick="toggleUserStatus('${user.phone}', ${!user.is_active})">
+                                    ${user.is_active ? '⏸️' : '▶️'}
+                                </button>
+                                <button class="btn btn-success" onclick="togglePremium('${user.phone}', ${!user.is_premium})">
+                                    ${user.is_premium ? '⭐' : '💎'}
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            usersList.innerHTML = usersHtml;
+        }
+        
+        async function toggleUserStatus(phone, activate) {
+            try {
+                const response = await fetch(`${API_BASE}/users/${phone}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ is_active: activate })
+                });
+                
+                if (response.ok) {
+                    loadDashboard(); // Refresh data
+                } else {
+                    alert('Failed to update user status');
+                }
+            } catch (error) {
+                alert('Error updating user: ' + error.message);
+            }
+        }
+        
+        async function togglePremium(phone, makePremium) {
+            try {
+                const response = await fetch(`${API_BASE}/users/${phone}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        is_premium: makePremium,
+                        session_plans_limit: makePremium ? 999 : 2,
+                        schemes_limit: makePremium ? 999 : 2
+                    })
+                });
+                
+                if (response.ok) {
+                    loadDashboard(); // Refresh data
+                } else {
+                    alert('Failed to update premium status');
+                }
+            } catch (error) {
+                alert('Error updating premium: ' + error.message);
+            }
+        }
+        
+        function refreshData() {
+            loadDashboard();
+        }
+        
+        function exportUsers() {
+            if (allUsers.length === 0) {
+                alert('No users to export');
+                return;
+            }
+            
+            const csv = [
+                ['Name', 'Phone', 'Email', 'Institution', 'Role', 'Premium', 'Active', 'Session Plans', 'Schemes'],
+                ...allUsers.map(user => [
+                    user.name || '',
+                    user.phone || '',
+                    user.email || '',
+                    user.institution || '',
+                    user.role || 'user',
+                    user.is_premium ? 'Yes' : 'No',
+                    user.is_active ? 'Yes' : 'No',
+                    user.session_plans_downloaded || 0,
+                    user.schemes_downloaded || 0
+                ])
+            ].map(row => row.join(',')).join('\n');
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'rtb_users_export.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+        
+        function viewSystemLogs() {
+            alert('System logs feature coming soon!');
+        }
+        
+        function manageSubscriptions() {
+            alert('Subscription management feature coming soon!');
+        }
+        
+        // Search functionality
+        document.getElementById('searchBox').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const filteredUsers = allUsers.filter(user => 
+                (user.name || '').toLowerCase().includes(searchTerm) ||
+                (user.phone || '').toLowerCase().includes(searchTerm) ||
+                (user.institution || '').toLowerCase().includes(searchTerm)
+            );
+            displayUsers(filteredUsers);
+        });
+        
+        // Load dashboard on page load
+        document.addEventListener('DOMContentLoaded', loadDashboard);
+    </script>
+</body>
+</html>
