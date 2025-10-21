@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RTB System Test - Final Verification</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 1000px; margin: 0 auto; padding: 2rem; }
+        .test-section { margin: 2rem 0; padding: 1rem; border: 1px solid #ddd; border-radius: 8px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .warning { background: #fff3cd; color: #856404; }
+        button { padding: 0.5rem 1rem; margin: 0.5rem; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:disabled { background: #ccc; }
+        .result { margin: 1rem 0; padding: 1rem; border-radius: 4px; }
+        pre { background: #f8f9fa; padding: 1rem; border-radius: 4px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>🧪 RTB System Test - Final Verification</h1>
+    <p><strong>Backend:</strong> https://leonardus437.pythonanywhere.com</p>
+
+    <div class="test-section">
+        <h2>1. API Connection Test</h2>
+        <button onclick="testConnection()">Test API Connection</button>
+        <div id="connectionResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. Session Plan Creation Test</h2>
+        <button onclick="testSessionPlan()">Create Test Session Plan</button>
+        <div id="sessionResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. Scheme Creation Test</h2>
+        <button onclick="testScheme()">Create Test Scheme</button>
+        <div id="schemeResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>4. Admin Dashboard Test</h2>
+        <button onclick="testAdmin()">Test Admin Functions</button>
+        <div id="adminResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>5. Download Test</h2>
+        <button onclick="testDownload()">Test Download Function</button>
+        <div id="downloadResult"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://leonardus437.pythonanywhere.com';
+        
+        async function testConnection() {
+            const result = document.getElementById('connectionResult');
+            result.innerHTML = '<p>Testing connection...</p>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/`, {
+                    method: 'GET',
+                    mode: 'cors',
+                    credentials: 'omit',
+                    headers: { 'Accept': 'application/json' }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    result.innerHTML = `
+                        <div class="result success">
+                            ✅ <strong>Connection Successful</strong><br>
+                            Version: ${data.version}<br>
+                            Status: ${data.status}<br>
+                            Users: ${data.users_count}<br>
+                            Session Plans: ${data.session_plans_count}<br>
+                            Schemes: ${data.schemes_count}
+                        </div>
+                    `;
+                } else {
+                    result.innerHTML = `<div class="result error">❌ Connection failed: ${response.status}</div>`;
+                }
+            } catch (error) {
+                result.innerHTML = `<div class="result error">❌ Network error: ${error.message}</div>`;
+            }
+        }
+        
+        async function testSessionPlan() {
+            const result = document.getElementById('sessionResult');
+            result.innerHTML = '<p>Creating session plan...</p>';
+            
+            const testData = {
+                sector: "ICT & MULTIMEDIA",
+                trade: "Software Development",
+                rqf_level: "Level 4",
+                date: "2025-01-20",
+                trainer_name: "Test Teacher",
+                term: "Term 1",
+                module_code_title: "Programming Fundamentals",
+                week: "Week 1",
+                number_of_trainees: 25,
+                class_name: "L4CSA-A",
+                topic_of_session: "Variables and Data Types",
+                learning_outcomes: "Students will understand variables",
+                indicative_contents: "Introduction to variables",
+                session_range: "Basic to intermediate",
+                facilitation_techniques: "Brainstorming",
+                duration: 90
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/session-plans`, {
+                    method: 'POST',
+                    mode: 'cors',
+                    credentials: 'omit',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(testData)
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    result.innerHTML = `
+                        <div class="result success">
+                            ✅ <strong>Session Plan Created Successfully</strong><br>
+                            ID: ${data.id}<br>
+                            Message: ${data.message}<br>
+                            <button onclick="downloadSessionPlan(${data.id})">📥 Download Plan</button>
+                        </div>
+                    `;
+                } else {
+                    const errorText = await response.text();
+                    result.innerHTML = `<div class="result error">❌ Creation failed: ${response.status} - ${errorText}</div>`;
+                }
+            } catch (error) {
+                result.innerHTML = `<div class="result error">❌ Network error: ${error.message}</div>`;
+            }
+        }
+        
+        async function testScheme() {
+            const result = document.getElementById('schemeResult');
+            result.innerHTML = '<p>Creating scheme...</p>';
+            
+            const testData = {
+                province: "Kigali City",
+                district: "Gasabo",
+                sector: "ICT & MULTIMEDIA",
+                school: "IPRC Kigali",
+                trade: "Software Development",
+                qualification_title: "Diploma in Software Development",
+                rqf_level: "Level 4",
+                module_code_title: "Programming Fundamentals",
+                school_year: "2024-2025",
+                terms: "Term 1, 2, 3",
+                module_hours: 120,
+                number_of_classes: 3,
+                class_name: "L4CSA-A",
+                cohort_size: 30,
+                trainer_name: "Test Teacher",
+                trainer_position: "Senior Instructor",
+                module_rationale: "Test rationale",
+                entry_requirements: "Test requirements",
+                competency_codes: "Test codes",
+                indicative_scope: "Test scope",
+                standards_alignment: "REB TVET standards",
+                cross_cutting_issues: "Safety, ethics",
+                key_skills: "Problem-solving",
+                delivery_approach: "Blended learning",
+                term1_weeks: "Week 1-12",
+                term1_learning_outcomes: "Test outcomes",
+                term1_duration: "40 hours",
+                term1_indicative_contents: "Test content",
+                term2_weeks: "Week 13-24",
+                term2_learning_outcomes: "Test outcomes 2",
+                term2_duration: "40 hours",
+                term2_indicative_contents: "Test content 2",
+                term3_weeks: "Week 25-36",
+                term3_learning_outcomes: "Test outcomes 3",
+                term3_duration: "40 hours",
+                term3_indicative_contents: "Test content 3",
+                formative_assessment: "Test assessment",
+                summative_assessment: "Test final assessment",
+                resource_inventory: "Test resources",
+                health_safety: "Test safety",
+                dos_name: "Jane Smith",
+                manager_name: "Robert Johnson"
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/schemes-of-work`, {
+                    method: 'POST',
+                    mode: 'cors',
+                    credentials: 'omit',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(testData)
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    result.innerHTML = `
+                        <div class="result success">
+                            ✅ <strong>Scheme Created Successfully</strong><br>
+                            ID: ${data.id}<br>
+                            Message: ${data.message}<br>
+                            <button onclick="downloadScheme(${data.id})">📥 Download Scheme</button>
+                        </div>
+                    `;
+                } else {
+                    const errorText = await response.text();
+                    result.innerHTML = `<div class="result error">❌ Creation failed: ${response.status} - ${errorText}</div>`;
+                }
+            } catch (error) {
+                result.innerHTML = `<div class="result error">❌ Network error: ${error.message}</div>`;
+            }
+        }
+        
+        async function testAdmin() {
+            const result = document.getElementById('adminResult');
+            result.innerHTML = '<p>Testing admin functions...</p>';
+            
+            try {
+                // Test stats
+                const statsResponse = await fetch(`${API_BASE}/stats`);
+                const stats = await statsResponse.json();
+                
+                // Test users
+                const usersResponse = await fetch(`${API_BASE}/users/`);
+                const users = await usersResponse.json();
+                
+                result.innerHTML = `
+                    <div class="result success">
+                        ✅ <strong>Admin Functions Working</strong><br>
+                        <strong>Stats:</strong> ${stats.total_users} users, ${stats.total_downloads} downloads<br>
+                        <strong>Users:</strong> ${users.length} users loaded<br>
+                        <a href="admin-final.html" target="_blank">🔗 Open Admin Dashboard</a>
+                    </div>
+                `;
+            } catch (error) {
+                result.innerHTML = `<div class="result error">❌ Admin test failed: ${error.message}</div>`;
+            }
+        }
+        
+        async function testDownload() {
+            const result = document.getElementById('downloadResult');
+            result.innerHTML = '<p>Testing download...</p>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/session-plans/1/download?phone=%2B250789751597`);
+                
+                if (response.ok) {
+                    result.innerHTML = `
+                        <div class="result success">
+                            ✅ <strong>Download Function Working</strong><br>
+                            Content-Type: ${response.headers.get('content-type')}<br>
+                            <a href="${API_BASE}/session-plans/1/download?phone=%2B250789751597" download>📥 Download Test File</a>
+                        </div>
+                    `;
+                } else {
+                    result.innerHTML = `<div class="result error">❌ Download failed: ${response.status}</div>`;
+                }
+            } catch (error) {
+                result.innerHTML = `<div class="result error">❌ Download test failed: ${error.message}</div>`;
+            }
+        }
+        
+        function downloadSessionPlan(id) {
+            const link = document.createElement('a');
+            link.href = `${API_BASE}/session-plans/${id}/download?phone=%2B250789751597`;
+            link.download = `session_plan_${id}.txt`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        function downloadScheme(id) {
+            const link = document.createElement('a');
+            link.href = `${API_BASE}/schemes-of-work/${id}/download?phone=%2B250789751597`;
+            link.download = `scheme_${id}.txt`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        // Auto-run connection test on load
+        window.onload = () => {
+            testConnection();
+        };
+    </script>
+</body>
+</html>
