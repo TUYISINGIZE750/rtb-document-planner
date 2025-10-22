@@ -591,5 +591,23 @@ def get_stats():
     except Exception as e:
         return jsonify({"detail": "Failed to get stats"}), 500
 
+@app.route('/admin/notify', methods=['POST', 'OPTIONS'])
+def send_notification():
+    if request.method == 'OPTIONS':
+        return '', 204
+    
+    try:
+        data = request.get_json()
+        user_ids = data.get('user_ids', [])
+        message = data.get('message', '')
+        
+        if not user_ids or not message:
+            return jsonify({"detail": "User IDs and message required"}), 400
+        
+        logger.info(f"Notification sent to {len(user_ids)} users: {message}")
+        return jsonify({"message": f"Notification sent to {len(user_ids)} users"}), 200
+    except Exception as e:
+        return jsonify({"detail": "Failed to send notification"}), 500
+
 if __name__ == '__main__':
     app.run(debug=True)

@@ -59,6 +59,7 @@
             <h2>👥 All Registered Users</h2>
             <button class="btn" onclick="refreshData()">🔄 Refresh Data</button>
             <button class="btn" onclick="clearCache()">🗑️ Clear Cache</button>
+            <button class="btn" onclick="sendNotification()">📧 Send Notification</button>
             <div id="usersList">Loading users...</div>
         </div>
     </div>
@@ -173,6 +174,7 @@
                             </div>
                         </div>
                         <div>
+                            <input type="checkbox" class="user-checkbox" data-user-id="${user.id}" style="margin-right:10px;">
                             <button class="btn" onclick="viewUser(${index})">👁️ View</button>
                         </div>
                     </div>
@@ -206,6 +208,36 @@ Premium: ${user.is_premium ? 'Yes' : 'No'}
 Session Plans: ${user.session_plans_downloaded}/${user.session_plans_limit}
 Schemes: ${user.schemes_downloaded}/${user.schemes_limit}
 User ID: ${user.user_id}`);
+        }
+        
+        async function sendNotification() {
+            const checkboxes = document.querySelectorAll('.user-checkbox:checked');
+            if (checkboxes.length === 0) {
+                alert('Please select at least one user');
+                return;
+            }
+            
+            const message = prompt('Enter notification message:');
+            if (!message) return;
+            
+            const userIds = Array.from(checkboxes).map(cb => parseInt(cb.dataset.userId));
+            
+            try {
+                const response = await fetch(`${API_BASE}/admin/notify`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_ids: userIds, message })
+                });
+                
+                if (response.ok) {
+                    alert(`Notification sent to ${userIds.length} users`);
+                    checkboxes.forEach(cb => cb.checked = false);
+                } else {
+                    alert('Failed to send notification');
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
         }
 
         async function refreshData() {

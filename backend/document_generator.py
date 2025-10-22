@@ -22,6 +22,7 @@ def generate_session_plan_docx(data):
     
     # Basic Information Table
     table = doc.add_table(rows=8, cols=4)
+    table.style = 'Table Grid'
     table.alignment = WD_TABLE_ALIGNMENT.CENTER
     
     # Fill basic info
@@ -73,6 +74,8 @@ def generate_session_plan_docx(data):
     cells[2].text = 'Duration:'
     cells[3].text = data.get('duration', '')
     
+    doc.add_paragraph()
+    
     # Session Details
     doc.add_heading('Session Details', level=1)
     
@@ -93,14 +96,6 @@ def generate_session_plan_docx(data):
     
     doc.add_heading('References:', level=2)
     doc.add_paragraph(data.get('references', ''))
-    
-    if data.get('appendices'):
-        doc.add_heading('Appendices:', level=2)
-        doc.add_paragraph(data.get('appendices', ''))
-    
-    if data.get('reflection'):
-        doc.add_heading('Reflection:', level=2)
-        doc.add_paragraph(data.get('reflection', ''))
     
     # Save to temporary file
     temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
