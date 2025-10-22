@@ -456,16 +456,31 @@
     <!-- Config MUST load first before any auth functions -->
     <!-- Cache-busting timestamp forces CDN/browser to fetch fresh code -->
     <script src="config.js?t=20250120T105300Z"></script>
+    <script src="offline-docx-generator.js"></script>
     <script src="auth-fixed.js?t=20250120T105300Z"></script>
     <script>
-        // Enforce authentication for wizard page
+        // STRICT authentication enforcement for wizard page
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Wizard page loaded - checking authentication');
-            if (!requireAuth()) {
-                console.log('Authentication required - blocking access');
+            const session = getCurrentSession();
+            if (!session) {
+                console.log('❌ No session found - redirecting to home');
+                alert('Please login to access the Session Plan Wizard');
+                window.location.replace('index.html');
                 return;
             }
-            console.log('✅ User authenticated - wizard access granted');
+            console.log('✅ User authenticated:', session.name);
+        });
+        
+        // Block form submission if not authenticated
+        document.getElementById('wizardForm').addEventListener('submit', function(e) {
+            const session = getCurrentSession();
+            if (!session) {
+                e.preventDefault();
+                alert('Session expired. Please login again.');
+                window.location.replace('index.html');
+                return false;
+            }
         });
     </script>
     <script src="subscription-modal.js"></script>
@@ -576,28 +591,37 @@
                     showNotification('Session plan created successfully!', 'success');
                     
                     if (plan && plan.id) {
-                        // Try to download directly, fallback to login prompt if needed
                         const session = getCurrentSession();
                         if (session) {
                             await checkDownloadLimits('session_plan', plan.id);
                         } else {
                             showNotification('Session plan created! Please login to download.', 'success');
-                            setTimeout(() => {
-                                window.location.href = 'login.html';
-                            }, 2000);
                         }
-                    } else {
-                        showNotification('Error: Invalid plan ID received', 'error');
                     }
                 } else {
                     const errorText = await response.text();
                     console.error('API Error:', response.status, errorText);
-                    showNotification(`Error creating session plan: ${response.status} - ${errorText}`, 'error');
+                    showNotification(`Backend error: ${response.status}. Generating offline document...`, 'warning');
+                    
+                    // Fallback to offline generation
+                    if (typeof generateOfflineSessionPlan === 'function') {
+                        generateOfflineSessionPlan(formData);
+                        showNotification('Session plan generated offline (basic format)', 'success');
+                    }
                 }
             } catch (error) {
                 console.error('Network error details:', error);
                 if (error.name === 'TypeError' && error.message.includes('fetch')) {
-                    showNotification('Connection failed: Please check your internet connection and try again', 'error');
+                    showNotification('Backend offline. Generating document offline...', 'warning');
+                    
+                    // Generate offline document
+                    if (typeof generateOfflineSessionPlan === 'function') {
+                        const formData = new FormData(e.target);
+                        generateOfflineSessionPlan(formData);
+                        showNotification('Session plan generated offline (basic format)', 'success');
+                    } else {
+                        showNotification('Unable to generate document. Please try again later.', 'error');
+                    }
                 } else {
                     showNotification('Network error: ' + error.message, 'error');
                 }

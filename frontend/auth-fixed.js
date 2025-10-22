@@ -53,13 +53,17 @@ function requireAuth() {
     return true;
 }
 
-// Protect wizard and scheme pages
+// Protect wizard and scheme pages - STRICT ENFORCEMENT
 function protectPage() {
     const currentPage = window.location.pathname;
-    const protectedPages = ['/wizard.html', '/scheme-wizard.html'];
+    const protectedPages = ['wizard.html', 'scheme-wizard.html'];
     
     if (protectedPages.some(page => currentPage.includes(page))) {
-        if (!requireAuth()) {
+        const session = getCurrentSession();
+        if (!session) {
+            // Immediately redirect to home and show login
+            window.location.replace('index.html');
+            setTimeout(() => showAuthModal(), 500);
             return false;
         }
     }

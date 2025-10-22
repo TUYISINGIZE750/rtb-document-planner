@@ -231,16 +231,31 @@
     <!-- Config MUST load first before any auth functions -->
     <!-- Cache-busting timestamp forces CDN/browser to fetch fresh code -->
     <script src="config.js?t=20250120T105300Z"></script>
+    <script src="offline-docx-generator.js"></script>
     <script src="auth-fixed.js?t=20250120T105300Z"></script>
     <script>
-        // Enforce authentication for scheme wizard page
+        // STRICT authentication enforcement for scheme wizard page
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Scheme wizard page loaded - checking authentication');
-            if (!requireAuth()) {
-                console.log('Authentication required - blocking access');
+            const session = getCurrentSession();
+            if (!session) {
+                console.log('❌ No session found - redirecting to home');
+                alert('Please login to access the Scheme of Work Wizard');
+                window.location.replace('index.html');
                 return;
             }
-            console.log('✅ User authenticated - scheme wizard access granted');
+            console.log('✅ User authenticated:', session.name);
+        });
+        
+        // Block form submission if not authenticated
+        document.getElementById('wizardForm').addEventListener('submit', function(e) {
+            const session = getCurrentSession();
+            if (!session) {
+                e.preventDefault();
+                alert('Session expired. Please login again.');
+                window.location.replace('index.html');
+                return false;
+            }
         });
     </script>
     <script src="subscription-modal.js"></script>
@@ -357,12 +372,27 @@
                 } else {
                     const errorText = await response.text();
                     console.error('API Error:', response.status, errorText);
-                    showNotification(`Error creating scheme: ${response.status} - ${errorText}`, 'error');
+                    showNotification(`Backend error: ${response.status}. Generating offline document...`, 'warning');
+                    
+                    // Fallback to offline generation
+                    if (typeof generateOfflineScheme === 'function') {
+                        generateOfflineScheme(formData);
+                        showNotification('Scheme of work generated offline (basic format)', 'success');
+                    }
                 }
             } catch (error) {
                 console.error('Network error details:', error);
                 if (error.name === 'TypeError' && error.message.includes('fetch')) {
-                    showNotification('Connection failed: Please check your internet connection and try again', 'error');
+                    showNotification('Backend offline. Generating document offline...', 'warning');
+                    
+                    // Generate offline document
+                    if (typeof generateOfflineScheme === 'function') {
+                        const formData = new FormData(e.target);
+                        generateOfflineScheme(formData);
+                        showNotification('Scheme of work generated offline (basic format)', 'success');
+                    } else {
+                        showNotification('Unable to generate document. Please try again later.', 'error');
+                    }
                 } else {
                     showNotification('Network error: ' + error.message, 'error');
                 }

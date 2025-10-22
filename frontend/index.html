@@ -251,6 +251,7 @@
     <script>
         // Show user menu and subscription status
         document.addEventListener('DOMContentLoaded', function() {
+            checkForLoggedInUser();
             updateUserInterface();
         });
         
@@ -489,12 +490,57 @@
             }
         }
         
-        // Check limits before redirecting to creation pages
+        // Check authentication and limits before redirecting
         async function checkLimitsAndRedirect(type, url) {
+            const session = getCurrentSession();
+            if (!session) {
+                showAuthModal();
+                return;
+            }
+            
             const canProceed = await checkDownloadLimits(type);
             if (canProceed) {
                 window.location.href = url;
             }
+        }
+        
+        // Redirect logged-in users to dashboard
+        function checkForLoggedInUser() {
+            const session = getCurrentSession();
+            if (session && window.location.pathname.includes('index.html')) {
+                // User is logged in, show dashboard instead of landing page
+                showDashboard();
+            }
+        }
+        
+        function showDashboard() {
+            const container = document.querySelector('.container');
+            container.innerHTML = `
+                <div style="position: absolute; top: 2rem; right: 2rem;">
+                    <div id="userMenu"></div>
+                </div>
+                <h1><i class="fas fa-graduation-cap"></i> RTB Document Planner</h1>
+                <p>Welcome back! Create professional TVET documents</p>
+                
+                <div id="subscriptionStatus" style="margin-bottom: 2rem;"></div>
+                
+                <div class="buttons">
+                    <a href="#" onclick="checkLimitsAndRedirect('session_plan', 'wizard.html')" class="card-btn">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                        <h2>Session Plan</h2>
+                        <p>Create RTB-formatted session plans</p>
+                    </a>
+                    
+                    <a href="#" onclick="checkLimitsAndRedirect('scheme', 'scheme-wizard.html')" class="card-btn">
+                        <i class="fas fa-clipboard-list"></i>
+                        <h2>Scheme of Work</h2>
+                        <p>Generate comprehensive schemes</p>
+                    </a>
+                </div>
+            `;
+            
+            // Update user interface after showing dashboard
+            updateUserInterface();
         }
     </script>
 </body>
