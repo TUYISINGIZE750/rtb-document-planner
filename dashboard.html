@@ -83,8 +83,16 @@
         const API_BASE = 'https://leonardus437.pythonanywhere.com';
         
         function getSession() {
-            const session = localStorage.getItem('rtb_auth_session');
-            return session ? JSON.parse(session) : null;
+            try {
+                const session = localStorage.getItem('rtb_auth_session');
+                if (!session) return null;
+                const parsed = JSON.parse(session);
+                console.log('Session data:', parsed);
+                return parsed;
+            } catch (e) {
+                console.error('Session parse error:', e);
+                return null;
+            }
         }
 
         function logout() {
@@ -96,28 +104,38 @@
         async function loadUserData() {
             const session = getSession();
             
-            if (!session) {
+            if (!session || !session.name) {
+                console.error('No valid session found');
                 window.location.href = 'login.html';
                 return;
             }
 
-            document.getElementById('userName').textContent = session.name;
-            document.getElementById('welcomeName').textContent = session.name.split(' ')[0];
+            console.log('Loading data for:', session.name);
+            document.getElementById('userName').textContent = session.name || 'Teacher';
+            document.getElementById('welcomeName').textContent = (session.name || 'Teacher').split(' ')[0];
 
             try {
-                const response = await fetch(`${API_BASE}/user-limits/${session.phone}`);
+                const response = await fetch(`${API_BASE}/user-limits/${encodeURIComponent(session.phone)}`);
                 if (response.ok) {
                     const limits = await response.json();
-                    document.getElementById('sessionPlansRemaining').textContent = limits.session_plans_remaining;
-                    document.getElementById('schemesRemaining').textContent = limits.schemes_remaining;
+                    document.getElementById('sessionPlansRemaining').textContent = limits.session_plans_remaining || 0;
+                    document.getElementById('schemesRemaining').textContent = limits.schemes_remaining || 0;
                     document.getElementById('accountStatus').textContent = limits.is_premium ? '⭐ Premium' : '🆓 Free';
+                } else {
+                    console.error('Failed to load limits');
+                    document.getElementById('sessionPlansRemaining').textContent = '2';
+                    document.getElementById('schemesRemaining').textContent = '2';
+                    document.getElementById('accountStatus').textContent = '🆓 Free';
                 }
             } catch (error) {
                 console.error('Error loading limits:', error);
+                document.getElementById('sessionPlansRemaining').textContent = '2';
+                document.getElementById('schemesRemaining').textContent = '2';
+                document.getElementById('accountStatus').textContent = '🆓 Free';
             }
         }
 
-        loadUserData();
+        window.addEventListener('DOMContentLoaded', loadUserData);
     </script>
 </body>
 </html>

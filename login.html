@@ -168,11 +168,9 @@
         © 2025 RTB Document Planner. All rights reserved. | Developed for TVET Excellence
     </div>
 
-    <!-- Config MUST load first before any auth functions -->
-    <!-- Cache-busting timestamp forces CDN/browser to fetch fresh code -->
-    <script src="config.js?t=20250120T105300Z"></script>
-    <script src="auth.js?t=20250120T105300Z"></script>
     <script>
+        const API_BASE = 'https://leonardus437.pythonanywhere.com';
+        
         // Clear any existing session on login page load
         localStorage.removeItem('rtb_auth_session');
         sessionStorage.removeItem('rtb_auth_session');
@@ -202,29 +200,41 @@
             btn.textContent = 'Signing in...';
             
             try {
-                const result = await loginUser(phone, password, remember);
+                const response = await fetch(`${API_BASE}/users/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone, password })
+                });
                 
-                if (result.success) {
-                    const session = getCurrentSession();
-                    console.log('Login successful, redirecting...', session);
+                if (response.ok) {
+                    const user = await response.json();
+                    console.log('User logged in:', user);
                     
-                    // Use setTimeout to ensure session is saved
-                    setTimeout(() => {
-                        if (session && session.role === 'admin') {
-                            window.location.replace('admin.html');
-                        } else {
-                            window.location.replace('dashboard.html');
-                        }
-                    }, 100);
+                    // Save session
+                    const session = { 
+                        ...user, 
+                        loggedInAt: new Date().toISOString(),
+                        remember 
+                    };
+                    localStorage.setItem('rtb_auth_session', JSON.stringify(session));
+                    console.log('Session saved:', session);
+                    
+                    // Redirect based on role
+                    if (user.role === 'admin') {
+                        window.location.href = 'admin.html';
+                    } else {
+                        window.location.href = 'dashboard.html';
+                    }
                 } else {
-                    document.getElementById('phoneError').textContent = result.message;
+                    const error = await response.json();
+                    document.getElementById('phoneError').textContent = error.detail || 'Login failed';
                     document.getElementById('phoneError').classList.add('show');
                     btn.disabled = false;
                     btn.textContent = 'Sign In';
                 }
             } catch (error) {
                 console.error('Login error:', error);
-                document.getElementById('phoneError').textContent = 'An error occurred. Please try again.';
+                document.getElementById('phoneError').textContent = 'Connection error. Please try again.';
                 document.getElementById('phoneError').classList.add('show');
                 btn.disabled = false;
                 btn.textContent = 'Sign In';
