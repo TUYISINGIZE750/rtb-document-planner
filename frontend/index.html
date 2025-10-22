@@ -218,6 +218,7 @@
     <link rel="stylesheet" href="subscription-modal.css">
     <script src="connection-fix.js"></script>
     <script src="config.js"></script>
+    <script src="backend-status.js"></script>
     <script src="auth-fixed.js"></script>
     <script src="notifications.js"></script>
     <script src="user-registration.js"></script>
@@ -249,12 +250,17 @@
     </script>
     <script>
         // Show user menu and subscription status
-        const session = getCurrentSession();
-        const userMenu = document.getElementById('userMenu');
+        document.addEventListener('DOMContentLoaded', function() {
+            updateUserInterface();
+        });
         
-        console.log('Current session:', session);
-        
-        if (session) {
+        function updateUserInterface() {
+            const session = getCurrentSession();
+            const userMenu = document.getElementById('userMenu');
+            
+            console.log('Current session:', session);
+            
+            if (session) {
             userMenu.innerHTML = `
                 <div style="background: white; padding: 1rem 1.5rem; border-radius: 2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 1rem;">
                     <span style="color: #333; font-weight: 600;"><i class="fas fa-user-circle" style="color: #6366f1;"></i> ${session.name}</span>
@@ -263,17 +269,18 @@
                 </div>
             `;
             
-            // Load subscription status for teachers
-            if (session.role !== 'admin') {
-                loadSubscriptionStatus();
-            }
-        } else {
+                // Load subscription status for teachers
+                if (session.role !== 'admin') {
+                    loadSubscriptionStatus();
+                }
+            } else {
             userMenu.innerHTML = `
                 <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
                     <a href="login-select.html" style="padding: 0.75rem 1.5rem; background: white; color: #333; text-decoration: none; border-radius: 2rem; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"><i class="fas fa-sign-in-alt"></i> Sign In</a>
                     <a href="register.html" style="padding: 0.75rem 1.5rem; background: #6366f1; color: white; text-decoration: none; border-radius: 2rem; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"><i class="fas fa-user-plus"></i> Register</a>
                 </div>
             `;
+            }
         }
         
         async function loadSubscriptionStatus() {

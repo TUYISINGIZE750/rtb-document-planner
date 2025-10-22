@@ -216,17 +216,22 @@ async function handleLogin(event) {
             closeAuthModal();
             showNotification(`Welcome back, ${userData.name}!`, 'success');
             
-            // Refresh page to update UI
-            setTimeout(() => {
-                window.location.reload();
-            }, 1000);
+            // Update UI immediately without reload
+            updateAuthUI();
+            if (typeof updateUserInterface === 'function') {
+                updateUserInterface();
+            }
         } else {
             const error = await response.json();
             showNotification(error.detail || 'Login failed', 'error');
         }
     } catch (error) {
         console.error('Login error:', error);
-        showNotification('Connection error. Please try again.', 'error');
+        if (error.name === 'TypeError' && error.message.includes('fetch')) {
+            showNotification('Backend not available. Please contact admin.', 'error');
+        } else {
+            showNotification('Connection error. Please try again.', 'error');
+        }
     } finally {
         submitBtn.disabled = false;
         submitBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
@@ -277,7 +282,11 @@ async function handleRegister(event) {
         }
     } catch (error) {
         console.error('Registration error:', error);
-        showNotification('Connection error. Please try again.', 'error');
+        if (error.name === 'TypeError' && error.message.includes('fetch')) {
+            showNotification('Backend not available. Please contact admin.', 'error');
+        } else {
+            showNotification('Connection error. Please try again.', 'error');
+        }
     } finally {
         submitBtn.disabled = false;
         submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Register';
