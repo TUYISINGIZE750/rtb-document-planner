@@ -226,27 +226,25 @@
     <script src="subscription-modal.js"></script>
     <script src="subscription-tracker.js"></script>
     <script>
-        // Prevent back button access after logout for teachers
-        (function() {
-            function preventBackAfterLogout() {
-                if (localStorage.getItem('rtb_logged_out') || sessionStorage.getItem('rtb_logged_out')) {
-                    window.location.replace('login-select.html');
-                    return;
+        // Handle logout with session clearing
+        function handleLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                clearSession();
+                sessionStorage.setItem('rtb_logged_out', 'true');
+                window.location.replace('index.html');
+            }
+        }
+        
+        // Prevent back button after logout
+        window.addEventListener('pageshow', function(event) {
+            if (sessionStorage.getItem('rtb_logged_out')) {
+                sessionStorage.removeItem('rtb_logged_out');
+                const session = getCurrentSession();
+                if (!session) {
+                    window.location.replace('index.html');
                 }
             }
-            
-            window.addEventListener('pageshow', function(event) {
-                if (event.persisted) {
-                    preventBackAfterLogout();
-                }
-            });
-            
-            window.addEventListener('popstate', function() {
-                preventBackAfterLogout();
-            });
-            
-            preventBackAfterLogout();
-        })();
+        });
     </script>
     <script>
         // Show user menu and subscription status
@@ -259,14 +257,16 @@
             const session = getCurrentSession();
             const userMenu = document.getElementById('userMenu');
             
+            if (!userMenu) return;
+            
             console.log('Current session:', session);
             
-            if (session) {
+            if (session && session.name) {
             userMenu.innerHTML = `
                 <div style="background: white; padding: 1rem 1.5rem; border-radius: 2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 1rem;">
-                    <span style="color: #333; font-weight: 600;"><i class="fas fa-user-circle" style="color: #6366f1;"></i> ${session.name}</span>
+                    <span style="color: #333; font-weight: 600;"><i class="fas fa-user-circle" style="color: #6366f1;"></i> ${session.name || 'User'}</span>
                     ${session.role === 'admin' ? '<a href="admin-fixed.html" style="padding: 0.5rem 1rem; background: #6366f1; color: white; text-decoration: none; border-radius: 0.5rem; font-weight: 600;"><i class="fas fa-shield-alt"></i> Admin</a>' : ''}
-                    <button onclick="logoutUser()" style="padding: 0.5rem 1rem; background: #ef4444; color: white; border: none; border-radius: 0.5rem; cursor: pointer; font-weight: 600;"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                    <button onclick="handleLogout()" style="padding: 0.5rem 1rem; background: #ef4444; color: white; border: none; border-radius: 0.5rem; cursor: pointer; font-weight: 600;"><i class="fas fa-sign-out-alt"></i> Logout</button>
                 </div>
             `;
             
@@ -285,6 +285,9 @@
         }
         
         async function loadSubscriptionStatus() {
+            const session = getCurrentSession();
+            if (!session) return;
+            
             try {
                 console.log('Loading subscription status for:', session.phone);
                 

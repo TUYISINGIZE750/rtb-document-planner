@@ -10,6 +10,12 @@ def generate_session_plan_docx(data):
     """Generate RTB Session Plan DOCX document"""
     doc = Document()
     
+    # Helper to get value from dict or object
+    def get_val(key, default=''):
+        if isinstance(data, dict):
+            return str(data.get(key, default))
+        return str(getattr(data, key, default))
+    
     # Header
     header = doc.sections[0].header
     header_para = header.paragraphs[0]
@@ -28,51 +34,51 @@ def generate_session_plan_docx(data):
     # Fill basic info
     cells = table.rows[0].cells
     cells[0].text = 'Sector:'
-    cells[1].text = data.get('sector', '')
+    cells[1].text = get_val('sector')
     cells[2].text = 'Sub-Sector:'
-    cells[3].text = data.get('sub_sector', '')
+    cells[3].text = get_val('sub_sector')
     
     cells = table.rows[1].cells
     cells[0].text = 'Trade:'
-    cells[1].text = data.get('trade', '')
+    cells[1].text = get_val('trade')
     cells[2].text = 'Qualification Title:'
-    cells[3].text = data.get('qualification_title', '')
+    cells[3].text = get_val('qualification_title')
     
     cells = table.rows[2].cells
     cells[0].text = 'RQF Level:'
-    cells[1].text = data.get('rqf_level', '')
+    cells[1].text = get_val('rqf_level')
     cells[2].text = 'Module Code & Title:'
-    cells[3].text = data.get('module_code_title', '')
+    cells[3].text = get_val('module_code_title')
     
     cells = table.rows[3].cells
     cells[0].text = 'Term:'
-    cells[1].text = data.get('term', '')
+    cells[1].text = get_val('term')
     cells[2].text = 'Week:'
-    cells[3].text = data.get('week', '')
+    cells[3].text = get_val('week')
     
     cells = table.rows[4].cells
     cells[0].text = 'Date:'
-    cells[1].text = data.get('date', '')
+    cells[1].text = get_val('date')
     cells[2].text = 'Trainer Name:'
-    cells[3].text = data.get('trainer_name', '')
+    cells[3].text = get_val('trainer_name')
     
     cells = table.rows[5].cells
     cells[0].text = 'Class:'
-    cells[1].text = data.get('class_name', '')
+    cells[1].text = get_val('class_name')
     cells[2].text = 'Number of Trainees:'
-    cells[3].text = data.get('number_of_trainees', '')
+    cells[3].text = get_val('number_of_trainees')
     
     cells = table.rows[6].cells
     cells[0].text = 'Learning Outcomes:'
-    cells[1].text = data.get('learning_outcomes', '')
+    cells[1].text = get_val('learning_outcomes')
     cells[2].text = 'Indicative Contents:'
-    cells[3].text = data.get('indicative_contents', '')
+    cells[3].text = get_val('indicative_contents')
     
     cells = table.rows[7].cells
     cells[0].text = 'Topic of Session:'
-    cells[1].text = data.get('topic_of_session', '')
+    cells[1].text = get_val('topic_of_session')
     cells[2].text = 'Duration:'
-    cells[3].text = data.get('duration', '')
+    cells[3].text = get_val('duration')
     
     doc.add_paragraph()
     
@@ -80,22 +86,22 @@ def generate_session_plan_docx(data):
     doc.add_heading('Session Details', level=1)
     
     doc.add_heading('Objectives:', level=2)
-    doc.add_paragraph(data.get('objectives', ''))
+    doc.add_paragraph(get_val('objectives'))
     
     doc.add_heading('Facilitation Techniques:', level=2)
-    doc.add_paragraph(data.get('facilitation_techniques', ''))
+    doc.add_paragraph(get_val('facilitation_techniques'))
     
     doc.add_heading('Learning Activities:', level=2)
-    doc.add_paragraph(data.get('learning_activities', ''))
+    doc.add_paragraph(get_val('learning_activities'))
     
     doc.add_heading('Resources:', level=2)
-    doc.add_paragraph(data.get('resources', ''))
+    doc.add_paragraph(get_val('resources'))
     
     doc.add_heading('Assessment Details:', level=2)
-    doc.add_paragraph(data.get('assessment_details', ''))
+    doc.add_paragraph(get_val('assessment_details'))
     
     doc.add_heading('References:', level=2)
-    doc.add_paragraph(data.get('references', ''))
+    doc.add_paragraph(get_val('references'))
     
     # Save to temporary file
     temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
@@ -122,6 +128,12 @@ def generate_scheme_of_work_docx(data):
     """Generate RTB Scheme of Work DOCX document"""
     doc = Document()
     
+    # Helper to get value from dict or object
+    def get_val(key, default=''):
+        if isinstance(data, dict):
+            return str(data.get(key, default))
+        return str(getattr(data, key, default))
+    
     # Header
     header = doc.sections[0].header
     header_para = header.paragraphs[0]
@@ -140,43 +152,43 @@ def generate_scheme_of_work_docx(data):
     
     cells = info_table.rows[0].cells
     cells[0].text = 'Province:'
-    cells[1].text = data.get('province', '')
+    cells[1].text = get_val('province')
     cells[2].text = 'District:'
-    cells[3].text = data.get('district', '')
+    cells[3].text = get_val('district')
     
     cells = info_table.rows[1].cells
     cells[0].text = 'Sector:'
-    cells[1].text = data.get('sector', '')
+    cells[1].text = get_val('sector')
     cells[2].text = 'School:'
-    cells[3].text = data.get('school', '')
+    cells[3].text = get_val('school')
     
     cells = info_table.rows[2].cells
     cells[0].text = 'Department/Trade:'
-    cells[1].text = data.get('department_trade', '')
+    cells[1].text = get_val('department_trade')
     cells[2].text = 'Qualification Title:'
-    cells[3].text = data.get('qualification_title', '')
+    cells[3].text = get_val('qualification_title')
     
     cells = info_table.rows[3].cells
     cells[0].text = 'RQF Level:'
-    cells[1].text = data.get('rqf_level', '')
+    cells[1].text = get_val('rqf_level')
     cells[2].text = 'Module Code & Title:'
-    cells[3].text = data.get('module_code_title', '')
+    cells[3].text = get_val('module_code_title')
     
     cells = info_table.rows[4].cells
     cells[0].text = 'School Year:'
-    cells[1].text = data.get('school_year', '')
+    cells[1].text = get_val('school_year')
     cells[2].text = 'Terms:'
-    cells[3].text = data.get('terms', '')
+    cells[3].text = get_val('terms')
     
     cells = info_table.rows[5].cells
     cells[0].text = 'Module Hours:'
-    cells[1].text = data.get('module_hours', '')
+    cells[1].text = get_val('module_hours')
     cells[2].text = 'Number of Classes:'
-    cells[3].text = data.get('number_of_classes', '')
+    cells[3].text = get_val('number_of_classes')
     
     # Term Details
     for term_num in [1, 2, 3]:
-        if data.get(f'term{term_num}_weeks'):
+        if get_val(f'term{term_num}_weeks'):
             doc.add_heading(f'Term {term_num}', level=1)
             
             term_table = doc.add_table(rows=1, cols=4)
@@ -191,10 +203,10 @@ def generate_scheme_of_work_docx(data):
             
             # Data row
             row_cells = term_table.add_row().cells
-            row_cells[0].text = data.get(f'term{term_num}_weeks', '')
-            row_cells[1].text = data.get(f'term{term_num}_learning_outcomes', '')
-            row_cells[2].text = data.get(f'term{term_num}_indicative_contents', '')
-            row_cells[3].text = data.get(f'term{term_num}_duration', '')
+            row_cells[0].text = get_val(f'term{term_num}_weeks')
+            row_cells[1].text = get_val(f'term{term_num}_learning_outcomes')
+            row_cells[2].text = get_val(f'term{term_num}_indicative_contents')
+            row_cells[3].text = get_val(f'term{term_num}_duration')
     
     # Signatures
     doc.add_heading('Signatures', level=1)
@@ -204,11 +216,11 @@ def generate_scheme_of_work_docx(data):
     
     cells = sig_table.rows[0].cells
     cells[0].text = 'Trainer Name:'
-    cells[1].text = data.get('trainer_name', '')
+    cells[1].text = get_val('trainer_name')
     
     cells = sig_table.rows[1].cells
     cells[0].text = 'DOS Name:'
-    cells[1].text = data.get('dos_name', '')
+    cells[1].text = get_val('dos_name')
     
     # Save to temporary file
     temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')

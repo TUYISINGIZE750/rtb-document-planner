@@ -303,11 +303,14 @@ async function handleRegister(event) {
 
 // Logout function
 function logoutUser() {
-    clearSession();
-    showNotification('Logged out successfully', 'success');
-    setTimeout(() => {
-        window.location.href = 'index.html';
-    }, 1000);
+    if (confirm('Are you sure you want to logout?')) {
+        clearSession();
+        sessionStorage.setItem('rtb_logged_out', 'true');
+        showNotification('Logged out successfully', 'success');
+        setTimeout(() => {
+            window.location.replace('index.html');
+        }, 500);
+    }
 }
 
 // Update UI based on login status
@@ -479,9 +482,26 @@ function showNotification(message, type = 'info') {
     }, 4000);
 }
 
+// Prevent back button after logout
+window.addEventListener('pageshow', function(event) {
+    if (sessionStorage.getItem('rtb_logged_out')) {
+        const session = getCurrentSession();
+        if (!session) {
+            sessionStorage.removeItem('rtb_logged_out');
+            window.location.replace('index.html');
+        }
+    }
+});
+
 // Initialize auth system
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🔐 Auth system initialized');
+    
+    // Clear logout flag on fresh page load
+    if (performance.navigation.type === 1) {
+        sessionStorage.removeItem('rtb_logged_out');
+    }
+    
     updateAuthUI();
     
     // Protect current page
