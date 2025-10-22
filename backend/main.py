@@ -431,6 +431,7 @@ def generate_scheme():
     except Exception as e:
         return jsonify({"detail": "Generation failed"}), 500
 
+@app.route('/users/', methods=['GET', 'OPTIONS'])
 @app.route('/admin/users', methods=['GET', 'OPTIONS'])
 def get_all_users():
     if request.method == 'OPTIONS':
@@ -547,6 +548,35 @@ def downgrade_user(user_id):
             db.close()
     except Exception as e:
         return jsonify({"detail": "Failed to downgrade user"}), 500
+
+@app.route('/stats', methods=['GET', 'OPTIONS'])
+def get_stats():
+    if request.method == 'OPTIONS':
+        return '', 204
+    
+    try:
+        db = SessionLocal()
+        try:
+            total_users = db.query(User).count()
+            premium_users = db.query(User).filter(User.is_premium == True).count()
+            active_users = db.query(User).filter(User.is_active == True).count()
+            
+            total_session_downloads = db.query(func.sum(User.session_plans_downloaded)).scalar() or 0
+            total_scheme_downloads = db.query(func.sum(User.schemes_downloaded)).scalar() or 0
+            total_downloads = total_session_downloads + total_scheme_downloads
+            
+            return jsonify({
+                "total_users": total_users,
+                "premium_users": premium_users,
+                "active_users": active_users,
+                "total_downloads": total_downloads,
+                "session_downloads": total_session_downloads,
+                "scheme_downloads": total_scheme_downloads
+            }), 200
+        finally:
+            db.close()
+    except Exception as e:
+        return jsonify({"detail": "Failed to get stats"}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
