@@ -166,11 +166,11 @@
         © 2025 RTB Document Planner. All rights reserved. | Developed for TVET Excellence
     </div>
 
-    <!-- Config MUST load first before any auth functions -->
-    <!-- Cache-busting timestamp forces CDN/browser to fetch fresh code -->
-    <script src="config.js?t=20250120T105300Z"></script>
-    <script src="auth.js?t=20250120T105300Z"></script>
+    <script src="config.js"></script>
+    <script src="auth.js"></script>
     <script>
+        console.log('Register page loaded, API_BASE:', typeof API_BASE !== 'undefined' ? API_BASE : 'NOT DEFINED');
+        
         document.getElementById('registerForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -203,13 +203,23 @@
             btn.disabled = true;
             btn.textContent = 'Creating account...';
             
-            const result = await registerUser(name, phone, email, institution, password);
-            
-            if (result.success) {
-                alert('Account created successfully! You can now sign in.');
-                window.location.href = 'login.html';
-            } else {
-                document.getElementById('phoneError').textContent = result.message;
+            try {
+                console.log('Calling registerUser with:', { name, phone, institution });
+                const result = await registerUser(name, phone, email, institution, password);
+                console.log('Registration result:', result);
+                
+                if (result.success) {
+                    alert('Account created successfully! You can now sign in.');
+                    window.location.href = 'login.html';
+                } else {
+                    document.getElementById('phoneError').textContent = result.message || 'Registration failed';
+                    document.getElementById('phoneError').classList.add('show');
+                    btn.disabled = false;
+                    btn.textContent = 'Sign Up';
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+                document.getElementById('phoneError').textContent = 'An error occurred. Please try again.';
                 document.getElementById('phoneError').classList.add('show');
                 btn.disabled = false;
                 btn.textContent = 'Sign Up';
