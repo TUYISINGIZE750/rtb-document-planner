@@ -1,0 +1,500 @@
+/* Subscription Modal Styles */
+.subscription-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    padding: 1rem;
+}
+
+.subscription-modal {
+    background: white;
+    border-radius: 1rem;
+    max-width: 900px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 1rem 1rem 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    transition: background 0.3s;
+}
+
+.close-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.modal-content {
+    padding: 2rem;
+}
+
+.upgrade-message {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: #f8fafc;
+    border-radius: 0.5rem;
+    border-left: 4px solid #6366f1;
+}
+
+.upgrade-message i {
+    color: #6366f1;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.upgrade-message p {
+    margin: 0;
+    color: #475569;
+}
+
+.subscription-plans {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.plan-card {
+    border: 2px solid #e2e8f0;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    background: white;
+}
+
+.plan-card:hover {
+    border-color: #6366f1;
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(99, 102, 241, 0.15);
+}
+
+.plan-card.premium {
+    border-color: #f59e0b;
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+}
+
+.plan-card.premium:hover {
+    border-color: #d97706;
+    box-shadow: 0 8px 25px rgba(245, 158, 11, 0.25);
+}
+
+.plan-badge {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #f59e0b;
+    color: white;
+    padding: 0.25rem 1rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.plan-header {
+    margin-bottom: 1rem;
+}
+
+.plan-header i {
+    font-size: 2rem;
+    color: #6366f1;
+    margin-bottom: 0.5rem;
+}
+
+.plan-card.premium .plan-header i {
+    color: #f59e0b;
+}
+
+.plan-header h3 {
+    margin: 0;
+    color: #1e293b;
+    font-size: 1.25rem;
+}
+
+.plan-price {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #6366f1;
+    margin-bottom: 0.5rem;
+}
+
+.plan-card.premium .plan-price {
+    color: #d97706;
+}
+
+.plan-savings {
+    color: #059669;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.plan-features {
+    margin: 1.5rem 0;
+}
+
+.feature {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 0.5rem;
+    color: #475569;
+}
+
+.feature i {
+    color: #10b981;
+    margin-right: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.select-plan-btn {
+    width: 100%;
+    padding: 0.75rem;
+    background: #6366f1;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.select-plan-btn:hover {
+    background: #4f46e5;
+}
+
+.premium-btn {
+    background: #f59e0b;
+}
+
+.premium-btn:hover {
+    background: #d97706;
+}
+
+/* Payment Instructions Styles */
+.selected-plan {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+    border-radius: 1rem;
+    border: 2px solid #0ea5e9;
+}
+
+.payment-highlight {
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    padding: 2rem;
+    border-radius: 1rem;
+    margin-bottom: 2rem;
+    border: 2px solid #f59e0b;
+    text-align: center;
+}
+
+.payment-highlight h3 {
+    color: #92400e;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+}
+
+.payment-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.payment-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.payment-row:last-child {
+    border-bottom: none;
+}
+
+.payment-label {
+    font-weight: 600;
+    color: #374151;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.payment-value {
+    font-weight: 700;
+    color: #1f2937;
+    font-size: 1.1rem;
+}
+
+.payment-value.amount {
+    color: #059669;
+    font-size: 1.5rem;
+}
+
+.payment-warning {
+    background: #fee2e2;
+    border: 2px solid #ef4444;
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    margin-top: 1rem;
+}
+
+.payment-warning i {
+    color: #dc2626;
+    margin-right: 0.5rem;
+}
+
+.payment-warning p {
+    margin: 0 0 1rem 0;
+    color: #991b1b;
+    font-weight: 600;
+}
+
+.payment-warning ul {
+    margin: 0;
+    padding-left: 1.5rem;
+    color: #991b1b;
+}
+
+.payment-warning li {
+    margin-bottom: 0.5rem;
+}
+
+.selected-plan h3 {
+    margin: 0 0 1rem 0;
+    color: #0c4a6e;
+}
+
+.selected-plan i {
+    color: #10b981;
+    margin-right: 0.5rem;
+}
+
+.plan-price-large {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #0ea5e9;
+}
+
+.payment-instructions {
+    margin-bottom: 2rem;
+}
+
+.payment-step {
+    display: flex;
+    margin-bottom: 2rem;
+    align-items: flex-start;
+}
+
+.step-number {
+    background: #6366f1;
+    color: white;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    margin-right: 1rem;
+    flex-shrink: 0;
+}
+
+.step-content {
+    flex: 1;
+}
+
+.step-content h4 {
+    margin: 0 0 0.5rem 0;
+    color: #1e293b;
+}
+
+.step-content p {
+    margin: 0;
+    color: #475569;
+    line-height: 1.6;
+}
+
+.payment-details {
+    background: #f8fafc;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border-left: 4px solid #6366f1;
+    margin-top: 0.5rem;
+}
+
+.payment-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    color: #374151;
+}
+
+.payment-info:last-child {
+    margin-bottom: 0;
+}
+
+.payment-info i {
+    color: #6366f1;
+    margin-right: 0.75rem;
+    width: 1.25rem;
+}
+
+.payment-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.refresh-btn {
+    background: #10b981;
+    color: white;
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+    font-size: 1rem;
+}
+
+.refresh-btn:hover {
+    background: #059669;
+}
+
+.refresh-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.back-btn {
+    background: #6b7280;
+    color: white;
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.back-btn:hover {
+    background: #4b5563;
+}
+
+.payment-note {
+    background: #fef3c7;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border-left: 4px solid #f59e0b;
+}
+
+.payment-note i {
+    color: #d97706;
+    margin-right: 0.5rem;
+}
+
+.payment-note p {
+    margin: 0;
+    color: #92400e;
+}
+
+/* Success Message Styles */
+.success-message {
+    text-align: center;
+    padding: 2rem;
+}
+
+.success-message h3 {
+    color: #1e293b;
+    margin: 1rem 0;
+    font-size: 1.5rem;
+}
+
+.success-message p {
+    color: #475569;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+.success-actions {
+    text-align: center;
+}
+
+.continue-btn {
+    background: #10b981;
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+    font-size: 1.1rem;
+}
+
+.continue-btn:hover {
+    background: #059669;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .subscription-modal {
+        margin: 1rem;
+        max-height: calc(100vh - 2rem);
+    }
+    
+    .modal-content {
+        padding: 1rem;
+    }
+    
+    .subscription-plans {
+        grid-template-columns: 1fr;
+    }
+    
+    .payment-actions {
+        flex-direction: column;
+    }
+    
+    .plan-price-large {
+        font-size: 2rem;
+    }
+}

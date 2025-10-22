@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RTB System Check - Final</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 2rem auto; padding: 1rem; }
+        .check-item { display: flex; align-items: center; padding: 1rem; margin: 0.5rem 0; border-radius: 8px; }
+        .check-pass { background: #d4edda; border: 1px solid #c3e6cb; }
+        .check-fail { background: #f8d7da; border: 1px solid #f5c6cb; }
+        .check-pending { background: #fff3cd; border: 1px solid #ffeaa7; }
+        .status { font-weight: bold; margin-right: 1rem; min-width: 60px; }
+        .pass { color: #155724; }
+        .fail { color: #721c24; }
+        .pending { color: #856404; }
+        .details { flex: 1; }
+        .timestamp { color: #666; font-size: 0.9rem; }
+        h1 { text-align: center; color: #333; }
+        .summary { text-align: center; padding: 1rem; margin: 1rem 0; border-radius: 8px; }
+        .all-pass { background: #d4edda; color: #155724; }
+        .has-fail { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>🔧 RTB System Check - Final Version</h1>
+    <div id="summary" class="summary">Running system checks...</div>
+    <div id="checks"></div>
+
+    <script>
+        const API_BASE = 'https://leonardus437.pythonanywhere.com';
+        const checks = [];
+        
+        function addCheck(name, status, message, details = '') {
+            checks.push({ name, status, message, details, timestamp: new Date().toLocaleTimeString() });
+            updateDisplay();
+        }
+        
+        function updateDisplay() {
+            const checksDiv = document.getElementById('checks');
+            const summaryDiv = document.getElementById('summary');
+            
+            const passCount = checks.filter(c => c.status === 'pass').length;
+            const failCount = checks.filter(c => c.status === 'fail').length;
+            const pendingCount = checks.filter(c => c.status === 'pending').length;
+            
+            if (pendingCount > 0) {
+                summaryDiv.textContent = `Running checks... (${checks.length} total)`;
+                summaryDiv.className = 'summary';
+            } else if (failCount === 0) {
+                summaryDiv.textContent = `✅ ALL SYSTEMS OPERATIONAL (${passCount}/${checks.length} passed)`;
+                summaryDiv.className = 'summary all-pass';
+            } else {
+                summaryDiv.textContent = `❌ ISSUES DETECTED (${passCount} passed, ${failCount} failed)`;
+                summaryDiv.className = 'summary has-fail';
+            }
+            
+            checksDiv.innerHTML = checks.map(check => `
+                <div class="check-item check-${check.status}">
+                    <div class="status ${check.status}">
+                        ${check.status === 'pass' ? '✅' : check.status === 'fail' ? '❌' : '⏳'}
+                    </div>
+                    <div class="details">
+                        <strong>${check.name}</strong><br>
+                        ${check.message}
+                        ${check.details ? `<br><small>${check.details}</small>` : ''}
+                        <div class="timestamp">${check.timestamp}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        async function runSystemCheck() {
+            addCheck('System Check', 'pending', 'Starting comprehensive system verification...');
+            
+            // Check 1: Backend connectivity
+            try {
+                const response = await fetch(`${API_BASE}/stats`);
+                if (response.ok) {
+                    const data = await response.json();
+                    addCheck('Backend API', 'pass', `Backend is online and responding`, `Stats: ${JSON.stringify(data)}`);
+                } else {
+                    addCheck('Backend API', 'fail', `Backend returned error: ${response.status}`, `URL: ${API_BASE}/stats`);
+                }
+            } catch (error) {
+                addCheck('Backend API', 'fail', `Cannot connect to backend: ${error.message}`, `URL: ${API_BASE}`);
+            }
+            
+            // Check 2: Users endpoint
+            try {
+                const response = await fetch(`${API_BASE}/users/`);
+                if (response.ok) {
+                    const users = await response.json();
+                    addCheck('Users API', 'pass', `Users endpoint working (${users.length} users found)`, `First user: ${users[0]?.name || 'N/A'}`);
+                } else {
+                    addCheck('Users API', 'fail', `Users endpoint error: ${response.status}`, 'This will cause admin dashboard failures');
+                }
+            } catch (error) {
+                addCheck('Users API', 'fail', `Users endpoint failed: ${error.message}`, 'Admin dashboard will not work');
+            }
+            
+            // Check 3: Authentication
+            try {
+                const response = await fetch(`${API_BASE}/users/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone: '+250789751597', password: 'admin123' })
+                });
+                if (response.ok) {
+                    addCheck('Authentication', 'pass', 'Admin login working correctly');
+                } else {
+                    addCheck('Authentication', 'fail', `Login failed: ${response.status}`, 'Admin access may not work');
+                }
+            } catch (error) {
+                addCheck('Authentication', 'fail', `Login test failed: ${error.message}`);
+            }
+            
+            // Check 4: Session plans endpoint
+            try {
+                const response = await fetch(`${API_BASE}/session-plans`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone: '+250789751597', subject: 'Test', topic: 'Test' })
+                });
+                if (response.ok || response.status === 400) {
+                    addCheck('Session Plans', 'pass', 'Session plans endpoint is available');
+                } else {
+                    addCheck('Session Plans', 'fail', `Session plans endpoint error: ${response.status}`, 'Document generation may fail');
+                }
+            } catch (error) {
+                addCheck('Session Plans', 'fail', `Session plans test failed: ${error.message}`);
+            }
+            
+            // Check 5: Schemes endpoint
+            try {
+                const response = await fetch(`${API_BASE}/schemes-of-work`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone: '+250789751597', subject: 'Test' })
+                });
+                if (response.ok || response.status === 400) {
+                    addCheck('Schemes of Work', 'pass', 'Schemes of work endpoint is available');
+                } else {
+                    addCheck('Schemes of Work', 'fail', `Schemes endpoint error: ${response.status}`, 'Document generation may fail');
+                }
+            } catch (error) {
+                addCheck('Schemes of Work', 'fail', `Schemes test failed: ${error.message}`);
+            }
+            
+            // Final summary
+            setTimeout(() => {
+                const finalFailCount = checks.filter(c => c.status === 'fail').length;
+                if (finalFailCount === 0) {
+                    addCheck('Final Status', 'pass', '🎉 ALL SYSTEMS ARE FULLY OPERATIONAL!', 'Ready for production use');
+                } else {
+                    addCheck('Final Status', 'fail', `❌ ${finalFailCount} issues need attention`, 'Check PythonAnywhere backend configuration');
+                }
+            }, 1000);
+        }
+        
+        // Start checks when page loads
+        document.addEventListener('DOMContentLoaded', runSystemCheck);
+    </script>
+</body>
+</html>

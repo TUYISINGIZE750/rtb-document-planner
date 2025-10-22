@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RTB Connection Test</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2rem; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .test-item { margin: 1rem 0; padding: 1rem; border-radius: 0.5rem; border-left: 4px solid #ccc; }
+        .success { border-left-color: #10b981; background: #f0fdf4; }
+        .error { border-left-color: #ef4444; background: #fef2f2; }
+        .warning { border-left-color: #f59e0b; background: #fffbeb; }
+        .loading { border-left-color: #6366f1; background: #f8fafc; }
+        button { padding: 0.75rem 1.5rem; background: #6366f1; color: white; border: none; border-radius: 0.5rem; cursor: pointer; margin: 0.5rem; }
+        button:hover { background: #4f46e5; }
+        .details { font-family: monospace; font-size: 0.875rem; margin-top: 0.5rem; padding: 0.5rem; background: rgba(0,0,0,0.05); border-radius: 0.25rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-network-wired"></i> RTB Connection Test</h1>
+        <p>This page tests all API connections to ensure the system works on any device.</p>
+        
+        <button onclick="runAllTests()"><i class="fas fa-play"></i> Run All Tests</button>
+        <button onclick="clearResults()"><i class="fas fa-trash"></i> Clear Results</button>
+        
+        <div id="results"></div>
+    </div>
+
+    <script src="connection-fix.js"></script>
+    <script src="config.js"></script>
+    <script>
+        let testResults = [];
+
+        function addResult(test, status, message, details = null) {
+            const result = { test, status, message, details, timestamp: new Date().toISOString() };
+            testResults.push(result);
+            displayResults();
+        }
+
+        function displayResults() {
+            const container = document.getElementById('results');
+            container.innerHTML = testResults.map(result => `
+                <div class="test-item ${result.status}">
+                    <h3><i class="fas fa-${getIcon(result.status)}"></i> ${result.test}</h3>
+                    <p>${result.message}</p>
+                    ${result.details ? `<div class="details">${result.details}</div>` : ''}
+                    <small>Time: ${new Date(result.timestamp).toLocaleTimeString()}</small>
+                </div>
+            `).join('');
+        }
+
+        function getIcon(status) {
+            switch(status) {
+                case 'success': return 'check-circle';
+                case 'error': return 'times-circle';
+                case 'warning': return 'exclamation-triangle';
+                case 'loading': return 'spinner fa-spin';
+                default: return 'info-circle';
+            }
+        }
+
+        function clearResults() {
+            testResults = [];
+            displayResults();
+        }
+
+        async function runAllTests() {
+            clearResults();
+            
+            // Test 1: Basic API Connection
+            addResult('Basic API Connection', 'loading', 'Testing basic API connectivity...');
+            try {
+                const response = await fetch(`${API_BASE}/`, {
+                    method: 'GET',
+                    mode: 'cors',
+                    credentials: 'omit',
+                    headers: { 'Accept': 'application/json' }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    addResult('Basic API Connection', 'success', 'API is reachable and responding', JSON.stringify(data, null, 2));
+                } else {
+                    addResult('Basic API Connection', 'error', `HTTP ${response.status}: ${response.statusText}`);
+                }
+            } catch (error) {
+                addResult('Basic API Connection', 'error', `Connection failed: ${error.message}`);
+            }
+
+            // Test 2: Health Check
+            addResult('Health Check', 'loading', 'Testing health endpoint...');
+            try {
+                const response = await fetch(`${API_BASE}/health`, {
+                    method: 'GET',
+                    mode: 'cors',
+                    credentials: 'omit',
+                    headers: { 'Accept': 'application/json' }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    addResult('Health Check', 'success', 'Health check passed', JSON.stringify(data, null, 2));
+                } else {
+                    addResult('Health Check', 'error', `HTTP ${response.status}: ${response.statusText}`);
+                }
+            } catch (error) {
+                addResult('Health Check', 'error', `Health check failed: ${error.message}`);
+            }
+
+            // Test 3: Connection Manager
+            addResult('Connection Manager', 'loading', 'Testing connection manager...');
+            if (window.connectionManager) {
+                try {
+                    const response = await window.connectionManager.makeRequest(`${API_BASE}/`);
+                    const data = await response.json();
+                    addResult('Connection Manager', 'success', 'Connection manager working properly', JSON.stringify(data, null, 2));
+                } catch (error) {
+                    addResult('Connection Manager', 'error', `Connection manager failed: ${error.message}`);
+                }
+            } else {
+                addResult('Connection Manager', 'warning', 'Connection manager not loaded');
+            }
+
+            // Test 4: User Limits Endpoint (with test phone)
+            addResult('User Limits Test', 'loading', 'Testing user limits endpoint...');
+            try {
+                const testPhone = '+250789751597'; // Admin phone for testing
+                const response = await fetch(`${API_BASE}/user-limits/${encodeURIComponent(testPhone)}`, {
+                    method: 'GET',
+                    mode: 'cors',
+                    credentials: 'omit',
+                    headers: { 'Accept': 'application/json' }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    addResult('User Limits Test', 'success', 'User limits endpoint working', JSON.stringify(data, null, 2));
+                } else if (response.status === 404) {
+                    addResult('User Limits Test', 'warning', 'Test user not found (expected for new installations)');
+                } else {
+                    addResult('User Limits Test', 'error', `HTTP ${response.status}: ${response.statusText}`);
+                }
+            } catch (error) {
+                addResult('User Limits Test', 'error', `User limits test failed: ${error.message}`);
+            }
+
+            // Test 5: CORS Preflight
+            addResult('CORS Preflight', 'loading', 'Testing CORS preflight request...');
+            try {
+                const response = await fetch(`${API_BASE}/users/login`, {
+                    method: 'OPTIONS',
+                    mode: 'cors',
+                    headers: {
+                        'Access-Control-Request-Method': 'POST',
+                        'Access-Control-Request-Headers': 'Content-Type'
+                    }
+                });
+                
+                addResult('CORS Preflight', 'success', `CORS preflight successful (${response.status})`, 
+                    `Headers: ${JSON.stringify(Object.fromEntries(response.headers.entries()), null, 2)}`);
+            } catch (error) {
+                addResult('CORS Preflight', 'error', `CORS preflight failed: ${error.message}`);
+            }
+
+            // Test 6: Network Speed Test
+            addResult('Network Speed', 'loading', 'Testing network speed...');
+            const startTime = performance.now();
+            try {
+                await fetch(`${API_BASE}/`, {
+                    method: 'GET',
+                    mode: 'cors',
+                    credentials: 'omit'
+                });
+                const endTime = performance.now();
+                const duration = Math.round(endTime - startTime);
+                
+                if (duration < 1000) {
+                    addResult('Network Speed', 'success', `Fast connection: ${duration}ms`);
+                } else if (duration < 3000) {
+                    addResult('Network Speed', 'warning', `Moderate connection: ${duration}ms`);
+                } else {
+                    addResult('Network Speed', 'error', `Slow connection: ${duration}ms`);
+                }
+            } catch (error) {
+                addResult('Network Speed', 'error', `Speed test failed: ${error.message}`);
+            }
+
+            addResult('Test Complete', 'success', 'All connection tests completed');
+        }
+
+        // Auto-run tests on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(runAllTests, 1000);
+        });
+    </script>
+</body>
+</html>

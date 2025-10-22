@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RTB Admin Control Center</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <style>
+        :root { --primary:#6366f1; --primary-dark:#4f46e5; --surface:#0f172a; --text:#0f172a; --muted:#64748b; --border:#e2e8f0; --success:#10b981; --warning:#f59e0b; --danger:#ef4444; }
+        * { box-sizing:border-box; }
+        body { margin:0; font-family:'Inter',sans-serif; background:linear-gradient(145deg,#eef2ff 0%,#dfe9ff 45%,#f8f9ff 100%); color:var(--text); }
+        .app { min-height:100vh; display:flex; flex-direction:column; }
+        .top-bar { display:flex; justify-content:space-between; align-items:center; padding:1.5rem 3rem; background:rgba(15,23,42,0.92); color:#fff; box-shadow:0 10px 40px rgba(15,23,42,0.3); position:sticky; top:0; z-index:20; backdrop-filter:blur(12px); }
+        .brand { display:flex; align-items:center; gap:0.75rem; font-weight:700; font-size:1.25rem; letter-spacing:0.02em; }
+        .brand i { font-size:1.5rem; }
+        .top-actions { display:flex; align-items:center; gap:1.5rem; }
+        .connection-pill { padding:0.35rem 0.9rem; border-radius:999px; font-size:0.85rem; font-weight:600; display:flex; align-items:center; gap:0.5rem; background:rgba(255,255,255,0.12); }
+        .connection-pill.online { background:rgba(16,185,129,0.15); color:#bbf7d0; }
+        .connection-pill.offline { background:rgba(239,68,68,0.15); color:#fecaca; }
+        .admin-badge { background:rgba(255,255,255,0.12); padding:0.5rem 1rem; border-radius:999px; font-size:0.9rem; font-weight:500; }
+        .btn { border:none; border-radius:0.75rem; padding:0.75rem 1.25rem; font-size:0.95rem; font-weight:600; cursor:pointer; transition:all 0.2s ease; display:inline-flex; align-items:center; justify-content:center; gap:0.5rem; }
+        .btn-primary { background:var(--primary); color:#fff; }
+        .btn-primary:hover { background:var(--primary-dark); box-shadow:0 12px 32px rgba(99,102,241,0.35); }
+        .btn-ghost { background:rgba(255,255,255,0.12); color:#fff; }
+        .btn-ghost:hover { background:rgba(255,255,255,0.18); }
+        .btn-neutral { background:#f1f5f9; color:var(--text); }
+        .btn-neutral:hover { background:#e2e8f0; }
+        .btn-outline { background:#fff; border:1px solid var(--border); color:var(--text); }
+        .btn-outline:hover { border-color:var(--primary); color:var(--primary); }
+        .btn-danger { background:var(--danger); color:#fff; }
+        .btn-warning { background:var(--warning); color:#fff; }
+        .btn-success { background:var(--success); color:#fff; }
+        .btn:disabled { opacity:0.65; cursor:not-allowed; box-shadow:none; }
+        .main-grid { flex:1; display:grid; gap:2rem; padding:2.5rem 3rem 3.5rem; grid-template-columns: minmax(0,1fr); }
+        .stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1.5rem; }
+        .stat-card { background:#fff; border-radius:1.25rem; padding:1.5rem; box-shadow:0 20px 50px rgba(15,23,42,0.08); position:relative; overflow:hidden; }
+        .stat-card::after { content:""; position:absolute; inset:auto -40% -40% auto; width:140%; height:140%; background:linear-gradient(225deg,rgba(99,102,241,0.25),rgba(15,23,42,0)); transform:rotate(-8deg); }
+        .stat-label { font-size:0.85rem; color:var(--muted); letter-spacing:0.04em; text-transform:uppercase; margin-bottom:0.5rem; }
+        .stat-value { font-size:2.4rem; font-weight:700; color:var(--text); margin-bottom:0.35rem; }
+        .stat-meta { font-size:0.85rem; color:var(--muted); display:flex; align-items:center; gap:0.35rem; }
+        .dashboard-panels { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:1.5rem; }
+        .panel { background:#fff; border-radius:1.25rem; padding:1.75rem; box-shadow:0 20px 50px rgba(15,23,42,0.08); display:flex; flex-direction:column; gap:1.25rem; }
+        .panel header { display:flex; align-items:center; justify-content:space-between; }
+        .panel header h2 { font-size:1.15rem; font-weight:700; margin:0; display:flex; align-items:center; gap:0.6rem; }
+        .panel header span { font-size:0.85rem; color:var(--muted); }
+        .filters { display:flex; flex-wrap:wrap; gap:0.75rem; }
+        .input, .select, .textarea { width:100%; border:1px solid var(--border); border-radius:0.9rem; padding:0.8rem 1rem; font-size:0.95rem; transition:0.2s; background:#fff; }
+        .input:focus, .select:focus, .textarea:focus { border-color:var(--primary); outline:none; box-shadow:0 0 0 4px rgba(99,102,241,0.12); }
+        .textarea { min-height:140px; resize:vertical; }
+        .filters .input, .filters .select { min-width:200px; }
+        .user-list { background:#fff; border-radius:1.25rem; box-shadow:0 25px 55px rgba(15,23,42,0.1); overflow:hidden; }
+        .user-header { display:flex; align-items:center; justify-content:space-between; padding:1.25rem 1.75rem; border-bottom:1px solid var(--border); }
+        .user-header h3 { margin:0; font-size:1.05rem; font-weight:700; display:flex; align-items:center; gap:0.5rem; }
+        .user-count { font-size:0.9rem; color:var(--muted); }
+        .user-items { max-height:520px; overflow-y:auto; }
+        .user-row { display:grid; grid-template-columns:1.5fr 1fr 1fr 1.2fr; gap:1rem; align-items:center; padding:1.25rem 1.75rem; border-bottom:1px solid var(--border); transition:0.2s; }
+        .user-row:hover { background:#f8fafc; }
+        .user-main { display:flex; flex-direction:column; gap:0.4rem; }
+        .user-name { font-weight:700; font-size:1.05rem; display:flex; align-items:center; gap:0.5rem; }
+        .user-meta { font-size:0.9rem; color:var(--muted); display:flex; flex-wrap:wrap; gap:0.75rem; }
+        .user-usage { display:flex; flex-direction:column; gap:0.45rem; font-size:0.85rem; color:var(--muted); }
+        .usage-pill { display:inline-flex; align-items:center; gap:0.4rem; padding:0.4rem 0.65rem; border-radius:999px; background:#eef2ff; color:#4338ca; font-weight:600; font-size:0.8rem; }
+        .tags { display:flex; flex-wrap:wrap; gap:0.4rem; }
+        .tag { display:inline-flex; align-items:center; gap:0.35rem; padding:0.35rem 0.65rem; border-radius:999px; font-size:0.75rem; font-weight:600; letter-spacing:0.02em; background:#f1f5f9; color:var(--muted); }
+        .tag.active { background:rgba(16,185,129,0.15); color:#047857; }
+        .tag.inactive { background:rgba(239,68,68,0.15); color:#b91c1c; }
+        .tag.premium { background:rgba(245,158,11,0.18); color:#b45309; }
+        .actions { display:flex; flex-wrap:wrap; gap:0.5rem; justify-content:flex-end; }
+        .actions .btn { padding:0.55rem 0.9rem; font-size:0.8rem; border-radius:0.65rem; }
+        .empty-state { padding:3rem; text-align:center; color:var(--muted); display:flex; flex-direction:column; gap:1rem; justify-content:center; align-items:center; }
+        .notification-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:1.5rem; }
+        .report-card { background:#fff; border-radius:1.25rem; padding:1.75rem; box-shadow:0 20px 45px rgba(15,23,42,0.08); display:flex; flex-direction:column; gap:1rem; }
+        .report-metrics { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1rem; }
+        .metric { padding:1rem; border-radius:1rem; background:#f8fafc; display:flex; flex-direction:column; gap:0.35rem; }
+        .metric strong { font-size:1.35rem; }
+        .metric span { font-size:0.85rem; color:var(--muted); }
+        .report-footer { display:flex; justify-content:space-between; gap:1rem; align-items:center; flex-wrap:wrap; }
+        .modal { position:fixed; inset:0; background:rgba(15,23,42,0.6); display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:0.2s ease; z-index:50; }
+        .modal.active { opacity:1; pointer-events:auto; }
+        .modal-card { background:#fff; border-radius:1.25rem; padding:2rem; max-width:430px; width:calc(100% - 2rem); box-shadow:0 35px 80px rgba(15,23,42,0.25); position:relative; display:flex; flex-direction:column; gap:1.25rem; }
+        .modal-card h3 { margin:0; font-size:1.25rem; font-weight:700; }
+        .modal-close { position:absolute; top:1.25rem; right:1.25rem; border:none; background:rgba(99,102,241,0.12); color:var(--primary); border-radius:999px; width:34px; height:34px; font-size:1rem; cursor:pointer; }
+        .modal-grid { display:grid; gap:1rem; }
+        .toast-container { position:fixed; right:2rem; bottom:2rem; display:flex; flex-direction:column; gap:0.75rem; z-index:60; }
+        .toast { padding:0.85rem 1.25rem; border-radius:0.9rem; color:#fff; min-width:240px; display:flex; align-items:center; gap:0.6rem; font-size:0.9rem; box-shadow:0 10px 40px rgba(15,23,42,0.25); animation:fade-in 0.2s ease; }
+        .toast.info { background:var(--primary); }
+        .toast.success { background:var(--success); }
+        .toast.error { background:var(--danger); }
+        .toast.warning { background:var(--warning); }
+        @keyframes fade-in { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+        @media (max-width:960px) {
+            .top-bar { padding:1.25rem 1.5rem; flex-wrap:wrap; gap:1rem; }
+            .main-grid { padding:2rem 1.5rem 3rem; }
+            .user-row { grid-template-columns:1fr; align-items:flex-start; }
+            .actions { justify-content:flex-start; }
+            .user-items { max-height:none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <header class="top-bar">
+            <div class="brand"><i class="fas fa-shield-halved"></i><span>RTB Admin Control</span></div>
+            <div class="top-actions">
+                <div id="connectionState" class="connection-pill"><i class="fas fa-circle-notch fa-spin"></i><span>Checking...</span></div>
+                <div id="adminIdentity" class="admin-badge"></div>
+                <button id="logoutBtn" class="btn btn-ghost"><i class="fas fa-sign-out-alt"></i>Logout</button>
+            </div>
+        </header>
+        <main class="main-grid">
+            <section class="stats-grid">
+                <article class="stat-card">
+                    <div class="stat-label">Total Users</div>
+                    <div id="statTotalUsers" class="stat-value">-</div>
+                    <div id="statFreeUsers" class="stat-meta"><i class="fas fa-users"></i></div>
+                </article>
+                <article class="stat-card">
+                    <div class="stat-label">Active Users</div>
+                    <div id="statActiveUsers" class="stat-value">-</div>
+                    <div id="statInactiveUsers" class="stat-meta"><i class="fas fa-user-clock"></i></div>
+                </article>
+                <article class="stat-card">
+                    <div class="stat-label">Premium Accounts</div>
+                    <div id="statPremiumUsers" class="stat-value">-</div>
+                    <div class="stat-meta"><i class="fas fa-gem"></i><span id="statPremiumShare"></span></div>
+                </article>
+                <article class="stat-card">
+                    <div class="stat-label">Total Downloads</div>
+                    <div id="statDownloads" class="stat-value">-</div>
+                    <div class="stat-meta"><i class="fas fa-file-download"></i><span id="statDownloadsMeta"></span></div>
+                </article>
+            </section>
+            <section class="panel">
+                <header>
+                    <h2><i class="fas fa-filter"></i>Filters & Controls</h2>
+                    <span>Refine user insights</span>
+                </header>
+                <div class="filters">
+                    <input id="searchInput" class="input" type="search" placeholder="Search by name, phone, or institution">
+                    <select id="statusFilter" class="select">
+                        <option value="all">All statuses</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                    <select id="tierFilter" class="select">
+                        <option value="all">All tiers</option>
+                        <option value="premium">Premium only</option>
+                        <option value="free">Free only</option>
+                    </select>
+                    <button id="refreshBtn" class="btn btn-neutral"><i class="fas fa-rotate"></i>Refresh</button>
+                </div>
+            </section>
+            <section class="user-list">
+                <div class="user-header">
+                    <h3><i class="fas fa-users"></i>User Directory</h3>
+                    <div id="userCount" class="user-count"></div>
+                </div>
+                <div id="userItems" class="user-items"></div>
+            </section>
+            <section class="notification-grid">
+                <article class="panel">
+                    <header>
+                        <h2><i class="fas fa-bullhorn"></i>Broadcast Notification</h2>
+                        <span>Deliver announcements instantly</span>
+                    </header>
+                    <form id="broadcastForm" class="modal-grid">
+                        <select id="broadcastTarget" class="select" required>
+                            <option value="all">All users</option>
+                            <option value="premium">Premium users</option>
+                            <option value="free">Free users</option>
+                            <option value="inactive">Inactive users</option>
+                        </select>
+                        <textarea id="broadcastMessage" class="textarea" placeholder="Message content" required></textarea>
+                        <div style="display:flex; gap:0.75rem; justify-content:flex-end;">
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i>Send notification</button>
+                        </div>
+                    </form>
+                </article>
+                <article class="panel">
+                    <header>
+                        <h2><i class="fas fa-chart-line"></i>Usage Reporting</h2>
+                        <span>Monitor platform performance</span>
+                    </header>
+                    <div class="report-card">
+                        <div id="reportTotals" class="filters" style="flex-direction:column; gap:0.5rem; align-items:flex-start;"></div>
+                        <div class="report-metrics">
+                            <div class="metric"><strong id="metricSessionDownloads">-</strong><span>Session plan downloads</span></div>
+                            <div class="metric"><strong id="metricSchemeDownloads">-</strong><span>Schemes downloaded</span></div>
+                            <div class="metric"><strong id="metricPremiumShare">-</strong><span>Premium adoption</span></div>
+                        </div>
+                        <div class="report-footer">
+                            <span id="reportLastSync" style="font-size:0.85rem; color:var(--muted);"></span>
+                            <div style="display:flex; gap:0.5rem;">
+                                <button id="exportBtn" class="btn btn-outline"><i class="fas fa-file-export"></i>Export CSV</button>
+                                <button id="downloadReportBtn" class="btn btn-primary"><i class="fas fa-chart-pie"></i>Download summary</button>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            </section>
+        </main>
+    </div>
+    <div id="userModal" class="modal">
+        <div class="modal-card">
+            <button class="modal-close" data-close-modal="userModal">&times;</button>
+            <h3>Update member</h3>
+            <form id="userForm" class="modal-grid">
+                <input id="editName" class="input" type="text" placeholder="Full name" required>
+                <input id="editInstitution" class="input" type="text" placeholder="Institution" required>
+                <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:0.75rem;">
+                    <input id="editSessionLimit" class="input" type="number" min="0" placeholder="Session plan limit" required>
+                    <input id="editSchemesLimit" class="input" type="number" min="0" placeholder="Scheme limit" required>
+                </div>
+                <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:0.75rem;">
+                    <select id="editPremium" class="select" required>
+                        <option value="true">Premium</option>
+                        <option value="false">Free</option>
+                    </select>
+                    <select id="editStatus" class="select" required>
+                        <option value="true">Active</option>
+                        <option value="false">Inactive</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Save changes</button>
+            </form>
+        </div>
+    </div>
+    <div id="messageModal" class="modal">
+        <div class="modal-card">
+            <button class="modal-close" data-close-modal="messageModal">&times;</button>
+            <h3>Send personal message</h3>
+            <div id="messageRecipient" style="font-size:0.9rem; color:var(--muted);"></div>
+            <form id="messageForm" class="modal-grid">
+                <textarea id="messageBody" class="textarea" placeholder="Message" required></textarea>
+                <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i>Send message</button>
+            </form>
+        </div>
+    </div>
+    <div id="toastContainer" class="toast-container"></div>
+    <script src="config-final.js"></script>
+    <script src="auth.js"></script>
+    <script>
+        const apiBase = typeof API_BASE !== 'undefined' ? API_BASE : (window.API_BASE || '');
+        let users = [];
+        let filteredUsers = [];
+        let stats = null;
+        let selectedUser = null;
+        const elements = {
+            connection: document.getElementById('connectionState'),
+            adminIdentity: document.getElementById('adminIdentity'),
+            logout: document.getElementById('logoutBtn'),
+            statTotal: document.getElementById('statTotalUsers'),
+            statFree: document.getElementById('statFreeUsers'),
+            statActive: document.getElementById('statActiveUsers'),
+            statInactive: document.getElementById('statInactiveUsers'),
+            statPremium: document.getElementById('statPremiumUsers'),
+            statPremiumShare: document.getElementById('statPremiumShare'),
+            statDownloads: document.getElementById('statDownloads'),
+            statDownloadsMeta: document.getElementById('statDownloadsMeta'),
+            search: document.getElementById('searchInput'),
+            statusFilter: document.getElementById('statusFilter'),
+            tierFilter: document.getElementById('tierFilter'),
+            refresh: document.getElementById('refreshBtn'),
+            userCount: document.getElementById('userCount'),
+            userItems: document.getElementById('userItems'),
+            broadcastForm: document.getElementById('broadcastForm'),
+            broadcastTarget: document.getElementById('broadcastTarget'),
+            broadcastMessage: document.getElementById('broadcastMessage'),
+            exportBtn: document.getElementById('exportBtn'),
+            downloadReportBtn: document.getElementById('downloadReportBtn'),
+            reportTotals: document.getElementById('reportTotals'),
+            metricSession: document.getElementById('metricSessionDownloads'),
+            metricScheme: document.getElementById('metricSchemeDownloads'),
+            metricPremiumShare: document.getElementById('metricPremiumShare'),
+            reportLastSync: document.getElementById('reportLastSync'),
+            userModal: document.getElementById('userModal'),
+            messageModal: document.getElementById('messageModal'),
+            userForm: document.getElementById('userForm'),
+            editName: document.getElementById('editName'),
+            editInstitution: document.getElementById('editInstitution'),
+            editSessionLimit: document.getElementById('editSessionLimit'),
+            editSchemesLimit: document.getElementById('editSchemesLimit'),
+            editPremium: document.getElementById('editPremium'),
+            editStatus: document.getElementById('editStatus'),
+            messageForm: document.getElementById('messageForm'),
+            messageBody: document.getElementById('messageBody'),
+            messageRecipient: document.getElementById('messageRecipient'),
+            toastContainer: document.getElementById('toastContainer')
+        };
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<i class="fas fa-circle-info"></i><span>${message}</span>`;
+            if (type === 'success') toast.innerHTML = `<i class="fas fa-check-circle"></i><span>${message}</span>`;
+            if (type === 'error') toast.innerHTML = `<i class="fas fa-triangle-exclamation"></i><span>${message}</span>`;
+            if (type === 'warning') toast.innerHTML = `<i class="fas fa-exclamation-circle"></i><span>${message}</span>`;
+            elements.toastContainer.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 220);
+            }, 3800);
+        }
+        function setConnectionState(online, meta = '') {
+            elements.connection.classList.toggle('online', online);
+            elements.connection.classList.toggle('offline', !online);
+            elements.connection.innerHTML = online ? `<i class="fas fa-signal"></i><span>${meta || 'Connected'}</span>` : `<i class="fas fa-triangle-exclamation"></i><span>${meta || 'Offline'}</span>`;
+        }
+        async function pingBackend() {
+            try {
+                const response = await fetch(`${apiBase}/`);
+                if (!response.ok) {
+                    setConnectionState(false, 'Unreachable');
+                    return false;
+                }
+                const payload = await response.json();
+                setConnectionState(true, payload.message || 'Online');
+                return true;
+            } catch (error) {
+                setConnectionState(false, 'Connection failed');
+                return false;
+            }
+        }
+        function updateAdminDetails() {
+            const session = typeof getCurrentSession === 'function' ? getCurrentSession() : null;
+            if (session) {
+                elements.adminIdentity.textContent = `${session.name || 'Administrator'} • ${session.phone || ''}`;
+            } else {
+                elements.adminIdentity.textContent = '';
+            }
+        }
+        function updateStatsView() {
+            if (!stats) return;
+            elements.statTotal.textContent = stats.total_users ?? 0;
+            const freeUsers = (stats.total_users ?? 0) - (stats.premium_users ?? 0);
+            const inactiveUsers = (stats.total_users ?? 0) - (stats.active_users ?? 0);
+            elements.statFree.textContent = `${freeUsers} free`;
+            elements.statActive.textContent = stats.active_users ?? 0;
+            elements.statInactive.textContent = `${inactiveUsers} inactive`;
+            elements.statPremium.textContent = stats.premium_users ?? 0;
+            const premiumShare = stats.total_users ? ((stats.premium_users / stats.total_users) * 100).toFixed(1) : '0.0';
+            elements.statPremiumShare.textContent = `${premiumShare}% premium`;
+            elements.statDownloads.textContent = stats.total_downloads ?? 0;
+            const avgDownloads = stats.total_users ? Math.round((stats.total_downloads || 0) / stats.total_users) : 0;
+            elements.statDownloadsMeta.textContent = `${avgDownloads} avg per user`;
+            elements.metricPremiumShare.textContent = `${premiumShare}%`;
+            const totals = computeDownloadBreakdown();
+            elements.metricSession.textContent = totals.session;
+            elements.metricScheme.textContent = totals.scheme;
+            elements.reportTotals.innerHTML = `<div><strong>${stats.total_users ?? 0}</strong> total users</div><div><strong>${stats.active_users ?? 0}</strong> active members</div><div><strong>${stats.premium_users ?? 0}</strong> premium subscriptions</div>`;
+        }
+        function computeDownloadBreakdown() {
+            let sessionDownloads = 0;
+            let schemeDownloads = 0;
+            users.forEach(user => {
+                sessionDownloads += user.session_plans_downloaded || 0;
+                schemeDownloads += user.schemes_downloaded || 0;
+            });
+            return { session: sessionDownloads, scheme: schemeDownloads };
+        }
+        function updateUserListView() {
+            if (!filteredUsers.length) {
+                elements.userItems.innerHTML = `<div class="empty-state"><i class="fas fa-inbox fa-2x"></i><div>No users match the current filters.</div><small>Try adjusting your filters or refresh data.</small></div>`;
+                elements.userCount.textContent = '0 users';
+                return;
+            }
+            elements.userCount.textContent = `${filteredUsers.length} users`;
+            const rows = filteredUsers.map(user => {
+                const premiumTag = user.is_premium ? '<span class="tag premium"><i class="fas fa-gem"></i>Premium</span>' : '<span class="tag"><i class="fas fa-circle"></i>Free</span>';
+                const statusTag = user.is_active ? '<span class="tag active"><i class="fas fa-check"></i>Active</span>' : '<span class="tag inactive"><i class="fas fa-ban"></i>Inactive</span>';
+                const sessionUsage = `${user.session_plans_downloaded || 0}/${user.session_plans_limit ?? 0}`;
+                const schemeUsage = `${user.schemes_downloaded || 0}/${user.schemes_limit ?? 0}`;
+                return `<div class="user-row" data-phone="${user.phone}">
+                    <div class="user-main">
+                        <div class="user-name">${user.name || 'Unnamed'} ${premiumTag}</div>
+                        <div class="user-meta"><span><i class="fas fa-phone"></i> ${user.phone || '-'}</span><span><i class="fas fa-school"></i> ${user.institution || 'N/A'}</span><span><i class="fas fa-id-badge"></i> ${user.role || 'user'}</span></div>
+                    </div>
+                    <div class="user-usage">
+                        <span class="usage-pill"><i class="fas fa-file-alt"></i>${sessionUsage} session</span>
+                        <span class="usage-pill" style="background:#e0f2fe;color:#0369a1;"><i class="fas fa-book"></i>${schemeUsage} schemes</span>
+                    </div>
+                    <div class="tags">${statusTag}</div>
+                    <div class="actions">
+                        <button class="btn btn-outline" data-action="edit" data-phone="${user.phone}"><i class="fas fa-pen"></i>Edit</button>
+                        <button class="btn ${user.is_active ? 'btn-warning' : 'btn-success'}" data-action="status" data-phone="${user.phone}" data-active="${user.is_active ? '0' : '1'}">${user.is_active ? 'Deactivate' : 'Activate'}</button>
+                        <button class="btn ${user.is_premium ? 'btn-warning' : 'btn-primary'}" data-action="tier" data-phone="${user.phone}" data-premium="${user.is_premium ? '0' : '1'}">${user.is_premium ? 'Remove premium' : 'Grant premium'}</button>
+                        <button class="btn btn-neutral" data-action="message" data-phone="${user.phone}"><i class="fas fa-envelope"></i>Message</button>
+                    </div>
+                </div>`;
+            }).join('');
+            elements.userItems.innerHTML = rows;
+            document.querySelectorAll('.user-row .btn').forEach(button => {
+                button.addEventListener('click', handleUserAction);
+            });
+        }
+        function applyFilters() {
+            const searchTerm = elements.search.value.toLowerCase().trim();
+            const status = elements.statusFilter.value;
+            const tier = elements.tierFilter.value;
+            filteredUsers = users.filter(user => {
+                const matchesSearch = !searchTerm || `${user.name || ''}`.toLowerCase().includes(searchTerm) || `${user.phone || ''}`.toLowerCase().includes(searchTerm) || `${user.institution || ''}`.toLowerCase().includes(searchTerm);
+                const matchesStatus = status === 'all' || (status === 'active' && user.is_active) || (status === 'inactive' && !user.is_active);
+                const matchesTier = tier === 'all' || (tier === 'premium' && user.is_premium) || (tier === 'free' && !user.is_premium);
+                return matchesSearch && matchesStatus && matchesTier;
+            });
+            updateUserListView();
+        }
+        function handleUserAction(event) {
+            const button = event.currentTarget;
+            const phone = button.dataset.phone;
+            const action = button.dataset.action;
+            if (!phone) return;
+            if (action === 'edit') openUserModal(phone);
+            if (action === 'status') toggleStatus(phone, button.dataset.active === '1', button);
+            if (action === 'tier') togglePremium(phone, button.dataset.premium === '1', button);
+            if (action === 'message') openMessageModal(phone);
+        }
+        function openUserModal(phone) {
+            selectedUser = users.find(u => u.phone === phone) || null;
+            if (!selectedUser) return;
+            elements.editName.value = selectedUser.name || '';
+            elements.editInstitution.value = selectedUser.institution || '';
+            elements.editSessionLimit.value = selectedUser.session_plans_limit ?? 0;
+            elements.editSchemesLimit.value = selectedUser.schemes_limit ?? 0;
+            elements.editPremium.value = selectedUser.is_premium ? 'true' : 'false';
+            elements.editStatus.value = selectedUser.is_active ? 'true' : 'false';
+            openModal('userModal');
+        }
+        function openMessageModal(phone) {
+            selectedUser = users.find(u => u.phone === phone) || null;
+            if (!selectedUser) return;
+            elements.messageRecipient.textContent = `${selectedUser.name || ''} • ${selectedUser.phone || ''}`;
+            elements.messageBody.value = '';
+            openModal('messageModal');
+        }
+        function openModal(id) {
+            const modal = document.getElementById(id);
+            if (modal) modal.classList.add('active');
+        }
+        function closeModal(id) {
+            const modal = document.getElementById(id);
+            if (modal) modal.classList.remove('active');
+        }
+        async function toggleStatus(phone, shouldActivate, button) {
+            if (!apiBase) return;
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
+            try {
+                const response = await fetch(`${apiBase}/users/${encodeURIComponent(phone)}/status`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ is_active: shouldActivate })
+                });
+                if (!response.ok) throw new Error('Unable to update status');
+                showToast(`User ${shouldActivate ? 'activated' : 'deactivated'}`, 'success');
+                await loadUsers();
+            } catch (error) {
+                showToast(error.message || 'Status update failed', 'error');
+            } finally {
+                button.disabled = false;
+                button.innerHTML = shouldActivate ? 'Activate' : 'Deactivate';
+            }
+        }
+        async function togglePremium(phone, shouldGrant, button) {
+            if (!apiBase) return;
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
+            try {
+                const response = await fetch(`${apiBase}/users/${encodeURIComponent(phone)}/premium`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ is_premium: shouldGrant })
+                });
+                if (!response.ok) throw new Error('Unable to update subscription');
+                showToast(shouldGrant ? 'Premium granted' : 'Premium removed', 'success');
+                await loadUsers();
+            } catch (error) {
+                showToast(error.message || 'Subscription update failed', 'error');
+            } finally {
+                button.disabled = false;
+                button.innerHTML = shouldGrant ? 'Grant premium' : 'Remove premium';
+            }
+        }
+        async function handleBroadcast(event) {
+            event.preventDefault();
+            if (!apiBase) return;
+            const message = elements.broadcastMessage.value.trim();
+            if (!message) {
+                showToast('Enter a message before sending', 'warning');
+                return;
+            }
+            const submitBtn = elements.broadcastForm.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Sending';
+            try {
+                const response = await fetch(`${apiBase}/notifications/broadcast`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ target: elements.broadcastTarget.value, message })
+                });
+                if (!response.ok) throw new Error('Notification failed');
+                elements.broadcastMessage.value = '';
+                showToast('Notification dispatched', 'success');
+            } catch (error) {
+                showToast(error.message || 'Unable to send notification', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i>Send notification';
+            }
+        }
+        async function submitUserForm(event) {
+            event.preventDefault();
+            if (!selectedUser || !apiBase) return;
+            const submitBtn = elements.userForm.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Saving';
+            try {
+                const payload = {
+                    name: elements.editName.value.trim(),
+                    institution: elements.editInstitution.value.trim(),
+                    session_plans_limit: Number(elements.editSessionLimit.value),
+                    schemes_limit: Number(elements.editSchemesLimit.value),
+                    is_premium: elements.editPremium.value === 'true',
+                    is_active: elements.editStatus.value === 'true'
+                };
+                const response = await fetch(`${apiBase}/users/${encodeURIComponent(selectedUser.phone)}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (!response.ok) throw new Error('Update failed');
+                showToast('User updated successfully', 'success');
+                closeModal('userModal');
+                await loadUsers();
+            } catch (error) {
+                showToast(error.message || 'Unable to save changes', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Save changes';
+            }
+        }
+        async function submitMessageForm(event) {
+            event.preventDefault();
+            if (!selectedUser || !apiBase) return;
+            const message = elements.messageBody.value.trim();
+            if (!message) {
+                showToast('Enter a message', 'warning');
+                return;
+            }
+            const submitBtn = elements.messageForm.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Sending';
+            try {
+                const response = await fetch(`${apiBase}/notifications/send`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ recipient: selectedUser.phone, message, type: 'personal' })
+                });
+                if (!response.ok) throw new Error('Message failed');
+                elements.messageBody.value = '';
+                closeModal('messageModal');
+                showToast('Message sent', 'success');
+            } catch (error) {
+                showToast(error.message || 'Unable to send message', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i>Send message';
+            }
+        }
+        function exportUsers() {
+            if (!filteredUsers.length) {
+                showToast('No users to export', 'warning');
+                return;
+            }
+            const header = ['Name','Phone','Institution','Role','Active','Premium','Session Downloads','Session Limit','Scheme Downloads','Scheme Limit'];
+            const rows = filteredUsers.map(user => [
+                (user.name || '').replace(/"/g,'""'),
+                user.phone || '',
+                (user.institution || '').replace(/"/g,'""'),
+                user.role || 'user',
+                user.is_active ? 'Yes' : 'No',
+                user.is_premium ? 'Yes' : 'No',
+                user.session_plans_downloaded || 0,
+                user.session_plans_limit ?? 0,
+                user.schemes_downloaded || 0,
+                user.schemes_limit ?? 0
+            ]);
+            const csv = [header, ...rows].map(row => row.map(value => `"${value}"`).join(',')).join('\n');
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `rtb_users_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            showToast('Export ready', 'success');
+        }
+        function downloadSummary() {
+            const content = `RTB Admin Summary\nGenerated: ${new Date().toLocaleString()}\nTotal users: ${stats ? stats.total_users : '-'}\nActive users: ${stats ? stats.active_users : '-'}\nPremium users: ${stats ? stats.premium_users : '-'}\nTotal downloads: ${stats ? stats.total_downloads : '-'}\n`;
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `rtb_admin_summary_${Date.now()}.txt`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            showToast('Summary downloaded', 'success');
+        }
+        async function loadStats() {
+            if (!apiBase) return;
+            try {
+                const response = await fetch(`${apiBase}/stats`);
+                if (!response.ok) throw new Error('Stats unavailable');
+                stats = await response.json();
+                updateStatsView();
+            } catch (error) {
+                showToast(error.message || 'Unable to load stats', 'error');
+            }
+        }
+        async function loadUsers() {
+            if (!apiBase) return;
+            try {
+                const response = await fetch(`${apiBase}/users/`);
+                if (!response.ok) throw new Error('User fetch failed');
+                users = await response.json();
+                applyFilters();
+                updateStatsView();
+            } catch (error) {
+                users = [];
+                filteredUsers = [];
+                updateUserListView();
+                showToast(error.message || 'Unable to load users', 'error');
+            }
+        }
+        async function refreshAll() {
+            await pingBackend();
+            await Promise.all([loadStats(), loadUsers()]);
+            elements.reportLastSync.textContent = `Last sync ${new Date().toLocaleString()}`;
+        }
+        function bindActions() {
+            elements.logout.addEventListener('click', () => logoutUser && logoutUser());
+            elements.search.addEventListener('input', () => applyFilters());
+            elements.statusFilter.addEventListener('change', () => applyFilters());
+            elements.tierFilter.addEventListener('change', () => applyFilters());
+            elements.refresh.addEventListener('click', () => refreshAll());
+            elements.broadcastForm.addEventListener('submit', handleBroadcast);
+            elements.userForm.addEventListener('submit', submitUserForm);
+            elements.messageForm.addEventListener('submit', submitMessageForm);
+            elements.exportBtn.addEventListener('click', exportUsers);
+            elements.downloadReportBtn.addEventListener('click', downloadSummary);
+            document.querySelectorAll('[data-close-modal]').forEach(button => {
+                button.addEventListener('click', () => closeModal(button.dataset.closeModal));
+            });
+            window.addEventListener('keydown', event => {
+                if (event.key === 'Escape') {
+                    closeModal('userModal');
+                    closeModal('messageModal');
+                }
+            });
+        }
+        async function init() {
+            if (typeof protectAdminPage === 'function') protectAdminPage();
+            updateAdminDetails();
+            bindActions();
+            await refreshAll();
+            setInterval(() => loadStats(), 60000);
+        }
+        init();
+    </script>
+</body>
+</html>

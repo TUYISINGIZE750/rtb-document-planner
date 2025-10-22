@@ -163,38 +163,50 @@
         © 2025 RTB Document Planner. All rights reserved. | Developed for TVET Excellence
     </div>
 
-    <script src="frontend/config.js"></script>
-    <script src="frontend/auth.js"></script>
+    <script src="config.js"></script>
+    <script src="auth.js"></script>
     <script>
+        // Clear any existing session and logout markers on admin login page load
         localStorage.removeItem('rtb_auth_session');
         sessionStorage.removeItem('rtb_auth_session');
         localStorage.removeItem('rtb_logged_out');
         sessionStorage.removeItem('rtb_logged_out');
+        
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+            
             const phone = document.getElementById('phone').value.trim();
             const password = document.getElementById('password').value;
             const remember = document.getElementById('remember').checked;
+            
             document.getElementById('phoneError').classList.remove('show');
             document.getElementById('passwordError').classList.remove('show');
+            
             if (!phone) {
                 document.getElementById('phoneError').classList.add('show');
                 return;
             }
+            
             if (password.length < 4) {
                 document.getElementById('passwordError').classList.add('show');
                 return;
             }
+            
             const btn = document.getElementById('signInBtn');
             btn.disabled = true;
             btn.textContent = 'Signing in...';
+            
             try {
                 const result = await loginUser(phone, password, remember);
+                
                 if (result.success) {
                     const session = getCurrentSession();
+                    console.log('Admin login successful, redirecting...', session);
+                    
+                    // Use setTimeout to ensure session is saved
                     setTimeout(() => {
                         if (session && session.role === 'admin') {
-                            window.location.replace('frontend/admin-final.html');
+                            window.location.replace('admin-final.html');
                         } else {
                             window.location.replace('index.html');
                         }

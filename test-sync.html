@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Sync Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: #f5f5f5;
+        }
+        .card {
+            background: white;
+            padding: 2rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 { color: #333; }
+        h2 { color: #666; margin-top: 0; }
+        button {
+            padding: 0.75rem 1.5rem;
+            background: #6366f1;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        button:hover { background: #4f46e5; }
+        pre {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .success { color: #10b981; font-weight: bold; }
+        .error { color: #ef4444; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>🔄 System Sync Test</h1>
+    
+    <div class="card">
+        <h2>Backend API Status</h2>
+        <button onclick="testBackend()">Test Backend Connection</button>
+        <div id="backendStatus"></div>
+    </div>
+    
+    <div class="card">
+        <h2>Frontend Data</h2>
+        <button onclick="showFrontendData()">Show Frontend Users</button>
+        <button onclick="showAuthUsers()">Show Auth Users</button>
+        <button onclick="showSubscription()">Show Subscription Data</button>
+        <div id="frontendData"></div>
+    </div>
+    
+    <div class="card">
+        <h2>Backend Data</h2>
+        <button onclick="showBackendSessionPlans()">Show Session Plans</button>
+        <button onclick="showBackendSchemes()">Show Schemes</button>
+        <div id="backendData"></div>
+    </div>
+    
+    <div class="card">
+        <h2>Sync Actions</h2>
+        <button onclick="syncData()">Sync All Data</button>
+        <button onclick="clearAllData()">Clear All Data</button>
+        <div id="syncStatus"></div>
+    </div>
+
+    <!-- Config MUST load first before any auth functions -->
+    <!-- Cache-busting timestamp forces CDN/browser to fetch fresh code -->
+    <script src="config.js?t=20250120T105300Z"></script>
+    <script src="auth.js?t=20250120T105300Z"></script>
+    <script src="subscription.js"></script>
+    <script src="user-registration.js"></script>
+    <script>
+        async function testBackend() {
+            const status = document.getElementById('backendStatus');
+            status.innerHTML = 'Testing...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/health`);
+                if (response.ok) {
+                    const data = await response.json();
+                    status.innerHTML = `<p class="success">✅ Backend is running!</p><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                } else {
+                    status.innerHTML = `<p class="error">❌ Backend returned error: ${response.status}</p>`;
+                }
+            } catch (error) {
+                status.innerHTML = `<p class="error">❌ Cannot connect to backend: ${error.message}</p>`;
+            }
+        }
+        
+        function showFrontendData() {
+            const data = document.getElementById('frontendData');
+            const users = getAllRegisteredUsers();
+            data.innerHTML = `
+                <h3>Registered Users (${users.length})</h3>
+                <pre>${JSON.stringify(users, null, 2)}</pre>
+            `;
+        }
+        
+        function showAuthUsers() {
+            const data = document.getElementById('frontendData');
+            const users = JSON.parse(localStorage.getItem('rtb_users_db') || '[]');
+            data.innerHTML = `
+                <h3>Auth Users (${users.length})</h3>
+                <pre>${JSON.stringify(users, null, 2)}</pre>
+            `;
+        }
+        
+        function showSubscription() {
+            const data = document.getElementById('frontendData');
+            const sub = getSubscriptionData();
+            data.innerHTML = `
+                <h3>Subscription Data</h3>
+                <pre>${JSON.stringify(sub, null, 2)}</pre>
+            `;
+        }
+        
+        async function showBackendSessionPlans() {
+            const data = document.getElementById('backendData');
+            data.innerHTML = 'Loading...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/session-plans/`);
+                const plans = await response.json();
+                data.innerHTML = `
+                    <h3>Session Plans (${plans.length})</h3>
+                    <pre>${JSON.stringify(plans, null, 2)}</pre>
+                `;
+            } catch (error) {
+                data.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+            }
+        }
+        
+        async function showBackendSchemes() {
+            const data = document.getElementById('backendData');
+            data.innerHTML = 'Loading...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/schemes-of-work/`);
+                const schemes = await response.json();
+                data.innerHTML = `
+                    <h3>Schemes of Work (${schemes.length})</h3>
+                    <pre>${JSON.stringify(schemes, null, 2)}</pre>
+                `;
+            } catch (error) {
+                data.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+            }
+        }
+        
+        async function syncData() {
+            const status = document.getElementById('syncStatus');
+            status.innerHTML = 'Syncing...';
+            
+            try {
+                // Get backend data
+                const [plansRes, schemesRes] = await Promise.all([
+                    fetch(`${API_BASE}/session-plans/`),
+                    fetch(`${API_BASE}/schemes-of-work/`)
+                ]);
+                
+                const plans = await plansRes.json();
+                const schemes = await schemesRes.json();
+                
+                // Get frontend data
+                const users = getAllRegisteredUsers();
+                const authUsers = JSON.parse(localStorage.getItem('rtb_users_db') || '[]');
+                const subscription = getSubscriptionData();
+                
+                status.innerHTML = `
+                    <p class="success">✅ Sync Complete!</p>
+                    <h3>Summary:</h3>
+                    <ul>
+                        <li>Frontend Users: ${users.length}</li>
+                        <li>Auth Users: ${authUsers.length}</li>
+                        <li>Backend Session Plans: ${plans.length}</li>
+                        <li>Backend Schemes: ${schemes.length}</li>
+                        <li>Downloads Used: ${subscription.sessionPlansDownloaded} plans, ${subscription.schemesDownloaded} schemes</li>
+                    </ul>
+                `;
+            } catch (error) {
+                status.innerHTML = `<p class="error">❌ Sync failed: ${error.message}</p>`;
+            }
+        }
+        
+        function clearAllData() {
+            if (confirm('⚠️ This will clear ALL localStorage data. Continue?')) {
+                localStorage.clear();
+                document.getElementById('syncStatus').innerHTML = '<p class="success">✅ All data cleared!</p>';
+            }
+        }
+        
+        // Auto-test on load
+        window.addEventListener('load', () => {
+            testBackend();
+            syncData();
+        });
+    </script>
+</body>
+</html>

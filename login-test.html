@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login Test</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        .test { margin: 10px 0; padding: 10px; border-radius: 5px; }
+        .success { background: #d4edda; }
+        .error { background: #f8d7da; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Login Test Page</h1>
+    
+    <h2>Test Admin Login</h2>
+    <button onclick="testAdminLogin()">Test Admin Login</button>
+    
+    <h2>Test Teacher Login</h2>
+    <input type="text" id="teacherPhone" placeholder="+250788123456">
+    <input type="password" id="teacherPassword" placeholder="password">
+    <button onclick="testTeacherLogin()">Test Teacher Login</button>
+    
+    <h2>Check Session</h2>
+    <button onclick="checkSession()">Check Current Session</button>
+    
+    <div id="results"></div>
+    
+    <script src="config.js"></script>
+    <script src="auth.js"></script>
+    <script>
+        const results = document.getElementById('results');
+        
+        async function testAdminLogin() {
+            results.innerHTML = '<div class="test">Testing admin login...</div>';
+            
+            const result = await loginUser('+250789751597', 'admin123', true);
+            
+            if (result.success) {
+                const session = getCurrentSession();
+                results.innerHTML += `<div class="test success">
+                    ✅ Admin Login SUCCESS<br>
+                    Role: ${session.role}<br>
+                    Name: ${session.name}<br>
+                    Session ID: ${session.sessionId}
+                </div>`;
+                
+                setTimeout(() => {
+                    window.location.href = 'admin.html';
+                }, 2000);
+            } else {
+                results.innerHTML += `<div class="test error">
+                    ❌ Admin Login FAILED<br>
+                    Error: ${result.message}
+                </div>`;
+            }
+        }
+        
+        async function testTeacherLogin() {
+            const phone = document.getElementById('teacherPhone').value;
+            const password = document.getElementById('teacherPassword').value;
+            
+            results.innerHTML = '<div class="test">Testing teacher login...</div>';
+            
+            const result = await loginUser(phone, password, true);
+            
+            if (result.success) {
+                const session = getCurrentSession();
+                results.innerHTML += `<div class="test success">
+                    ✅ Teacher Login SUCCESS<br>
+                    Role: ${session.role}<br>
+                    Name: ${session.name}<br>
+                    Session ID: ${session.sessionId}
+                </div>`;
+                
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
+            } else {
+                results.innerHTML += `<div class="test error">
+                    ❌ Teacher Login FAILED<br>
+                    Error: ${result.message}
+                </div>`;
+            }
+        }
+        
+        function checkSession() {
+            const session = getCurrentSession();
+            
+            if (session) {
+                results.innerHTML = `<div class="test success">
+                    ✅ Session EXISTS<br>
+                    Role: ${session.role}<br>
+                    Name: ${session.name}<br>
+                    Phone: ${session.phone}<br>
+                    Logged in: ${session.loggedInAt}<br>
+                    Expires: ${session.expiresAt}
+                </div>`;
+            } else {
+                results.innerHTML = `<div class="test error">
+                    ❌ No session found
+                </div>`;
+            }
+        }
+    </script>
+</body>
+</html>

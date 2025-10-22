@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - RTB Document Planner</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        
+        .container {
+            text-align: center;
+            max-width: 450px;
+            width: 100%;
+            padding: 2rem 1rem;
+        }
+        
+        .header {
+            margin-bottom: 2rem;
+        }
+        
+        .logo {
+            color: white;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .subtitle {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .description {
+            color: rgba(255,255,255,0.8);
+            font-size: 1rem;
+        }
+        
+        .login-options {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .login-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 3rem 2rem;
+            width: 280px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            text-decoration: none;
+            display: block;
+        }
+        
+        .login-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        .login-card.teacher {
+            border-top: 4px solid #10b981;
+        }
+        
+        .login-card.admin {
+            border-top: 4px solid #e50914;
+        }
+        
+        .login-card i {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .login-card.teacher i {
+            color: #10b981;
+        }
+        
+        .login-card.admin i {
+            color: #e50914;
+        }
+        
+        .login-card h2 {
+            color: #1e293b;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .login-card p {
+            color: #64748b;
+            font-size: 0.875rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .login-card .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+        }
+        
+        .login-card.teacher .btn {
+            background: #10b981;
+            color: white;
+        }
+        
+        .login-card.teacher .btn:hover {
+            background: #059669;
+        }
+        
+        .login-card.admin .btn {
+            background: #e50914;
+            color: white;
+        }
+        
+        .login-card.admin .btn:hover {
+            background: #c11119;
+        }
+        
+        .back-link {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2rem;
+            transition: all 0.3s;
+        }
+        
+        .back-link:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .register-link {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .register-link p {
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 1rem;
+        }
+        
+        .register-link a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.75rem 2rem;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2rem;
+            transition: all 0.3s;
+        }
+        
+        .register-link a:hover {
+            background: rgba(255,255,255,0.3);
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-link">
+        <i class="fas fa-arrow-left"></i> Back to Home
+    </a>
+    
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <i class="fas fa-chalkboard-teacher" style="color: #10b981;"></i> RTB Teacher Portal
+            </div>
+            <div class="subtitle">Injira ukoresheje konti yawe</div>
+           
+        </div>
+        
+        <div class="login-options">
+            <a href="login.html" class="login-card teacher" style="width: 100%; max-width: 350px; margin: 0 auto; padding: 2rem 1.5rem;">
+                <i class="fas fa-chalkboard-teacher" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                <h2 style="font-size: 1.3rem; margin-bottom: 0.75rem;">Injira nka Mwarimu</h2>
+                <p style="font-size: 0.85rem; margin-bottom: 1.25rem;">Koresha konti yawe yo gukora session plans na schemes of work</p>
+                <button style="padding: 0.25rem 0.5rem; font-size: 0.7rem; background: #10b981; color: white; border: none; border-radius: 0.3rem; font-weight: 600; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.3rem;" onmouseover="this.style.background='#059669'" onmouseout="this.style.background='#10b981'">
+                    <i class="fas fa-arrow-right" style="color: white; font-size: 0.6rem;"></i> Injira
+                </button>
+            </a>
+        </div>
+        
+        <div class="register-link" style="margin-top: 1.5rem;">
+            <p style="color: rgba(255,255,255,0.9); font-size: 0.9rem; margin-bottom: 0.75rem;">Nta konti ufite?</p>
+            <a href="register.html" style="display: inline-flex; align-items: center; gap: 0.5rem; color: white; text-decoration: none; font-weight: 600; padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #10b981, #059669); border-radius: 1.5rem; transition: all 0.3s; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); font-size: 0.9rem;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(16, 185, 129, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(16, 185, 129, 0.3)'">
+                <i class="fas fa-user-plus"></i> Iyandikishe nka Mwarimu
+            </a>
+        </div>
+    </div>
+</body>
+</html>

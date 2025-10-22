@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - RTB Planner (FIXED)</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #f1f5f9; display: flex; min-height: 100vh; }
+        .sidebar { width: 260px; background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%); color: white; padding: 2rem 0; position: fixed; height: 100vh; overflow-y: auto; }
+        .sidebar h1 { padding: 0 1.5rem; font-size: 1.5rem; margin-bottom: 2rem; display: flex; align-items: center; gap: 0.5rem; }
+        .nav-item { padding: 1rem 1.5rem; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 0.75rem; border-left: 3px solid transparent; }
+        .nav-item:hover { background: rgba(255,255,255,0.1); border-left-color: #6366f1; }
+        .nav-item.active { background: rgba(99,102,241,0.2); border-left-color: #6366f1; }
+        .main-content { margin-left: 260px; flex: 1; padding: 2rem; }
+        .header { background: white; padding: 1.5rem 2rem; border-radius: 1rem; margin-bottom: 2rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card { background: white; padding: 1.5rem; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .stat-card h3 { color: #64748b; font-size: 0.875rem; margin-bottom: 0.5rem; }
+        .stat-card .value { font-size: 2rem; font-weight: 700; color: #1e293b; }
+        .card { background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+        .card h2 { color: #1e293b; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem; }
+        .section { display: none; }
+        .section.active { display: block; }
+        .user-list { max-height: 400px; overflow-y: auto; }
+        .user-item { padding: 1rem; border: 1px solid #e2e8f0; border-radius: 0.5rem; margin-bottom: 0.75rem; display: flex; justify-content: space-between; align-items: center; }
+        .user-info { flex: 1; }
+        .user-id { font-weight: 600; color: #1e293b; margin-bottom: 0.25rem; }
+        .user-stats { font-size: 0.875rem; color: #64748b; }
+        .btn { padding: 0.5rem 1rem; border: none; border-radius: 0.5rem; cursor: pointer; font-weight: 600; transition: all 0.3s; }
+        .btn-primary { background: linear-gradient(135deg, #6366f1, #4f46e5); color: white; }
+        .btn-success { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+        .btn-danger { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .alert { padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem; display: none; }
+        .alert.success { background: #dcfce7; color: #166534; }
+        .alert.error { background: #fee2e2; color: #991b1b; }
+        .alert.show { display: block; }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h1><i class="fas fa-shield-alt"></i> Admin (FIXED)</h1>
+        <div class="nav-item active" onclick="showSection('dashboard')">
+            <i class="fas fa-chart-line"></i> Dashboard
+        </div>
+        <div class="nav-item" onclick="showSection('users')">
+            <i class="fas fa-users"></i> User Management
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <div>
+                <h2>Admin Dashboard (CACHE-FIXED)</h2>
+                <p style="color: #64748b; font-size: 0.875rem;">API Base: <span id="apiBaseDisplay">Loading...</span></p>
+            </div>
+            <button onclick="window.location.href='direct-login.html'" style="padding: 0.5rem 1rem; background: #ef4444; color: white; border: none; border-radius: 0.5rem; cursor: pointer; font-weight: 600;">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div id="dashboard" class="section active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3><i class="fas fa-users"></i> Total Users</h3>
+                    <div class="value" id="totalUsers">Loading...</div>
+                </div>
+                <div class="stat-card">
+                    <h3><i class="fas fa-crown"></i> Premium Users</h3>
+                    <div class="value" id="premiumUsers">Loading...</div>
+                </div>
+                <div class="stat-card">
+                    <h3><i class="fas fa-download"></i> Total Downloads</h3>
+                    <div class="value" id="totalDownloads">Loading...</div>
+                </div>
+                <div class="stat-card">
+                    <h3><i class="fas fa-check-circle"></i> Active Users</h3>
+                    <div class="value" id="activeUsers">Loading...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Section -->
+        <div id="users" class="section">
+            <div class="card">
+                <h2><i class="fas fa-users"></i> All Registered Users</h2>
+                <div class="user-list" id="userList">
+                    <p style="color: #64748b; text-align: center; padding: 2rem;">Loading users...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // HARDCODED API BASE TO BYPASS CACHE ISSUES
+        const API_BASE = 'https://leonardus437.pythonanywhere.com';
+        
+        console.log('🔧 ADMIN FIXED VERSION - API_BASE:', API_BASE);
+        document.getElementById('apiBaseDisplay').textContent = API_BASE;
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            event.target.closest('.nav-item').classList.add('active');
+            
+            if (sectionId === 'users') loadUsers();
+            if (sectionId === 'dashboard') refreshStats();
+        }
+
+        async function loadUsers() {
+            const userList = document.getElementById('userList');
+            userList.innerHTML = '<p style="color: #64748b; text-align: center; padding: 2rem;">Loading users from production backend...</p>';
+            
+            try {
+                console.log('🔍 Fetching users from:', `${API_BASE}/users/`);
+                const response = await fetch(`${API_BASE}/users/`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Cache-Control': 'no-cache'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const users = await response.json();
+                console.log('✅ Users loaded:', users);
+                
+                if (users.length === 0) {
+                    userList.innerHTML = '<p style="color: #64748b; text-align: center; padding: 2rem;">No users found</p>';
+                    return;
+                }
+                
+                userList.innerHTML = users.map(user => {
+                    const isPremium = user.is_premium ? '<span style="color: #10b981; font-weight: bold;">PREMIUM</span>' : '<span style="color: #64748b;">FREE</span>';
+                    const role = user.role === 'admin' ? '<span style="color: #ef4444; font-weight: bold;">[ADMIN]</span>' : '';
+                    
+                    return `
+                    <div class="user-item">
+                        <div class="user-info">
+                            <div class="user-id">
+                                <i class="fas fa-user-circle" style="color: #6366f1;"></i> ${user.name || 'Unknown'} ${isPremium} ${role}
+                            </div>
+                            <div class="user-stats">
+                                <i class="fas fa-phone"></i> ${user.phone || 'No Phone'} | 
+                                <i class="fas fa-school"></i> ${user.institution || 'No Institution'}<br>
+                                <small>Plans: ${user.session_plans_downloaded || 0}/${user.session_plans_limit || 0} | Schemes: ${user.schemes_downloaded || 0}/${user.schemes_limit || 0}</small>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="alert('User: ${user.name}\\nPhone: ${user.phone}\\nRole: ${user.role}\\nActive: ${user.is_active}')">
+                            <i class="fas fa-eye"></i> Details
+                        </button>
+                    </div>
+                `;}).join('');
+                
+            } catch (error) {
+                console.error('❌ Error loading users:', error);
+                userList.innerHTML = `
+                    <div style="color: #ef4444; text-align: center; padding: 2rem;">
+                        <h3>Error loading users: ${error.message}</h3>
+                        <p>API Base: ${API_BASE}</p>
+                        <button class="btn btn-primary" onclick="loadUsers()">
+                            <i class="fas fa-sync"></i> Retry
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        async function refreshStats() {
+            try {
+                console.log('🔍 Fetching stats from:', `${API_BASE}/stats`);
+                const response = await fetch(`${API_BASE}/stats`);
+                
+                if (response.ok) {
+                    const stats = await response.json();
+                    console.log('✅ Stats loaded:', stats);
+                    
+                    document.getElementById('totalUsers').textContent = stats.total_users || 0;
+                    document.getElementById('premiumUsers').textContent = stats.premium_users || 0;
+                    document.getElementById('totalDownloads').textContent = stats.total_downloads || 0;
+                    document.getElementById('activeUsers').textContent = stats.active_users || 0;
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                console.error('❌ Error loading stats:', error);
+                document.getElementById('totalUsers').textContent = 'Error';
+                document.getElementById('premiumUsers').textContent = 'Error';
+                document.getElementById('totalDownloads').textContent = 'Error';
+                document.getElementById('activeUsers').textContent = 'Error';
+            }
+        }
+
+        // Initialize
+        console.log('🚀 Admin dashboard initialized with API_BASE:', API_BASE);
+        refreshStats();
+        
+        // Test API connection
+        fetch(`${API_BASE}/`)
+            .then(response => response.json())
+            .then(data => console.log('✅ API connection test successful:', data))
+            .catch(error => console.error('❌ API connection test failed:', error));
+    </script>
+</body>
+</html>

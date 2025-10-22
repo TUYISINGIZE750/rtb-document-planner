@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Direct API Test - 2024</title>
+    <style>
+        body { font-family: monospace; padding: 2rem; background: #000; color: #0f0; }
+        .test { margin: 1rem 0; padding: 1rem; border: 1px solid #333; }
+        .pass { border-color: #0f0; background: #001100; }
+        .fail { border-color: #f00; background: #110000; }
+        .pending { border-color: #ff0; background: #111100; }
+        button { padding: 0.5rem 1rem; margin: 0.5rem; background: #333; color: #fff; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Direct API Test - 2024</h1>
+    <button onclick="runTests()">🚀 Run All Tests</button>
+    <div id="results"></div>
+
+    <script>
+        const API = 'https://leonardus437.pythonanywhere.com';
+        
+        async function runTests() {
+            const results = document.getElementById('results');
+            results.innerHTML = '<div class="pending">Running tests...</div>';
+            
+            const tests = [];
+            
+            // Test 1: Basic connectivity
+            try {
+                const response = await fetch(`${API}/`);
+                const data = await response.json();
+                tests.push({
+                    name: 'Basic Connectivity',
+                    status: response.ok ? 'pass' : 'fail',
+                    details: `Status: ${response.status}, Data: ${JSON.stringify(data)}`
+                });
+            } catch (error) {
+                tests.push({
+                    name: 'Basic Connectivity',
+                    status: 'fail',
+                    details: `Error: ${error.message}`
+                });
+            }
+            
+            // Test 2: Stats endpoint
+            try {
+                const response = await fetch(`${API}/stats`);
+                const data = await response.json();
+                tests.push({
+                    name: 'Stats Endpoint',
+                    status: response.ok ? 'pass' : 'fail',
+                    details: `Status: ${response.status}, Users: ${data.total_users}`
+                });
+            } catch (error) {
+                tests.push({
+                    name: 'Stats Endpoint',
+                    status: 'fail',
+                    details: `Error: ${error.message}`
+                });
+            }
+            
+            // Test 3: Users endpoint
+            try {
+                const response = await fetch(`${API}/users/`);
+                const data = await response.json();
+                tests.push({
+                    name: 'Users Endpoint',
+                    status: response.ok ? 'pass' : 'fail',
+                    details: `Status: ${response.status}, Count: ${data.length}, First: ${data[0]?.name}`
+                });
+            } catch (error) {
+                tests.push({
+                    name: 'Users Endpoint',
+                    status: 'fail',
+                    details: `Error: ${error.message}`
+                });
+            }
+            
+            // Display results
+            results.innerHTML = tests.map(test => `
+                <div class="test ${test.status}">
+                    <h3>${test.status === 'pass' ? '✅' : '❌'} ${test.name}</h3>
+                    <p>${test.details}</p>
+                </div>
+            `).join('');
+        }
+        
+        // Auto-run tests
+        document.addEventListener('DOMContentLoaded', runTests);
+    </script>
+</body>
+</html>

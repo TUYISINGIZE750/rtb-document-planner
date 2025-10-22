@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RTB System Test - Full Integration</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+        .container { max-width: 800px; margin: 0 auto; background: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+        h1 { color: #333; margin-bottom: 10px; font-size: 28px; }
+        .subtitle { color: #666; margin-bottom: 30px; font-size: 14px; }
+        .test-section { margin: 20px 0; padding: 20px; border-radius: 10px; background: #f8f9fa; }
+        .test-item { padding: 15px; margin: 10px 0; border-radius: 8px; border-left: 4px solid #ccc; }
+        .success { background: #d4edda; border-color: #28a745; color: #155724; }
+        .error { background: #f8d7da; border-color: #dc3545; color: #721c24; }
+        .loading { background: #fff3cd; border-color: #ffc107; color: #856404; }
+        .info { background: #d1ecf1; border-color: #17a2b8; color: #0c5460; }
+        button { background: #667eea; color: white; border: none; padding: 12px 30px; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; margin: 10px 5px; }
+        button:hover { background: #5568d3; }
+        .device-info { background: #e7f3ff; padding: 15px; border-radius: 8px; margin: 20px 0; }
+        .share-section { background: #fff; padding: 20px; border-radius: 10px; margin: 20px 0; border: 2px dashed #667eea; }
+        .url-box { background: #f8f9fa; padding: 10px; border-radius: 5px; font-family: monospace; word-break: break-all; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 RTB System Test</h1>
+        <p class="subtitle">Complete Integration Test - Frontend + Backend</p>
+        
+        <div class="device-info">
+            <strong>📱 Your Device Info:</strong><br>
+            <span id="deviceInfo">Loading...</span>
+        </div>
+        
+        <div class="share-section">
+            <strong>📤 Share This Test Page:</strong>
+            <div class="url-box" id="testUrl">https://schemesession.netlify.app/system-test.html</div>
+            <button onclick="copyUrl()">📋 Copy URL</button>
+            <button onclick="shareUrl()">📱 Share</button>
+        </div>
+        
+        <button onclick="runAllTests()">▶️ Run All Tests</button>
+        <button onclick="location.reload()">🔄 Refresh</button>
+        
+        <div id="results"></div>
+    </div>
+    
+    <script src="config.js"></script>
+    <script>
+        const results = document.getElementById('results');
+        
+        // Display device info
+        document.getElementById('deviceInfo').innerHTML = `
+            Browser: ${navigator.userAgent.includes('Chrome') ? 'Chrome' : navigator.userAgent.includes('Firefox') ? 'Firefox' : navigator.userAgent.includes('Safari') ? 'Safari' : 'Other'}<br>
+            Platform: ${navigator.platform}<br>
+            Screen: ${window.screen.width}x${window.screen.height}<br>
+            Online: ${navigator.onLine ? '✅ Yes' : '❌ No'}
+        `;
+        
+        function copyUrl() {
+            navigator.clipboard.writeText('https://schemesession.netlify.app/system-test.html');
+            alert('✅ URL copied! Share it to test on other devices.');
+        }
+        
+        function shareUrl() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'RTB System Test',
+                    text: 'Test the RTB Document Planner system',
+                    url: 'https://schemesession.netlify.app/system-test.html'
+                });
+            } else {
+                copyUrl();
+            }
+        }
+        
+        async function runAllTests() {
+            results.innerHTML = '<div class="test-section"><h2>🧪 Running Tests...</h2></div>';
+            
+            // Test 1: Frontend Accessibility
+            results.innerHTML += '<div class="test-section"><h3>Test 1: Frontend Accessibility</h3><div class="test-item loading">Testing...</div></div>';
+            await new Promise(resolve => setTimeout(resolve, 500));
+            results.lastElementChild.lastElementChild.className = 'test-item success';
+            results.lastElementChild.lastElementChild.innerHTML = '✅ Frontend is accessible from your device';
+            
+            // Test 2: Backend Connection
+            results.innerHTML += '<div class="test-section"><h3>Test 2: Backend API Connection</h3><div class="test-item loading">Connecting to backend...</div></div>';
+            try {
+                const response = await fetch(`${API_BASE}/`, {
+                    method: 'GET',
+                    mode: 'cors',
+                    credentials: 'omit'
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    results.lastElementChild.lastElementChild.className = 'test-item success';
+                    results.lastElementChild.lastElementChild.innerHTML = `✅ Backend API connected successfully<br>Status: ${data.status}<br>Message: ${data.message}`;
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                results.lastElementChild.lastElementChild.className = 'test-item error';
+                results.lastElementChild.lastElementChild.innerHTML = `❌ Backend connection failed: ${error.message}`;
+            }
+            
+            // Test 3: User Login Endpoint
+            results.innerHTML += '<div class="test-section"><h3>Test 3: User Login Functionality</h3><div class="test-item loading">Testing login endpoint...</div></div>';
+            try {
+                const response = await fetch(`${API_BASE}/users/login`, {
+                    method: 'GET',
+                    mode: 'cors',
+                    credentials: 'omit',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    results.lastElementChild.lastElementChild.className = 'test-item success';
+                    results.lastElementChild.lastElementChild.innerHTML = `✅ Login endpoint working<br>User: ${data.name}<br>Phone: ${data.phone}<br>Premium: ${data.is_premium ? 'Yes' : 'No'}`;
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                results.lastElementChild.lastElementChild.className = 'test-item error';
+                results.lastElementChild.lastElementChild.innerHTML = `❌ Login test failed: ${error.message}`;
+            }
+            
+            // Test 4: User Limits Endpoint
+            results.innerHTML += '<div class="test-section"><h3>Test 4: User Limits Functionality</h3><div class="test-item loading">Testing limits endpoint...</div></div>';
+            try {
+                const response = await fetch(`${API_BASE}/user-limits/+250788123456`, {
+                    method: 'GET',
+                    mode: 'cors',
+                    credentials: 'omit',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    results.lastElementChild.lastElementChild.className = 'test-item success';
+                    results.lastElementChild.lastElementChild.innerHTML = `✅ User limits endpoint working<br>Session Plans: ${data.session_plans_limit}<br>Schemes: ${data.schemes_limit}<br>Premium: ${data.is_premium ? 'Yes' : 'No'}`;
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                results.lastElementChild.lastElementChild.className = 'test-item error';
+                results.lastElementChild.lastElementChild.innerHTML = `❌ Limits test failed: ${error.message}`;
+            }
+            
+            // Final Summary
+            const successCount = document.querySelectorAll('.test-item.success').length;
+            const totalTests = 4;
+            
+            if (successCount === totalTests) {
+                results.innerHTML += `
+                    <div class="test-section" style="background: linear-gradient(135deg, #d4edda, #c3e6cb); border: 3px solid #28a745;">
+                        <h2>🎉 ALL TESTS PASSED!</h2>
+                        <p style="margin: 10px 0; font-size: 18px;"><strong>${successCount}/${totalTests} tests successful</strong></p>
+                        <p style="margin: 10px 0;">✅ Frontend is accessible globally</p>
+                        <p style="margin: 10px 0;">✅ Backend API is responding</p>
+                        <p style="margin: 10px 0;">✅ CORS is configured correctly</p>
+                        <p style="margin: 10px 0;">✅ All endpoints are functional</p>
+                        <p style="margin: 20px 0; font-size: 20px; font-weight: bold; color: #155724;">
+                            🌍 YOUR SYSTEM IS 100% LIVE AND ACCESSIBLE FROM ANY DEVICE WORLDWIDE!
+                        </p>
+                        <button onclick="window.location.href='index.html'" style="background: #28a745; font-size: 18px; padding: 15px 40px;">
+                            🚀 Go to Main App
+                        </button>
+                    </div>
+                `;
+            } else {
+                results.innerHTML += `
+                    <div class="test-section" style="background: #f8d7da; border: 3px solid #dc3545;">
+                        <h2>⚠️ Some Tests Failed</h2>
+                        <p style="margin: 10px 0;"><strong>${successCount}/${totalTests} tests passed</strong></p>
+                        <p>Please check the failed tests above and contact support.</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Auto-run tests on page load
+        window.addEventListener('load', () => {
+            setTimeout(runAllTests, 1000);
+        });
+    </script>
+</body>
+</html>

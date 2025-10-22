@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vercel ↔ PythonAnywhere Debug Tool</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 30px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        .test-section:last-child {
+            border-bottom: none;
+        }
+        .test-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .test-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #ddd;
+            font-family: monospace;
+            font-size: 13px;
+            word-break: break-all;
+        }
+        .test-item.success {
+            border-left-color: #10b981;
+            background: #f0fdf4;
+        }
+        .test-item.error {
+            border-left-color: #ef4444;
+            background: #fef2f2;
+        }
+        .test-item.pending {
+            border-left-color: #f59e0b;
+            background: #fffbf0;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+        .status-badge.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .status-badge.error {
+            background: #fee2e2;
+            color: #7f1d1d;
+        }
+        .status-badge.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .run-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+        .run-button:hover {
+            opacity: 0.9;
+        }
+        .run-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .info-box {
+            background: #e0e7ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .code-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 13px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Vercel ↔ PythonAnywhere Debug Tool</h1>
+            <p>Diagnose connection issues between your frontend and backend</p>
+        </div>
+
+        <div class="content">
+            <div class="info-box">
+                <strong>📋 Instructions:</strong>
+                <ol style="margin-left: 20px; margin-top: 8px;">
+                    <li>Edit the "Backend URL" below to match your PythonAnywhere domain</li>
+                    <li>Click "Run All Tests" to diagnose connection issues</li>
+                    <li>Check the results below</li>
+                    <li>Fix any ❌ errors and re-run tests</li>
+                </ol>
+            </div>
+
+            <!-- Configuration Section -->
+            <div class="test-section">
+                <div class="test-title">⚙️ Configuration</div>
+                <div>
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600;">Backend URL:</label>
+                    <input type="text" id="backendUrl" class="code-input" value="https://leonardus437.pythonanywhere.com">
+                    <small style="color: #666;">Update this with your PythonAnywhere domain</small>
+                </div>
+            </div>
+
+            <!-- Frontend Information -->
+            <div class="test-section">
+                <div class="test-title">🌐 Frontend Information</div>
+                <button class="run-button" onclick="testFrontendInfo()">Check Frontend</button>
+                <div id="frontendResults"></div>
+            </div>
+
+            <!-- Backend Connection Tests -->
+            <div class="test-section">
+                <div class="test-title">🔗 Backend Connection Tests</div>
+                <button class="run-button" onclick="testBackendConnection()">Test Connection</button>
+                <div id="backendResults"></div>
+            </div>
+
+            <!-- CORS Tests -->
+            <div class="test-section">
+                <div class="test-title">🔐 CORS & Security Tests</div>
+                <button class="run-button" onclick="testCORS()">Test CORS</button>
+                <div id="corsResults"></div>
+            </div>
+
+            <!-- API Health Check -->
+            <div class="test-section">
+                <div class="test-title">💚 API Health Check</div>
+                <button class="run-button" onclick="testAPIHealth()">Check Health</button>
+                <div id="healthResults"></div>
+            </div>
+
+            <!-- Quick Fixes -->
+            <div class="test-section">
+                <div class="test-title">🔧 Quick Fixes</div>
+                <button class="run-button" onclick="showQuickFixes()">Show Common Issues</button>
+                <div id="quickFixResults"></div>
+            </div>
+
+            <!-- Run All Tests -->
+            <div style="margin-top: 30px; text-align: center;">
+                <button class="run-button" style="padding: 14px 40px; font-size: 16px;" onclick="runAllTests()">
+                    ▶️ Run All Tests
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function addResult(elementId, status, message, details = '') {
+            const element = document.getElementById(elementId);
+            const statusClass = status === 'success' ? 'success' : status === 'error' ? 'error' : 'pending';
+            const statusBadge = `<span class="status-badge ${statusClass}">${status.toUpperCase()}</span>`;
+            
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `test-item ${statusClass}`;
+            resultDiv.innerHTML = `${statusBadge}${message}${details ? '<br><small style="margin-top: 8px; display: block;">' + details + '</small>' : ''}`;
+            element.appendChild(resultDiv);
+        }
+
+        function clearResults(elementId) {
+            document.getElementById(elementId).innerHTML = '';
+        }
+
+        async function testFrontendInfo() {
+            clearResults('frontendResults');
+            
+            addResult('frontendResults', 'success', '📍 Frontend URL', window.location.href);
+            addResult('frontendResults', 'success', '🖥️ Hostname', window.location.hostname);
+            addResult('frontendResults', 'success', '🔌 Port', window.location.port || '(default)');
+            addResult('frontendResults', 'success', '📦 User Agent', navigator.userAgent);
+            addResult('frontendResults', 'success', '🔗 Protocol', window.location.protocol);
+            
+            if (typeof API_BASE !== 'undefined') {
+                addResult('frontendResults', 'success', '✅ API_BASE Configured', API_BASE);
+            } else {
+                addResult('frontendResults', 'error', '❌ API_BASE Not Found', 'config.js may not be loaded');
+            }
+        }
+
+        async function testBackendConnection() {
+            clearResults('backendResults');
+            const backendUrl = document.getElementById('backendUrl').value;
+            
+            if (!backendUrl) {
+                addResult('backendResults', 'error', 'Backend URL is empty', 'Please enter a backend URL');
+                return;
+            }
+
+            addResult('backendResults', 'pending', '🔄 Testing connection to:', backendUrl);
+            
+            try {
+                const response = await fetch(`${backendUrl}/`, {
+                    method: 'GET',
+                    mode: 'cors',
+                    credentials: 'omit',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    addResult('backendResults', 'success', '✅ Backend Connected', JSON.stringify(data, null, 2));
+                } else {
+                    addResult('backendResults', 'error', `❌ HTTP ${response.status}`, response.statusText);
+                }
+            } catch (error) {
+                addResult('backendResults', 'error', '❌ Connection Failed', error.message);
+            }
+        }
+
+        async function testCORS() {
+            clearResults('corsResults');
+            const backendUrl = document.getElementById('backendUrl').value;
+            
+            if (!backendUrl) {
+                addResult('corsResults', 'error', 'Backend URL is empty', 'Please enter a backend URL');
+                return;
+            }
+
+            addResult('corsResults', 'pending', '🔄 Testing CORS headers...');
+            
+            try {
+                const response = await fetch(`${backendUrl}/`, {
+                    method: 'OPTIONS',
+                    mode: 'cors'
+                });
+                
+                const corsHeaders = {
+                    'Access-Control-Allow-Origin': response.headers.get('Access-Control-Allow-Origin'),
+                    'Access-Control-Allow-Methods': response.headers.get('Access-Control-Allow-Methods'),
+                    'Access-Control-Allow-Headers': response.headers.get('Access-Control-Allow-Headers')
+                };
+                
+                addResult('corsResults', 'success', '✅ CORS Headers', JSON.stringify(corsHeaders, null, 2));
+            } catch (error) {
+                if (error.message.includes('CORS')) {
+                    addResult('corsResults', 'error', '❌ CORS Error', 'Backend may not have CORS enabled for this origin');
+                } else {
+                    addResult('corsResults', 'error', '❌ Request Failed', error.message);
+                }
+            }
+        }
+
+        async function testAPIHealth() {
+            clearResults('healthResults');
+            const backendUrl = document.getElementById('backendUrl').value;
+            
+            if (!backendUrl) {
+                addResult('healthResults', 'error', 'Backend URL is empty', 'Please enter a backend URL');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${backendUrl}/health`, {
+                    method: 'GET',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    addResult('healthResults', 'success', '✅ API Healthy', JSON.stringify(data, null, 2));
+                } else {
+                    addResult('healthResults', 'error', `❌ Health Check Failed (${response.status})`, response.statusText);
+                }
+            } catch (error) {
+                addResult('healthResults', 'error', '❌ Health Check Error', error.message);
+            }
+        }
+
+        function showQuickFixes() {
+            clearResults('quickFixResults');
+            
+            addResult('quickFixResults', 'pending', '⚠️ Issue: Connection Refused', 
+                '1. Verify PythonAnywhere domain is correct<br>2. Check if web app is running (green icon in PythonAnywhere)<br>3. Verify WSGI file is configured');
+            
+            addResult('quickFixResults', 'pending', '⚠️ Issue: CORS Error', 
+                '1. Verify frontend domain is in backend CORS allowed_origins<br>2. Check backend/main.py lines 20-29<br>3. Restart PythonAnywhere web app');
+            
+            addResult('quickFixResults', 'pending', '⚠️ Issue: 502 Bad Gateway', 
+                '1. Check PythonAnywhere error log<br>2. Verify virtualenv is configured<br>3. Check Python version is 3.9+<br>4. Restart web app');
+            
+            addResult('quickFixResults', 'pending', '⚠️ Issue: Database Error', 
+                '1. SSH into PythonAnywhere<br>2. Run: python backend/init_db.py<br>3. Restart web app');
+        }
+
+        async function runAllTests() {
+            testFrontendInfo();
+            await new Promise(r => setTimeout(r, 500));
+            testBackendConnection();
+            await new Promise(r => setTimeout(r, 500));
+            testCORS();
+            await new Promise(r => setTimeout(r, 500));
+            testAPIHealth();
+            await new Promise(r => setTimeout(r, 500));
+            showQuickFixes();
+        }
+
+        // Run frontend info check on page load
+        window.addEventListener('load', testFrontendInfo);
+    </script>
+</body>
+</html>
