@@ -163,14 +163,12 @@
         © 2025 RTB Document Planner. All rights reserved. | Developed for TVET Excellence
     </div>
 
-    <script src="config.js"></script>
-    <script src="auth.js"></script>
     <script>
-        // Clear any existing session and logout markers on admin login page load
+        const API_BASE = 'https://leonardus437.pythonanywhere.com';
+        
+        // Clear any existing session
         localStorage.removeItem('rtb_auth_session');
         sessionStorage.removeItem('rtb_auth_session');
-        localStorage.removeItem('rtb_logged_out');
-        sessionStorage.removeItem('rtb_logged_out');
         
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -197,29 +195,45 @@
             btn.textContent = 'Signing in...';
             
             try {
-                const result = await loginUser(phone, password, remember);
+                console.log('Attempting admin login...');
+                const response = await fetch(`${API_BASE}/users/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone, password })
+                });
                 
-                if (result.success) {
-                    const session = getCurrentSession();
-                    console.log('Admin login successful, redirecting...', session);
+                console.log('Response status:', response.status);
+                
+                if (response.ok) {
+                    const user = await response.json();
+                    console.log('Admin logged in:', user);
                     
-                    // Use setTimeout to ensure session is saved
-                    setTimeout(() => {
-                        if (session && session.role === 'admin') {
-                            window.location.replace('admin-final.html');
-                        } else {
-                            window.location.replace('index.html');
-                        }
-                    }, 100);
+                    // Save session
+                    const session = { 
+                        ...user, 
+                        loggedInAt: new Date().toISOString(),
+                        remember 
+                    };
+                    localStorage.setItem('rtb_auth_session', JSON.stringify(session));
+                    console.log('Session saved:', session);
+                    
+                    // Redirect to admin dashboard
+                    if (user.role === 'admin') {
+                        window.location.href = 'admin.html';
+                    } else {
+                        window.location.href = 'dashboard.html';
+                    }
                 } else {
-                    document.getElementById('passwordError').textContent = result.message;
+                    const error = await response.json();
+                    console.error('Login failed:', error);
+                    document.getElementById('passwordError').textContent = error.detail || 'Login failed';
                     document.getElementById('passwordError').classList.add('show');
                     btn.disabled = false;
                     btn.textContent = 'Sign In';
                 }
             } catch (error) {
                 console.error('Admin login error:', error);
-                document.getElementById('passwordError').textContent = 'An error occurred. Please try again.';
+                document.getElementById('passwordError').textContent = 'Connection error: ' + error.message;
                 document.getElementById('passwordError').classList.add('show');
                 btn.disabled = false;
                 btn.textContent = 'Sign In';
