@@ -313,15 +313,48 @@
         }
         
         function showOfflineStatus() {
+            const session = getCurrentSession();
             const statusContainer = document.getElementById('subscriptionStatus');
+            
+            // Show default free account status when offline
             statusContainer.innerHTML = `
-                <div class="subscription-card" style="text-align: center; padding: 2rem;">
-                    <i class="fas fa-wifi" style="font-size: 2rem; color: #f59e0b; margin-bottom: 1rem;"></i>
-                    <h3 style="color: #f59e0b; margin-bottom: 0.5rem;">Offline Mode</h3>
-                    <p style="color: #64748b; margin-bottom: 1rem;">Backend not available. Documents will be generated offline.</p>
-                    <div style="background: #fef3c7; padding: 1rem; border-radius: 0.5rem; border: 2px solid #f59e0b;">
-                        <p style="color: #92400e; font-weight: 600; margin: 0;">✅ You can still create documents!</p>
-                        <p style="color: #92400e; margin: 0.5rem 0 0 0; font-size: 0.875rem;">Documents will be generated in basic format until backend is deployed.</p>
+                <div class="subscription-card">
+                    <div style="text-align: center; margin-bottom: 1rem;">
+                        <h3 style="color: #1e293b; margin-bottom: 0.25rem; font-size: 1.125rem;">
+                            <i class="fas fa-user" style="color: #6366f1;"></i>
+                            Free Account
+                        </h3>
+                        <p style="color: #64748b; font-size: 0.8rem; margin: 0;">Backend temporarily unavailable</p>
+                    </div>
+                    
+                    <div class="status-grid">
+                        <div class="status-item session-plans">
+                            <div class="status-number">5</div>
+                            <div class="status-label">Session Plans Available</div>
+                            <div style="margin-top: 0.25rem; font-size: 0.7rem; opacity: 0.8;">
+                                Default free tier
+                            </div>
+                        </div>
+                        
+                        <div class="status-item schemes">
+                            <div class="status-number">5</div>
+                            <div class="status-label">Schemes Available</div>
+                            <div style="margin-top: 0.25rem; font-size: 0.7rem; opacity: 0.8;">
+                                Default free tier
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 1rem; padding: 0.75rem; background: linear-gradient(135deg, #f3f4f6, #e5e7eb); border-radius: 0.5rem; text-align: center;">
+                        <p style="color: #374151; font-weight: 600; margin: 0; font-size: 0.8rem;">
+                            <i class="fas fa-info-circle" style="color: #6b7280;"></i> Free Account Status
+                        </p>
+                        <p style="color: #6b7280; margin: 0.25rem 0 0 0; font-size: 0.7rem;">
+                            Upgrade for unlimited access and premium features
+                        </p>
+                        <button onclick="showSubscriptionModal()" style="margin-top: 0.5rem; padding: 0.5rem 1rem; background: #6366f1; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-weight: 600; font-size: 0.8rem;">
+                            <i class="fas fa-arrow-up"></i> View Plans
+                        </button>
                     </div>
                 </div>
             `;
