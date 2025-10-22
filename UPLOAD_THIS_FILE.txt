@@ -1,0 +1,23 @@
+🚀 UPLOAD THIS FILE TO PYTHONANYWHERE:
+
+📁 File Location: 
+backend/main_production.py
+
+📋 Steps:
+1. Go to https://www.pythonanywhere.com
+2. Login as: leonardus437
+3. Click "Files" tab
+4. Upload: backend/main_production.py
+5. Rename to: main.py
+6. Install packages: pip3.10 install --user flask flask-cors sqlalchemy python-docx
+7. Reload web app
+
+✅ This file contains the complete backend with:
+- User authentication
+- DOCX generation
+- Download limits
+- Admin panel API
+- Database management
+
+Size: 23,711 bytes
+Ready to deploy!

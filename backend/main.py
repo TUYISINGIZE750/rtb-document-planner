@@ -1,222 +1,409 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
+from sqlalchemy import create_engine, Column, Integer, String, Text, DateTime, Boolean
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.sql import func
+from datetime import datetime
+import hashlib
+import tempfile
+import os
+from document_generator import generate_session_plan_docx, generate_scheme_of_work_docx, generate_session_plan_pdf, generate_scheme_of_work_pdf
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
 CORS(app, 
-     resources={r"/*": {"origins": "*"}},
-     allow_headers=["Content-Type", "Authorization", "Accept"],
-     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
-
-users_db = {}
-
-# Pre-load admin
-users_db['+250789751597'] = {
-    'user_id': 'ADMIN_001',
-    'name': 'Administrator',
-    'phone': '+250789751597',
-    'email': 'admin@rtb.rw',
-    'institution': 'RTB',
-    'password': 'admin123',
-    'role': 'admin',
-    'is_premium': True,
-    'is_active': True,
-    'session_plans_limit': 999,
-    'schemes_limit': 999,
-    'session_plans_downloaded': 0,
-    'schemes_downloaded': 0
-}
+     origins=[
+         "https://tuyisingize750.github.io",
+         "https://schemesession.netlify.app",
+         "http://localhost:5173"
+     ],
+     methods=["GET", "POST", "OPTIONS"],
+     allow_headers=["Content-Type", "Authorization"],
+     supports_credentials=False)
 
 @app.after_request
 def after_request(response):
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,Accept')
-    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+    origin = request.headers.get('Origin')
+    if origin in ["https://tuyisingize750.github.io", "https://schemesession.netlify.app"]:
+        response.headers.add('Access-Control-Allow-Origin', origin)
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
     return response
+
+# Database setup
+DATABASE_URL = "sqlite:///./rtb_planner.db"
+engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
+
+class User(Base):
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(String(255), unique=True, index=True)
+    name = Column(String(255), nullable=False)
+    phone = Column(String(50), unique=True, nullable=False, index=True)
+    email = Column(String(255))
+    institution = Column(String(255))
+    password = Column(String(255), nullable=False)
+    role = Column(String(50), default='user')
+    is_premium = Column(Boolean, default=False)
+    is_active = Column(Boolean, default=True)
+    session_plans_limit = Column(Integer, default=5)
+    schemes_limit = Column(Integer, default=5)
+    session_plans_downloaded = Column(Integer, default=0)
+    schemes_downloaded = Column(Integer, default=0)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+class SessionPlan(Base):
+    __tablename__ = "session_plans"
+    id = Column(Integer, primary_key=True, index=True)
+    user_phone = Column(String(50), nullable=False)
+    sector = Column(String(255))
+    sub_sector = Column(String(255))
+    trade = Column(String(255))
+    qualification_title = Column(String(500))
+    rqf_level = Column(String(50))
+    module_code_title = Column(String(500))
+    term = Column(String(100))
+    week = Column(String(100))
+    date = Column(String(100))
+    trainer_name = Column(String(255))
+    class_name = Column(String(255))
+    number_of_trainees = Column(String(100))
+    learning_outcomes = Column(Text)
+    indicative_contents = Column(Text)
+    topic_of_session = Column(String(500))
+    duration = Column(String(100))
+    objectives = Column(Text)
+    facilitation_techniques = Column(Text)
+    learning_activities = Column(Text)
+    resources = Column(Text)
+    assessment_details = Column(Text)
+    references = Column(Text)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+class SchemeOfWork(Base):
+    __tablename__ = "schemes_of_work"
+    id = Column(Integer, primary_key=True, index=True)
+    user_phone = Column(String(50), nullable=False)
+    province = Column(String(255))
+    district = Column(String(255))
+    sector = Column(String(255))
+    school = Column(String(255))
+    department_trade = Column(String(255))
+    qualification_title = Column(String(500))
+    rqf_level = Column(String(50))
+    module_code_title = Column(String(500))
+    school_year = Column(String(100))
+    terms = Column(String(100))
+    module_hours = Column(String(100))
+    number_of_classes = Column(String(100))
+    class_name = Column(String(255))
+    trainer_name = Column(String(255))
+    term1_weeks = Column(Text)
+    term1_learning_outcomes = Column(Text)
+    term1_indicative_contents = Column(Text)
+    term1_duration = Column(Text)
+    term2_weeks = Column(Text)
+    term2_learning_outcomes = Column(Text)
+    term2_indicative_contents = Column(Text)
+    term2_duration = Column(Text)
+    term3_weeks = Column(Text)
+    term3_learning_outcomes = Column(Text)
+    term3_indicative_contents = Column(Text)
+    term3_duration = Column(Text)
+    dos_name = Column(String(255))
+    manager_name = Column(String(255))
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+Base.metadata.create_all(bind=engine)
+
+def hash_password(password: str) -> str:
+    return hashlib.sha256(password.encode()).hexdigest()
+
+def verify_password(password: str, hashed: str) -> bool:
+    return hash_password(password) == hashed
+
+def init_admin():
+    db = SessionLocal()
+    try:
+        admin = db.query(User).filter(User.phone == "+250789751597").first()
+        if not admin:
+            admin = User(
+                user_id="ADMIN_001",
+                name="Administrator",
+                phone="+250789751597",
+                email="admin@rtb.rw",
+                institution="RTB",
+                password=hash_password("admin123"),
+                role="admin",
+                is_premium=True,
+                is_active=True,
+                session_plans_limit=999,
+                schemes_limit=999
+            )
+            db.add(admin)
+            db.commit()
+    finally:
+        db.close()
+
+init_admin()
 
 @app.route('/', methods=['GET', 'OPTIONS'])
 def home():
     if request.method == 'OPTIONS':
         return '', 204
-    return jsonify({"message": "RTB Document Planner API", "status": "online", "cors": "enabled", "environment": "local", "users_count": len(users_db)})
-
-@app.route('/users/', methods=['GET', 'OPTIONS'])
-def get_all_users():
-    if request.method == 'OPTIONS':
-        return '', 204
-    
-    users_list = []
-    for phone, user in users_db.items():
-        user_data = {
-            'user_id': user.get('user_id'),
-            'name': user.get('name'),
-            'phone': phone,
-            'email': user.get('email', ''),
-            'institution': user.get('institution', ''),
-            'role': user.get('role', 'user'),
-            'is_premium': user.get('is_premium', False),
-            'is_active': user.get('is_active', True),
-            'session_plans_limit': user.get('session_plans_limit', 2),
-            'schemes_limit': user.get('schemes_limit', 2),
-            'session_plans_downloaded': user.get('session_plans_downloaded', 0),
-            'schemes_downloaded': user.get('schemes_downloaded', 0)
-        }
-        users_list.append(user_data)
-    
-    return jsonify(users_list), 200
-
-@app.route('/users/<phone>', methods=['GET', 'PUT', 'OPTIONS'])
-def manage_user(phone):
-    if request.method == 'OPTIONS':
-        return '', 204
-    
-    if request.method == 'GET':
-        if phone in users_db:
-            user = users_db[phone]
-            return jsonify({
-                'user_id': user.get('user_id'),
-                'name': user.get('name'),
-                'phone': phone,
-                'email': user.get('email', ''),
-                'institution': user.get('institution', ''),
-                'role': user.get('role', 'user'),
-                'is_premium': user.get('is_premium', False),
-                'is_active': user.get('is_active', True),
-                'session_plans_limit': user.get('session_plans_limit', 2),
-                'schemes_limit': user.get('schemes_limit', 2)
-            }), 200
-        else:
-            return jsonify({"detail": "User not found"}), 404
-    
-    elif request.method == 'PUT':
-        if phone not in users_db:
-            return jsonify({"detail": "User not found"}), 404
-        
-        data = request.get_json()
-        user = users_db[phone]
-        
-        if 'is_active' in data:
-            user['is_active'] = data['is_active']
-        if 'is_premium' in data:
-            user['is_premium'] = data['is_premium']
-        if 'session_plans_limit' in data:
-            user['session_plans_limit'] = data['session_plans_limit']
-        if 'schemes_limit' in data:
-            user['schemes_limit'] = data['schemes_limit']
-        
-        users_db[phone] = user
-        return jsonify({"message": "User updated successfully"}), 200
-
-@app.route('/stats', methods=['GET', 'OPTIONS'])
-def get_stats():
-    if request.method == 'OPTIONS':
-        return '', 204
-    
-    total_users = len(users_db)
-    active_users = sum(1 for u in users_db.values() if u.get('is_active', True))
-    premium_users = sum(1 for u in users_db.values() if u.get('is_premium', False))
-    total_downloads = sum(
-        u.get('session_plans_downloaded', 0) + u.get('schemes_downloaded', 0) 
-        for u in users_db.values()
-    )
-    
     return jsonify({
-        "total_users": total_users,
-        "active_users": active_users,
-        "premium_users": premium_users,
-        "total_downloads": total_downloads,
-        "free_users": total_users - premium_users
-    }), 200
+        "message": "RTB Document Planner API",
+        "status": "online",
+        "cors": "enabled",
+        "environment": "production",
+        "version": "2.0",
+        "features": ["authentication", "docx_generation", "pdf_generation"]
+    })
 
 @app.route('/users/register', methods=['POST', 'OPTIONS'])
 def register():
     if request.method == 'OPTIONS':
         return '', 204
     
-    data = request.get_json()
-    phone = data.get('phone')
-    password = data.get('password')
-    
-    if not phone:
-        return jsonify({"detail": "Phone required"}), 400
-    
-    if phone in users_db:
-        return jsonify({"detail": "Phone already registered"}), 400
-    
-    users_db[phone] = {
-        'user_id': data.get('user_id'),
-        'name': data.get('name'),
-        'phone': phone,
-        'email': data.get('email', ''),
-        'institution': data.get('institution', ''),
-        'password': password,
-        'role': 'user',
-        'is_premium': False,
-        'is_active': True,
-        'session_plans_limit': 2,
-        'schemes_limit': 2,
-        'session_plans_downloaded': 0,
-        'schemes_downloaded': 0
-    }
-    return jsonify({"message": "User registered successfully"}), 201
+    try:
+        data = request.get_json()
+        phone = data.get('phone')
+        password = data.get('password')
+        name = data.get('name')
+        
+        if not all([phone, password, name]):
+            return jsonify({"detail": "Phone, password, and name are required"}), 400
+        
+        db = SessionLocal()
+        try:
+            existing_user = db.query(User).filter(User.phone == phone).first()
+            if existing_user:
+                return jsonify({"detail": "Phone number already registered"}), 400
+            
+            user = User(
+                user_id=f"USER_{datetime.now().strftime('%Y%m%d%H%M%S')}",
+                name=name,
+                phone=phone,
+                email=data.get('email', ''),
+                institution=data.get('institution', ''),
+                password=hash_password(password)
+            )
+            
+            db.add(user)
+            db.commit()
+            return jsonify({"message": "User registered successfully"}), 201
+        finally:
+            db.close()
+    except Exception as e:
+        return jsonify({"detail": "Registration failed"}), 500
 
 @app.route('/users/login', methods=['POST', 'OPTIONS'])
 def login():
     if request.method == 'OPTIONS':
         return '', 204
     
-    data = request.get_json()
-    phone = data.get('phone')
-    password = data.get('password')
-    
-    if not phone or not password:
-        return jsonify({"detail": "Phone and password required"}), 400
-    
-    if phone in users_db:
-        user = users_db[phone]
+    try:
+        data = request.get_json()
+        phone = data.get('phone')
+        password = data.get('password')
         
-        if user.get('password') != password:
-            return jsonify({"detail": "Incorrect phone number or password"}), 401
+        if not all([phone, password]):
+            return jsonify({"detail": "Phone and password are required"}), 400
         
-        if not user.get('is_active', True):
-            return jsonify({"detail": "Account is deactivated. Contact admin."}), 403
-        
-        return jsonify({
-            "user_id": user.get('user_id'),
-            "name": user.get('name'),
-            "phone": phone,
-            "email": user.get('email', ''),
-            "institution": user.get('institution', ''),
-            "role": user.get('role', 'user'),
-            "is_premium": user.get('is_premium', False),
-            "session_plans_limit": user.get('session_plans_limit', 2),
-            "schemes_limit": user.get('schemes_limit', 2)
-        }), 200
-    else:
-        return jsonify({"detail": "User not found. Please register first."}), 404
+        db = SessionLocal()
+        try:
+            user = db.query(User).filter(User.phone == phone).first()
+            
+            if not user or not verify_password(password, user.password):
+                return jsonify({"detail": "Invalid credentials"}), 401
+            
+            if not user.is_active:
+                return jsonify({"detail": "Account not activated"}), 403
+            
+            return jsonify({
+                "message": "Login successful",
+                "user": {
+                    "name": user.name,
+                    "phone": user.phone,
+                    "email": user.email,
+                    "institution": user.institution,
+                    "role": user.role,
+                    "is_premium": user.is_premium,
+                    "session_plans_limit": user.session_plans_limit,
+                    "schemes_limit": user.schemes_limit,
+                    "session_plans_downloaded": user.session_plans_downloaded,
+                    "schemes_downloaded": user.schemes_downloaded
+                }
+            }), 200
+        finally:
+            db.close()
+    except Exception as e:
+        return jsonify({"detail": "Login failed"}), 500
 
-@app.route('/user-limits/<phone>')
-def user_limits(phone):
-    return jsonify({"session_plans_limit": 2, "schemes_limit": 2, "session_plans_downloaded": 0, "schemes_downloaded": 0, "is_premium": False})
+@app.route('/session-plans/generate', methods=['POST', 'OPTIONS'])
+def generate_session_plan():
+    if request.method == 'OPTIONS':
+        return '', 204
+    
+    try:
+        data = request.get_json()
+        user_phone = data.get('user_phone')
+        format_type = data.get('format', 'docx')
+        
+        if not user_phone:
+            return jsonify({"detail": "User phone required"}), 400
+        
+        db = SessionLocal()
+        try:
+            user = db.query(User).filter(User.phone == user_phone).first()
+            if not user:
+                return jsonify({"detail": "User not found"}), 404
+            
+            if user.session_plans_downloaded >= user.session_plans_limit:
+                return jsonify({"detail": "Download limit reached"}), 403
+            
+            # Save session plan
+            session_plan = SessionPlan(
+                user_phone=user_phone,
+                sector=data.get('sector'),
+                sub_sector=data.get('sub_sector'),
+                trade=data.get('trade'),
+                qualification_title=data.get('qualification_title'),
+                rqf_level=data.get('rqf_level'),
+                module_code_title=data.get('module_code_title'),
+                term=data.get('term'),
+                week=data.get('week'),
+                date=data.get('date'),
+                trainer_name=data.get('trainer_name'),
+                class_name=data.get('class_name'),
+                number_of_trainees=data.get('number_of_trainees'),
+                learning_outcomes=data.get('learning_outcomes'),
+                indicative_contents=data.get('indicative_contents'),
+                topic_of_session=data.get('topic_of_session'),
+                duration=data.get('duration'),
+                objectives=data.get('objectives'),
+                facilitation_techniques=data.get('facilitation_techniques'),
+                learning_activities=data.get('learning_activities'),
+                resources=data.get('resources'),
+                assessment_details=data.get('assessment_details'),
+                references=data.get('references')
+            )
+            
+            db.add(session_plan)
+            
+            # Generate document
+            if format_type == 'pdf':
+                file_path = generate_session_plan_pdf(data)
+                mimetype = 'application/pdf'
+                filename = f"Session_Plan_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+            else:
+                file_path = generate_session_plan_docx(data)
+                mimetype = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                filename = f"Session_Plan_{datetime.now().strftime('%Y%m%d_%H%M%S')}.docx"
+            
+            # Update download count
+            user.session_plans_downloaded += 1
+            db.commit()
+            
+            return send_file(
+                file_path,
+                as_attachment=True,
+                download_name=filename,
+                mimetype=mimetype
+            )
+        finally:
+            db.close()
+    except Exception as e:
+        return jsonify({"detail": "Generation failed"}), 500
+
+@app.route('/schemes/generate', methods=['POST', 'OPTIONS'])
+def generate_scheme():
+    if request.method == 'OPTIONS':
+        return '', 204
+    
+    try:
+        data = request.get_json()
+        user_phone = data.get('user_phone')
+        format_type = data.get('format', 'docx')
+        
+        if not user_phone:
+            return jsonify({"detail": "User phone required"}), 400
+        
+        db = SessionLocal()
+        try:
+            user = db.query(User).filter(User.phone == user_phone).first()
+            if not user:
+                return jsonify({"detail": "User not found"}), 404
+            
+            if user.schemes_downloaded >= user.schemes_limit:
+                return jsonify({"detail": "Download limit reached"}), 403
+            
+            # Save scheme
+            scheme = SchemeOfWork(
+                user_phone=user_phone,
+                province=data.get('province'),
+                district=data.get('district'),
+                sector=data.get('sector'),
+                school=data.get('school'),
+                department_trade=data.get('department_trade'),
+                qualification_title=data.get('qualification_title'),
+                rqf_level=data.get('rqf_level'),
+                module_code_title=data.get('module_code_title'),
+                school_year=data.get('school_year'),
+                terms=data.get('terms'),
+                module_hours=data.get('module_hours'),
+                number_of_classes=data.get('number_of_classes'),
+                class_name=data.get('class_name'),
+                trainer_name=data.get('trainer_name'),
+                term1_weeks=data.get('term1_weeks'),
+                term1_learning_outcomes=data.get('term1_learning_outcomes'),
+                term1_indicative_contents=data.get('term1_indicative_contents'),
+                term1_duration=data.get('term1_duration'),
+                term2_weeks=data.get('term2_weeks'),
+                term2_learning_outcomes=data.get('term2_learning_outcomes'),
+                term2_indicative_contents=data.get('term2_indicative_contents'),
+                term2_duration=data.get('term2_duration'),
+                term3_weeks=data.get('term3_weeks'),
+                term3_learning_outcomes=data.get('term3_learning_outcomes'),
+                term3_indicative_contents=data.get('term3_indicative_contents'),
+                term3_duration=data.get('term3_duration'),
+                dos_name=data.get('dos_name'),
+                manager_name=data.get('manager_name')
+            )
+            
+            db.add(scheme)
+            
+            # Generate document
+            if format_type == 'pdf':
+                file_path = generate_scheme_of_work_pdf(data)
+                mimetype = 'application/pdf'
+                filename = f"Scheme_of_Work_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+            else:
+                file_path = generate_scheme_of_work_docx(data)
+                mimetype = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                filename = f"Scheme_of_Work_{datetime.now().strftime('%Y%m%d_%H%M%S')}.docx"
+            
+            # Update download count
+            user.schemes_downloaded += 1
+            db.commit()
+            
+            return send_file(
+                file_path,
+                as_attachment=True,
+                download_name=filename,
+                mimetype=mimetype
+            )
+        finally:
+            db.close()
+    except Exception as e:
+        return jsonify({"detail": "Generation failed"}), 500
 
 if __name__ == '__main__':
-    # Pre-load admin
-    users_db['+250789751597'] = {
-        'user_id': 'ADMIN_001',
-        'name': 'Administrator',
-        'phone': '+250789751597',
-        'email': 'admin@rtb.rw',
-        'institution': 'RTB',
-        'password': 'admin123',
-        'role': 'admin',
-        'is_premium': True,
-        'session_plans_limit': 999,
-        'schemes_limit': 999
-    }
-    
-    print("🚀 Starting RTB Document Planner Backend...")
-    print("📍 Backend running at: http://localhost:8000")
-    print("🌐 Frontend should run at: http://localhost:5173")
-    print("✅ CORS enabled for all origins")
-    print("👤 Admin: +250789751597 / admin123")
-    app.run(host='0.0.0.0', port=8000, debug=True)
+    app.run(debug=True)
