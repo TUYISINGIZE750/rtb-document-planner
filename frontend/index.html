@@ -1,1 +1,179 @@
-</html> 
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RTB Document Planner v2.1</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .container { text-align: center; max-width: 800px; padding: 3rem; }
+        h1 { color: white; font-size: 3rem; margin-bottom: 1rem; }
+        p { color: rgba(255,255,255,0.9); font-size: 1.25rem; margin-bottom: 3rem; }
+        .buttons { display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; }
+        .btn { background: white; border: none; border-radius: 1rem; padding: 2rem 1.5rem; width: 250px; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 12px rgba(0,0,0,0.15); text-decoration: none; display: block; }
+        .btn:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+        .btn i { font-size: 2.5rem; color: #6366f1; margin-bottom: 0.75rem; }
+        .btn h2 { color: #1e293b; font-size: 1.25rem; margin-bottom: 0.25rem; }
+        .btn p { color: #64748b; font-size: 0.8rem; margin: 0; }
+        .user-menu { position: fixed; top: 2rem; right: 2rem; }
+        .auth-btn { padding: 0.75rem 1.5rem; background: white; color: #333; text-decoration: none; border-radius: 2rem; font-weight: 600; margin: 0 0.5rem; }
+        .logout-btn { background: #ef4444; color: white; border: none; padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer; }
+        .user-info { background: white; padding: 1rem 1.5rem; border-radius: 2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 1rem; }
+        .version { position: fixed; bottom: 1rem; left: 1rem; color: rgba(255,255,255,0.7); font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+    <div class="version">v2.1 - Latest</div>
+    <div class="user-menu" id="userMenu">
+        <a href="#" onclick="showLogin()" class="auth-btn"><i class="fas fa-sign-in-alt"></i> Login</a>
+    </div>
+    <div class="container">
+        <h1><i class="fas fa-graduation-cap"></i> RTB Document Planner</h1>
+        <p>Professional TVET Session Plans & Schemes of Work Generator</p>
+        <div class="buttons">
+            <a href="wizard.html" class="btn" onclick="return checkAuth()">
+                <i class="fas fa-chalkboard-teacher"></i>
+                <h2>Session Plan</h2>
+                <p>Create RTB-formatted session plans</p>
+            </a>
+            <a href="scheme.html" class="btn" onclick="return checkAuth()">
+                <i class="fas fa-clipboard-list"></i>
+                <h2>Scheme of Work</h2>
+                <p>Generate comprehensive schemes</p>
+            </a>
+        </div>
+    </div>
+    <script>
+        const API_BASE = 'https://leonardus437.pythonanywhere.com';
+        const APP_VERSION = '2.1';
+        let currentUser = null;
+        
+        console.log('RTB App v' + APP_VERSION + ' loaded');
+        
+        function saveUser(userData) {
+            console.log('Saving user:', userData);
+            if (!userData || !userData.name) {
+                console.error('Invalid user data - no name field');
+                alert('Login error: Invalid user data received');
+                return;
+            }
+            currentUser = userData;
+            localStorage.setItem('rtb_user', JSON.stringify(userData));
+            updateUI();
+        }
+        
+        function getUser() {
+            if (currentUser && currentUser.name) return currentUser;
+            
+            try {
+                const stored = localStorage.getItem('rtb_user');
+                if (stored) {
+                    const userData = JSON.parse(stored);
+                    if (userData && userData.name) {
+                        currentUser = userData;
+                        return currentUser;
+                    }
+                }
+            } catch (error) {
+                console.error('Error parsing stored user:', error);
+                localStorage.removeItem('rtb_user');
+            }
+            return null;
+        }
+        
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                currentUser = null;
+                localStorage.removeItem('rtb_user');
+                updateUI();
+                alert('Logged out successfully');
+            }
+        }
+        
+        function updateUI() {
+            const user = getUser();
+            const menu = document.getElementById('userMenu');
+            
+            if (user && user.name) {
+                console.log('Updating UI for user:', user.name);
+                menu.innerHTML = `
+                    <div class="user-info">
+                        <span style="color: #333; font-weight: 600;">
+                            <i class="fas fa-user-circle" style="color: #6366f1;"></i> ${user.name}
+                        </span>
+                        <button onclick="logout()" class="logout-btn">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </button>
+                    </div>
+                `;
+            } else {
+                console.log('No user logged in');
+                menu.innerHTML = `<a href="#" onclick="showLogin()" class="auth-btn"><i class="fas fa-sign-in-alt"></i> Login</a>`;
+            }
+        }
+        
+        function checkAuth() {
+            const user = getUser();
+            if (!user || !user.name) {
+                showLogin();
+                return false;
+            }
+            return true;
+        }
+        
+        function showLogin() {
+            const phone = prompt('Enter your phone number (e.g., +250788123456):');
+            if (!phone) return;
+            
+            const password = prompt('Enter your password:');
+            if (!password) return;
+            
+            login(phone, password);
+        }
+        
+        async function login(phone, password) {
+            try {
+                console.log('Attempting login for:', phone);
+                
+                const response = await fetch(`${API_BASE}/users/login`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ phone, password })
+                });
+                
+                console.log('Login response status:', response.status);
+                
+                if (response.ok) {
+                    const userData = await response.json();
+                    console.log('Login successful, user data:', userData);
+                    
+                    if (userData && userData.name) {
+                        saveUser(userData);
+                        alert(`Welcome back, ${userData.name}!`);
+                    } else {
+                        console.error('Invalid user data received:', userData);
+                        alert('Login error: Invalid user data received');
+                    }
+                } else {
+                    const errorData = await response.json();
+                    console.error('Login failed:', errorData);
+                    alert(errorData.detail || 'Login failed. Please check your credentials.');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                alert('Connection error. Please check your internet and try again.');
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Page loaded, initializing...');
+            updateUI();
+        });
+    </script>
+</body>
+</html>
