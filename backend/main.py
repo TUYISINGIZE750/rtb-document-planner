@@ -158,13 +158,24 @@ init_admin()
 def home():
     if request.method == 'OPTIONS':
         return '', 204
+    
+    try:
+        db = SessionLocal()
+        try:
+            users_count = db.query(User).count()
+        finally:
+            db.close()
+    except:
+        users_count = 0
+    
     return jsonify({
         "message": "RTB Document Planner API",
         "status": "online",
         "cors": "enabled",
         "environment": "production",
         "version": "2.0",
-        "features": ["authentication", "docx_generation", "pdf_generation"]
+        "features": ["authentication", "docx_generation", "pdf_generation"],
+        "users_count": users_count
     })
 
 @app.route('/users/register', methods=['POST', 'OPTIONS'])
