@@ -202,6 +202,8 @@ async function handleLogin(event) {
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
     
+    const API_BASE = 'https://leonardus437.pythonanywhere.com';
+    
     try {
         const response = await fetch(`${API_BASE}/users/login`, {
             method: 'POST',
@@ -263,6 +265,8 @@ async function handleRegister(event) {
     
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registering...';
+    
+    const API_BASE = 'https://leonardus437.pythonanywhere.com';
     
     try {
         const response = await fetch(`${API_BASE}/users/register`, {
