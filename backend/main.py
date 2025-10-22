@@ -298,19 +298,19 @@ def generate_session_plan():
             
             db.add(session_plan)
             
-            # Generate document
+            # Update download count first
+            user.session_plans_downloaded += 1
+            db.commit()
+            
+            # Generate document after commit
             if format_type == 'pdf':
                 file_path = generate_session_plan_pdf(data)
                 mimetype = 'application/pdf'
-                filename = f"Session_Plan_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+                filename = f"RTB_Session_Plan_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
             else:
                 file_path = generate_session_plan_docx(data)
                 mimetype = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-                filename = f"Session_Plan_{datetime.now().strftime('%Y%m%d_%H%M%S')}.docx"
-            
-            # Update download count
-            user.session_plans_downloaded += 1
-            db.commit()
+                filename = f"RTB_Session_Plan_{datetime.now().strftime('%Y%m%d_%H%M%S')}.docx"
             
             return send_file(
                 file_path,
@@ -406,19 +406,19 @@ def generate_scheme():
             
             db.add(scheme)
             
-            # Generate document
+            # Update download count first
+            user.schemes_downloaded += 1
+            db.commit()
+            
+            # Generate document after commit
             if format_type == 'pdf':
                 file_path = generate_scheme_of_work_pdf(data)
                 mimetype = 'application/pdf'
-                filename = f"Scheme_of_Work_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+                filename = f"RTB_Scheme_of_Work_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
             else:
                 file_path = generate_scheme_of_work_docx(data)
                 mimetype = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-                filename = f"Scheme_of_Work_{datetime.now().strftime('%Y%m%d_%H%M%S')}.docx"
-            
-            # Update download count
-            user.schemes_downloaded += 1
-            db.commit()
+                filename = f"RTB_Scheme_of_Work_{datetime.now().strftime('%Y%m%d_%H%M%S')}.docx"
             
             return send_file(
                 file_path,
@@ -430,6 +430,123 @@ def generate_scheme():
             db.close()
     except Exception as e:
         return jsonify({"detail": "Generation failed"}), 500
+
+@app.route('/admin/users', methods=['GET', 'OPTIONS'])
+def get_all_users():
+    if request.method == 'OPTIONS':
+        return '', 204
+    
+    try:
+        db = SessionLocal()
+        try:
+            users = db.query(User).all()
+            return jsonify({
+                "users": [{
+                    "id": user.id,
+                    "user_id": user.user_id,
+                    "name": user.name,
+                    "phone": user.phone,
+                    "email": user.email,
+                    "institution": user.institution,
+                    "role": user.role,
+                    "is_premium": user.is_premium,
+                    "is_active": user.is_active,
+                    "session_plans_limit": user.session_plans_limit,
+                    "schemes_limit": user.schemes_limit,
+                    "session_plans_downloaded": user.session_plans_downloaded,
+                    "schemes_downloaded": user.schemes_downloaded,
+                    "created_at": user.created_at.isoformat() if user.created_at else None
+                } for user in users]
+            }), 200
+        finally:
+            db.close()
+    except Exception as e:
+        return jsonify({"detail": "Failed to get users"}), 500
+
+@app.route('/admin/users/<int:user_id>/activate', methods=['POST', 'OPTIONS'])
+def activate_user(user_id):
+    if request.method == 'OPTIONS':
+        return '', 204
+    
+    try:
+        db = SessionLocal()
+        try:
+            user = db.query(User).filter(User.id == user_id).first()
+            if not user:
+                return jsonify({"detail": "User not found"}), 404
+            
+            user.is_active = True
+            db.commit()
+            return jsonify({"message": "User activated successfully"}), 200
+        finally:
+            db.close()
+    except Exception as e:
+        return jsonify({"detail": "Failed to activate user"}), 500
+
+@app.route('/admin/users/<int:user_id>/deactivate', methods=['POST', 'OPTIONS'])
+def deactivate_user(user_id):
+    if request.method == 'OPTIONS':
+        return '', 204
+    
+    try:
+        db = SessionLocal()
+        try:
+            user = db.query(User).filter(User.id == user_id).first()
+            if not user:
+                return jsonify({"detail": "User not found"}), 404
+            
+            user.is_active = False
+            db.commit()
+            return jsonify({"message": "User deactivated successfully"}), 200
+        finally:
+            db.close()
+    except Exception as e:
+        return jsonify({"detail": "Failed to deactivate user"}), 500
+
+@app.route('/admin/users/<int:user_id>/upgrade', methods=['POST', 'OPTIONS'])
+def upgrade_user(user_id):
+    if request.method == 'OPTIONS':
+        return '', 204
+    
+    try:
+        data = request.get_json() or {}
+        db = SessionLocal()
+        try:
+            user = db.query(User).filter(User.id == user_id).first()
+            if not user:
+                return jsonify({"detail": "User not found"}), 404
+            
+            user.is_premium = True
+            user.session_plans_limit = 999
+            user.schemes_limit = 999
+            db.commit()
+            return jsonify({"message": "User upgraded to premium"}), 200
+        finally:
+            db.close()
+    except Exception as e:
+        return jsonify({"detail": "Failed to upgrade user"}), 500
+
+@app.route('/admin/users/<int:user_id>/downgrade', methods=['POST', 'OPTIONS'])
+def downgrade_user(user_id):
+    if request.method == 'OPTIONS':
+        return '', 204
+    
+    try:
+        db = SessionLocal()
+        try:
+            user = db.query(User).filter(User.id == user_id).first()
+            if not user:
+                return jsonify({"detail": "User not found"}), 404
+            
+            user.is_premium = False
+            user.session_plans_limit = 2
+            user.schemes_limit = 2
+            db.commit()
+            return jsonify({"message": "User downgraded to free"}), 200
+        finally:
+            db.close()
+    except Exception as e:
+        return jsonify({"detail": "Failed to downgrade user"}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
