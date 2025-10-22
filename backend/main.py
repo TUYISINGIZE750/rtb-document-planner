@@ -452,28 +452,30 @@ def get_all_users():
         db = SessionLocal()
         try:
             users = db.query(User).all()
-            return jsonify({
-                "users": [{
-                    "id": user.id,
-                    "user_id": user.user_id,
-                    "name": user.name,
-                    "phone": user.phone,
-                    "email": user.email,
-                    "institution": user.institution,
-                    "role": user.role,
-                    "is_premium": user.is_premium,
-                    "is_active": user.is_active,
-                    "session_plans_limit": user.session_plans_limit,
-                    "schemes_limit": user.schemes_limit,
-                    "session_plans_downloaded": user.session_plans_downloaded,
-                    "schemes_downloaded": user.schemes_downloaded,
-                    "created_at": user.created_at.isoformat() if user.created_at else None
-                } for user in users]
-            }), 200
+            users_list = [{
+                "id": user.id,
+                "user_id": user.user_id,
+                "name": user.name,
+                "phone": user.phone,
+                "email": user.email,
+                "institution": user.institution,
+                "role": user.role,
+                "is_premium": user.is_premium,
+                "is_active": user.is_active,
+                "session_plans_limit": user.session_plans_limit,
+                "schemes_limit": user.schemes_limit,
+                "session_plans_downloaded": user.session_plans_downloaded,
+                "schemes_downloaded": user.schemes_downloaded,
+                "created_at": user.created_at.isoformat() if user.created_at else None
+            } for user in users]
+            
+            # Return array directly for admin-clean.html compatibility
+            return jsonify(users_list), 200
         finally:
             db.close()
     except Exception as e:
-        return jsonify({"detail": "Failed to get users"}), 500
+        logger.error(f"Error getting users: {e}")
+        return jsonify([]), 200
 
 @app.route('/admin/users/<int:user_id>/activate', methods=['POST', 'OPTIONS'])
 def activate_user(user_id):
