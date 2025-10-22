@@ -490,7 +490,8 @@
         async function checkLimitsAndRedirect(type, url) {
             const session = getCurrentSession();
             if (!session) {
-                showAuthModal();
+                alert('Please sign in to create documents');
+                window.location.href = 'login-select.html';
                 return;
             }
             
