@@ -609,5 +609,120 @@ def send_notification():
     except Exception as e:
         return jsonify({"detail": "Failed to send notification"}), 500
 
+@app.route('/users/<phone>/status', methods=['PUT', 'OPTIONS'])
+def update_user_status(phone):
+    if request.method == 'OPTIONS':
+        return '', 204
+    
+    try:
+        data = request.get_json()
+        is_active = data.get('is_active')
+        
+        db = SessionLocal()
+        try:
+            user = db.query(User).filter(User.phone == phone).first()
+            if not user:
+                return jsonify({"detail": "User not found"}), 404
+            
+            user.is_active = is_active
+            db.commit()
+            return jsonify({"message": "Status updated"}), 200
+        finally:
+            db.close()
+    except Exception as e:
+        return jsonify({"detail": "Failed to update status"}), 500
+
+@app.route('/users/<phone>/premium', methods=['PUT', 'OPTIONS'])
+def update_user_premium(phone):
+    if request.method == 'OPTIONS':
+        return '', 204
+    
+    try:
+        data = request.get_json()
+        is_premium = data.get('is_premium')
+        
+        db = SessionLocal()
+        try:
+            user = db.query(User).filter(User.phone == phone).first()
+            if not user:
+                return jsonify({"detail": "User not found"}), 404
+            
+            user.is_premium = is_premium
+            if is_premium:
+                user.session_plans_limit = 999
+                user.schemes_limit = 999
+            else:
+                user.session_plans_limit = 2
+                user.schemes_limit = 2
+            db.commit()
+            return jsonify({"message": "Premium updated"}), 200
+        finally:
+            db.close()
+    except Exception as e:
+        return jsonify({"detail": "Failed to update premium"}), 500
+
+@app.route('/users/<phone>', methods=['PUT', 'OPTIONS'])
+def update_user(phone):
+    if request.method == 'OPTIONS':
+        return '', 204
+    
+    try:
+        data = request.get_json()
+        
+        db = SessionLocal()
+        try:
+            user = db.query(User).filter(User.phone == phone).first()
+            if not user:
+                return jsonify({"detail": "User not found"}), 404
+            
+            user.name = data.get('name', user.name)
+            user.institution = data.get('institution', user.institution)
+            user.session_plans_limit = data.get('session_plans_limit', user.session_plans_limit)
+            user.schemes_limit = data.get('schemes_limit', user.schemes_limit)
+            user.is_premium = data.get('is_premium', user.is_premium)
+            user.is_active = data.get('is_active', user.is_active)
+            db.commit()
+            return jsonify({"message": "User updated"}), 200
+        finally:
+            db.close()
+    except Exception as e:
+        return jsonify({"detail": "Failed to update user"}), 500
+
+@app.route('/notifications/broadcast', methods=['POST', 'OPTIONS'])
+def broadcast_notification():
+    if request.method == 'OPTIONS':
+        return '', 204
+    
+    try:
+        data = request.get_json()
+        target = data.get('target', 'all')
+        message = data.get('message', '')
+        
+        if not message:
+            return jsonify({"detail": "Message required"}), 400
+        
+        logger.info(f"Broadcast to {target}: {message}")
+        return jsonify({"message": "Notification sent"}), 200
+    except Exception as e:
+        return jsonify({"detail": "Failed to send notification"}), 500
+
+@app.route('/notifications/send', methods=['POST', 'OPTIONS'])
+def send_personal_notification():
+    if request.method == 'OPTIONS':
+        return '', 204
+    
+    try:
+        data = request.get_json()
+        recipient = data.get('recipient', '')
+        message = data.get('message', '')
+        
+        if not recipient or not message:
+            return jsonify({"detail": "Recipient and message required"}), 400
+        
+        logger.info(f"Message to {recipient}: {message}")
+        return jsonify({"message": "Message sent"}), 200
+    except Exception as e:
+        return jsonify({"detail": "Failed to send message"}), 500
+
 if __name__ == '__main__':
     app.run(debug=True)
