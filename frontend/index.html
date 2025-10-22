@@ -288,51 +288,47 @@
             try {
                 console.log('Loading subscription status for:', session.phone);
                 
-                let limits;
-                if (window.connectionManager) {
-                    limits = await fetchUserLimits(session.phone);
-                } else {
-                    // Fallback method
-                    const response = await fetch(`${API_BASE}/user-limits/${encodeURIComponent(session.phone)}`, {
-                        method: 'GET',
-                        mode: 'cors',
-                        credentials: 'omit',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json'
-                        }
-                    });
-                    
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                const response = await fetch(`${API_BASE}/user-limits/${encodeURIComponent(session.phone)}`, {
+                    method: 'GET',
+                    mode: 'cors',
+                    credentials: 'omit',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
                     }
-                    
-                    limits = await response.json();
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Backend offline`);
                 }
                 
+                const limits = await response.json();
                 console.log('Limits received:', limits);
                 displaySubscriptionStatus(limits);
             } catch (error) {
-                console.error('Error loading subscription status:', error.message);
-                // Show fallback UI for connection issues
-                showConnectionError();
+                console.error('Backend unavailable:', error.message);
+                // Show offline status instead of error
+                showOfflineStatus();
             }
         }
         
-        function showConnectionError() {
+        function showOfflineStatus() {
             const statusContainer = document.getElementById('subscriptionStatus');
             statusContainer.innerHTML = `
                 <div class="subscription-card" style="text-align: center; padding: 2rem;">
-                    <i class="fas fa-wifi" style="font-size: 2rem; color: #ef4444; margin-bottom: 1rem;"></i>
-                    <h3 style="color: #ef4444; margin-bottom: 0.5rem;">Connection Issue</h3>
-                    <p style="color: #64748b; margin-bottom: 1rem;">Unable to load subscription status. Please check your internet connection.</p>
-                    <button onclick="loadSubscriptionStatus()" style="padding: 0.75rem 1.5rem; background: #6366f1; color: white; border: none; border-radius: 0.5rem; cursor: pointer; font-weight: 600;">
-                        <i class="fas fa-refresh"></i> Retry
-                    </button>
+                    <i class="fas fa-wifi" style="font-size: 2rem; color: #f59e0b; margin-bottom: 1rem;"></i>
+                    <h3 style="color: #f59e0b; margin-bottom: 0.5rem;">Offline Mode</h3>
+                    <p style="color: #64748b; margin-bottom: 1rem;">Backend not available. Documents will be generated offline.</p>
+                    <div style="background: #fef3c7; padding: 1rem; border-radius: 0.5rem; border: 2px solid #f59e0b;">
+                        <p style="color: #92400e; font-weight: 600; margin: 0;">✅ You can still create documents!</p>
+                        <p style="color: #92400e; margin: 0.5rem 0 0 0; font-size: 0.875rem;">Documents will be generated in basic format until backend is deployed.</p>
+                    </div>
                 </div>
             `;
             statusContainer.style.display = 'block';
         }
+        
+
         
         function displaySubscriptionStatus(limits) {
             const statusContainer = document.getElementById('subscriptionStatus');

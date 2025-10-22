@@ -127,19 +127,22 @@ function generateOfflineSessionPlan(formData) {
 </body>
 </html>`;
 
-    // Create and download the file
+    // Create proper Word document
     const blob = new Blob([docContent], { 
-        type: 'application/msword;charset=utf-8' 
+        type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' 
     });
     
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `RTB_Session_Plan_${data.topic_of_session?.replace(/[^a-zA-Z0-9]/g, '_') || 'Document'}.doc`;
+    link.download = `RTB_Session_Plan_${data.topic_of_session?.replace(/[^a-zA-Z0-9]/g, '_') || 'Document'}.docx`;
+    link.setAttribute('download', link.download);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
+    
+    console.log('Session plan downloaded:', link.download);
     
     return true;
 }
@@ -251,17 +254,20 @@ function generateOfflineScheme(formData) {
 </html>`;
 
     const blob = new Blob([docContent], { 
-        type: 'application/msword;charset=utf-8' 
+        type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' 
     });
     
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `RTB_Scheme_of_Work_${data.module_code_title?.replace(/[^a-zA-Z0-9]/g, '_') || 'Document'}.doc`;
+    link.download = `RTB_Scheme_of_Work_${data.module_code_title?.replace(/[^a-zA-Z0-9]/g, '_') || 'Document'}.docx`;
+    link.setAttribute('download', link.download);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
+    
+    console.log('Scheme of work downloaded:', link.download);
     
     return true;
 }

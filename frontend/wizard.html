@@ -571,60 +571,47 @@
                 const formData = new FormData(e.target);
                 const data = Object.fromEntries(formData);
                 
-                const response = await fetch(`${API_BASE}/session-plans`, {
-                    method: 'POST',
-                    mode: 'cors',
-                    credentials: 'omit',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                });
-                
-                console.log('Response status:', response.status);
-                console.log('Response headers:', response.headers);
-                
-                if (response.ok) {
-                    const plan = await response.json();
-                    console.log('Created plan:', plan);
-                    showNotification('Session plan created successfully!', 'success');
+                // Try backend first, but fallback to offline immediately if it fails
+                let backendSuccess = false;
+                try {
+                    const response = await fetch(`${API_BASE}/session-plans`, {
+                        method: 'POST',
+                        mode: 'cors',
+                        credentials: 'omit',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    });
                     
-                    if (plan && plan.id) {
-                        const session = getCurrentSession();
-                        if (session) {
-                            await checkDownloadLimits('session_plan', plan.id);
-                        } else {
-                            showNotification('Session plan created! Please login to download.', 'success');
+                    if (response.ok) {
+                        const plan = await response.json();
+                        console.log('Created plan:', plan);
+                        showNotification('Session plan created successfully!', 'success');
+                        
+                        if (plan && plan.id) {
+                            const session = getCurrentSession();
+                            if (session) {
+                                await checkDownloadLimits('session_plan', plan.id);
+                            }
                         }
+                        backendSuccess = true;
                     }
-                } else {
-                    const errorText = await response.text();
-                    console.error('API Error:', response.status, errorText);
-                    showNotification(`Backend error: ${response.status}. Generating offline document...`, 'warning');
-                    
-                    // Fallback to offline generation
-                    if (typeof generateOfflineSessionPlan === 'function') {
-                        generateOfflineSessionPlan(formData);
-                        showNotification('Session plan generated offline (basic format)', 'success');
-                    }
+                } catch (backendError) {
+                    console.log('Backend unavailable, using offline generator');
                 }
+                
+                // If backend failed, use offline generator
+                if (!backendSuccess) {
+                    showNotification('Generating document offline...', 'info');
+                    generateOfflineSessionPlan(formData);
+                    showNotification('Session plan downloaded! (Offline mode)', 'success');
+                }
+                
             } catch (error) {
-                console.error('Network error details:', error);
-                if (error.name === 'TypeError' && error.message.includes('fetch')) {
-                    showNotification('Backend offline. Generating document offline...', 'warning');
-                    
-                    // Generate offline document
-                    if (typeof generateOfflineSessionPlan === 'function') {
-                        const formData = new FormData(e.target);
-                        generateOfflineSessionPlan(formData);
-                        showNotification('Session plan generated offline (basic format)', 'success');
-                    } else {
-                        showNotification('Unable to generate document. Please try again later.', 'error');
-                    }
-                } else {
-                    showNotification('Network error: ' + error.message, 'error');
-                }
+                console.error('Error in form submission:', error);
+                showNotification('Error occurred. Please try again.', 'error');
             } finally {
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;

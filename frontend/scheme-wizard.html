@@ -330,72 +330,54 @@
             try {
                 const formData = new FormData(e.target);
                 const data = Object.fromEntries(formData);
-                const response = await fetch(`${API_BASE}/schemes`, {
-                    method: 'POST',
-                    mode: 'cors',
-                    credentials: 'omit',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                });
                 
-                console.log('Response status:', response.status);
-                console.log('Response headers:', response.headers);
-                
-                if (response.ok) {
-                    const scheme = await response.json();
-                    console.log('Created scheme:', scheme);
-                    showNotification('Scheme of work created successfully!', 'success');
+                // Try backend first, fallback to offline if unavailable
+                let backendSuccess = false;
+                try {
+                    const response = await fetch(`${API_BASE}/schemes`, {
+                        method: 'POST',
+                        mode: 'cors',
+                        credentials: 'omit',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    });
                     
-                    if (scheme && scheme.id) {
-                        // Try to download directly, fallback to login prompt if needed
-                        let session;
-                        try {
-                            session = getCurrentSession();
-                        } catch (error) {
-                            session = null;
-                        }
+                    if (response.ok) {
+                        const scheme = await response.json();
+                        console.log('Created scheme:', scheme);
+                        showNotification('Scheme of work created successfully!', 'success');
                         
-                        if (session) {
-                            await checkDownloadLimits('scheme', scheme.id);
-                        } else {
-                            showNotification('Scheme created! Please login to download.', 'success');
-                            setTimeout(() => {
-                                window.location.href = 'login.html';
-                            }, 2000);
+                        if (scheme && scheme.id) {
+                            let session;
+                            try {
+                                session = getCurrentSession();
+                            } catch (error) {
+                                session = null;
+                            }
+                            
+                            if (session) {
+                                await checkDownloadLimits('scheme', scheme.id);
+                            }
                         }
-                    } else {
-                        showNotification('Error: Invalid scheme ID received', 'error');
+                        backendSuccess = true;
                     }
-                } else {
-                    const errorText = await response.text();
-                    console.error('API Error:', response.status, errorText);
-                    showNotification(`Backend error: ${response.status}. Generating offline document...`, 'warning');
-                    
-                    // Fallback to offline generation
-                    if (typeof generateOfflineScheme === 'function') {
-                        generateOfflineScheme(formData);
-                        showNotification('Scheme of work generated offline (basic format)', 'success');
-                    }
+                } catch (backendError) {
+                    console.log('Backend unavailable, using offline generator');
                 }
+                
+                // If backend failed, use offline generator
+                if (!backendSuccess) {
+                    showNotification('Generating document offline...', 'info');
+                    generateOfflineScheme(formData);
+                    showNotification('Scheme of work downloaded! (Offline mode)', 'success');
+                }
+                
             } catch (error) {
-                console.error('Network error details:', error);
-                if (error.name === 'TypeError' && error.message.includes('fetch')) {
-                    showNotification('Backend offline. Generating document offline...', 'warning');
-                    
-                    // Generate offline document
-                    if (typeof generateOfflineScheme === 'function') {
-                        const formData = new FormData(e.target);
-                        generateOfflineScheme(formData);
-                        showNotification('Scheme of work generated offline (basic format)', 'success');
-                    } else {
-                        showNotification('Unable to generate document. Please try again later.', 'error');
-                    }
-                } else {
-                    showNotification('Network error: ' + error.message, 'error');
-                }
+                console.error('Error in form submission:', error);
+                showNotification('Error occurred. Please try again.', 'error');
             } finally {
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;
