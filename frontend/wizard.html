@@ -602,11 +602,9 @@
                     console.log('Backend unavailable, using offline generator');
                 }
                 
-                // If backend failed, use offline generator
+                // If backend failed, show error
                 if (!backendSuccess) {
-                    showNotification('Generating document offline...', 'info');
-                    generateOfflineSessionPlan(formData);
-                    showNotification('Session plan downloaded! (Offline mode)', 'success');
+                    showNotification('Backend unavailable. Please try again later.', 'error');
                 }
                 
             } catch (error) {
