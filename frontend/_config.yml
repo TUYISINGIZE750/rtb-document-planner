@@ -1,0 +1,13 @@
+title: RTB Document Planner
+description: Professional TVET Session Plans & Schemes of Work Generator for Rwanda Technical Board
+url: https://tuyisingize750.github.io
+baseurl: ""
+
+plugins:
+  - jekyll-sitemap
+  - jekyll-feed
+
+exclude:
+  - README.md
+  - .gitignore
+  - deploy-to-github.bat

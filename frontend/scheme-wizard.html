@@ -231,10 +231,17 @@
     <!-- Config MUST load first before any auth functions -->
     <!-- Cache-busting timestamp forces CDN/browser to fetch fresh code -->
     <script src="config.js?t=20250120T105300Z"></script>
-    <script src="auth.js?t=20250120T105300Z"></script>
+    <script src="auth-fixed.js?t=20250120T105300Z"></script>
     <script>
-        // No session check - let users access freely
-        console.log('Scheme wizard page loaded');
+        // Enforce authentication for scheme wizard page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Scheme wizard page loaded - checking authentication');
+            if (!requireAuth()) {
+                console.log('Authentication required - blocking access');
+                return;
+            }
+            console.log('✅ User authenticated - scheme wizard access granted');
+        });
     </script>
     <script src="subscription-modal.js"></script>
     <script src="notifications.js"></script>
@@ -308,7 +315,7 @@
             try {
                 const formData = new FormData(e.target);
                 const data = Object.fromEntries(formData);
-                const response = await fetch(`${API_BASE}/schemes-of-work`, {
+                const response = await fetch(`${API_BASE}/schemes`, {
                     method: 'POST',
                     mode: 'cors',
                     credentials: 'omit',

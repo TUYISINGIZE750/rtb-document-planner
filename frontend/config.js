@@ -4,6 +4,8 @@ console.log('✅ config.js loaded (PRODUCTION-ONLY v2.0)');
 // FORCE PRODUCTION API - NO LOCAL DEVELOPMENT
 const API_BASE = 'https://leonardus437.pythonanywhere.com';
 
+// Note: You need to upload main_production.py to PythonAnywhere as your main WSGI file
+
 console.log('🌐 API Base URL:', API_BASE);
 console.log('🚀 Environment: PRODUCTION ONLY');
 console.log('📡 Backend: PythonAnywhere');
