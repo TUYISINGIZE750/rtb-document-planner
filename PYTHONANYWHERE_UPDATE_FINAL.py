@@ -339,45 +339,61 @@ def download_session_plan(plan_id):
     if phone and phone in users_db:
         users_db[phone]['session_plans_downloaded'] = users_db[phone].get('session_plans_downloaded', 0) + 1
     
-    # Create a simple text file (in production, this would be a DOCX file)
-    content = f"""RTB SESSION PLAN
-
-Sector: {plan.get('sector', '')}
-Trade: {plan.get('trade', '')}
-Level: {plan.get('rqf_level', '')}
-Date: {plan.get('date', '')}
-Trainer: {plan.get('trainer_name', '')}
-Term: {plan.get('term', '')}
-
-Module: {plan.get('module_code_title', '')}
-Week: {plan.get('week', '')}
-Class: {plan.get('class_name', '')}
-Number of Trainees: {plan.get('number_of_trainees', '')}
-
-Topic: {plan.get('topic_of_session', '')}
-Duration: {plan.get('duration', '')} minutes
-
-Learning Outcomes:
-{plan.get('learning_outcomes', '')}
-
-Indicative Contents:
-{plan.get('indicative_contents', '')}
-
-Range: {plan.get('session_range', '')}
-Facilitation Technique: {plan.get('facilitation_techniques', '')}
-
-Generated on: {plan.get('created_at', '')}
-"""
+    # Generate professional DOCX document
+    from docx import Document
+    from docx.shared import Pt, RGBColor
+    from docx.enum.text import WD_ALIGN_PARAGRAPH
     
-    # Create file-like object
-    file_obj = io.BytesIO(content.encode('utf-8'))
+    doc = Document()
+    
+    # Title
+    title = doc.add_heading('RTB SESSION PLAN', 0)
+    title.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    
+    # Basic Information Table
+    table = doc.add_table(rows=7, cols=2)
+    table.style = 'Light Grid Accent 1'
+    
+    table.rows[0].cells[0].text = 'Sector:'
+    table.rows[0].cells[1].text = plan.get('sector', '')
+    table.rows[1].cells[0].text = 'Trade:'
+    table.rows[1].cells[1].text = plan.get('trade', '')
+    table.rows[2].cells[0].text = 'Level:'
+    table.rows[2].cells[1].text = plan.get('rqf_level', '')
+    table.rows[3].cells[0].text = 'Module:'
+    table.rows[3].cells[1].text = plan.get('module_code_title', '')
+    table.rows[4].cells[0].text = 'Trainer:'
+    table.rows[4].cells[1].text = plan.get('trainer_name', '')
+    table.rows[5].cells[0].text = 'Class:'
+    table.rows[5].cells[1].text = plan.get('class_name', '')
+    table.rows[6].cells[0].text = 'Date:'
+    table.rows[6].cells[1].text = plan.get('date', '')
+    
+    doc.add_paragraph()
+    
+    # Session Details
+    doc.add_heading('Topic: ' + plan.get('topic_of_session', ''), level=1)
+    doc.add_paragraph(f"Duration: {plan.get('duration', '')} minutes")
+    
+    doc.add_heading('Learning Outcomes', level=2)
+    doc.add_paragraph(plan.get('learning_outcomes', ''))
+    
+    doc.add_heading('Indicative Contents', level=2)
+    doc.add_paragraph(plan.get('indicative_contents', ''))
+    
+    doc.add_heading('Facilitation Technique', level=2)
+    doc.add_paragraph(plan.get('facilitation_techniques', ''))
+    
+    # Save to BytesIO
+    file_obj = io.BytesIO()
+    doc.save(file_obj)
     file_obj.seek(0)
     
     return send_file(
         file_obj,
         as_attachment=True,
-        download_name=f'session_plan_{plan_id}.txt',
-        mimetype='text/plain'
+        download_name=f'RTB_Session_Plan_{plan_id}.docx',
+        mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
     )
 
 # SCHEMES OF WORK ENDPOINTS - CRITICAL FOR FUNCTIONALITY
@@ -465,75 +481,77 @@ def download_scheme(scheme_id):
     if phone and phone in users_db:
         users_db[phone]['schemes_downloaded'] = users_db[phone].get('schemes_downloaded', 0) + 1
     
-    # Create a simple text file (in production, this would be a DOCX file)
-    content = f"""RTB SCHEME OF WORK
-
-INSTITUTIONAL INFORMATION
-Province: {scheme.get('province', '')}
-District: {scheme.get('district', '')}
-Sector: {scheme.get('sector', '')}
-School: {scheme.get('school', '')}
-Trade: {scheme.get('trade', '')}
-Qualification: {scheme.get('qualification_title', '')}
-Level: {scheme.get('rqf_level', '')}
-
-MODULE INFORMATION
-Module: {scheme.get('module_code_title', '')}
-School Year: {scheme.get('school_year', '')}
-Terms: {scheme.get('terms', '')}
-Module Hours: {scheme.get('module_hours', '')}
-Classes: {scheme.get('number_of_classes', '')}
-Class Name: {scheme.get('class_name', '')}
-Cohort Size: {scheme.get('cohort_size', '')}
-Trainer: {scheme.get('trainer_name', '')} ({scheme.get('trainer_position', '')})
-
-MODULE OVERVIEW
-Rationale: {scheme.get('module_rationale', '')}
-Entry Requirements: {scheme.get('entry_requirements', '')}
-Competency Codes: {scheme.get('competency_codes', '')}
-
-TERM 1
-Weeks: {scheme.get('term1_weeks', '')}
-Duration: {scheme.get('term1_duration', '')}
-Learning Outcomes: {scheme.get('term1_learning_outcomes', '')}
-Content: {scheme.get('term1_indicative_contents', '')}
-
-TERM 2
-Weeks: {scheme.get('term2_weeks', '')}
-Duration: {scheme.get('term2_duration', '')}
-Learning Outcomes: {scheme.get('term2_learning_outcomes', '')}
-Content: {scheme.get('term2_indicative_contents', '')}
-
-TERM 3
-Weeks: {scheme.get('term3_weeks', '')}
-Duration: {scheme.get('term3_duration', '')}
-Learning Outcomes: {scheme.get('term3_learning_outcomes', '')}
-Content: {scheme.get('term3_indicative_contents', '')}
-
-ASSESSMENT
-Formative: {scheme.get('formative_assessment', '')}
-Summative: {scheme.get('summative_assessment', '')}
-
-RESOURCES & SAFETY
-Resources: {scheme.get('resource_inventory', '')}
-Health & Safety: {scheme.get('health_safety', '')}
-
-SIGN-OFFS
-DOS: {scheme.get('dos_name', '')}
-Manager: {scheme.get('manager_name', '')}
-
-Generated on: {scheme.get('created_at', '')}
-"""
+    # Generate professional DOCX document
+    from docx import Document
+    from docx.enum.text import WD_ALIGN_PARAGRAPH
     
-    # Create file-like object
-    file_obj = io.BytesIO(content.encode('utf-8'))
+    doc = Document()
+    
+    # Title
+    title = doc.add_heading('RTB SCHEME OF WORK', 0)
+    title.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    
+    # Institutional Information
+    doc.add_heading('Institutional Information', level=1)
+    table1 = doc.add_table(rows=4, cols=2)
+    table1.style = 'Light Grid Accent 1'
+    table1.rows[0].cells[0].text = 'Province:'
+    table1.rows[0].cells[1].text = scheme.get('province', '')
+    table1.rows[1].cells[0].text = 'District:'
+    table1.rows[1].cells[1].text = scheme.get('district', '')
+    table1.rows[2].cells[0].text = 'School:'
+    table1.rows[2].cells[1].text = scheme.get('school', '')
+    table1.rows[3].cells[0].text = 'Trade:'
+    table1.rows[3].cells[1].text = scheme.get('trade', '')
+    
+    doc.add_paragraph()
+    
+    # Module Information
+    doc.add_heading('Module Information', level=1)
+    table2 = doc.add_table(rows=4, cols=2)
+    table2.style = 'Light Grid Accent 1'
+    table2.rows[0].cells[0].text = 'Module:'
+    table2.rows[0].cells[1].text = scheme.get('module_code_title', '')
+    table2.rows[1].cells[0].text = 'Level:'
+    table2.rows[1].cells[1].text = scheme.get('rqf_level', '')
+    table2.rows[2].cells[0].text = 'Trainer:'
+    table2.rows[2].cells[1].text = scheme.get('trainer_name', '')
+    table2.rows[3].cells[0].text = 'School Year:'
+    table2.rows[3].cells[1].text = scheme.get('school_year', '')
+    
+    doc.add_paragraph()
+    
+    # Term Details
+    for term_num in [1, 2, 3]:
+        if scheme.get(f'term{term_num}_weeks'):
+            doc.add_heading(f'Term {term_num}', level=1)
+            doc.add_paragraph(f"Weeks: {scheme.get(f'term{term_num}_weeks', '')}")
+            doc.add_paragraph(f"Duration: {scheme.get(f'term{term_num}_duration', '')}")
+            doc.add_heading('Learning Outcomes:', level=2)
+            doc.add_paragraph(scheme.get(f'term{term_num}_learning_outcomes', ''))
+            doc.add_heading('Indicative Contents:', level=2)
+            doc.add_paragraph(scheme.get(f'term{term_num}_indicative_contents', ''))
+            doc.add_paragraph()
+    
+    # Signatures
+    doc.add_heading('Signatures', level=1)
+    table3 = doc.add_table(rows=2, cols=2)
+    table3.style = 'Light Grid Accent 1'
+    table3.rows[0].cells[0].text = 'DOS:'
+    table3.rows[0].cells[1].text = scheme.get('dos_name', '')
+    table3.rows[1].cells[0].text = 'Manager:'
+    table3.rows[1].cells[1].text = scheme.get('manager_name', '')
+    
+    # Save to BytesIO
+    file_obj = io.BytesIO()
+    doc.save(file_obj)
     file_obj.seek(0)
     
     return send_file(
         file_obj,
         as_attachment=True,
-        download_name=f'scheme_of_work_{scheme_id}.txt',
-        mimetype='text/plain'
+        download_name=f'RTB_Scheme_of_Work_{scheme_id}.docx',
+        mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
     )
 
 # NOTIFICATION ENDPOINTS (Mock implementation)

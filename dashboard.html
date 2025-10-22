@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard - RTB Document Planner</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #f8fafc; }
+        .header { background: white; padding: 1.5rem 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.5rem; font-weight: 700; color: #10b981; }
+        .user-info { display: flex; align-items: center; gap: 1rem; }
+        .user-name { font-weight: 600; color: #1e293b; }
+        .btn-logout { padding: 0.5rem 1rem; background: #ef4444; color: white; border: none; border-radius: 0.5rem; cursor: pointer; }
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 2rem; }
+        .welcome { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3rem; border-radius: 1rem; margin-bottom: 2rem; }
+        .welcome h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .welcome p { font-size: 1.2rem; opacity: 0.9; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card { background: white; padding: 1.5rem; border-radius: 1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .stat-card h3 { color: #64748b; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.5rem; }
+        .stat-card .value { font-size: 2rem; font-weight: 700; color: #1e293b; }
+        .actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+        .action-card { background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.3s; }
+        .action-card:hover { transform: translateY(-5px); }
+        .action-icon { font-size: 3rem; color: #6366f1; margin-bottom: 1rem; }
+        .action-card h3 { font-size: 1.5rem; margin-bottom: 1rem; color: #1e293b; }
+        .action-card p { color: #64748b; margin-bottom: 1.5rem; line-height: 1.6; }
+        .btn { padding: 0.875rem 2rem; background: linear-gradient(135deg, #6366f1, #4f46e5); color: white; text-decoration: none; border-radius: 0.5rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem; border: none; cursor: pointer; }
+        .btn:hover { opacity: 0.9; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo"><i class="fas fa-graduation-cap"></i> RTB Document Planner</div>
+        <div class="user-info">
+            <span class="user-name" id="userName">Loading...</span>
+            <button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="welcome">
+            <h1>Welcome back, <span id="welcomeName">Teacher</span>!</h1>
+            <p>Ready to create professional TVET documents?</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <h3>SESSION PLANS REMAINING</h3>
+                <div class="value" id="sessionPlansRemaining">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>SCHEMES REMAINING</h3>
+                <div class="value" id="schemesRemaining">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>ACCOUNT STATUS</h3>
+                <div class="value" id="accountStatus" style="font-size: 1.5rem;">-</div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <div class="action-card">
+                <div class="action-icon"><i class="fas fa-clipboard-list"></i></div>
+                <h3>Session Plans</h3>
+                <p>Create professional RTB-compliant session plans with step-by-step guidance.</p>
+                <a href="wizard-fixed.html" class="btn"><i class="fas fa-magic"></i> Create Session Plan</a>
+            </div>
+
+            <div class="action-card">
+                <div class="action-icon"><i class="fas fa-calendar-alt"></i></div>
+                <h3>Schemes of Work</h3>
+                <p>Generate comprehensive schemes of work covering full academic terms.</p>
+                <a href="scheme-wizard-fixed.html" class="btn"><i class="fas fa-calendar-plus"></i> Create Scheme of Work</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://leonardus437.pythonanywhere.com';
+        
+        function getSession() {
+            const session = localStorage.getItem('rtb_auth_session');
+            return session ? JSON.parse(session) : null;
+        }
+
+        function logout() {
+            localStorage.removeItem('rtb_auth_session');
+            sessionStorage.removeItem('rtb_auth_session');
+            window.location.href = 'login.html';
+        }
+
+        async function loadUserData() {
+            const session = getSession();
+            
+            if (!session) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            document.getElementById('userName').textContent = session.name;
+            document.getElementById('welcomeName').textContent = session.name.split(' ')[0];
+
+            try {
+                const response = await fetch(`${API_BASE}/user-limits/${session.phone}`);
+                if (response.ok) {
+                    const limits = await response.json();
+                    document.getElementById('sessionPlansRemaining').textContent = limits.session_plans_remaining;
+                    document.getElementById('schemesRemaining').textContent = limits.schemes_remaining;
+                    document.getElementById('accountStatus').textContent = limits.is_premium ? '⭐ Premium' : '🆓 Free';
+                }
+            } catch (error) {
+                console.error('Error loading limits:', error);
+            }
+        }
+
+        loadUserData();
+    </script>
+</body>
+</html>
