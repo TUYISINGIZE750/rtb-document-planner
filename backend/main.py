@@ -53,8 +53,8 @@ class User(Base):
     role = Column(String(50), default='user')
     is_premium = Column(Boolean, default=False)
     is_active = Column(Boolean, default=True)
-    session_plans_limit = Column(Integer, default=5)
-    schemes_limit = Column(Integer, default=5)
+    session_plans_limit = Column(Integer, default=2)
+    schemes_limit = Column(Integer, default=2)
     session_plans_downloaded = Column(Integer, default=0)
     schemes_downloaded = Column(Integer, default=0)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
@@ -322,6 +322,32 @@ def generate_session_plan():
             db.close()
     except Exception as e:
         return jsonify({"detail": "Generation failed"}), 500
+
+@app.route('/user-limits/<phone>', methods=['GET', 'OPTIONS'])
+def get_user_limits(phone):
+    if request.method == 'OPTIONS':
+        return '', 204
+    
+    try:
+        db = SessionLocal()
+        try:
+            user = db.query(User).filter(User.phone == phone).first()
+            if not user:
+                return jsonify({"detail": "User not found"}), 404
+            
+            return jsonify({
+                "is_premium": user.is_premium,
+                "session_plans_limit": user.session_plans_limit,
+                "session_plans_downloaded": user.session_plans_downloaded,
+                "session_plans_remaining": user.session_plans_limit - user.session_plans_downloaded if not user.is_premium else 999,
+                "schemes_limit": user.schemes_limit,
+                "schemes_downloaded": user.schemes_downloaded,
+                "schemes_remaining": user.schemes_limit - user.schemes_downloaded if not user.is_premium else 999
+            }), 200
+        finally:
+            db.close()
+    except Exception as e:
+        return jsonify({"detail": "Failed to get limits"}), 500
 
 @app.route('/schemes/generate', methods=['POST', 'OPTIONS'])
 def generate_scheme():
