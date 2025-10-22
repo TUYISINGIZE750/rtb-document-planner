@@ -1,136 +1,75 @@
-================================================================================
-FINAL DEPLOYMENT INSTRUCTIONS - FOLLOW EXACTLY
-================================================================================
+RTB DOCUMENT PLANNER - DEPLOYMENT INSTRUCTIONS
+==============================================
 
-STEP 1: UPDATE PYTHONANYWHERE BACKEND
---------------------------------------
+CHANGES MADE:
+1. Removed offline download fallback (no more "Offline mode" message)
+2. Added all admin endpoints for user management and notifications
+3. Fixed session plan document formatting
 
-1. Go to: https://www.pythonanywhere.com/user/leonardus437/
+FILES TO UPLOAD TO PYTHONANYWHERE:
+===================================
 
-2. Click "Files" tab
+1. backend/main.py
+   Location: /home/leonardus437/rtb-document-planner/main.py
+   
+2. backend/document_generator.py
+   Location: /home/leonardus437/rtb-document-planner/document_generator.py
 
-3. Navigate to your main.py file
+PYTHONANYWHERE DEPLOYMENT STEPS:
+=================================
 
-4. Click "Edit"
+1. Go to https://www.pythonanywhere.com/
+2. Login to leonardus437 account
+3. Go to "Files" tab
+4. Navigate to /home/leonardus437/rtb-document-planner/
+5. Upload main.py (replace existing)
+6. Upload document_generator.py (replace existing)
+7. Go to "Web" tab
+8. Click "Reload leonardus437.pythonanywhere.com"
+9. Wait 30 seconds for reload to complete
 
-5. SELECT ALL (Ctrl+A) and DELETE everything
+GITHUB DEPLOYMENT (When network is stable):
+============================================
 
-6. Open the file: FINAL_PYTHONANYWHERE_CODE.py (in your local project)
+Run these commands:
+cd "c:\Users\PC\Music\Scheme of work and session plan planner"
+git push origin main
 
-7. COPY ALL content from FINAL_PYTHONANYWHERE_CODE.py
+This will deploy frontend changes to GitHub Pages automatically.
 
-8. PASTE into PythonAnywhere main.py editor
+NEW ADMIN ENDPOINTS ADDED:
+===========================
 
-9. Click "Save" button
+1. PUT /users/<phone>/status - Toggle user active/inactive
+2. PUT /users/<phone>/premium - Toggle premium subscription
+3. PUT /users/<phone> - Update user details (name, institution, limits)
+4. POST /notifications/broadcast - Send message to all/premium/free users
+5. POST /notifications/send - Send personal message to specific user
 
-10. Go to "Web" tab
+ADMIN DASHBOARD:
+================
+URL: https://tuyisingize750.github.io/rtb-document-planner/admin-final.html
+Login: +250789751597 / admin123
 
-11. Click the GREEN "Reload leonardus437.pythonanywhere.com" button
+TEACHER DASHBOARD:
+==================
+URL: https://tuyisingize750.github.io/rtb-document-planner/
 
-12. Wait 10 seconds
+TESTING CHECKLIST:
+==================
+[ ] Teacher can register and login
+[ ] Teacher can create session plan
+[ ] Teacher can download session plan (proper format, no offline message)
+[ ] Admin can login to admin-final.html
+[ ] Admin can view all users
+[ ] Admin can activate/deactivate users
+[ ] Admin can grant/remove premium
+[ ] Admin can send broadcast notifications
+[ ] Admin can send personal messages to teachers
+[ ] Download limits work correctly (2 free downloads each)
 
-
-STEP 2: VERIFY BACKEND IS WORKING
-----------------------------------
-
-1. Open new browser tab
-
-2. Go to: https://leonardus437.pythonanywhere.com/
-
-3. You should see:
-   {
-     "message": "RTB Document Planner API",
-     "status": "online",
-     "cors": "enabled",
-     "frontend": "https://schemesession.netlify.app",
-     "version": "2.0"
-   }
-
-4. If you see this, backend is working!
-
-
-STEP 3: TEST FULL INTEGRATION
-------------------------------
-
-1. Go to: https://schemesession.netlify.app/backend-status.html
-
-2. You should see:
-   ✅ Backend is reachable (no-cors mode)
-   ✅ Backend ONLINE with CORS!
-   🎉 YOUR SYSTEM IS LIVE!
-
-3. If you see this, CORS is working!
-
-
-STEP 4: TEST REGISTRATION
---------------------------
-
-1. Go to: https://schemesession.netlify.app/register.html
-
-2. Fill in the form:
-   - Name: Test User
-   - Phone: +250788123456
-   - Institution: Test School
-   - Password: test123
-
-3. Click "Sign Up"
-
-4. You should see: "Account created successfully!"
-
-5. If you see this, registration is working!
-
-
-STEP 5: TEST LOGIN
--------------------
-
-1. Go to: https://schemesession.netlify.app/login.html
-
-2. Enter:
-   - Phone: +250788123456
-   - Password: test123
-
-3. Click "Sign In"
-
-4. You should be redirected to the main app
-
-5. If this works, login is working!
-
-
-================================================================================
-TROUBLESHOOTING
-================================================================================
-
-If backend status shows "Failed to fetch":
-- Check PythonAnywhere web app is running (green indicator)
-- Verify you saved main.py correctly
-- Make sure you clicked "Reload" button
-- Wait 10 seconds and try again
-
-If registration shows "Connection failed":
-- Verify backend status test passes first
-- Check browser console for errors (F12)
-- Make sure you're using https://schemesession.netlify.app
-
-================================================================================
-WHAT THIS CODE DOES
-================================================================================
-
-✅ Enables CORS for Netlify frontend
-✅ Handles OPTIONS preflight requests
-✅ Stores users in memory (users_db dictionary)
-✅ Provides registration endpoint
-✅ Provides login endpoint
-✅ Provides user limits endpoint
-✅ Returns proper error messages
-✅ Works with any device worldwide
-
-================================================================================
-YOUR LIVE URLS
-================================================================================
-
-Frontend: https://schemesession.netlify.app
-Backend: https://leonardus437.pythonanywhere.com
-Test Page: https://schemesession.netlify.app/backend-status.html
-System Test: https://schemesession.netlify.app/system-test.html
-
-================================================================================
+CURRENT STATUS:
+===============
+- Backend code: Updated locally, needs upload to PythonAnywhere
+- Frontend code: Committed locally, needs push to GitHub
+- Network issue preventing git push (will auto-deploy when pushed)
