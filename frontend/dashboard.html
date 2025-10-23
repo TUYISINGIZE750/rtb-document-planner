@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RTB Teacher Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+        .header { background: rgba(255,255,255,0.1); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .logo { color: white; font-size: 1.5rem; font-weight: bold; }
+        .user-info { background: white; padding: 0.75rem 1.5rem; border-radius: 2rem; display: flex; align-items: center; gap: 1rem; }
+        .logout-btn { background: #ef4444; color: white; border: none; padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer; }
+        .container { padding: 2rem; max-width: 1200px; margin: 0 auto; }
+        .welcome { text-align: center; color: white; margin-bottom: 3rem; }
+        .welcome h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+        .card { background: white; border-radius: 1rem; padding: 2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: transform 0.3s; }
+        .card:hover { transform: translateY(-5px); }
+        .card i { font-size: 3rem; color: #6366f1; margin-bottom: 1rem; }
+        .card h2 { color: #1e293b; margin-bottom: 1rem; }
+        .card p { color: #64748b; margin-bottom: 1.5rem; }
+        .btn { background: #6366f1; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.5rem; cursor: pointer; font-size: 1rem; width: 100%; }
+        .btn:hover { background: #5855eb; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <i class="fas fa-graduation-cap"></i> RTB Document Planner
+        </div>
+        <div class="user-info">
+            <span id="userName">Loading...</span>
+            <button onclick="logout()" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="welcome">
+            <h1>Welcome to Your Dashboard</h1>
+            <p>Create professional RTB-compliant documents</p>
+        </div>
+
+        <div class="cards">
+            <div class="card">
+                <i class="fas fa-chalkboard-teacher"></i>
+                <h2>Session Plan</h2>
+                <p>Create RTB-formatted session plans with all required components</p>
+                <button onclick="createSessionPlan()" class="btn">Create Session Plan</button>
+            </div>
+
+            <div class="card">
+                <i class="fas fa-clipboard-list"></i>
+                <h2>Scheme of Work</h2>
+                <p>Generate comprehensive schemes of work for your modules</p>
+                <button onclick="createScheme()" class="btn">Create Scheme of Work</button>
+            </div>
+
+            <div class="card">
+                <i class="fas fa-chart-bar"></i>
+                <h2>My Documents</h2>
+                <p>View and manage your created documents and download history</p>
+                <button onclick="viewDocuments()" class="btn">View Documents</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://leonardus437.pythonanywhere.com';
+
+        // Check authentication on page load
+        function checkAuth() {
+            const user = getUser();
+            if (!user) {
+                window.location.href = 'index.html';
+                return false;
+            }
+            document.getElementById('userName').textContent = user.name;
+            return true;
+        }
+
+        function getUser() {
+            try {
+                const stored = localStorage.getItem('rtb_user_working');
+                return stored ? JSON.parse(stored) : null;
+            } catch {
+                return null;
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('rtb_user_working');
+            sessionStorage.clear();
+            window.location.href = 'index.html';
+        }
+
+        function createSessionPlan() {
+            const user = getUser();
+            if (!user) return;
+
+            const sector = prompt('Enter Sector:') || 'ICT & MULTIMEDIA';
+            const trade = prompt('Enter Trade:') || 'Software Development';
+            const topic = prompt('Enter Topic:') || 'Programming Basics';
+
+            const data = {
+                sector: sector,
+                trade: trade,
+                rqf_level: 'Level 4',
+                trainer_name: user.name,
+                module_code_title: 'Programming Module',
+                term: 'Term 1',
+                week: 'Week 1',
+                date: new Date().toISOString().split('T')[0],
+                number_of_trainees: '25',
+                class_name: 'L4CSA-A',
+                duration: '40',
+                topic_of_session: topic,
+                learning_outcomes: 'Students will understand ' + topic,
+                indicative_contents: 'Introduction to ' + topic,
+                facilitation_techniques: 'Interactive learning'
+            };
+
+            createDocument('session-plans', data, 'Session Plan');
+        }
+
+        function createScheme() {
+            const user = getUser();
+            if (!user) return;
+
+            const school = prompt('Enter School Name:') || 'IPRC Kigali';
+            const module = prompt('Enter Module Title:') || 'Programming Module';
+
+            const data = {
+                school: school,
+                department_trade: 'ICT',
+                module_code_title: module,
+                trainer_name: user.name,
+                school_year: '2024-2025',
+                term1_learning_outcomes: 'Basic understanding of the module',
+                term1_indicative_contents: 'Introduction and fundamentals'
+            };
+
+            createDocument('schemes', data, 'Scheme of Work');
+        }
+
+        async function createDocument(endpoint, data, type) {
+            try {
+                const response = await fetch(`${API_BASE}/${endpoint}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    alert(`${type} created successfully!`);
+                    
+                    const user = getUser();
+                    const downloadUrl = `${API_BASE}/${endpoint}/${result.id}/download?phone=${encodeURIComponent(user.phone)}`;
+                    
+                    const link = document.createElement('a');
+                    link.href = downloadUrl;
+                    link.download = `RTB_${type.replace(' ', '_')}_${result.id}.docx`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                } else {
+                    const error = await response.json();
+                    alert(`Error: ${error.detail || 'Unknown error'}`);
+                }
+            } catch (error) {
+                alert('Connection error. Please try again.');
+            }
+        }
+
+        function viewDocuments() {
+            alert('Document history feature coming soon!');
+        }
+
+        // Initialize
+        if (!checkAuth()) {
+            // Redirect handled in checkAuth
+        }
+
+        // Prevent back button after logout
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+                if (!getUser()) {
+                    window.location.href = 'index.html';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

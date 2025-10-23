@@ -175,6 +175,9 @@
                     saveUser(userData);
                     closeLoginModal();
                     alert(`Welcome, ${userData.name || 'Teacher'}!`);
+                    
+                    // Redirect to dashboard
+                    window.location.href = 'dashboard.html';
                 } else {
                     const error = await response.json();
                     alert(`Login failed: ${error.detail || 'Please check credentials'}`);
@@ -278,8 +281,19 @@
             }
         }
 
+        // Check if already logged in and redirect
+        function checkLoginRedirect() {
+            const user = getUser();
+            if (user && user.name) {
+                window.location.href = 'dashboard.html';
+            }
+        }
+
         // Initialize
-        document.addEventListener('DOMContentLoaded', updateUI);
+        document.addEventListener('DOMContentLoaded', function() {
+            checkLoginRedirect();
+            updateUI();
+        });
     </script>
 </body>
 </html>
