@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "c:\Users\PC\Music\Scheme of work and session plan planner\backend\analyze_templates.py", line 28, in <module>
+    analyze_template("RTB Templates/TUYISINGIZE LEONARD_SESSION PLAN_S4F3.docx", "Session Plan")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\PC\Music\Scheme of work and session plan planner\backend\analyze_templates.py", line 7, in analyze_template
+    doc = Document(file_path)
+  File "C:\Users\PC\AppData\Roaming\Python\Python313\site-packages\docx\api.py", line 27, in Document
+    document_part = cast("DocumentPart", Package.open(docx).main_document_part)
+                                         ~~~~~~~~~~~~^^^^^^
+  File "C:\Users\PC\AppData\Roaming\Python\Python313\site-packages\docx\opc\package.py", line 126, in open
+    pkg_reader = PackageReader.from_file(pkg_file)
+  File "C:\Users\PC\AppData\Roaming\Python\Python313\site-packages\docx\opc\pkgreader.py", line 22, in from_file
+    phys_reader = PhysPkgReader(pkg_file)
+  File "C:\Users\PC\AppData\Roaming\Python\Python313\site-packages\docx\opc\phys_pkg.py", line 21, in __new__
+    raise PackageNotFoundError("Package not found at '%s'" % pkg_file)
+docx.opc.exceptions.PackageNotFoundError: Package not found at 'RTB Templates/TUYISINGIZE LEONARD_SESSION PLAN_S4F3.docx'

@@ -3,7 +3,7 @@ from flask_cors import CORS
 import hashlib
 import tempfile
 import os
-from docx import Document
+from rtb_professional_generator import generate_rtb_session_plan, generate_rtb_scheme_of_work
 
 app = Flask(__name__)
 CORS(app, origins=["https://tuyisingize750.github.io"])
@@ -92,19 +92,13 @@ def download_session_plan(plan_id):
     
     data = documents[plan_id]['data']
     
-    # Create simple DOCX
-    doc = Document()
-    doc.add_heading('RTB SESSION PLAN', 0)
-    doc.add_paragraph(f"Sector: {data.get('sector', 'N/A')}")
-    doc.add_paragraph(f"Trade: {data.get('trade', 'N/A')}")
-    doc.add_paragraph(f"Topic: {data.get('topic_of_session', 'N/A')}")
-    doc.add_paragraph(f"Teacher: {data.get('trainer_name', 'N/A')}")
-    doc.add_paragraph(f"Duration: {data.get('duration', '40')} minutes")
+    # Generate professional RTB session plan
+    doc = generate_rtb_session_plan(data)
     
     temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
     doc.save(temp_file.name)
     
-    return send_file(temp_file.name, as_attachment=True, download_name=f"session_plan_{plan_id}.docx")
+    return send_file(temp_file.name, as_attachment=True, download_name=f"RTB_Session_Plan_{plan_id}.docx")
 
 @app.route('/schemes/<int:scheme_id>/download', methods=['GET'])
 def download_scheme(scheme_id):
@@ -113,18 +107,13 @@ def download_scheme(scheme_id):
     
     data = documents[scheme_id]['data']
     
-    # Create simple DOCX
-    doc = Document()
-    doc.add_heading('RTB SCHEME OF WORK', 0)
-    doc.add_paragraph(f"School: {data.get('school', 'N/A')}")
-    doc.add_paragraph(f"Module: {data.get('module_code_title', 'N/A')}")
-    doc.add_paragraph(f"Teacher: {data.get('trainer_name', 'N/A')}")
-    doc.add_paragraph(f"Year: {data.get('school_year', 'N/A')}")
+    # Generate professional RTB scheme of work
+    doc = generate_rtb_scheme_of_work(data)
     
     temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
     doc.save(temp_file.name)
     
-    return send_file(temp_file.name, as_attachment=True, download_name=f"scheme_{scheme_id}.docx")
+    return send_file(temp_file.name, as_attachment=True, download_name=f"RTB_Scheme_of_Work_{scheme_id}.docx")
 
 if __name__ == '__main__':
     app.run(debug=False)
