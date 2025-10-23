@@ -218,7 +218,7 @@ function logoutUser() {
     window.history.pushState(null, null, window.location.href);
     
     // Redirect based on role
-    const redirectPage = isAdmin ? 'direct-login.html' : 'login-select.html';
+    const redirectPage = isAdmin ? 'direct-login.html' : 'login.html';
     window.location.replace(redirectPage);
 }
 
@@ -244,7 +244,7 @@ function wasExplicitlyLoggedOut() {
 function preventBackAfterLogout() {
     if (wasExplicitlyLoggedOut()) {
         window.history.pushState(null, null, window.location.href);
-        window.location.replace('login-select.html');
+        window.location.replace('login.html');
         return true;
     }
     return false;
@@ -260,7 +260,7 @@ if (typeof window !== 'undefined') {
     
     window.addEventListener('pageshow', function(event) {
         if (event.persisted && wasExplicitlyLoggedOut()) {
-            window.location.replace('login-select.html');
+            window.location.replace('login.html');
         }
     });
 }

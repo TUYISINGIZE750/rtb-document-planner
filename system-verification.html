@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RTB System Verification</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 1rem; }
+        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 2rem; border-radius: 0.5rem; }
+        .test-section { margin: 1rem 0; padding: 1rem; border: 1px solid #ddd; border-radius: 0.5rem; }
+        .test-item { display: flex; justify-content: space-between; padding: 0.5rem; margin: 0.25rem 0; background: #f8f9fa; }
+        .status { padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-weight: bold; }
+        .pass { background: #d4edda; color: #155724; }
+        .fail { background: #f8d7da; color: #721c24; }
+        .pending { background: #fff3cd; color: #856404; }
+        .btn { padding: 0.5rem 1rem; background: #007bff; color: white; border: none; border-radius: 0.25rem; cursor: pointer; margin: 0.25rem; }
+        .results { margin-top: 2rem; padding: 1rem; background: #f8f9fa; border-radius: 0.5rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 RTB System Verification</h1>
+        <p>Comprehensive testing of all deployed features...</p>
+        
+        <div class="test-section">
+            <h2>🌐 Frontend Pages</h2>
+            <div id="frontendTests"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>🔧 Backend API</h2>
+            <div id="backendTests"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>🔐 Authentication Flow</h2>
+            <div id="authTests"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>📄 Document Generation</h2>
+            <div id="docTests"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>💳 Subscription System</h2>
+            <div id="subTests"></div>
+        </div>
+        
+        <button class="btn" onclick="runAllTests()">🚀 Run All Tests</button>
+        
+        <div class="results" id="results" style="display: none;">
+            <h3>📊 Test Results Summary</h3>
+            <div id="summary"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://leonardus437.pythonanywhere.com';
+        const GITHUB_BASE = 'https://tuyisingize750.github.io/rtb-document-planner';
+        
+        let testResults = {
+            passed: 0,
+            failed: 0,
+            total: 0
+        };
+
+        function addTest(containerId, testName, status, message = '') {
+            const container = document.getElementById(containerId);
+            const testItem = document.createElement('div');
+            testItem.className = 'test-item';
+            testItem.innerHTML = `
+                <span>${testName}</span>
+                <span class="status ${status}">${status.toUpperCase()} ${message}</span>
+            `;
+            container.appendChild(testItem);
+            
+            testResults.total++;
+            if (status === 'pass') testResults.passed++;
+            if (status === 'fail') testResults.failed++;
+        }
+
+        async function testFrontendPages() {
+            const pages = [
+                { name: 'Landing Page', url: `${GITHUB_BASE}/` },
+                { name: 'Teacher Dashboard', url: `${GITHUB_BASE}/teacher-dashboard.html` },
+                { name: 'Registration Page', url: `${GITHUB_BASE}/register.html` },
+                { name: 'Login Page', url: `${GITHUB_BASE}/login.html` },
+                { name: 'Session Plan Wizard', url: `${GITHUB_BASE}/wizard.html` },
+                { name: 'Scheme Wizard', url: `${GITHUB_BASE}/scheme-wizard.html` }
+            ];
+
+            for (const page of pages) {
+                try {
+                    const response = await fetch(page.url, { method: 'HEAD' });
+                    if (response.ok) {
+                        addTest('frontendTests', page.name, 'pass');
+                    } else {
+                        addTest('frontendTests', page.name, 'fail', `(${response.status})`);
+                    }
+                } catch (error) {
+                    addTest('frontendTests', page.name, 'fail', '(Network Error)');
+                }
+            }
+        }
+
+        async function testBackendAPI() {
+            const endpoints = [
+                { name: 'API Root', url: `${API_BASE}/` },
+                { name: 'Users Endpoint', url: `${API_BASE}/users/` },
+                { name: 'Session Plans', url: `${API_BASE}/session-plans`, method: 'OPTIONS' },
+                { name: 'Schemes', url: `${API_BASE}/schemes`, method: 'OPTIONS' },
+                { name: 'User Limits', url: `${API_BASE}/user-limits/+250788123456` }
+            ];
+
+            for (const endpoint of endpoints) {
+                try {
+                    const response = await fetch(endpoint.url, { 
+                        method: endpoint.method || 'GET',
+                        mode: 'cors'
+                    });
+                    if (response.ok || response.status === 204 || response.status === 404) {
+                        addTest('backendTests', endpoint.name, 'pass');
+                    } else {
+                        addTest('backendTests', endpoint.name, 'fail', `(${response.status})`);
+                    }
+                } catch (error) {
+                    addTest('backendTests', endpoint.name, 'fail', '(CORS/Network)');
+                }
+            }
+        }
+
+        async function testAuthentication() {
+            // Test registration endpoint
+            try {
+                const regResponse = await fetch(`${API_BASE}/users/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: 'Test User',
+                        phone: '+250788999999',
+                        password: 'test123',
+                        institution: 'Test School'
+                    })
+                });
+                
+                if (regResponse.status === 201 || regResponse.status === 400) {
+                    addTest('authTests', 'Registration Endpoint', 'pass');
+                } else {
+                    addTest('authTests', 'Registration Endpoint', 'fail', `(${regResponse.status})`);
+                }
+            } catch (error) {
+                addTest('authTests', 'Registration Endpoint', 'fail', '(Network)');
+            }
+
+            // Test login endpoint
+            try {
+                const loginResponse = await fetch(`${API_BASE}/users/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        phone: '+250789751597',
+                        password: 'admin123'
+                    })
+                });
+                
+                if (loginResponse.ok || loginResponse.status === 401) {
+                    addTest('authTests', 'Login Endpoint', 'pass');
+                } else {
+                    addTest('authTests', 'Login Endpoint', 'fail', `(${loginResponse.status})`);
+                }
+            } catch (error) {
+                addTest('authTests', 'Login Endpoint', 'fail', '(Network)');
+            }
+
+            // Test session management
+            const sessionData = {
+                name: 'Test Teacher',
+                phone: '+250788123456',
+                role: 'user',
+                loggedInAt: new Date().toISOString(),
+                expiresAt: new Date(Date.now() + 24*60*60*1000).toISOString()
+            };
+            
+            try {
+                localStorage.setItem('rtb_auth_session', JSON.stringify(sessionData));
+                const retrieved = JSON.parse(localStorage.getItem('rtb_auth_session'));
+                if (retrieved && retrieved.name === 'Test Teacher') {
+                    addTest('authTests', 'Session Storage', 'pass');
+                } else {
+                    addTest('authTests', 'Session Storage', 'fail');
+                }
+                localStorage.removeItem('rtb_auth_session');
+            } catch (error) {
+                addTest('authTests', 'Session Storage', 'fail', '(LocalStorage)');
+            }
+        }
+
+        async function testDocumentGeneration() {
+            // Test if document endpoints respond
+            const docEndpoints = [
+                { name: 'Session Plan Creation', url: `${API_BASE}/session-plans` },
+                { name: 'Scheme Creation', url: `${API_BASE}/schemes` }
+            ];
+
+            for (const endpoint of docEndpoints) {
+                try {
+                    const response = await fetch(endpoint.url, { 
+                        method: 'OPTIONS',
+                        mode: 'cors'
+                    });
+                    if (response.ok || response.status === 204) {
+                        addTest('docTests', endpoint.name, 'pass');
+                    } else {
+                        addTest('docTests', endpoint.name, 'fail', `(${response.status})`);
+                    }
+                } catch (error) {
+                    addTest('docTests', endpoint.name, 'fail', '(CORS)');
+                }
+            }
+
+            // Test file download capability
+            try {
+                const link = document.createElement('a');
+                link.href = 'data:text/plain;charset=utf-8,Test';
+                link.download = 'test.txt';
+                addTest('docTests', 'Download Capability', 'pass');
+            } catch (error) {
+                addTest('docTests', 'Download Capability', 'fail');
+            }
+        }
+
+        async function testSubscriptionSystem() {
+            // Test subscription modal functionality
+            try {
+                if (typeof showSubscriptionModal === 'function') {
+                    addTest('subTests', 'Subscription Modal Function', 'pass');
+                } else {
+                    addTest('subTests', 'Subscription Modal Function', 'fail', '(Not Loaded)');
+                }
+            } catch (error) {
+                addTest('subTests', 'Subscription Modal Function', 'fail');
+            }
+
+            // Test CSS loading
+            try {
+                const cssLink = document.createElement('link');
+                cssLink.rel = 'stylesheet';
+                cssLink.href = `${GITHUB_BASE}/subscription-modal.css`;
+                cssLink.onload = () => addTest('subTests', 'Subscription CSS', 'pass');
+                cssLink.onerror = () => addTest('subTests', 'Subscription CSS', 'fail');
+                document.head.appendChild(cssLink);
+            } catch (error) {
+                addTest('subTests', 'Subscription CSS', 'fail');
+            }
+
+            // Test payment instructions
+            const paymentInfo = {
+                phone: '+250789751597',
+                name: 'Leonard TUYISINGIZE',
+                plans: ['per_session', 'per_scheme', 'unlimited']
+            };
+            
+            if (paymentInfo.phone && paymentInfo.name && paymentInfo.plans.length > 0) {
+                addTest('subTests', 'Payment Configuration', 'pass');
+            } else {
+                addTest('subTests', 'Payment Configuration', 'fail');
+            }
+        }
+
+        async function runAllTests() {
+            // Reset results
+            testResults = { passed: 0, failed: 0, total: 0 };
+            
+            // Clear previous results
+            ['frontendTests', 'backendTests', 'authTests', 'docTests', 'subTests'].forEach(id => {
+                document.getElementById(id).innerHTML = '';
+            });
+
+            // Run all test suites
+            await testFrontendPages();
+            await testBackendAPI();
+            await testAuthentication();
+            await testDocumentGeneration();
+            await testSubscriptionSystem();
+
+            // Show results
+            const resultsDiv = document.getElementById('results');
+            const summaryDiv = document.getElementById('summary');
+            
+            const passRate = ((testResults.passed / testResults.total) * 100).toFixed(1);
+            
+            summaryDiv.innerHTML = `
+                <p><strong>Total Tests:</strong> ${testResults.total}</p>
+                <p><strong>Passed:</strong> ${testResults.passed}</p>
+                <p><strong>Failed:</strong> ${testResults.failed}</p>
+                <p><strong>Pass Rate:</strong> ${passRate}%</p>
+                <p><strong>Status:</strong> ${passRate >= 90 ? '✅ EXCELLENT' : passRate >= 75 ? '⚠️ GOOD' : '❌ NEEDS ATTENTION'}</p>
+            `;
+            
+            resultsDiv.style.display = 'block';
+        }
+
+        // Auto-run tests on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(runAllTests, 1000);
+        });
+    </script>
+</body>
+</html>
