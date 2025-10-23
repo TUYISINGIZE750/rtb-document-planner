@@ -13,12 +13,28 @@ users = {
     "+250796014803": {
         "name": "Test Teacher",
         "password": hashlib.sha256("teacher123".encode()).hexdigest(),
-        "phone": "+250796014803"
+        "phone": "+250796014803",
+        "role": "user",
+        "is_active": True,
+        "is_premium": False,
+        "institution": "Test School",
+        "session_plans_downloaded": 0,
+        "session_plans_limit": 2,
+        "schemes_downloaded": 0,
+        "schemes_limit": 2
     },
     "+250789751597": {
         "name": "Administrator", 
         "password": hashlib.sha256("admin123".encode()).hexdigest(),
-        "phone": "+250789751597"
+        "phone": "+250789751597",
+        "role": "admin",
+        "is_active": True,
+        "is_premium": True,
+        "institution": "RTB Admin",
+        "session_plans_downloaded": 0,
+        "session_plans_limit": 999,
+        "schemes_downloaded": 0,
+        "schemes_limit": 999
     }
 }
 
@@ -43,13 +59,67 @@ def login():
     if phone in users:
         user = users[phone]
         if hashlib.sha256(password.encode()).hexdigest() == user['password']:
+            if not user.get('is_active', True):
+                return jsonify({"detail": "Account deactivated"}), 403
             return jsonify({
                 "name": user['name'],
                 "phone": user['phone'],
-                "role": "user"
+                "role": user.get('role', 'user')
             })
     
     return jsonify({"detail": "Invalid credentials"}), 401
+
+@app.route('/users/', methods=['GET', 'OPTIONS'])
+def get_users():
+    if request.method == 'OPTIONS':
+        return '', 204
+    user_list = []
+    for phone, user in users.items():
+        user_list.append({
+            "name": user['name'],
+            "phone": user['phone'],
+            "role": user.get('role', 'user'),
+            "is_active": user.get('is_active', True),
+            "is_premium": user.get('is_premium', False),
+            "institution": user.get('institution', 'N/A'),
+            "session_plans_downloaded": user.get('session_plans_downloaded', 0),
+            "session_plans_limit": user.get('session_plans_limit', 2),
+            "schemes_downloaded": user.get('schemes_downloaded', 0),
+            "schemes_limit": user.get('schemes_limit', 2)
+        })
+    return jsonify(user_list)
+
+@app.route('/users/<phone>', methods=['PUT', 'OPTIONS'])
+def update_user(phone):
+    if request.method == 'OPTIONS':
+        return '', 204
+    if phone not in users:
+        return jsonify({"detail": "User not found"}), 404
+    data = request.get_json()
+    if 'is_active' in data:
+        users[phone]['is_active'] = data['is_active']
+    if 'is_premium' in data:
+        users[phone]['is_premium'] = data['is_premium']
+    if 'session_plans_limit' in data:
+        users[phone]['session_plans_limit'] = data['session_plans_limit']
+    if 'schemes_limit' in data:
+        users[phone]['schemes_limit'] = data['schemes_limit']
+    return jsonify({"message": "User updated"})
+
+@app.route('/stats', methods=['GET', 'OPTIONS'])
+def get_stats():
+    if request.method == 'OPTIONS':
+        return '', 204
+    total = len(users)
+    active = sum(1 for u in users.values() if u.get('is_active', True))
+    premium = sum(1 for u in users.values() if u.get('is_premium', False))
+    downloads = sum(u.get('session_plans_downloaded', 0) + u.get('schemes_downloaded', 0) for u in users.values())
+    return jsonify({
+        "total_users": total,
+        "active_users": active,
+        "premium_users": premium,
+        "total_downloads": downloads
+    })
 
 @app.route('/session-plans', methods=['POST', 'OPTIONS'])
 def create_session_plan():
