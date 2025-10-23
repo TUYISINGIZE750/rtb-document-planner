@@ -49,7 +49,7 @@
             </button>
         </form>
         <div class="link">
-            Already have an account? <a href="index.html">Login here</a>
+            Already have an account? <a href="login.html">Login here</a>
         </div>
     </div>
 
@@ -75,22 +75,48 @@
                 return;
             }
 
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
+            btn.disabled = true;
+
             try {
+                console.log('Registering user:', { name, phone, institution });
+                
                 const response = await fetch(`${API_BASE}/users/register`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    mode: 'cors',
+                    credentials: 'omit',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
                     body: JSON.stringify({ name, phone, password, institution })
                 });
 
+                console.log('Response status:', response.status);
+
                 if (response.ok) {
                     alert('✅ Registration successful! You can now login.');
-                    window.location.href = 'index.html';
+                    window.location.href = 'login.html';
                 } else {
-                    const error = await response.json();
-                    alert(`❌ Registration failed: ${error.detail}`);
+                    const errorText = await response.text();
+                    console.error('Registration error:', errorText);
+                    let errorMessage = 'Registration failed';
+                    try {
+                        const error = JSON.parse(errorText);
+                        errorMessage = error.detail || error.message || 'Registration failed';
+                    } catch (e) {
+                        errorMessage = `Registration failed (${response.status})`;
+                    }
+                    alert(`❌ ${errorMessage}`);
                 }
             } catch (error) {
-                alert('❌ Connection error. Please try again.');
+                console.error('Network error:', error);
+                alert('❌ Connection error. Please check your internet connection and try again.');
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
             }
         });
     </script>
