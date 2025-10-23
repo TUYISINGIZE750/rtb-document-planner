@@ -3,63 +3,43 @@ AI-Powered Content Generator for RTB Session Plans
 Generates SMART objectives and facilitation-specific activities based on user input
 """
 
-def generate_smart_objectives(topic, learning_outcomes, duration, rqf_level):
+def generate_smart_objectives(topic, learning_outcomes, duration, rqf_level, module_name="", range_content=""):
     """
-    Generate SMART (Specific, Measurable, Achievable, Relevant, Time-bound) objectives
-    based on topic, learning outcomes, duration, and RQF level
+    Generate SMART objectives based on: topic, range, learning outcomes, module name, hours, and RQF level
     """
-    
-    # Parse duration
     duration_minutes = int(duration) if str(duration).isdigit() else 40
+    hours = duration_minutes / 60
     
-    # Determine complexity based on RQF level
-    complexity_map = {
-        "Level 1": "basic",
-        "Level 2": "foundational",
-        "Level 3": "intermediate",
-        "Level 4": "advanced",
-        "Level 5": "expert"
-    }
-    complexity = complexity_map.get(rqf_level, "intermediate")
+    # Action verbs by RQF level (Bloom's Taxonomy)
+    verbs = {
+        "Level 1": ["identify", "list", "describe", "state"],
+        "Level 2": ["explain", "demonstrate", "summarize", "classify"],
+        "Level 3": ["apply", "implement", "solve", "construct"],
+        "Level 4": ["analyze", "evaluate", "design", "develop"],
+        "Level 5": ["create", "synthesize", "formulate", "innovate"]
+    }.get(rqf_level, ["apply", "demonstrate", "solve", "construct"])
     
-    # Action verbs based on Bloom's Taxonomy for different RQF levels
-    action_verbs = {
-        "Level 1": ["identify", "list", "name", "state", "describe"],
-        "Level 2": ["explain", "demonstrate", "illustrate", "summarize", "classify"],
-        "Level 3": ["apply", "implement", "solve", "use", "construct"],
-        "Level 4": ["analyze", "compare", "evaluate", "design", "develop"],
-        "Level 5": ["create", "synthesize", "formulate", "propose", "innovate"]
-    }
-    
-    verbs = action_verbs.get(rqf_level, action_verbs["Level 3"])
-    
-    # Generate 3-4 SMART objectives
     objectives = []
     
-    # Objective 1: Knowledge/Understanding (Specific & Measurable)
+    # Objective 1: Specific & Measurable (based on topic and learning outcomes)
     objectives.append(
-        f"By the end of this {duration_minutes}-minute session, trainees will be able to "
-        f"{verbs[0]} the key concepts of {topic} with at least 80% accuracy."
+        f"By the end of this {duration_minutes}-minute session on {topic}, trainees will be able to "
+        f"{verbs[0]} {learning_outcomes.split('.')[0].lower() if learning_outcomes else 'the key concepts'} "
+        f"with at least 80% accuracy."
     )
     
-    # Objective 2: Application/Skills (Achievable & Relevant)
+    # Objective 2: Achievable & Relevant (based on module and range)
+    range_text = f" within the range of {range_content}" if range_content else ""
     objectives.append(
-        f"Trainees will successfully {verbs[1]} {topic} through practical exercises, "
-        f"demonstrating {complexity} level competency as per {rqf_level} standards."
+        f"Trainees will successfully {verbs[1]} practical applications of {topic}{range_text}, "
+        f"demonstrating {rqf_level} competency standards."
     )
     
-    # Objective 3: Analysis/Problem-solving (Time-bound)
+    # Objective 3: Time-bound (based on duration)
     if len(verbs) > 2:
         objectives.append(
-            f"Within the session timeframe, trainees will {verbs[2]} real-world scenarios "
-            f"related to {topic}, showing critical thinking and problem-solving skills."
-        )
-    
-    # Objective 4: Synthesis/Evaluation (for higher levels)
-    if rqf_level in ["Level 4", "Level 5"] and len(verbs) > 3:
-        objectives.append(
-            f"Trainees will {verbs[3]} solutions or approaches to {topic} challenges, "
-            f"demonstrating {complexity} understanding and professional judgment."
+            f"Within {hours:.1f} hour(s), trainees will {verbs[2]} real-world problems related to {topic}, "
+            f"showing critical thinking and problem-solving skills."
         )
     
     return "\n".join([f"• {obj}" for obj in objectives])
@@ -451,37 +431,34 @@ def generate_resources_list(topic, facilitation_technique, number_of_trainees):
 
 def enhance_session_plan_data(data):
     """
-    Main function to enhance session plan data with AI-generated content
+    Generate SMART objectives and activities based on user input
     """
-    
-    # Extract key information
     topic = data.get('topic_of_session', 'the topic')
     learning_outcomes = data.get('learning_outcomes', '')
     duration = data.get('duration', '40')
     rqf_level = data.get('rqf_level', 'Level 3')
+    module_name = data.get('module_code_title', '')
+    range_content = data.get('indicative_contents', '')
     facilitation_technique = data.get('facilitation_techniques', 'Trainer Guided')
     number_of_trainees = data.get('number_of_trainees', '25')
     
-    # Generate SMART objectives if not provided or generic
+    # Generate SMART objectives based on all key factors
     if not data.get('objectives') or len(data.get('objectives', '')) < 50:
-        data['objectives'] = generate_smart_objectives(topic, learning_outcomes, duration, rqf_level)
+        data['objectives'] = generate_smart_objectives(
+            topic, learning_outcomes, duration, rqf_level, module_name, range_content
+        )
     
-    # Generate facilitation-specific activities
-    if facilitation_technique:
+    # Generate activities only if facilitation technique is selected
+    if facilitation_technique and facilitation_technique != '':
         data['learning_activities'] = generate_facilitation_activities(
             facilitation_technique, topic, duration, number_of_trainees
         )
     
-    # Generate assessment methods if not provided
-    if not data.get('assessment_details') or len(data.get('assessment_details', '')) < 30:
-        data['assessment_details'] = generate_assessment_methods(
-            topic, rqf_level, facilitation_technique
-        )
+    # Generate assessment and resources
+    if not data.get('assessment_details'):
+        data['assessment_details'] = generate_assessment_methods(topic, rqf_level, facilitation_technique)
     
-    # Generate resources list if not provided
-    if not data.get('resources') or len(data.get('resources', '')) < 30:
-        data['resources'] = generate_resources_list(
-            topic, facilitation_technique, number_of_trainees
-        )
+    if not data.get('resources'):
+        data['resources'] = generate_resources_list(topic, facilitation_technique, number_of_trainees)
     
     return data
