@@ -119,7 +119,8 @@ async function loginUser(phone, password, remember) {
             return { success: false, message: errorMessage };
         }
         
-        const user = await response.json();
+        const result = await response.json();
+        const user = result && result.user ? result.user : result;
         console.log('✅ User data received:', { ...user, password: '***' });
         
         const expiryTime = remember ? 30 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000;

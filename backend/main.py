@@ -1,15 +1,16 @@
 from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
-from sqlalchemy import create_engine, Column, Integer, String, Text, DateTime, Boolean
+from sqlalchemy import create_engine, Column, Integer, String, Text, DateTime, Boolean, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.sql import func
 from datetime import datetime
 import hashlib
 import tempfile
 import os
-from document_generator import generate_session_plan_docx, generate_scheme_of_work_docx, generate_session_plan_pdf, generate_scheme_of_work_pdf
 import logging
+
+from document_generator import generate_session_plan_docx, generate_scheme_of_work_docx, generate_session_plan_pdf, generate_scheme_of_work_pdf
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -58,6 +59,8 @@ class User(Base):
     session_plans_downloaded = Column(Integer, default=0)
     schemes_downloaded = Column(Integer, default=0)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    notifications = relationship("Notification", back_populates="user", cascade="all, delete-orphan")
 
 class SessionPlan(Base):
     __tablename__ = "session_plans"
@@ -120,6 +123,18 @@ class SchemeOfWork(Base):
     dos_name = Column(String(255))
     manager_name = Column(String(255))
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+class Notification(Base):
+    __tablename__ = "notifications"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    title = Column(String(255), nullable=False)
+    message = Column(Text, nullable=False)
+    type = Column(String(50), default='info')
+    is_read = Column(Boolean, default=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    user = relationship("User", back_populates="notifications", lazy='joined')
 
 Base.metadata.create_all(bind=engine)
 
@@ -600,13 +615,32 @@ def send_notification():
         data = request.get_json()
         user_ids = data.get('user_ids', [])
         message = data.get('message', '')
+        title = data.get('title', 'Notification')
+        notif_type = data.get('type', 'info')
         
         if not user_ids or not message:
             return jsonify({"detail": "User IDs and message required"}), 400
         
-        logger.info(f"Notification sent to {len(user_ids)} users: {message}")
-        return jsonify({"message": f"Notification sent to {len(user_ids)} users"}), 200
+        db = SessionLocal()
+        try:
+            users = db.query(User).filter(User.id.in_(user_ids)).all()
+            if not users:
+                return jsonify({"detail": "No valid users found"}), 404
+            
+            for user in users:
+                notification = Notification(
+                    user_id=user.id,
+                    title=title,
+                    message=message,
+                    type=notif_type
+                )
+                db.add(notification)
+            db.commit()
+            return jsonify({"message": f"Notification sent to {len(users)} users"}), 200
+        finally:
+            db.close()
     except Exception as e:
+        logger.error(f"Notification error: {e}")
         return jsonify({"detail": "Failed to send notification"}), 500
 
 @app.route('/users/<phone>/status', methods=['PUT', 'OPTIONS'])
@@ -688,6 +722,67 @@ def update_user(phone):
     except Exception as e:
         return jsonify({"detail": "Failed to update user"}), 500
 
+@app.route('/notifications/user/<int:user_id>', methods=['GET', 'OPTIONS'])
+def get_user_notifications(user_id):
+    if request.method == 'OPTIONS':
+        return '', 204
+    
+    try:
+        db = SessionLocal()
+        try:
+            notifications = db.query(Notification).filter(Notification.user_id == user_id).order_by(Notification.created_at.desc()).all()
+            return jsonify([
+                {
+                    "id": n.id,
+                    "title": n.title,
+                    "message": n.message,
+                    "type": n.type,
+                    "is_read": n.is_read,
+                    "created_at": n.created_at.isoformat() if n.created_at else None
+                } for n in notifications
+            ]), 200
+        finally:
+            db.close()
+    except Exception as e:
+        logger.error(f"Get notifications error: {e}")
+        return jsonify([]), 200
+
+@app.route('/notifications/<int:notification_id>/read', methods=['PUT', 'OPTIONS'])
+def mark_notification_read(notification_id):
+    if request.method == 'OPTIONS':
+        return '', 204
+    
+    try:
+        db = SessionLocal()
+        try:
+            notification = db.query(Notification).filter(Notification.id == notification_id).first()
+            if not notification:
+                return jsonify({"detail": "Notification not found"}), 404
+            notification.is_read = True
+            db.commit()
+            return jsonify({"message": "Notification marked as read"}), 200
+        finally:
+            db.close()
+    except Exception as e:
+        logger.error(f"Mark notification read error: {e}")
+        return jsonify({"detail": "Failed to update notification"}), 500
+
+@app.route('/notifications/unread/<int:user_id>', methods=['GET', 'OPTIONS'])
+def get_unread_count(user_id):
+    if request.method == 'OPTIONS':
+        return '', 204
+    
+    try:
+        db = SessionLocal()
+        try:
+            count = db.query(Notification).filter(Notification.user_id == user_id, Notification.is_read == False).count()
+            return jsonify({"unread_count": count}), 200
+        finally:
+            db.close()
+    except Exception as e:
+        logger.error(f"Unread count error: {e}")
+        return jsonify({"unread_count": 0}), 200
+
 @app.route('/notifications/broadcast', methods=['POST', 'OPTIONS'])
 def broadcast_notification():
     if request.method == 'OPTIONS':
@@ -697,13 +792,40 @@ def broadcast_notification():
         data = request.get_json()
         target = data.get('target', 'all')
         message = data.get('message', '')
+        title = data.get('title', 'Notification')
+        notif_type = data.get('type', 'info')
         
         if not message:
             return jsonify({"detail": "Message required"}), 400
         
-        logger.info(f"Broadcast to {target}: {message}")
-        return jsonify({"message": "Notification sent"}), 200
+        db = SessionLocal()
+        try:
+            query = db.query(User)
+            if target == 'premium':
+                query = query.filter(User.is_premium == True)
+            elif target == 'free':
+                query = query.filter(User.is_premium == False)
+            elif target == 'inactive':
+                query = query.filter(User.is_active == False)
+            users = query.all()
+            
+            if not users:
+                return jsonify({"detail": "No users for selected target"}), 404
+            
+            for user in users:
+                notification = Notification(
+                    user_id=user.id,
+                    title=title,
+                    message=message,
+                    type=notif_type
+                )
+                db.add(notification)
+            db.commit()
+            return jsonify({"message": f"Notification sent to {len(users)} users"}), 200
+        finally:
+            db.close()
     except Exception as e:
+        logger.error(f"Broadcast error: {e}")
         return jsonify({"detail": "Failed to send notification"}), 500
 
 @app.route('/notifications/send', methods=['POST', 'OPTIONS'])
@@ -715,13 +837,31 @@ def send_personal_notification():
         data = request.get_json()
         recipient = data.get('recipient', '')
         message = data.get('message', '')
+        title = data.get('title', 'Message')
+        notif_type = data.get('type', 'info')
         
         if not recipient or not message:
             return jsonify({"detail": "Recipient and message required"}), 400
         
-        logger.info(f"Message to {recipient}: {message}")
-        return jsonify({"message": "Message sent"}), 200
+        db = SessionLocal()
+        try:
+            user = db.query(User).filter(User.phone == recipient).first()
+            if not user:
+                return jsonify({"detail": "Recipient not found"}), 404
+            
+            notification = Notification(
+                user_id=user.id,
+                title=title,
+                message=message,
+                type=notif_type
+            )
+            db.add(notification)
+            db.commit()
+            return jsonify({"message": "Message sent"}), 200
+        finally:
+            db.close()
     except Exception as e:
+        logger.error(f"Personal notification error: {e}")
         return jsonify({"detail": "Failed to send message"}), 500
 
 if __name__ == '__main__':

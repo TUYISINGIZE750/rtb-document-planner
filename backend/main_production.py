@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 import hashlib
 import os
 import tempfile
-from document_generator import generate_session_plan_docx, generate_scheme_of_work_docx
+from simple_document_generator import generate_session_plan_docx, generate_scheme_of_work_docx
 import logging
 
 # Configure logging

@@ -17,7 +17,7 @@ async function getNotifications() {
         // Get user ID from backend
         const usersResponse = await fetch(`${API_BASE}/users/`);
         const users = await usersResponse.json();
-        const user = users.find(u => u.user_id === session.user_id);
+        const user = users.find(u => u.phone === session.phone);
         
         if (!user) return [];
         
@@ -50,7 +50,7 @@ async function getUnreadCount() {
         
         const usersResponse = await fetch(`${API_BASE}/users/`);
         const users = await usersResponse.json();
-        const user = users.find(u => u.user_id === session.user_id);
+        const user = users.find(u => u.phone === session.phone);
         
         if (!user) return 0;
         
@@ -111,17 +111,19 @@ async function displayNotificationWidget() {
     `}).join('');
     
     if (notifications.length > 0) {
-        setTimeout(() => {
-            notifications.forEach(n => markNotificationAsRead(n.id));
-            updateNotificationBell();
+        setTimeout(async () => {
+            for (const notif of notifications) {
+                await markNotificationAsRead(notif.id);
+            }
+            await updateNotificationBell();
         }, 5000);
     }
 }
 
 async function dismissNotification(notificationId) {
     await markNotificationAsRead(notificationId);
-    displayNotificationWidget();
-    updateNotificationBell();
+    await displayNotificationWidget();
+    await updateNotificationBell();
 }
 
 // Add notification bell to pages
@@ -151,6 +153,24 @@ async function addNotificationBell() {
     document.body.appendChild(bell);
 }
 
+async function populateNotificationsPanel(container, notifications) {
+    container.innerHTML = notifications.length === 0 ? 
+        '<p style="text-align: center; color: #64748b; padding: 2rem;">No notifications</p>' :
+        notifications.map(notif => {
+            const typeColor = notif.type === 'success' ? '#10b981' : 
+                             notif.type === 'warning' ? '#f59e0b' : 
+                             notif.type === 'error' ? '#ef4444' : '#6366f1';
+            return `
+            <div style="padding: 1rem; border-radius: 0.5rem; margin-bottom: 0.75rem; background: ${notif.is_read ? '#f8fafc' : '#eef2ff'}; border-left: 3px solid ${notif.is_read ? '#cbd5e1' : typeColor};">
+                <h4 style="margin: 0 0 0.5rem 0; color: #1e293b; font-size: 0.95rem;">${notif.title}</h4>
+                <p style="margin: 0; color: #64748b; font-size: 0.875rem; white-space: pre-line;">${notif.message}</p>
+                <div style="margin-top: 0.5rem; font-size: 0.75rem; color: #94a3b8;">
+                    ${new Date(notif.created_at).toLocaleString()}
+                </div>
+            </div>
+        `}).join('');
+}
+
 async function showNotificationPanel() {
     const panel = document.createElement('div');
     panel.id = 'notificationPanel';
@@ -165,24 +185,7 @@ async function showNotificationPanel() {
             </h3>
             <button onclick="document.getElementById('notificationPanel').remove()" style="background: none; border: none; color: #64748b; cursor: pointer; font-size: 1.5rem; padding: 0;">×</button>
         </div>
-        <div style="max-height: 400px; overflow-y: auto; padding: 1rem;">
-            ${notifications.length === 0 ? 
-                '<p style="text-align: center; color: #64748b; padding: 2rem;">No notifications</p>' :
-                notifications.map(notif => {
-                    const typeColor = notif.type === 'success' ? '#10b981' : 
-                                     notif.type === 'warning' ? '#f59e0b' : 
-                                     notif.type === 'error' ? '#ef4444' : '#6366f1';
-                    return `
-                    <div style="padding: 1rem; border-radius: 0.5rem; margin-bottom: 0.75rem; background: ${notif.is_read ? '#f8fafc' : '#eef2ff'}; border-left: 3px solid ${notif.is_read ? '#cbd5e1' : typeColor};">
-                        <h4 style="margin: 0 0 0.5rem 0; color: #1e293b; font-size: 0.95rem;">${notif.title}</h4>
-                        <p style="margin: 0; color: #64748b; font-size: 0.875rem; white-space: pre-line;">${notif.message}</p>
-                        <div style="margin-top: 0.5rem; font-size: 0.75rem; color: #94a3b8;">
-                            ${new Date(notif.created_at).toLocaleString()}
-                        </div>
-                    </div>
-                `}).join('')
-            }
-        </div>
+        <div id="notificationPanelBody" style="max-height: 400px; overflow-y: auto; padding: 1rem;"></div>
         ${notifications.length > 0 ? `
             <div style="padding: 1rem; border-top: 1px solid #e2e8f0; text-align: center;">
                 <button onclick="clearAllNotifications(); document.getElementById('notificationPanel').remove(); updateNotificationBell();" style="background: none; border: none; color: #6366f1; cursor: pointer; font-weight: 600;">
@@ -191,8 +194,9 @@ async function showNotificationPanel() {
             </div>
         ` : ''}
     `;
-    
     document.body.appendChild(panel);
+    const body = document.getElementById('notificationPanelBody');
+    await populateNotificationsPanel(body, notifications);
 }
 
 async function updateNotificationBell() {

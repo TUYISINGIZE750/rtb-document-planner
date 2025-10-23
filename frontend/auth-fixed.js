@@ -3,13 +3,15 @@ console.log('✅ auth-fixed.js loaded - Session enforcement enabled');
 
 // Session management
 function saveSession(userData) {
+    const coreData = userData && userData.user ? userData.user : userData;
+    if (!coreData) return;
     const sessionData = {
-        ...userData,
+        ...coreData,
         loginTime: Date.now(),
-        expiresAt: Date.now() + (24 * 60 * 60 * 1000) // 24 hours
+        expiresAt: Date.now() + (24 * 60 * 60 * 1000)
     };
     localStorage.setItem('rtb_session', JSON.stringify(sessionData));
-    console.log('✅ Session saved:', sessionData.phone);
+    console.log('✅ Session saved:', sessionData.phone || sessionData.user_id);
 }
 
 function getCurrentSession() {

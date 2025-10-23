@@ -244,9 +244,10 @@
     </div>
     <div id="toastContainer" class="toast-container"></div>
     <script src="config-final.js"></script>
+    <script src="config.js"></script>
     <script src="auth.js"></script>
     <script>
-        const apiBase = typeof API_BASE !== 'undefined' ? API_BASE : (window.API_BASE || '');
+        const apiBase = typeof API_BASE !== 'undefined' ? API_BASE : (window.API_BASE || 'https://leonardus437.pythonanywhere.com');
         let users = [];
         let filteredUsers = [];
         let stats = null;
@@ -501,7 +502,12 @@
                 const response = await fetch(`${apiBase}/notifications/broadcast`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ target: elements.broadcastTarget.value, message })
+                    body: JSON.stringify({
+                        target: elements.broadcastTarget.value,
+                        message,
+                        title: 'Admin Broadcast',
+                        type: 'info'
+                    })
                 });
                 if (!response.ok) throw new Error('Notification failed');
                 elements.broadcastMessage.value = '';
@@ -559,7 +565,12 @@
                 const response = await fetch(`${apiBase}/notifications/send`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ recipient: selectedUser.phone, message, type: 'personal' })
+                    body: JSON.stringify({
+                        recipient: selectedUser.phone,
+                        message,
+                        title: 'Admin Message',
+                        type: 'personal'
+                    })
                 });
                 if (!response.ok) throw new Error('Message failed');
                 elements.messageBody.value = '';
@@ -669,6 +680,11 @@
         }
         async function init() {
             if (typeof protectAdminPage === 'function') protectAdminPage();
+            const session = getCurrentSession && getCurrentSession();
+            if (!session || session.role !== 'admin') {
+                window.location.replace('direct-login.html');
+                return;
+            }
             updateAdminDetails();
             bindActions();
             await refreshAll();

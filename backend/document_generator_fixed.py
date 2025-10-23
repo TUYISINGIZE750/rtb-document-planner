@@ -112,24 +112,22 @@ def generate_session_plan_docx(data):
         doc.add_heading('References:', level=2)
         doc.add_paragraph(get_val('references', 'RTB curriculum guidelines and approved textbooks'))
         
+        # Save to temporary file with proper error handling
         temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
-        temp_path = temp_file.name
-        temp_file.close()
-        doc.save(temp_path)
-        logger.info(f"Session plan DOCX generated: {temp_path}")
-        return temp_path
+        doc.save(temp_file.name)
+        logger.info(f"Session plan DOCX generated: {temp_file.name}")
+        return temp_file.name
         
     except Exception as e:
         logger.error(f"Error generating session plan DOCX: {e}")
+        # Create a simple fallback document
         doc = Document()
         doc.add_heading('RTB Session Plan', 0)
         doc.add_paragraph('Error generating document. Please contact support.')
         doc.add_paragraph(f'Error details: {str(e)}')
         temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
-        temp_path = temp_file.name
-        temp_file.close()
-        doc.save(temp_path)
-        return temp_path
+        doc.save(temp_file.name)
+        return temp_file.name
 
 def generate_scheme_of_work_docx(data):
     """Generate RTB Scheme of Work DOCX document"""
@@ -236,12 +234,11 @@ def generate_scheme_of_work_docx(data):
         cells[0].text = 'DOS Name:'
         cells[1].text = get_val('dos_name')
         
+        # Save to temporary file
         temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
-        temp_path = temp_file.name
-        temp_file.close()
-        doc.save(temp_path)
-        logger.info(f"Scheme DOCX generated: {temp_path}")
-        return temp_path
+        doc.save(temp_file.name)
+        logger.info(f"Scheme DOCX generated: {temp_file.name}")
+        return temp_file.name
         
     except Exception as e:
         logger.error(f"Error generating scheme DOCX: {e}")
@@ -251,7 +248,5 @@ def generate_scheme_of_work_docx(data):
         doc.add_paragraph('Error generating document. Please contact support.')
         doc.add_paragraph(f'Error details: {str(e)}')
         temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
-        temp_path = temp_file.name
-        temp_file.close()
-        doc.save(temp_path)
-        return temp_path
+        doc.save(temp_file.name)
+        return temp_file.name
