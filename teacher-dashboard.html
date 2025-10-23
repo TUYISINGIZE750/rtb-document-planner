@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard - RTB Document Planner</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="subscription-modal.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            min-height: 100vh; 
+        }
+        
+        .header { 
+            background: rgba(255,255,255,0.1); 
+            padding: 1rem 2rem; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            backdrop-filter: blur(10px);
+        }
+        
+        .logo { 
+            color: white; 
+            font-size: 1.5rem; 
+            font-weight: 700; 
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .user-info { 
+            background: white; 
+            padding: 0.75rem 1.5rem; 
+            border-radius: 2rem; 
+            display: flex; 
+            align-items: center; 
+            gap: 1rem; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .logout-btn { 
+            background: #ef4444; 
+            color: white; 
+            border: none; 
+            padding: 0.5rem 1rem; 
+            border-radius: 0.5rem; 
+            cursor: pointer; 
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .logout-btn:hover {
+            background: #dc2626;
+        }
+        
+        .container { 
+            padding: 2rem; 
+            max-width: 1200px; 
+            margin: 0 auto; 
+        }
+        
+        .welcome { 
+            text-align: center; 
+            color: white; 
+            margin-bottom: 3rem; 
+        }
+        
+        .welcome h1 { 
+            font-size: 2.5rem; 
+            margin-bottom: 0.5rem; 
+            font-weight: 700;
+        }
+        
+        .welcome p {
+            font-size: 1.125rem;
+            opacity: 0.9;
+        }
+        
+        .status-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .status-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            text-align: center;
+        }
+        
+        .status-card.premium {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+        
+        .status-card.warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+        
+        .status-card i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #6366f1;
+        }
+        
+        .status-card.premium i,
+        .status-card.warning i {
+            color: white;
+        }
+        
+        .status-card h3 {
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+            font-size: 1.125rem;
+        }
+        
+        .status-card.premium h3,
+        .status-card.warning h3 {
+            color: white;
+        }
+        
+        .status-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #6366f1;
+            margin-bottom: 0.5rem;
+        }
+        
+        .status-card.premium .status-number,
+        .status-card.warning .status-number {
+            color: white;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #6366f1;
+            transition: width 0.3s;
+        }
+        
+        .status-card.premium .progress-bar {
+            display: none;
+        }
+        
+        .action-cards { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+            gap: 2rem; 
+        }
+        
+        .action-card { 
+            background: white; 
+            border-radius: 1rem; 
+            padding: 2rem; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+            transition: transform 0.3s; 
+            text-align: center;
+        }
+        
+        .action-card:hover { 
+            transform: translateY(-5px); 
+        }
+        
+        .action-card i { 
+            font-size: 3rem; 
+            color: #6366f1; 
+            margin-bottom: 1rem; 
+        }
+        
+        .action-card h2 { 
+            color: #1e293b; 
+            margin-bottom: 1rem; 
+            font-size: 1.25rem;
+        }
+        
+        .action-card p { 
+            color: #64748b; 
+            margin-bottom: 1.5rem; 
+            line-height: 1.5;
+        }
+        
+        .btn { 
+            background: #6366f1; 
+            color: white; 
+            border: none; 
+            padding: 0.875rem 1.5rem; 
+            border-radius: 0.5rem; 
+            cursor: pointer; 
+            font-size: 1rem; 
+            width: 100%; 
+            font-weight: 600;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .btn:hover { 
+            background: #5855eb; 
+            transform: translateY(-1px);
+        }
+        
+        .btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .upgrade-btn {
+            background: #10b981;
+        }
+        
+        .upgrade-btn:hover {
+            background: #059669;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.875rem;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .welcome h1 {
+                font-size: 2rem;
+            }
+            
+            .status-cards,
+            .action-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <i class="fas fa-graduation-cap"></i> RTB Document Planner
+        </div>
+        <div class="user-info">
+            <span id="userName">Loading...</span>
+            <button onclick="logout()" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="welcome">
+            <h1>Welcome to Your Dashboard</h1>
+            <p>Create professional RTB-compliant documents with ease</p>
+        </div>
+
+        <div class="status-cards" id="statusCards">
+            <!-- Status cards will be populated by JavaScript -->
+        </div>
+
+        <div class="action-cards">
+            <div class="action-card">
+                <i class="fas fa-chalkboard-teacher"></i>
+                <h2>Session Plan Wizard</h2>
+                <p>Create RTB-formatted session plans with step-by-step guidance and all required components</p>
+                <button onclick="createSessionPlan()" class="btn" id="sessionPlanBtn">
+                    <i class="fas fa-magic"></i> Create Session Plan
+                </button>
+            </div>
+
+            <div class="action-card">
+                <i class="fas fa-clipboard-list"></i>
+                <h2>Scheme of Work Wizard</h2>
+                <p>Generate comprehensive schemes of work for your modules with professional formatting</p>
+                <button onclick="createScheme()" class="btn" id="schemeBtn">
+                    <i class="fas fa-magic"></i> Create Scheme of Work
+                </button>
+            </div>
+
+            <div class="action-card">
+                <i class="fas fa-crown"></i>
+                <h2>Upgrade Account</h2>
+                <p>Get unlimited downloads, priority support, and access to premium features</p>
+                <button onclick="showSubscriptionModal()" class="btn upgrade-btn">
+                    <i class="fas fa-crown"></i> View Plans
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        © 2025 RTB Document Planner. All rights reserved. | Developed for TVET Excellence
+    </div>
+
+    <!-- Load required scripts -->
+    <script src="config.js"></script>
+    <script src="auth.js"></script>
+    <script src="subscription-modal.js"></script>
+    <script src="subscription-tracker.js"></script>
+    <script>
+        let currentLimits = null;
+
+        // Check authentication on page load
+        function checkAuth() {
+            const session = getCurrentSession();
+            if (!session) {
+                window.location.href = 'login.html';
+                return false;
+            }
+            document.getElementById('userName').textContent = session.name;
+            loadUserStatus();
+            return true;
+        }
+
+        async function loadUserStatus() {
+            try {
+                const session = getCurrentSession();
+                if (!session) return;
+                
+                const response = await fetch(`${API_BASE}/user-limits/${encodeURIComponent(session.phone)}`);
+                if (response.ok) {
+                    currentLimits = await response.json();
+                    updateStatusCards();
+                    updateActionButtons();
+                }
+            } catch (error) {
+                console.error('Error loading user status:', error);
+            }
+        }
+
+        function updateStatusCards() {
+            const statusCards = document.getElementById('statusCards');
+            
+            if (currentLimits.is_premium) {
+                statusCards.innerHTML = `
+                    <div class="status-card premium">
+                        <i class="fas fa-crown"></i>
+                        <h3>Premium Account</h3>
+                        <div class="status-number">∞</div>
+                        <p>Unlimited Downloads Available</p>
+                    </div>
+                    <div class="status-card">
+                        <i class="fas fa-file-alt"></i>
+                        <h3>Session Plans Created</h3>
+                        <div class="status-number">${currentLimits.session_plans_downloaded}</div>
+                        <p>Total documents created</p>
+                    </div>
+                    <div class="status-card">
+                        <i class="fas fa-clipboard-list"></i>
+                        <h3>Schemes Created</h3>
+                        <div class="status-number">${currentLimits.schemes_downloaded}</div>
+                        <p>Total documents created</p>
+                    </div>
+                `;
+            } else {
+                const sessionRemaining = Math.max(0, currentLimits.session_plans_limit - currentLimits.session_plans_downloaded);
+                const schemeRemaining = Math.max(0, currentLimits.schemes_limit - currentLimits.schemes_downloaded);
+                
+                const sessionPercent = currentLimits.session_plans_limit > 0 ? 
+                    (sessionRemaining / currentLimits.session_plans_limit) * 100 : 0;
+                const schemePercent = currentLimits.schemes_limit > 0 ? 
+                    (schemeRemaining / currentLimits.schemes_limit) * 100 : 0;
+                
+                statusCards.innerHTML = `
+                    <div class="status-card ${sessionRemaining === 0 ? 'warning' : ''}">
+                        <i class="fas fa-file-alt"></i>
+                        <h3>Session Plans</h3>
+                        <div class="status-number">${sessionRemaining}</div>
+                        <p>Free downloads remaining</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${sessionPercent}%"></div>
+                        </div>
+                    </div>
+                    <div class="status-card ${schemeRemaining === 0 ? 'warning' : ''}">
+                        <i class="fas fa-clipboard-list"></i>
+                        <h3>Schemes of Work</h3>
+                        <div class="status-number">${schemeRemaining}</div>
+                        <p>Free downloads remaining</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${schemePercent}%"></div>
+                        </div>
+                    </div>
+                    <div class="status-card">
+                        <i class="fas fa-download"></i>
+                        <h3>Total Downloads</h3>
+                        <div class="status-number">${currentLimits.session_plans_downloaded + currentLimits.schemes_downloaded}</div>
+                        <p>Documents created so far</p>
+                    </div>
+                `;
+            }
+        }
+
+        function updateActionButtons() {
+            const sessionBtn = document.getElementById('sessionPlanBtn');
+            const schemeBtn = document.getElementById('schemeBtn');
+            
+            if (!currentLimits.is_premium) {
+                const sessionRemaining = Math.max(0, currentLimits.session_plans_limit - currentLimits.session_plans_downloaded);
+                const schemeRemaining = Math.max(0, currentLimits.schemes_limit - currentLimits.schemes_downloaded);
+                
+                if (sessionRemaining === 0) {
+                    sessionBtn.disabled = true;
+                    sessionBtn.innerHTML = '<i class="fas fa-lock"></i> Upgrade Required';
+                }
+                
+                if (schemeRemaining === 0) {
+                    schemeBtn.disabled = true;
+                    schemeBtn.innerHTML = '<i class="fas fa-lock"></i> Upgrade Required';
+                }
+            }
+        }
+
+        function logout() {
+            logoutUser();
+        }
+
+        async function createSessionPlan() {
+            if (!currentLimits) {
+                await loadUserStatus();
+            }
+            
+            if (!currentLimits.is_premium) {
+                const sessionRemaining = Math.max(0, currentLimits.session_plans_limit - currentLimits.session_plans_downloaded);
+                if (sessionRemaining === 0) {
+                    showSubscriptionModal('session_plans');
+                    return;
+                }
+            }
+            window.location.href = 'wizard.html';
+        }
+
+        async function createScheme() {
+            if (!currentLimits) {
+                await loadUserStatus();
+            }
+            
+            if (!currentLimits.is_premium) {
+                const schemeRemaining = Math.max(0, currentLimits.schemes_limit - currentLimits.schemes_downloaded);
+                if (schemeRemaining === 0) {
+                    showSubscriptionModal('schemes');
+                    return;
+                }
+            }
+            window.location.href = 'scheme-wizard.html';
+        }
+        
+        function viewDocuments() {
+            window.location.href = 'my-documents.html';
+        }
+
+        // Ensure functions are available globally
+        window.createSessionPlan = createSessionPlan;
+        window.createScheme = createScheme;
+        window.viewDocuments = viewDocuments;
+        window.showSubscriptionModal = showSubscriptionModal;
+
+        // Initialize
+        if (!checkAuth()) {
+            // Redirect handled in checkAuth
+        }
+
+        // Initialize subscription tracker
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof SubscriptionTracker !== 'undefined') {
+                new SubscriptionTracker();
+            }
+        });
+
+        // Prevent back button after logout
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+                const session = getCurrentSession();
+                if (!session) {
+                    window.location.href = 'login.html';
+                }
+            }
+        });
+
+        // Refresh status every 30 seconds
+        setInterval(loadUserStatus, 30000);
+    </script>
+</body>
+</html>

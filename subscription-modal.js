@@ -2,9 +2,24 @@
 let subscriptionModal = null;
 let currentSettings = null;
 
+// Load system settings
+async function loadSystemSettings() {
+    try {
+        const response = await fetch(`${API_BASE}/settings`);
+        if (response.ok) {
+            currentSettings = await response.json();
+            return currentSettings;
+        }
+    } catch (error) {
+        console.error('Error loading settings:', error);
+    }
+    return null;
+}
+
 // Show subscription modal
-function showSubscriptionModal(type = 'both') {
-    console.log('📋 Opening subscription modal');
+async function showSubscriptionModal(type = 'both') {
+    const settings = await loadSystemSettings();
+    if (!settings) return;
 
     // Create modal if it doesn't exist
     if (!subscriptionModal) {
@@ -129,8 +144,6 @@ function showSubscriptionModal(type = 'both') {
 
     subscriptionModal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
-    
-    console.log('✅ Subscription modal displayed');
 }
 
 // Select a plan and show payment instructions

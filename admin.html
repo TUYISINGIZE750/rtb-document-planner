@@ -1,28 +1,315 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <title>RTB Admin Panel</title>
     <meta charset="UTF-8">
-    <title>Redirecting to Working Admin Dashboard...</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; padding: 3rem; background: #f8f9fa; }
-        .container { max-width: 600px; margin: 0 auto; background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .btn { padding: 1rem 2rem; background: #007bff; color: white; text-decoration: none; border-radius: 4px; font-weight: bold; margin: 0.5rem; display: inline-block; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f7fa; }
+        .header { background: #6366f1; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 2rem; }
+        .card { background: white; border-radius: 0.5rem; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .btn { padding: 0.5rem 1rem; border: none; border-radius: 0.25rem; cursor: pointer; font-weight: 600; }
+        .btn-primary { background: #6366f1; color: white; }
+        .btn-success { background: #10b981; color: white; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-secondary { background: #6b7280; color: white; }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
+        .form-group input, .form-group textarea { width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.25rem; }
+        .users-table { width: 100%; border-collapse: collapse; }
+        .users-table th, .users-table td { padding: 0.75rem; text-align: left; border-bottom: 1px solid #e5e7eb; }
+        .users-table th { background: #f9fafb; font-weight: 600; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .stat-card { background: white; padding: 1.5rem; border-radius: 0.5rem; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .stat-number { font-size: 2rem; font-weight: bold; color: #6366f1; }
+        .stat-label { color: #6b7280; margin-top: 0.5rem; }
+        .notification-form { background: #f0f9ff; border: 1px solid #0ea5e9; border-radius: 0.5rem; padding: 1.5rem; }
     </style>
 </head>
 <body>
+    <div class="header">
+        <h1><i class="fas fa-shield-alt"></i> RTB Admin Panel</h1>
+        <div>
+            <span id="adminName">Loading...</span>
+            <button onclick="logout()" class="btn btn-secondary" style="margin-left: 1rem;">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </div>
+
     <div class="container">
-        <h1>🔄 Redirecting to Working Admin Dashboard</h1>
-        <p>The old admin dashboard has cache issues. Redirecting you to the working version...</p>
-        <p><strong>If redirect doesn't work, click below:</strong></p>
-        <a href="admin-clean.html" class="btn">🛡️ Go to Working Admin Dashboard</a>
-        <a href="system-status.html" class="btn">🔍 System Status</a>
+        <!-- Stats -->
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <div class="stat-number" id="totalUsers">-</div>
+                <div class="stat-label">Total Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="activeUsers">-</div>
+                <div class="stat-label">Active Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="premiumUsers">-</div>
+                <div class="stat-label">Premium Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalDownloads">-</div>
+                <div class="stat-label">Total Downloads</div>
+            </div>
+        </div>
+
+        <!-- Send Notification -->
+        <div class="card">
+            <h2><i class="fas fa-bell"></i> Send Notification</h2>
+            <div class="notification-form">
+                <div class="form-group">
+                    <label>Recipient Phone Number</label>
+                    <input type="tel" id="notificationPhone" placeholder="+250788123456">
+                </div>
+                <div class="form-group">
+                    <label>Message</label>
+                    <textarea id="notificationMessage" rows="3" placeholder="Enter your message here..."></textarea>
+                </div>
+                <button onclick="sendNotification()" class="btn btn-primary">
+                    <i class="fas fa-paper-plane"></i> Send Notification
+                </button>
+            </div>
+        </div>
+
+        <!-- Users Management -->
+        <div class="card">
+            <h2><i class="fas fa-users"></i> Users Management</h2>
+            <button onclick="loadUsers()" class="btn btn-primary" style="margin-bottom: 1rem;">
+                <i class="fas fa-refresh"></i> Refresh Users
+            </button>
+            <div style="overflow-x: auto;">
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Institution</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Downloads</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 2rem;">
+                                <i class="fas fa-spinner fa-spin"></i> Loading users...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
     <script>
-        // Auto-redirect after 2 seconds
-        setTimeout(() => {
-            window.location.href = 'admin-clean.html';
-        }, 2000);
+        const API_BASE = 'https://leonardus437.pythonanywhere.com';
+        let currentAdmin = null;
+
+        // Check admin authentication
+        function checkAdminAuth() {
+            try {
+                const stored = localStorage.getItem('rtb_user');
+                if (!stored) {
+                    throw new Error('No user data');
+                }
+
+                const user = JSON.parse(stored);
+                if (!user || user.role !== 'admin') {
+                    throw new Error('Not an admin');
+                }
+
+                currentAdmin = user;
+                document.getElementById('adminName').textContent = user.name;
+                return true;
+            } catch (error) {
+                alert('Admin access required. Please login as admin.');
+                window.location.href = 'index_fixed.html';
+                return false;
+            }
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('rtb_user');
+                window.location.href = 'index_fixed.html';
+            }
+        }
+
+        // Load statistics
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_BASE}/stats`, {
+                    method: 'GET',
+                    headers: { 'Accept': 'application/json' }
+                });
+
+                if (response.ok) {
+                    const stats = await response.json();
+                    document.getElementById('totalUsers').textContent = stats.total_users;
+                    document.getElementById('activeUsers').textContent = stats.active_users;
+                    document.getElementById('premiumUsers').textContent = stats.premium_users;
+                    document.getElementById('totalDownloads').textContent = stats.total_downloads;
+                } else {
+                    console.error('Failed to load stats');
+                }
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        // Load users
+        async function loadUsers() {
+            try {
+                const response = await fetch(`${API_BASE}/users/`, {
+                    method: 'GET',
+                    headers: { 'Accept': 'application/json' }
+                });
+
+                if (response.ok) {
+                    const users = await response.json();
+                    displayUsers(users);
+                } else {
+                    document.getElementById('usersTableBody').innerHTML = 
+                        '<tr><td colspan="7" style="text-align: center; color: red;">Failed to load users</td></tr>';
+                }
+            } catch (error) {
+                console.error('Error loading users:', error);
+                document.getElementById('usersTableBody').innerHTML = 
+                    '<tr><td colspan="7" style="text-align: center; color: red;">Connection error</td></tr>';
+            }
+        }
+
+        function displayUsers(users) {
+            const tbody = document.getElementById('usersTableBody');
+            
+            if (users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No users found</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = users.map(user => `
+                <tr>
+                    <td>${user.name}</td>
+                    <td>${user.phone}</td>
+                    <td>${user.institution || 'N/A'}</td>
+                    <td>
+                        <span style="background: ${user.role === 'admin' ? '#6366f1' : '#10b981'}; color: white; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem;">
+                            ${user.role.toUpperCase()}
+                        </span>
+                    </td>
+                    <td>
+                        <span style="background: ${user.is_active ? '#10b981' : '#ef4444'}; color: white; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem;">
+                            ${user.is_active ? 'ACTIVE' : 'INACTIVE'}
+                        </span>
+                        ${user.is_premium ? '<br><span style="background: #f59e0b; color: white; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem;">PREMIUM</span>' : ''}
+                    </td>
+                    <td>
+                        Plans: ${user.session_plans_downloaded}/${user.session_plans_limit}<br>
+                        Schemes: ${user.schemes_downloaded}/${user.schemes_limit}
+                    </td>
+                    <td>
+                        <button onclick="toggleUserStatus('${user.phone}', ${!user.is_active})" class="btn ${user.is_active ? 'btn-danger' : 'btn-success'}" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">
+                            ${user.is_active ? 'Deactivate' : 'Activate'}
+                        </button>
+                        <button onclick="togglePremium('${user.phone}', ${!user.is_premium})" class="btn btn-primary" style="font-size: 0.75rem; padding: 0.25rem 0.5rem; margin-left: 0.25rem;">
+                            ${user.is_premium ? 'Remove Premium' : 'Make Premium'}
+                        </button>
+                        <button onclick="sendMessageToUser('${user.phone}', '${user.name}')" class="btn btn-secondary" style="font-size: 0.75rem; padding: 0.25rem 0.5rem; margin-left: 0.25rem;">
+                            Message
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Toggle user status
+        async function toggleUserStatus(phone, newStatus) {
+            try {
+                const response = await fetch(`${API_BASE}/users/${encodeURIComponent(phone)}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ is_active: newStatus })
+                });
+
+                if (response.ok) {
+                    alert(`User ${newStatus ? 'activated' : 'deactivated'} successfully`);
+                    loadUsers();
+                } else {
+                    alert('Failed to update user status');
+                }
+            } catch (error) {
+                alert('Error updating user status');
+            }
+        }
+
+        // Toggle premium status
+        async function togglePremium(phone, newStatus) {
+            try {
+                const response = await fetch(`${API_BASE}/users/${encodeURIComponent(phone)}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        is_premium: newStatus,
+                        session_plans_limit: newStatus ? 999 : 2,
+                        schemes_limit: newStatus ? 999 : 2
+                    })
+                });
+
+                if (response.ok) {
+                    alert(`User premium status ${newStatus ? 'enabled' : 'disabled'} successfully`);
+                    loadUsers();
+                } else {
+                    alert('Failed to update premium status');
+                }
+            } catch (error) {
+                alert('Error updating premium status');
+            }
+        }
+
+        // Send message to specific user
+        function sendMessageToUser(phone, name) {
+            const message = prompt(`Send message to ${name} (${phone}):`);
+            if (message) {
+                document.getElementById('notificationPhone').value = phone;
+                document.getElementById('notificationMessage').value = message;
+                sendNotification();
+            }
+        }
+
+        // Send notification (simulated)
+        function sendNotification() {
+            const phone = document.getElementById('notificationPhone').value;
+            const message = document.getElementById('notificationMessage').value;
+
+            if (!phone || !message) {
+                alert('Please enter both phone number and message');
+                return;
+            }
+
+            // Simulate sending notification
+            alert(`✅ Notification sent to ${phone}:\n\n"${message}"\n\nNote: This is a simulation. In production, this would integrate with SMS/email services.`);
+            
+            // Clear form
+            document.getElementById('notificationPhone').value = '';
+            document.getElementById('notificationMessage').value = '';
+        }
+
+        // Initialize admin panel
+        document.addEventListener('DOMContentLoaded', function() {
+            if (checkAdminAuth()) {
+                loadStats();
+                loadUsers();
+            }
+        });
     </script>
 </body>
 </html>

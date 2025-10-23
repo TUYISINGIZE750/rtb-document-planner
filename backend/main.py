@@ -20,6 +20,7 @@ app = Flask(__name__)
 CORS(app, 
      origins=[
          "https://tuyisingize750.github.io",
+         "https://tuyisingize750.github.io/rtb-document-planner",
          "https://schemesession.netlify.app",
          "http://localhost:5173",
          "http://localhost:8000"
@@ -32,7 +33,8 @@ CORS(app,
 def after_request(response):
     origin = request.headers.get('Origin')
     allowed_origins = [
-        "https://tuyisingize750.github.io", 
+        "https://tuyisingize750.github.io",
+        "https://tuyisingize750.github.io/rtb-document-planner", 
         "https://schemesession.netlify.app",
         "http://localhost:5173",
         "http://localhost:8000"
