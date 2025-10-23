@@ -45,8 +45,8 @@ def generate_rtb_session_plan(data):
     
     # Row 0: Empty header row
     
-    # Row 1: Sector, Sub-sector, Date
-    merge_cells_in_row(table, 1, 1, 3).text = f"Sub-sector: {data.get('sub_sector', 'N/A')}"
+    # Row 1: Sector, Sub-sector (trade), Date
+    merge_cells_in_row(table, 1, 1, 3).text = f"Sub-sector: {data.get('trade', 'N/A')}"
     merge_cells_in_row(table, 1, 4, 5).text = f"Date : {data.get('date', 'N/A')}"
     table.rows[1].cells[0].text = f"Sector :    {data.get('sector', 'N/A')}"
     
@@ -55,31 +55,31 @@ def generate_rtb_session_plan(data):
     merge_cells_in_row(table, 2, 4, 5).text = f"TERM : {data.get('term', 'I')}"
     
     # Row 3: Module, Week, Trainees, Class
-    table.rows[3].cells[0].text = f"Module(Code&Name): {data.get('module_code', 'N/A')}"
+    table.rows[3].cells[0].text = f"Module(Code&Name): {data.get('module_code_title', 'N/A')}"
     merge_cells_in_row(table, 3, 1, 2).text = f"Week : {data.get('week', 'I')}"
-    table.rows[3].cells[3].text = f"No. Trainees: {data.get('num_trainees', '0')}"
-    merge_cells_in_row(table, 3, 4, 5).text = f"Class(es): {data.get('classes', '1')}"
+    table.rows[3].cells[3].text = f"No. Trainees: {data.get('number_of_trainees', '0')}"
+    merge_cells_in_row(table, 3, 4, 5).text = f"Class(es): {data.get('class_name', '1')}"
     
     # Row 4: Learning outcome
     table.rows[4].cells[0].text = "Learning outcome:"
-    merge_cells_in_row(table, 4, 1, 5).text = data.get('learning_outcome', 'N/A')
+    merge_cells_in_row(table, 4, 1, 5).text = data.get('learning_outcomes', 'N/A')
     
     # Row 5: Indicative contents
     table.rows[5].cells[0].text = "Indicative contents:"
-    merge_cells_in_row(table, 5, 1, 5).text = data.get('indicative_content', 'N/A')
+    merge_cells_in_row(table, 5, 1, 5).text = data.get('indicative_contents', 'N/A')
     
     # Row 6: Topic
     merge_cells_in_row(table, 6, 0, 5).text = f"Topic of the session: {data.get('topic_of_session', 'N/A')}"
     
     # Row 7: Range and Duration
-    table.rows[7].cells[0].text = f"Range: \n{data.get('range', 'N/A')}"
+    table.rows[7].cells[0].text = f"Range: \n{data.get('rqf_level', 'N/A')}"
     merge_cells_in_row(table, 7, 1, 5).text = f"Duration of the session: {data.get('duration', '40')}min"
     
     # Row 8: Objectives
-    merge_cells_in_row(table, 8, 0, 5).text = f"Objectives: By the end of this session every learner should be able to:\n{data.get('objectives', 'N/A')}"
+    merge_cells_in_row(table, 8, 0, 5).text = f"Objectives: By the end of this session every learner should be able to:\n{data.get('learning_outcomes', 'N/A')}"
     
     # Row 9: Facilitation technique
-    merge_cells_in_row(table, 9, 0, 5).text = f"Facilitation technique(s):   {data.get('facilitation_technique', 'N/A')}"
+    merge_cells_in_row(table, 9, 0, 5).text = f"Facilitation technique(s):   {data.get('facilitation_techniques', 'N/A')}"
     
     # Row 10: Headers for Introduction
     table.rows[10].cells[0].text = "Introduction"
@@ -88,47 +88,51 @@ def generate_rtb_session_plan(data):
     table.rows[10].cells[5].text = "Duration"
     
     # Row 11: Introduction content
-    merge_cells_in_row(table, 11, 0, 1).text = f"Trainer's activity: \n{data.get('intro_trainer_activity', 'Greets and Make roll calls')}"
-    merge_cells_in_row(table, 11, 2, 4).text = data.get('intro_resources', 'Attendance sheet\nPPT\nProjector')
-    table.rows[11].cells[5].text = data.get('intro_duration', '5 minutes')
+    merge_cells_in_row(table, 11, 0, 1).text = "Trainer's activity: \nGreets and makes roll calls\nIntroduces topic and objectives"
+    merge_cells_in_row(table, 11, 2, 4).text = "Attendance sheet\nPPT\nProjector\nWhiteboard"
+    table.rows[11].cells[5].text = "5 minutes"
     
     # Row 12: Development header
     merge_cells_in_row(table, 12, 0, 5).text = "Development/Body"
     
-    # Rows 13-15: Development steps
-    for i, step_num in enumerate([1, 2, 3]):
+    # Rows 13-15: Development steps (simplified)
+    steps = [
+        ("Introduction to topic", "Explains key concepts and demonstrates examples"),
+        ("Practical application", "Guides learners through hands-on activities"),
+        ("Group work and practice", "Assigns tasks and monitors learner progress")
+    ]
+    for i, (title, activity) in enumerate(steps):
         row_idx = 13 + i
-        step_data = data.get(f'step{step_num}', {})
-        merge_cells_in_row(table, row_idx, 0, 1).text = f"Step {step_num}: {step_data.get('title', 'N/A')}\nTrainer's activity: \n{step_data.get('activity', 'N/A')}"
-        merge_cells_in_row(table, row_idx, 2, 4).text = step_data.get('resources', 'Computer\nprojector\nPPT')
-        table.rows[row_idx].cells[5].text = step_data.get('duration', '25\nminutes')
+        merge_cells_in_row(table, row_idx, 0, 1).text = f"Step {i+1}: {title}\nTrainer's activity: \n{activity}"
+        merge_cells_in_row(table, row_idx, 2, 4).text = "Computer\nProjector\nPPT\nLearning materials"
+        table.rows[row_idx].cells[5].text = f"{int(int(data.get('duration', 40)) * 0.6 / 3)}\nminutes"
     
     # Row 16: Conclusion header
     merge_cells_in_row(table, 16, 0, 5).text = "Conclusion"
     
     # Row 17: Summary
-    merge_cells_in_row(table, 17, 0, 1).text = f"Summary:\n{data.get('summary', 'The trainer involves the learners to summarize the session')}"
-    merge_cells_in_row(table, 17, 2, 4).text = data.get('summary_resources', 'Computer\nprojector')
-    table.rows[17].cells[5].text = data.get('summary_duration', '3 minutes')
+    merge_cells_in_row(table, 17, 0, 1).text = "Summary:\nTrainer involves learners to summarize key points learned"
+    merge_cells_in_row(table, 17, 2, 4).text = "Computer\nProjector"
+    table.rows[17].cells[5].text = "3 minutes"
     
     # Row 18: Assessment
-    merge_cells_in_row(table, 18, 0, 1).text = f"Assessment/Assignment\nTrainer's activity: \n{data.get('assessment_activity', 'Trainer gives learners assessment')}"
-    merge_cells_in_row(table, 18, 2, 4).text = data.get('assessment_resources', 'Assessment sheets')
-    table.rows[18].cells[5].text = data.get('assessment_duration', '5 minutes')
+    merge_cells_in_row(table, 18, 0, 1).text = "Assessment/Assignment\nTrainer's activity: \nProvides assessment questions or assignment"
+    merge_cells_in_row(table, 18, 2, 4).text = "Assessment sheets\nQuestion papers"
+    table.rows[18].cells[5].text = "5 minutes"
     
     # Row 19: Evaluation
-    merge_cells_in_row(table, 19, 0, 1).text = f"Evaluation of the session:\nTrainer's activity: \n{data.get('evaluation_activity', 'Trainer involves learners in evaluation')}"
-    merge_cells_in_row(table, 19, 2, 4).text = data.get('evaluation_resources', 'Self-assessment form')
-    table.rows[19].cells[5].text = data.get('evaluation_duration', '2minutes')
+    merge_cells_in_row(table, 19, 0, 1).text = "Evaluation of the session:\nTrainer's activity: \nCollects feedback from learners"
+    merge_cells_in_row(table, 19, 2, 4).text = "Self-assessment form\nFeedback forms"
+    table.rows[19].cells[5].text = "2 minutes"
     
     # Row 20: References
-    merge_cells_in_row(table, 20, 0, 5).text = f"References:\n{data.get('references', 'N/A')}"
+    merge_cells_in_row(table, 20, 0, 5).text = "References:\nRTB Curriculum Guidelines\nModule Learning Materials"
     
     # Row 21: Appendices
-    merge_cells_in_row(table, 21, 0, 5).text = f"Appendices: {data.get('appendices', 'PPT, Task Sheets, assessment')}"
+    merge_cells_in_row(table, 21, 0, 5).text = "Appendices: PPT, Task Sheets, Assessment, Learning Materials"
     
     # Row 22: Reflection
-    merge_cells_in_row(table, 22, 0, 5).text = f"Reflection :\n{data.get('reflection', '')}"
+    merge_cells_in_row(table, 22, 0, 5).text = "Reflection :\n"
     
     # Format all cells
     for row in table.rows:
@@ -158,15 +162,18 @@ def generate_rtb_scheme_of_work(data):
     doc.add_heading('SCHEME OF WORK', 0).alignment = WD_ALIGN_PARAGRAPH.CENTER
     
     # School info table
-    info_table = doc.add_table(rows=5, cols=2)
+    info_table = doc.add_table(rows=8, cols=2)
     info_table.style = 'Table Grid'
     
     info_data = [
+        ('Province:', data.get('province', 'N/A')),
+        ('District:', data.get('district', 'N/A')),
         ('School:', data.get('school', 'N/A')),
+        ('Sector:', data.get('sector', 'N/A')),
         ('Module Code & Title:', data.get('module_code_title', 'N/A')),
+        ('RQF Level:', data.get('rqf_level', 'N/A')),
         ('Trainer Name:', data.get('trainer_name', 'N/A')),
-        ('School Year:', data.get('school_year', 'N/A')),
-        ('Term:', data.get('term', 'I'))
+        ('School Year:', data.get('school_year', 'N/A'))
     ]
     
     for i, (label, value) in enumerate(info_data):
@@ -194,19 +201,30 @@ def generate_rtb_scheme_of_work(data):
         scheme_table.rows[1].cells[i].text = header
         scheme_table.rows[1].cells[i].paragraphs[0].runs[0].font.bold = True
     
-    # Add weeks data
-    weeks = data.get('weeks', [])
-    for week in weeks:
-        row = scheme_table.add_row()
-        row.cells[0].text = week.get('week_range', '')
-        row.cells[1].text = week.get('learning_outcome', '')
-        row.cells[2].text = week.get('duration', '')
-        row.cells[3].text = week.get('indicative_content', '')
-        row.cells[4].text = week.get('learning_activities', '')
-        row.cells[5].text = week.get('resources', '')
-        row.cells[6].text = week.get('assessment_evidence', '')
-        row.cells[7].text = week.get('learning_place', '')
-        row.cells[8].text = week.get('observation', '')
+    # Add term data from wizard
+    terms = [
+        ('term1', 'Term 1'),
+        ('term2', 'Term 2'),
+        ('term3', 'Term 3')
+    ]
+    
+    for term_key, term_name in terms:
+        weeks = data.get(f'{term_key}_weeks', '')
+        los = data.get(f'{term_key}_learning_outcomes', '')
+        duration = data.get(f'{term_key}_duration', '')
+        ics = data.get(f'{term_key}_indicative_contents', '')
+        
+        if weeks and los:  # Only add if data exists
+            row = scheme_table.add_row()
+            row.cells[0].text = weeks
+            row.cells[1].text = los
+            row.cells[2].text = duration
+            row.cells[3].text = ics
+            row.cells[4].text = data.get('delivery_approach', 'Lectures, Practicals, Group work')
+            row.cells[5].text = data.get('resource_inventory', 'Computer, Projector, Learning materials')
+            row.cells[6].text = data.get('formative_assessment', 'Continuous assessment')
+            row.cells[7].text = 'Lab/Classroom'
+            row.cells[8].text = term_name
     
     # Format all cells
     for row in scheme_table.rows:
