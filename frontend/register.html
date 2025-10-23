@@ -53,8 +53,8 @@
         </div>
     </div>
 
+    <script src="config.js"></script>
     <script>
-        const API_BASE = 'https://leonardus437.pythonanywhere.com';
 
         document.getElementById('registerForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -81,7 +81,16 @@
             btn.disabled = true;
 
             try {
-                console.log('Registering user:', { name, phone, institution });
+                console.log('🔄 Registering user:', { name, phone, institution });
+                console.log('🌐 API URL:', `${API_BASE}/users/register`);
+                
+                // Test API connection first
+                const testResponse = await fetch(`${API_BASE}/`, {
+                    method: 'GET',
+                    mode: 'cors',
+                    credentials: 'omit'
+                });
+                console.log('🧪 API test response:', testResponse.status);
                 
                 const response = await fetch(`${API_BASE}/users/register`, {
                     method: 'POST',
@@ -94,7 +103,7 @@
                     body: JSON.stringify({ name, phone, password, institution })
                 });
 
-                console.log('Response status:', response.status);
+                console.log('📡 Registration response status:', response.status);
 
                 if (response.ok) {
                     alert('✅ Registration successful! You can now login.');
@@ -112,8 +121,20 @@
                     alert(`❌ ${errorMessage}`);
                 }
             } catch (error) {
-                console.error('Network error:', error);
-                alert('❌ Connection error. Please check your internet connection and try again.');
+                console.error('🚫 Network error details:', error);
+                console.error('🚫 Error name:', error.name);
+                console.error('🚫 Error message:', error.message);
+                
+                let errorMsg = 'Connection error. ';
+                if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                    errorMsg += 'Cannot reach server. Please check if the backend is running.';
+                } else if (error.name === 'TypeError' && error.message.includes('CORS')) {
+                    errorMsg += 'CORS policy error. Please contact support.';
+                } else {
+                    errorMsg += 'Please check your internet connection and try again.';
+                }
+                
+                alert(`❌ ${errorMsg}`);
             } finally {
                 btn.innerHTML = originalText;
                 btn.disabled = false;
