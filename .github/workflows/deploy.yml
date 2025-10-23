@@ -2,9 +2,9 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, master ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, master ]
 
 permissions:
   contents: read
@@ -28,10 +28,15 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
       
+      - name: Copy frontend files
+        run: |
+          mkdir -p _site
+          cp -r frontend/* _site/
+          
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './'
+          path: '_site'
       
       - name: Deploy to GitHub Pages
         id: deployment

@@ -133,40 +133,39 @@
         </form>
     </div>
 
+    <!-- Load required scripts -->
+    <script src="config.js"></script>
+    <script src="auth.js"></script>
+    <script src="subscription-modal.js"></script>
+    <script src="subscription-tracker.js"></script>
     <script>
-        const API_BASE = 'https://leonardus437.pythonanywhere.com';
         let currentUser = null;
 
-        // FIXED: Strict user validation on page load
+        // Strict user validation on page load
         function validateUser() {
             try {
-                const stored = localStorage.getItem('rtb_user');
-                if (!stored) {
-                    throw new Error('No user data found');
+                const session = getCurrentSession();
+                if (!session || !session.name || !session.phone) {
+                    throw new Error('No valid session found');
                 }
 
-                const user = JSON.parse(stored);
-                if (!user || !user.name || user.name.trim() === '' || !user.phone) {
-                    throw new Error('Invalid user data');
-                }
-
-                currentUser = user;
-                console.log('✅ User validated:', user.name);
+                currentUser = session;
+                console.log('✅ User validated:', session.name);
                 
                 // Display user info
-                document.getElementById('userName').textContent = `${user.name} (${user.phone})`;
+                document.getElementById('userName').textContent = `${session.name} (${session.phone})`;
                 
-                return user;
+                return session;
             } catch (error) {
                 console.error('❌ User validation failed:', error);
                 alert('Please login first to access this page');
-                window.location.href = 'index_fixed.html';
+                window.location.href = 'login.html';
                 return null;
             }
         }
 
         function goBack() {
-            window.location.href = 'index_fixed.html';
+            window.location.href = 'teacher-dashboard.html';
         }
 
         // Set today's date as default
@@ -177,6 +176,11 @@
             // Set today's date
             const today = new Date().toISOString().split('T')[0];
             document.querySelector('input[name="date"]').value = today;
+            
+            // Initialize subscription tracker
+            if (typeof SubscriptionTracker !== 'undefined') {
+                new SubscriptionTracker();
+            }
         });
 
         document.getElementById('sessionForm').addEventListener('submit', async (e) => {
@@ -185,12 +189,15 @@
             // Double-check user authentication
             if (!currentUser) {
                 alert('Session expired. Please login again.');
-                window.location.href = 'index_fixed.html';
+                window.location.href = 'login.html';
                 return;
             }
 
             const formData = new FormData(e.target);
             const data = Object.fromEntries(formData);
+            
+            // Add user phone to data
+            data.user_phone = currentUser.phone;
             
             // Validate required fields
             const requiredFields = ['sector', 'trade', 'rqf_level', 'trainer_name', 'module_code_title', 'term', 'week', 'date', 'number_of_trainees', 'class_name', 'duration', 'topic_of_session', 'learning_outcomes', 'indicative_contents'];
@@ -209,6 +216,14 @@
             btn.disabled = true;
 
             try {
+                // First check download limits
+                const canDownload = await checkDownloadLimits('session_plan');
+                if (!canDownload) {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                    return;
+                }
+
                 console.log('🚀 Creating session plan with data:', data);
 
                 const response = await fetch(`${API_BASE}/session-plans`, {
@@ -226,24 +241,8 @@
                     const result = await response.json();
                     console.log('✅ Session plan created:', result);
                     
-                    alert('✅ Session plan created successfully!');
-
-                    // Check download limits
                     if (result.id) {
-                        try {
-                            const limitsResponse = await fetch(`${API_BASE}/user-limits/${encodeURIComponent(currentUser.phone)}`);
-                            if (limitsResponse.ok) {
-                                const limits = await limitsResponse.json();
-                                
-                                if (!limits.is_premium && limits.session_plans_remaining <= 0) {
-                                    alert('❌ Free download limit reached!\n\nUpgrade to Premium for unlimited downloads.\n\nContact: +250789751597');
-                                    return;
-                                }
-                            }
-                        } catch (e) {
-                            console.error('Error checking limits:', e);
-                        }
-
+                        // Download the document
                         const link = document.createElement('a');
                         link.href = `${API_BASE}/session-plans/${result.id}/download?phone=${encodeURIComponent(currentUser.phone)}`;
                         link.download = `RTB_Session_Plan_${result.id}.docx`;
@@ -251,14 +250,25 @@
                         link.click();
                         document.body.removeChild(link);
                         
+                        alert('✅ Session plan created and downloaded successfully!');
+                        
+                        // Update download counter
+                        updateDownloadCounter();
+                        
+                        // Redirect back to dashboard after a delay
                         setTimeout(() => {
-                            alert('📄 Document downloaded successfully!');
-                        }, 1000);
+                            window.location.href = 'teacher-dashboard.html';
+                        }, 2000);
                     }
                 } else {
                     const errorData = await response.json().catch(() => ({ detail: 'Unknown error' }));
                     console.error('❌ Creation failed:', errorData);
-                    alert(`❌ Error creating session plan:\n${errorData.detail || 'Please try again'}`);
+                    
+                    if (errorData.detail && errorData.detail.includes('Download limit reached')) {
+                        showSubscriptionModal('session_plans');
+                    } else {
+                        alert(`❌ Error creating session plan:\n${errorData.detail || 'Please try again'}`);
+                    }
                 }
             } catch (error) {
                 console.error('💥 Error:', error);
@@ -268,6 +278,41 @@
                 btn.disabled = false;
             }
         });
+        
+        // Check download limits before creating document
+        async function checkDownloadLimits(type) {
+            try {
+                const response = await fetch(`${API_BASE}/user-limits/${encodeURIComponent(currentUser.phone)}`);
+                if (response.ok) {
+                    const limits = await response.json();
+                    
+                    if (limits.is_premium) return true; // Premium users have unlimited access
+                    
+                    if (type === 'session_plan' && limits.session_plans_remaining <= 0) {
+                        showSubscriptionModal('session_plans');
+                        return false;
+                    }
+                    
+                    return true;
+                }
+            } catch (error) {
+                console.error('Error checking limits:', error);
+            }
+            return true;
+        }
+        
+        // Update download counter display
+        async function updateDownloadCounter() {
+            try {
+                const response = await fetch(`${API_BASE}/user-limits/${encodeURIComponent(currentUser.phone)}`);
+                if (response.ok) {
+                    const limits = await response.json();
+                    console.log('Updated limits:', limits);
+                }
+            } catch (error) {
+                console.error('Error updating counter:', error);
+            }
+        }
     </script>
 </body>
 </html>

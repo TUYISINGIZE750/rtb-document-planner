@@ -198,6 +198,58 @@ async function showNotificationPanel() {
 async function updateNotificationBell() {
     const bell = document.getElementById('notificationBell');
     if (bell) {
+        const unreadCount = await getUnreadCount();
+        const badge = bell.querySelector('span');
+        if (unreadCount > 0) {
+            if (badge) {
+                badge.textContent = unreadCount;
+            } else {
+                const newBadge = document.createElement('span');
+                newBadge.style.cssText = 'position: absolute; top: 0; right: 0; background: #ef4444; color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700;';
+                newBadge.textContent = unreadCount;
+                bell.querySelector('div').appendChild(newBadge);
+            }
+        } else if (badge) {
+            badge.remove();
+        }
+    }
+}
+
+// Initialize notifications on pages that need them
+if (typeof window !== 'undefined') {
+    document.addEventListener('DOMContentLoaded', function() {
+        const session = getCurrentSession();
+        if (session && session.role !== 'admin') {
+            // Only show notifications for regular users, not admins
+            setTimeout(() => {
+                addNotificationBell();
+                displayNotificationWidget();
+            }, 1000);
+        }
+    });
+}
+
+// Auto-refresh notifications every 30 seconds
+setInterval(async () => {
+    const session = getCurrentSession();
+    if (session && session.role !== 'admin') {
+        await updateNotificationBell();
+    }
+}, 30000);
+
+// Export functions for use in other scripts
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        getNotifications,
+        markNotificationAsRead,
+        getUnreadCount,
+        displayNotificationWidget,
+        addNotificationBell,
+        updateNotificationBell
+    };
+}ionBell() {
+    const bell = document.getElementById('notificationBell');
+    if (bell) {
         bell.remove();
         await addNotificationBell();
     }
