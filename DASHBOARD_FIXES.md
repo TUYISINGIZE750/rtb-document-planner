@@ -38,6 +38,11 @@ window.viewDocuments = viewDocuments;
 - Download and view actions
 - Responsive design matching dashboard
 
+### 4. **Registration Connection Error** ✅ FIXED
+- **Problem**: Teachers getting "Connection error" during registration
+- **Fix**: Import config.js for centralized API URL and added better error handling
+- **Files**: `register.html`, `api-test.html` (new)
+
 ## 🚀 DEPLOYMENT STATUS:
 
 All fixes applied and ready for deployment. The issues should be resolved once GitHub Pages updates (2-5 minutes).
@@ -50,3 +55,11 @@ All fixes applied and ready for deployment. The issues should be resolved once G
 5. **My Documents Button** → Opens my-documents.html
 
 The dashboard is now fully functional for teachers!
+
+## 🧪 TESTING:
+
+Use `api-test.html` to diagnose any API connection issues:
+- Tests basic API connectivity
+- Checks registration endpoint
+- Verifies CORS headers
+- Provides detailed error information
