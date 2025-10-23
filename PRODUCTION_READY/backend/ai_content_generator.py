@@ -5,41 +5,54 @@ Generates SMART objectives and facilitation-specific activities based on user in
 
 def generate_smart_objectives(topic, learning_outcomes, duration, rqf_level, module_name="", range_content=""):
     """
-    Generate SMART objectives based on: topic, range, learning outcomes, module name, hours, and RQF level
+    Generate professional SMART objectives based on educational best practices
     """
     duration_minutes = int(duration) if str(duration).isdigit() else 40
-    hours = duration_minutes / 60
     
-    # Action verbs by RQF level (Bloom's Taxonomy)
+    # Bloom's Taxonomy action verbs by RQF level
     verbs = {
-        "Level 1": ["identify", "list", "describe", "state"],
-        "Level 2": ["explain", "demonstrate", "summarize", "classify"],
-        "Level 3": ["apply", "implement", "solve", "construct"],
-        "Level 4": ["analyze", "evaluate", "design", "develop"],
-        "Level 5": ["create", "synthesize", "formulate", "innovate"]
+        "Level 1": ["identify", "list", "describe", "recognize", "recall"],
+        "Level 2": ["explain", "demonstrate", "illustrate", "summarize", "interpret"],
+        "Level 3": ["apply", "implement", "execute", "solve", "use"],
+        "Level 4": ["analyze", "compare", "evaluate", "critique", "design"],
+        "Level 5": ["create", "synthesize", "formulate", "design", "construct"]
     }.get(rqf_level, ["apply", "demonstrate", "solve", "construct"])
+    
+    # Extract key learning outcome
+    outcome_text = learning_outcomes.split('.')[0].strip() if learning_outcomes else f"the key concepts of {topic}"
     
     objectives = []
     
-    # Objective 1: Specific & Measurable (based on topic and learning outcomes)
+    # Objective 1: Specific & Measurable
     objectives.append(
-        f"By the end of this {duration_minutes}-minute session on {topic}, trainees will be able to "
-        f"{verbs[0]} {learning_outcomes.split('.')[0].lower() if learning_outcomes else 'the key concepts'} "
-        f"with at least 80% accuracy."
+        f"By the end of this {duration_minutes}-minute session, trainees will be able to {verbs[0]} "
+        f"{outcome_text.lower()}, achieving at least 80% accuracy in assessment tasks."
     )
     
-    # Objective 2: Achievable & Relevant (based on module and range)
-    range_text = f" within the range of {range_content}" if range_content else ""
-    objectives.append(
-        f"Trainees will successfully {verbs[1]} practical applications of {topic}{range_text}, "
-        f"demonstrating {rqf_level} competency standards."
-    )
+    # Objective 2: Achievable & Relevant
+    if range_content:
+        objectives.append(
+            f"Trainees will successfully {verbs[1]} {topic} concepts including {range_content[:100]}..., "
+            f"meeting {rqf_level} competency standards."
+        )
+    else:
+        objectives.append(
+            f"Trainees will successfully {verbs[1]} practical applications of {topic}, "
+            f"demonstrating {rqf_level} competency standards."
+        )
     
-    # Objective 3: Time-bound (based on duration)
+    # Objective 3: Application-focused
     if len(verbs) > 2:
         objectives.append(
-            f"Within {hours:.1f} hour(s), trainees will {verbs[2]} real-world problems related to {topic}, "
-            f"showing critical thinking and problem-solving skills."
+            f"Trainees will {verbs[2]} real-world scenarios related to {topic}, "
+            f"demonstrating critical thinking and professional problem-solving skills."
+        )
+    
+    # Objective 4: Higher-order thinking (for advanced levels)
+    if rqf_level in ["Level 4", "Level 5"] and len(verbs) > 3:
+        objectives.append(
+            f"Trainees will {verbs[3]} innovative solutions for {topic} challenges, "
+            f"showing advanced understanding and professional judgment."
         )
     
     return "\n".join([f"• {obj}" for obj in objectives])
@@ -431,7 +444,7 @@ def generate_resources_list(topic, facilitation_technique, number_of_trainees):
 
 def enhance_session_plan_data(data):
     """
-    Generate SMART objectives and activities based on user input
+    Professional AI enhancement: Generate comprehensive, contextually-rich session plan content
     """
     topic = data.get('topic_of_session', 'the topic')
     learning_outcomes = data.get('learning_outcomes', '')
@@ -442,23 +455,28 @@ def enhance_session_plan_data(data):
     facilitation_technique = data.get('facilitation_techniques', 'Trainer Guided')
     number_of_trainees = data.get('number_of_trainees', '25')
     
-    # Generate SMART objectives based on all key factors
+    # Generate professional SMART objectives
     if not data.get('objectives') or len(data.get('objectives', '')) < 50:
         data['objectives'] = generate_smart_objectives(
             topic, learning_outcomes, duration, rqf_level, module_name, range_content
         )
     
-    # Generate activities only if facilitation technique is selected
+    # Generate comprehensive facilitation-specific activities
     if facilitation_technique and facilitation_technique != '':
         data['learning_activities'] = generate_facilitation_activities(
             facilitation_technique, topic, duration, number_of_trainees
         )
     
-    # Generate assessment and resources
-    if not data.get('assessment_details'):
-        data['assessment_details'] = generate_assessment_methods(topic, rqf_level, facilitation_technique)
+    # Generate RQF level-appropriate assessment
+    if not data.get('assessment_details') or len(data.get('assessment_details', '')) < 30:
+        data['assessment_details'] = generate_assessment_methods(
+            topic, rqf_level, facilitation_technique
+        )
     
-    if not data.get('resources'):
-        data['resources'] = generate_resources_list(topic, facilitation_technique, number_of_trainees)
+    # Generate comprehensive resources list
+    if not data.get('resources') or len(data.get('resources', '')) < 30:
+        data['resources'] = generate_resources_list(
+            topic, facilitation_technique, number_of_trainees
+        )
     
     return data
