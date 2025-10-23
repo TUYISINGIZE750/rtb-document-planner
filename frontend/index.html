@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>RTB Document Planner v3.0</title>
+    <title>RTB Document Planner - Working</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -22,236 +22,263 @@
         .logout-btn { background: #ef4444; color: white; border: none; padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer; }
         .user-info { background: white; padding: 1rem 1.5rem; border-radius: 2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 1rem; }
         .version { position: fixed; bottom: 1rem; left: 1rem; color: rgba(255,255,255,0.7); font-size: 0.8rem; }
-        .admin-btn { background: #6366f1; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; text-decoration: none; margin-left: 0.5rem; }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 1000; }
+        .modal-content { background: white; padding: 2rem; border-radius: 1rem; max-width: 400px; width: 90%; }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
+        .form-group input { width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 0.5rem; }
     </style>
 </head>
 <body>
-    <div class="version">v3.0 - All Issues Fixed</div>
+    <div class="version">v4.0 - Working Version</div>
     <div class="user-menu" id="userMenu">
-        <button onclick="showLogin()" class="auth-btn"><i class="fas fa-sign-in-alt"></i> Login</button>
+        <button onclick="showLoginModal()" class="auth-btn"><i class="fas fa-sign-in-alt"></i> Login</button>
     </div>
     <div class="container">
         <h1><i class="fas fa-graduation-cap"></i> RTB Document Planner</h1>
         <p>Professional TVET Session Plans & Schemes of Work Generator</p>
         <div class="buttons">
-            <a href="wizard_fixed.html" class="btn" onclick="return checkAuth()">
+            <a href="#" onclick="createSessionPlan()" class="btn">
                 <i class="fas fa-chalkboard-teacher"></i>
                 <h2>Session Plan</h2>
                 <p>Create RTB-formatted session plans</p>
             </a>
-            <a href="scheme_fixed.html" class="btn" onclick="return checkAuth()">
+            <a href="#" onclick="createScheme()" class="btn">
                 <i class="fas fa-clipboard-list"></i>
                 <h2>Scheme of Work</h2>
                 <p>Generate comprehensive schemes</p>
             </a>
         </div>
     </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <h2>Login</h2>
+            <p style="margin-bottom: 1rem; color: #666; font-size: 0.9rem;">
+                Test Account: +250796014803 / teacher123
+            </p>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="loginPhone" placeholder="+250796014803" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" placeholder="teacher123" required>
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                    <button type="button" onclick="closeLoginModal()" style="flex: 1; padding: 0.75rem; background: #6b7280; color: white; border: none; border-radius: 0.5rem; cursor: pointer;">Cancel</button>
+                    <button type="submit" style="flex: 1; padding: 0.75rem; background: #6366f1; color: white; border: none; border-radius: 0.5rem; cursor: pointer;">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         const API_BASE = 'https://leonardus437.pythonanywhere.com';
-        const APP_VERSION = '3.0';
         let currentUser = null;
-        
-        console.log('RTB App v' + APP_VERSION + ' loaded');
-        
-        // FIXED: Enhanced user saving with strict validation
+
         function saveUser(userData) {
-            console.log('Attempting to save user:', userData);
+            console.log('Saving user data:', userData);
             
-            // Strict validation
-            if (!userData) {
-                console.error('No user data provided');
-                alert('Login error: No user data received');
-                return false;
-            }
+            // Ensure we have a valid name
+            const userName = userData.name || userData.user_id || 'Teacher';
             
-            if (!userData.name || userData.name.trim() === '') {
-                console.error('User data missing name field:', userData);
-                alert('Login error: User name is missing');
-                return false;
-            }
-            
-            if (!userData.phone || userData.phone.trim() === '') {
-                console.error('User data missing phone field:', userData);
-                alert('Login error: User phone is missing');
-                return false;
-            }
-            
-            // Clean the data
             const cleanUser = {
-                user_id: userData.user_id || 'UNKNOWN',
-                name: userData.name.trim(),
-                phone: userData.phone.trim(),
-                email: userData.email || '',
-                institution: userData.institution || '',
-                role: userData.role || 'user',
-                is_premium: userData.is_premium || false,
-                session_plans_limit: userData.session_plans_limit || 2,
-                schemes_limit: userData.schemes_limit || 2,
-                session_plans_downloaded: userData.session_plans_downloaded || 0,
-                schemes_downloaded: userData.schemes_downloaded || 0
+                name: userName,
+                phone: userData.phone || '',
+                role: userData.role || 'user'
             };
             
             currentUser = cleanUser;
-            localStorage.setItem('rtb_user', JSON.stringify(cleanUser));
-            console.log('✅ User saved successfully:', cleanUser.name);
+            localStorage.setItem('rtb_user_working', JSON.stringify(cleanUser));
             updateUI();
             return true;
         }
-        
-        // FIXED: Enhanced user retrieval with validation
+
         function getUser() {
-            if (currentUser && currentUser.name) {
-                console.log('Returning cached user:', currentUser.name);
-                return currentUser;
-            }
+            if (currentUser) return currentUser;
             
             try {
-                const stored = localStorage.getItem('rtb_user');
-                if (!stored) {
-                    console.log('No stored user data');
-                    return null;
+                const stored = localStorage.getItem('rtb_user_working');
+                if (stored) {
+                    currentUser = JSON.parse(stored);
+                    return currentUser;
                 }
-                
-                const userData = JSON.parse(stored);
-                if (!userData || !userData.name || userData.name.trim() === '') {
-                    console.error('Invalid stored user data:', userData);
-                    localStorage.removeItem('rtb_user');
-                    return null;
-                }
-                
-                currentUser = userData;
-                console.log('✅ Retrieved stored user:', userData.name);
-                return currentUser;
             } catch (error) {
-                console.error('Error parsing stored user:', error);
-                localStorage.removeItem('rtb_user');
-                return null;
+                console.error('Error getting user:', error);
             }
+            return null;
         }
-        
+
         function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                currentUser = null;
-                localStorage.removeItem('rtb_user');
-                console.log('User logged out');
-                updateUI();
-                alert('Logged out successfully');
-            }
+            currentUser = null;
+            localStorage.removeItem('rtb_user_working');
+            updateUI();
+            alert('Logged out successfully');
         }
-        
-        // FIXED: Enhanced UI update with multiple safety checks
+
         function updateUI() {
             const user = getUser();
             const menu = document.getElementById('userMenu');
             
-            if (!menu) {
-                console.error('User menu element not found');
-                return;
-            }
-            
-            if (user && user.name && user.name.trim() !== '') {
-                console.log('✅ Updating UI for user:', user.name);
-                
-                let adminButton = '';
-                if (user.role === 'admin') {
-                    adminButton = `<a href="admin_fixed.html" class="admin-btn"><i class="fas fa-shield-alt"></i> Admin</a>`;
-                }
-                
+            if (user && user.name) {
                 menu.innerHTML = `
                     <div class="user-info">
                         <span style="color: #333; font-weight: 600;">
                             <i class="fas fa-user-circle" style="color: #6366f1;"></i> ${user.name}
                         </span>
-                        ${adminButton}
                         <button onclick="logout()" class="logout-btn">
                             <i class="fas fa-sign-out-alt"></i> Logout
                         </button>
                     </div>
                 `;
             } else {
-                console.log('No valid user - showing login button');
-                menu.innerHTML = `<button onclick="showLogin()" class="auth-btn"><i class="fas fa-sign-in-alt"></i> Login</button>`;
+                menu.innerHTML = `<button onclick="showLoginModal()" class="auth-btn"><i class="fas fa-sign-in-alt"></i> Login</button>`;
             }
         }
-        
-        function checkAuth() {
-            const user = getUser();
-            if (!user || !user.name) {
-                showLogin();
-                return false;
+
+        function showLoginModal() {
+            document.getElementById('loginModal').style.display = 'flex';
+        }
+
+        function closeLoginModal() {
+            document.getElementById('loginModal').style.display = 'none';
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const phone = document.getElementById('loginPhone').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+            
+            if (!phone || !password) {
+                alert('Please enter both phone and password');
+                return;
             }
-            return true;
-        }
-        
-        function showLogin() {
-            const phone = prompt('Enter your phone number:\n\nTest Accounts:\n• Teacher: +250796014803\n• Admin: +250789751597');
-            if (!phone) return;
-            
-            const password = prompt('Enter your password:\n\nTest Passwords:\n• Teacher: teacher123\n• Admin: admin123');
-            if (!password) return;
-            
-            login(phone, password);
-        }
-        
-        // FIXED: Enhanced login with better error handling and validation
-        async function login(phone, password) {
+
             try {
-                console.log('🔐 Attempting login for:', phone);
+                console.log('Attempting login for:', phone);
                 
                 const response = await fetch(`${API_BASE}/users/login`, {
                     method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({ 
-                        phone: phone.trim(), 
-                        password: password.trim() 
-                    })
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone, password })
                 });
-                
-                console.log('📡 Login response status:', response.status);
-                
+
                 if (response.ok) {
                     const userData = await response.json();
-                    console.log('📥 Received user data:', userData);
+                    console.log('Login response:', userData);
                     
-                    // Validate response data
-                    if (!userData) {
-                        throw new Error('No user data in response');
-                    }
-                    
-                    if (!userData.name || userData.name.trim() === '') {
-                        throw new Error('User name is missing or empty');
-                    }
-                    
-                    if (saveUser(userData)) {
-                        alert(`✅ Welcome back, ${userData.name}!`);
-                    }
+                    saveUser(userData);
+                    closeLoginModal();
+                    alert(`Welcome, ${userData.name || 'Teacher'}!`);
                 } else {
-                    const errorData = await response.json().catch(() => ({ detail: 'Unknown error' }));
-                    console.error('❌ Login failed:', errorData);
-                    alert(`Login failed: ${errorData.detail || 'Please check your credentials'}`);
+                    const error = await response.json();
+                    alert(`Login failed: ${error.detail || 'Please check credentials'}`);
                 }
             } catch (error) {
-                console.error('💥 Login error:', error);
-                alert(`Connection error: ${error.message}\n\nPlease check your internet connection and try again.`);
-            }
-        }
-        
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Page loaded, initializing...');
-            updateUI();
-            
-            // Auto-check for existing user
-            const user = getUser();
-            if (user) {
-                console.log('👤 Found existing user:', user.name);
-            } else {
-                console.log('👤 No user logged in');
+                console.error('Login error:', error);
+                alert('Connection error. Please try again.');
             }
         });
+
+        function createSessionPlan() {
+            const user = getUser();
+            if (!user) {
+                showLoginModal();
+                return;
+            }
+
+            const sector = prompt('Enter Sector (e.g., ICT & MULTIMEDIA):') || 'ICT & MULTIMEDIA';
+            const trade = prompt('Enter Trade (e.g., Software Development):') || 'Software Development';
+            const topic = prompt('Enter Topic (e.g., Variables and Data Types):') || 'Programming Basics';
+
+            const data = {
+                sector: sector,
+                trade: trade,
+                rqf_level: 'Level 4',
+                trainer_name: user.name,
+                module_code_title: 'Programming Module',
+                term: 'Term 1',
+                week: 'Week 1',
+                date: new Date().toISOString().split('T')[0],
+                number_of_trainees: '25',
+                class_name: 'L4CSA-A',
+                duration: '40',
+                topic_of_session: topic,
+                learning_outcomes: 'Students will understand ' + topic,
+                indicative_contents: 'Introduction to ' + topic,
+                facilitation_techniques: 'Interactive learning'
+            };
+
+            createDocument('session-plans', data, 'Session Plan');
+        }
+
+        function createScheme() {
+            const user = getUser();
+            if (!user) {
+                showLoginModal();
+                return;
+            }
+
+            const school = prompt('Enter School Name:') || 'IPRC Kigali';
+            const module = prompt('Enter Module Title:') || 'Programming Module';
+
+            const data = {
+                school: school,
+                department_trade: 'ICT',
+                module_code_title: module,
+                trainer_name: user.name,
+                school_year: '2024-2025',
+                term1_learning_outcomes: 'Basic understanding of the module',
+                term1_indicative_contents: 'Introduction and fundamentals'
+            };
+
+            createDocument('schemes', data, 'Scheme of Work');
+        }
+
+        async function createDocument(endpoint, data, type) {
+            try {
+                console.log(`Creating ${type}...`);
+                
+                const response = await fetch(`${API_BASE}/${endpoint}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    alert(`${type} created successfully!`);
+                    
+                    // Download
+                    const user = getUser();
+                    const downloadUrl = `${API_BASE}/${endpoint}/${result.id}/download?phone=${encodeURIComponent(user.phone)}`;
+                    
+                    const link = document.createElement('a');
+                    link.href = downloadUrl;
+                    link.download = `RTB_${type.replace(' ', '_')}_${result.id}.docx`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    setTimeout(() => {
+                        alert('Document downloaded! The DOCX file should now open properly in Microsoft Word.');
+                    }, 1000);
+                } else {
+                    const error = await response.json();
+                    alert(`Error creating ${type}: ${error.detail || 'Unknown error'}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Connection error. Please try again.');
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', updateUI);
     </script>
 </body>
 </html>
