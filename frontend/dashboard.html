@@ -98,52 +98,13 @@
         }
 
         function createSessionPlan() {
-            const user = getUser();
-            if (!user) return;
-
-            const sector = prompt('Enter Sector:') || 'ICT & MULTIMEDIA';
-            const trade = prompt('Enter Trade:') || 'Software Development';
-            const topic = prompt('Enter Topic:') || 'Programming Basics';
-
-            const data = {
-                sector: sector,
-                trade: trade,
-                rqf_level: 'Level 4',
-                trainer_name: user.name,
-                module_code_title: 'Programming Module',
-                term: 'Term 1',
-                week: 'Week 1',
-                date: new Date().toISOString().split('T')[0],
-                number_of_trainees: '25',
-                class_name: 'L4CSA-A',
-                duration: '40',
-                topic_of_session: topic,
-                learning_outcomes: 'Students will understand ' + topic,
-                indicative_contents: 'Introduction to ' + topic,
-                facilitation_techniques: 'Interactive learning'
-            };
-
-            createDocument('session-plans', data, 'Session Plan');
+            // Redirect to wizard page
+            window.location.href = 'wizard.html';
         }
 
         function createScheme() {
-            const user = getUser();
-            if (!user) return;
-
-            const school = prompt('Enter School Name:') || 'IPRC Kigali';
-            const module = prompt('Enter Module Title:') || 'Programming Module';
-
-            const data = {
-                school: school,
-                department_trade: 'ICT',
-                module_code_title: module,
-                trainer_name: user.name,
-                school_year: '2024-2025',
-                term1_learning_outcomes: 'Basic understanding of the module',
-                term1_indicative_contents: 'Introduction and fundamentals'
-            };
-
-            createDocument('schemes', data, 'Scheme of Work');
+            // Redirect to scheme wizard page
+            window.location.href = 'scheme-wizard.html';
         }
 
         async function createDocument(endpoint, data, type) {
