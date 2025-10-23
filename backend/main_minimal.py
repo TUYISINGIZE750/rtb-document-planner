@@ -47,6 +47,39 @@ def home():
         return '', 204
     return jsonify({"message": "RTB API", "status": "online", "version": "minimal"})
 
+@app.route('/users/register', methods=['POST', 'OPTIONS'])
+def register():
+    if request.method == 'OPTIONS':
+        return '', 204
+    
+    data = request.get_json()
+    phone = data.get('phone')
+    password = data.get('password')
+    name = data.get('name')
+    institution = data.get('institution', '')
+    
+    if not phone or not password or not name:
+        return jsonify({"detail": "Missing required fields"}), 400
+    
+    if phone in users:
+        return jsonify({"detail": "User already exists"}), 400
+    
+    users[phone] = {
+        "name": name,
+        "password": hashlib.sha256(password.encode()).hexdigest(),
+        "phone": phone,
+        "role": "user",
+        "is_active": True,
+        "is_premium": False,
+        "institution": institution,
+        "session_plans_downloaded": 0,
+        "session_plans_limit": 2,
+        "schemes_downloaded": 0,
+        "schemes_limit": 2
+    }
+    
+    return jsonify({"message": "Registration successful", "name": name, "phone": phone})
+
 @app.route('/users/login', methods=['POST', 'OPTIONS'])
 def login():
     if request.method == 'OPTIONS':
@@ -64,10 +97,28 @@ def login():
             return jsonify({
                 "name": user['name'],
                 "phone": user['phone'],
-                "role": user.get('role', 'user')
+                "role": user.get('role', 'user'),
+                "session_plans_remaining": user.get('session_plans_limit', 2) - user.get('session_plans_downloaded', 0),
+                "schemes_remaining": user.get('schemes_limit', 2) - user.get('schemes_downloaded', 0),
+                "is_premium": user.get('is_premium', False)
             })
     
     return jsonify({"detail": "Invalid credentials"}), 401
+
+@app.route('/user-limits/<phone>', methods=['GET', 'OPTIONS'])
+def get_user_limits(phone):
+    if request.method == 'OPTIONS':
+        return '', 204
+    
+    if phone not in users:
+        return jsonify({"detail": "User not found"}), 404
+    
+    user = users[phone]
+    return jsonify({
+        "session_plans_remaining": user.get('session_plans_limit', 2) - user.get('session_plans_downloaded', 0),
+        "schemes_remaining": user.get('schemes_limit', 2) - user.get('schemes_downloaded', 0),
+        "is_premium": user.get('is_premium', False)
+    })
 
 @app.route('/users/', methods=['GET', 'OPTIONS'])
 def get_users():
@@ -160,9 +211,15 @@ def download_session_plan(plan_id):
     if plan_id not in documents:
         return jsonify({"detail": "Not found"}), 404
     
-    data = documents[plan_id]['data']
+    phone = request.args.get('phone')
+    if phone and phone in users:
+        user = users[phone]
+        if not user.get('is_premium', False):
+            if user.get('session_plans_downloaded', 0) >= user.get('session_plans_limit', 2):
+                return jsonify({"detail": "Download limit reached"}), 403
+            users[phone]['session_plans_downloaded'] = user.get('session_plans_downloaded', 0) + 1
     
-    # Generate professional RTB session plan
+    data = documents[plan_id]['data']
     doc = generate_rtb_session_plan(data)
     
     temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
@@ -175,9 +232,15 @@ def download_scheme(scheme_id):
     if scheme_id not in documents:
         return jsonify({"detail": "Not found"}), 404
     
-    data = documents[scheme_id]['data']
+    phone = request.args.get('phone')
+    if phone and phone in users:
+        user = users[phone]
+        if not user.get('is_premium', False):
+            if user.get('schemes_downloaded', 0) >= user.get('schemes_limit', 2):
+                return jsonify({"detail": "Download limit reached"}), 403
+            users[phone]['schemes_downloaded'] = user.get('schemes_downloaded', 0) + 1
     
-    # Generate professional RTB scheme of work
+    data = documents[scheme_id]['data']
     doc = generate_rtb_scheme_of_work(data)
     
     temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')

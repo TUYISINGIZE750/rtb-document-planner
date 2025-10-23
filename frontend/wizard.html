@@ -228,8 +228,22 @@
                     
                     alert('✅ Session plan created successfully!');
 
-                    // Download immediately
+                    // Check download limits
                     if (result.id) {
+                        try {
+                            const limitsResponse = await fetch(`${API_BASE}/user-limits/${encodeURIComponent(currentUser.phone)}`);
+                            if (limitsResponse.ok) {
+                                const limits = await limitsResponse.json();
+                                
+                                if (!limits.is_premium && limits.session_plans_remaining <= 0) {
+                                    alert('❌ Free download limit reached!\n\nUpgrade to Premium for unlimited downloads.\n\nContact: +250789751597');
+                                    return;
+                                }
+                            }
+                        } catch (e) {
+                            console.error('Error checking limits:', e);
+                        }
+
                         const link = document.createElement('a');
                         link.href = `${API_BASE}/session-plans/${result.id}/download?phone=${encodeURIComponent(currentUser.phone)}`;
                         link.download = `RTB_Session_Plan_${result.id}.docx`;
@@ -238,7 +252,7 @@
                         document.body.removeChild(link);
                         
                         setTimeout(() => {
-                            alert('📄 Document downloaded successfully!\n\nIf the file doesn\'t open properly in Word, try:\n1. Right-click → Open with → Microsoft Word\n2. Or use Word\'s File → Open menu');
+                            alert('📄 Document downloaded successfully!');
                         }, 1000);
                     }
                 } else {

@@ -42,6 +42,10 @@
         <div class="welcome">
             <h1>Welcome to Your Dashboard</h1>
             <p>Create professional RTB-compliant documents</p>
+            <div id="downloadLimits" style="background: rgba(255,255,255,0.2); padding: 1rem; border-radius: 0.5rem; margin-top: 1rem; color: white;">
+                <strong>Free Downloads Remaining:</strong><br>
+                Session Plans: <span id="sessionPlansRemaining">-</span> | Schemes: <span id="schemesRemaining">-</span>
+            </div>
         </div>
 
         <div class="cards">
@@ -79,7 +83,19 @@
                 return false;
             }
             document.getElementById('userName').textContent = user.name;
+            loadDownloadLimits();
             return true;
+        }
+
+        function loadDownloadLimits() {
+            try {
+                const limits = JSON.parse(localStorage.getItem('rtb_limits') || '{}');
+                document.getElementById('sessionPlansRemaining').textContent = limits.session_plans_remaining || 2;
+                document.getElementById('schemesRemaining').textContent = limits.schemes_remaining || 2;
+            } catch (e) {
+                document.getElementById('sessionPlansRemaining').textContent = '2';
+                document.getElementById('schemesRemaining').textContent = '2';
+            }
         }
 
         function getUser() {
