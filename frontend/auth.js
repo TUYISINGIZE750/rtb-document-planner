@@ -218,7 +218,7 @@ function logoutUser() {
     window.history.pushState(null, null, window.location.href);
     
     // Redirect based on role
-    const redirectPage = isAdmin ? 'direct-login.html' : 'login.html';
+    const redirectPage = isAdmin ? 'admin.html' : 'login.html';
     window.location.replace(redirectPage);
 }
 
@@ -367,13 +367,13 @@ function protectAdminPage() {
     (async function() {
         const loggedIn = await isLoggedIn();
         if (!loggedIn) {
-            window.location.replace('direct-login.html');
+            window.location.replace('login.html');
             return;
         }
         
         if (!isAdmin()) {
             alert('Access denied. Admin privileges required.');
-            window.location.replace('index.html');
+            window.location.replace('login.html');
             return;
         }
     })();
@@ -382,7 +382,7 @@ function protectAdminPage() {
     setInterval(async function() {
         const loggedIn = await isLoggedIn();
         if (!loggedIn || !isAdmin() || wasExplicitlyLoggedOut()) {
-            window.location.replace('direct-login.html');
+            window.location.replace('login.html');
         }
     }, 10000); // Check every 10 seconds
     

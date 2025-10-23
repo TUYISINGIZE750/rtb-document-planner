@@ -433,7 +433,11 @@
             logoutUser();
         }
 
-        function createSessionPlan() {
+        async function createSessionPlan() {
+            if (!currentLimits) {
+                await loadUserStatus();
+            }
+            
             if (!currentLimits.is_premium) {
                 const sessionRemaining = Math.max(0, currentLimits.session_plans_limit - currentLimits.session_plans_downloaded);
                 if (sessionRemaining === 0) {
@@ -444,7 +448,11 @@
             window.location.href = 'wizard.html';
         }
 
-        function createScheme() {
+        async function createScheme() {
+            if (!currentLimits) {
+                await loadUserStatus();
+            }
+            
             if (!currentLimits.is_premium) {
                 const schemeRemaining = Math.max(0, currentLimits.schemes_limit - currentLimits.schemes_downloaded);
                 if (schemeRemaining === 0) {
@@ -454,6 +462,16 @@
             }
             window.location.href = 'scheme-wizard.html';
         }
+        
+        function viewDocuments() {
+            window.location.href = 'my-documents.html';
+        }
+
+        // Ensure functions are available globally
+        window.createSessionPlan = createSessionPlan;
+        window.createScheme = createScheme;
+        window.viewDocuments = viewDocuments;
+        window.showSubscriptionModal = showSubscriptionModal;
 
         // Initialize
         if (!checkAuth()) {

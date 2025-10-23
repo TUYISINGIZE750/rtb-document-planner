@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Documents - RTB Document Planner</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            min-height: 100vh; 
+        }
+        
+        .header { 
+            background: rgba(255,255,255,0.1); 
+            padding: 1rem 2rem; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            backdrop-filter: blur(10px);
+        }
+        
+        .logo { 
+            color: white; 
+            font-size: 1.5rem; 
+            font-weight: 700; 
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .user-info { 
+            background: white; 
+            padding: 0.75rem 1.5rem; 
+            border-radius: 2rem; 
+            display: flex; 
+            align-items: center; 
+            gap: 1rem; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .back-btn { 
+            background: #6366f1; 
+            color: white; 
+            border: none; 
+            padding: 0.5rem 1rem; 
+            border-radius: 0.5rem; 
+            cursor: pointer; 
+            font-weight: 600;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .container { 
+            padding: 2rem; 
+            max-width: 1200px; 
+            margin: 0 auto; 
+        }
+        
+        .page-title { 
+            text-align: center; 
+            color: white; 
+            margin-bottom: 2rem; 
+        }
+        
+        .page-title h1 { 
+            font-size: 2.5rem; 
+            margin-bottom: 0.5rem; 
+            font-weight: 700;
+        }
+        
+        .documents-container {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .filter-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .tab {
+            padding: 0.75rem 1.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: #64748b;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        
+        .tab.active {
+            color: #6366f1;
+            border-bottom-color: #6366f1;
+        }
+        
+        .documents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .document-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            transition: all 0.2s;
+        }
+        
+        .document-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-color: #6366f1;
+        }
+        
+        .document-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .document-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+        
+        .document-info h3 {
+            color: #1e293b;
+            font-size: 1.125rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .document-date {
+            color: #64748b;
+            font-size: 0.875rem;
+        }
+        
+        .document-details {
+            margin-bottom: 1rem;
+        }
+        
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.25rem 0;
+            font-size: 0.875rem;
+        }
+        
+        .detail-label {
+            color: #64748b;
+        }
+        
+        .detail-value {
+            color: #1e293b;
+            font-weight: 500;
+        }
+        
+        .document-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .action-btn {
+            flex: 1;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .download-btn {
+            background: #10b981;
+            color: white;
+        }
+        
+        .download-btn:hover {
+            background: #059669;
+        }
+        
+        .view-btn {
+            background: #f1f5f9;
+            color: #475569;
+        }
+        
+        .view-btn:hover {
+            background: #e2e8f0;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #64748b;
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: #cbd5e1;
+        }
+        
+        .create-btn {
+            background: #6366f1;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 1rem;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .documents-grid { grid-template-columns: 1fr; }
+            .filter-tabs { flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <i class="fas fa-graduation-cap"></i> RTB Document Planner
+        </div>
+        <div class="user-info">
+            <span id="userName">Loading...</span>
+            <a href="teacher-dashboard.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="page-title">
+            <h1>My Documents</h1>
+            <p>View and manage your created documents</p>
+        </div>
+
+        <div class="documents-container">
+            <div class="filter-tabs">
+                <button class="tab active" onclick="filterDocuments('all')">
+                    <i class="fas fa-list"></i> All Documents
+                </button>
+                <button class="tab" onclick="filterDocuments('session-plans')">
+                    <i class="fas fa-chalkboard-teacher"></i> Session Plans
+                </button>
+                <button class="tab" onclick="filterDocuments('schemes')">
+                    <i class="fas fa-clipboard-list"></i> Schemes of Work
+                </button>
+            </div>
+
+            <div class="documents-grid" id="documentsGrid">
+                <!-- Documents will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Load required scripts -->
+    <script src="config.js"></script>
+    <script src="auth.js"></script>
+    <script>
+        let currentUser = null;
+        let allDocuments = [];
+
+        // Check authentication on page load
+        function checkAuth() {
+            const session = getCurrentSession();
+            if (!session) {
+                window.location.href = 'login.html';
+                return false;
+            }
+            currentUser = session;
+            document.getElementById('userName').textContent = session.name;
+            loadDocuments();
+            return true;
+        }
+
+        async function loadDocuments() {
+            try {
+                // For now, show sample documents since we don't have a documents endpoint
+                // In a real implementation, you would fetch from the backend
+                allDocuments = [
+                    {
+                        id: 1,
+                        type: 'session-plan',
+                        title: 'Variables and Data Types',
+                        module: 'CSA-M01: C Programming',
+                        date: '2025-01-20',
+                        term: 'Term 1',
+                        week: 'Week 4',
+                        class: 'L4CSA-A'
+                    },
+                    {
+                        id: 2,
+                        type: 'scheme',
+                        title: 'C Programming Scheme',
+                        module: 'CSA-M01: C Programming',
+                        date: '2025-01-15',
+                        year: '2024-2025',
+                        terms: 'Term 1, 2, 3',
+                        hours: '120'
+                    }
+                ];
+                
+                displayDocuments(allDocuments);
+            } catch (error) {
+                console.error('Error loading documents:', error);
+                showEmptyState('Error loading documents');
+            }
+        }
+
+        function displayDocuments(documents) {
+            const grid = document.getElementById('documentsGrid');
+            
+            if (documents.length === 0) {
+                showEmptyState('No documents found');
+                return;
+            }
+
+            grid.innerHTML = documents.map(doc => {
+                const isSessionPlan = doc.type === 'session-plan';
+                const icon = isSessionPlan ? 'fa-chalkboard-teacher' : 'fa-clipboard-list';
+                const typeLabel = isSessionPlan ? 'Session Plan' : 'Scheme of Work';
+                
+                return `
+                    <div class="document-card">
+                        <div class="document-header">
+                            <div class="document-icon">
+                                <i class="fas ${icon}"></i>
+                            </div>
+                            <div class="document-info">
+                                <h3>${doc.title}</h3>
+                                <div class="document-date">${new Date(doc.date).toLocaleDateString()}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="document-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Type:</span>
+                                <span class="detail-value">${typeLabel}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Module:</span>
+                                <span class="detail-value">${doc.module}</span>
+                            </div>
+                            ${isSessionPlan ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Term:</span>
+                                    <span class="detail-value">${doc.term}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Week:</span>
+                                    <span class="detail-value">${doc.week}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Class:</span>
+                                    <span class="detail-value">${doc.class}</span>
+                                </div>
+                            ` : `
+                                <div class="detail-item">
+                                    <span class="detail-label">Year:</span>
+                                    <span class="detail-value">${doc.year}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Terms:</span>
+                                    <span class="detail-value">${doc.terms}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Hours:</span>
+                                    <span class="detail-value">${doc.hours}</span>
+                                </div>
+                            `}
+                        </div>
+                        
+                        <div class="document-actions">
+                            <button class="action-btn download-btn" onclick="downloadDocument(${doc.id}, '${doc.type}')">
+                                <i class="fas fa-download"></i> Download
+                            </button>
+                            <button class="action-btn view-btn" onclick="viewDocument(${doc.id})">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function showEmptyState(message) {
+            const grid = document.getElementById('documentsGrid');
+            grid.innerHTML = `
+                <div class="empty-state" style="grid-column: 1 / -1;">
+                    <i class="fas fa-file-alt"></i>
+                    <h3>${message}</h3>
+                    <p>Start creating documents to see them here</p>
+                    <a href="teacher-dashboard.html" class="create-btn">
+                        <i class="fas fa-plus"></i> Create Documents
+                    </a>
+                </div>
+            `;
+        }
+
+        function filterDocuments(type) {
+            // Update active tab
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Filter documents
+            let filtered = allDocuments;
+            if (type === 'session-plans') {
+                filtered = allDocuments.filter(doc => doc.type === 'session-plan');
+            } else if (type === 'schemes') {
+                filtered = allDocuments.filter(doc => doc.type === 'scheme');
+            }
+            
+            displayDocuments(filtered);
+        }
+
+        function downloadDocument(id, type) {
+            // In a real implementation, this would download from the backend
+            alert(`Downloading ${type} document #${id}...`);
+        }
+
+        function viewDocument(id) {
+            // In a real implementation, this would show document details
+            alert(`Viewing document #${id} details...`);
+        }
+
+        // Initialize
+        if (!checkAuth()) {
+            // Redirect handled in checkAuth
+        }
+    </script>
+</body>
+</html>
