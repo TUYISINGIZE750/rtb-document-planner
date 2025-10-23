@@ -1,0 +1,48 @@
+═══════════════════════════════════════════════════════════
+  RTB DOCUMENT PLANNER - QUICK DEPLOYMENT REFERENCE
+═══════════════════════════════════════════════════════════
+
+📦 FILES TO UPLOAD (4 files):
+   1. document_generator.py
+   2. rtb_template_filler.py
+   3. rtb_session_plan_template.docx
+   4. rtb_scheme_template.docx
+
+🗑️ FILE TO DELETE (if exists):
+   - rtb_document_generator.py
+
+📍 UPLOAD LOCATION:
+   /home/leonardus437/
+
+🚀 DEPLOYMENT STEPS:
+   1. Login → PythonAnywhere
+   2. Files tab → /home/leonardus437/
+   3. Delete: rtb_document_generator.py (if exists)
+   4. Upload 4 files above
+   5. Web tab → Click "Reload" button
+   6. Wait 30 seconds
+   7. Test: https://leonardus437.pythonanywhere.com/
+
+✅ VERIFICATION:
+   □ API shows "status": "online"
+   □ Create session plan → downloads
+   □ Document matches RTB format
+   □ Subscription modal shows when limit reached
+
+🎯 WHAT'S NEW:
+   ✓ Uses EXACT RTB official templates
+   ✓ Preserves all formatting (fonts, colors, tables)
+   ✓ Subscription modal for free users
+   ✓ Upgrade card hidden for premium users
+
+📞 ADMIN CREDENTIALS:
+   Phone: +250789751597
+   Password: admin123
+
+🌐 LIVE URLS:
+   Backend:  https://leonardus437.pythonanywhere.com
+   Frontend: https://tuyisingize750.github.io/rtb-document-planner
+
+═══════════════════════════════════════════════════════════
+  READY TO DEPLOY! Follow COMPLETE_DEPLOYMENT_GUIDE.md
+═══════════════════════════════════════════════════════════

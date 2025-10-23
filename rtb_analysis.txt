@@ -1,0 +1,611 @@
+
+================================================================================
+ANALYZING: RTB Templates\TUYISINGIZE LEONARD_SESSION PLAN_S4F3.docx
+================================================================================
+
+
+--- TABLE 1 ---
+Rows: 23, Columns: 6
+
+  Row 1:
+    Cell 1: ''
+      colspan: 6
+    Cell 2: ''
+      colspan: 6
+    Cell 3: ''
+      colspan: 6
+    Cell 4: ''
+      colspan: 6
+    Cell 5: ''
+      colspan: 6
+    Cell 6: ''
+      colspan: 6
+
+  Row 2:
+    Cell 1: 'Sector :    ICT & MULTIMEDIA'
+    Cell 2: 'Sub-sector: Software Development'
+      colspan: 3
+    Cell 3: 'Sub-sector: Software Development'
+      colspan: 3
+    Cell 4: 'Sub-sector: Software Development'
+      colspan: 3
+    Cell 5: 'Date : 17th October 2025'
+      colspan: 2
+    Cell 6: 'Date : 17th October 2025'
+      colspan: 2
+
+  Row 3:
+    Cell 1: 'Lead Trainer’s name : TUYISINGIZE Leonard'
+      colspan: 4
+    Cell 2: 'Lead Trainer’s name : TUYISINGIZE Leonard'
+      colspan: 4
+    Cell 3: 'Lead Trainer’s name : TUYISINGIZE Leonard'
+      colspan: 4
+    Cell 4: 'Lead Trainer’s name : TUYISINGIZE Leonard'
+      colspan: 4
+    Cell 5: 'TERM : I'
+      colspan: 2
+    Cell 6: 'TERM : I'
+      colspan: 2
+
+  Row 4:
+    Cell 1: 'Module(Code&Name): SWDPR301 Analyze project requir'
+    Cell 2: 'Week : I'
+      colspan: 2
+    Cell 3: 'Week : I'
+      colspan: 2
+    Cell 4: 'No. Trainees: 57'
+    Cell 5: 'Class(es):1'
+      colspan: 2
+    Cell 6: 'Class(es):1'
+      colspan: 2
+
+  Row 5:
+    Cell 1: 'Learning outcome:'
+    Cell 2: '1.Identify customer needs'
+      colspan: 5
+    Cell 3: '1.Identify customer needs'
+      colspan: 5
+    Cell 4: '1.Identify customer needs'
+      colspan: 5
+    Cell 5: '1.Identify customer needs'
+      colspan: 5
+    Cell 6: '1.Identify customer needs'
+      colspan: 5
+
+  Row 6:
+    Cell 1: 'Indicative contents:'
+    Cell 2: '1.1 Data gathering'
+      colspan: 5
+    Cell 3: '1.1 Data gathering'
+      colspan: 5
+    Cell 4: '1.1 Data gathering'
+      colspan: 5
+    Cell 5: '1.1 Data gathering'
+      colspan: 5
+    Cell 6: '1.1 Data gathering'
+      colspan: 5
+
+  Row 7:
+    Cell 1: 'Topic of the session: Identification of requiremen'
+      colspan: 6
+    Cell 2: 'Topic of the session: Identification of requiremen'
+      colspan: 6
+    Cell 3: 'Topic of the session: Identification of requiremen'
+      colspan: 6
+    Cell 4: 'Topic of the session: Identification of requiremen'
+      colspan: 6
+    Cell 5: 'Topic of the session: Identification of requiremen'
+      colspan: 6
+    Cell 6: 'Topic of the session: Identification of requiremen'
+      colspan: 6
+
+  Row 8:
+    Cell 1: 'Range: 
+Key concept definitions 
+Methods of collec'
+    Cell 2: 'Duration of the session: 80min'
+      colspan: 5
+    Cell 3: 'Duration of the session: 80min'
+      colspan: 5
+    Cell 4: 'Duration of the session: 80min'
+      colspan: 5
+    Cell 5: 'Duration of the session: 80min'
+      colspan: 5
+    Cell 6: 'Duration of the session: 80min'
+      colspan: 5
+
+  Row 9:
+    Cell 1: 'Objectives: By the end of this session every learn'
+      colspan: 6
+    Cell 2: 'Objectives: By the end of this session every learn'
+      colspan: 6
+    Cell 3: 'Objectives: By the end of this session every learn'
+      colspan: 6
+    Cell 4: 'Objectives: By the end of this session every learn'
+      colspan: 6
+    Cell 5: 'Objectives: By the end of this session every learn'
+      colspan: 6
+    Cell 6: 'Objectives: By the end of this session every learn'
+      colspan: 6
+
+  Row 10:
+    Cell 1: 'Facilitation technique(s):   JIGSAW'
+      colspan: 6
+    Cell 2: 'Facilitation technique(s):   JIGSAW'
+      colspan: 6
+    Cell 3: 'Facilitation technique(s):   JIGSAW'
+      colspan: 6
+    Cell 4: 'Facilitation technique(s):   JIGSAW'
+      colspan: 6
+    Cell 5: 'Facilitation technique(s):   JIGSAW'
+      colspan: 6
+    Cell 6: 'Facilitation technique(s):   JIGSAW'
+      colspan: 6
+
+  Row 11:
+    Cell 1: 'Introduction'
+      colspan: 2
+    Cell 2: 'Introduction'
+      colspan: 2
+    Cell 3: 'Resources'
+      colspan: 3
+    Cell 4: 'Resources'
+      colspan: 3
+    Cell 5: 'Resources'
+      colspan: 3
+    Cell 6: 'Duration'
+
+  Row 12:
+    Cell 1: 'Trainer’s activity: 
+Greets and Make roll calls
+In'
+      colspan: 2
+    Cell 2: 'Trainer’s activity: 
+Greets and Make roll calls
+In'
+      colspan: 2
+    Cell 3: 'Attendance sheet
+PPT
+Projector
+Computers
+Flipchart'
+      colspan: 3
+    Cell 4: 'Attendance sheet
+PPT
+Projector
+Computers
+Flipchart'
+      colspan: 3
+    Cell 5: 'Attendance sheet
+PPT
+Projector
+Computers
+Flipchart'
+      colspan: 3
+    Cell 6: '5 minutes'
+
+  Row 13:
+    Cell 1: 'Development/Body'
+      colspan: 6
+    Cell 2: 'Development/Body'
+      colspan: 6
+    Cell 3: 'Development/Body'
+      colspan: 6
+    Cell 4: 'Development/Body'
+      colspan: 6
+    Cell 5: 'Development/Body'
+      colspan: 6
+    Cell 6: 'Development/Body'
+      colspan: 6
+
+  Row 14:
+    Cell 1: 'Step 1: Forming groups (home group and expert grou'
+      colspan: 2
+      rowspan: restart
+    Cell 2: 'Step 1: Forming groups (home group and expert grou'
+      colspan: 2
+      rowspan: restart
+    Cell 3: 'Computer
+projector, 
+PPT
+Installed operating syste'
+      colspan: 3
+      rowspan: restart
+    Cell 4: 'Computer
+projector, 
+PPT
+Installed operating syste'
+      colspan: 3
+      rowspan: restart
+    Cell 5: 'Computer
+projector, 
+PPT
+Installed operating syste'
+      colspan: 3
+      rowspan: restart
+    Cell 6: '25
+minutes'
+      rowspan: restart
+
+  Row 15:
+    Cell 1: 'Step 1: Forming groups (home group and expert grou'
+      colspan: 2
+      rowspan: restart
+    Cell 2: 'Step 1: Forming groups (home group and expert grou'
+      colspan: 2
+      rowspan: restart
+    Cell 3: 'Computer
+projector, 
+PPT
+Installed operating syste'
+      colspan: 3
+      rowspan: restart
+    Cell 4: 'Computer
+projector, 
+PPT
+Installed operating syste'
+      colspan: 3
+      rowspan: restart
+    Cell 5: 'Computer
+projector, 
+PPT
+Installed operating syste'
+      colspan: 3
+      rowspan: restart
+    Cell 6: '25
+minutes'
+      rowspan: restart
+
+  Row 16:
+    Cell 1: 'Step 1: Forming groups (home group and expert grou'
+      colspan: 2
+      rowspan: restart
+    Cell 2: 'Step 1: Forming groups (home group and expert grou'
+      colspan: 2
+      rowspan: restart
+    Cell 3: 'Computer
+projector, 
+PPT
+Installed operating syste'
+      colspan: 3
+      rowspan: restart
+    Cell 4: 'Computer
+projector, 
+PPT
+Installed operating syste'
+      colspan: 3
+      rowspan: restart
+    Cell 5: 'Computer
+projector, 
+PPT
+Installed operating syste'
+      colspan: 3
+      rowspan: restart
+    Cell 6: '25
+minutes'
+      rowspan: restart
+
+  Row 17:
+    Cell 1: 'Conclusion'
+      colspan: 6
+    Cell 2: 'Conclusion'
+      colspan: 6
+    Cell 3: 'Conclusion'
+      colspan: 6
+    Cell 4: 'Conclusion'
+      colspan: 6
+    Cell 5: 'Conclusion'
+      colspan: 6
+    Cell 6: 'Conclusion'
+      colspan: 6
+
+  Row 18:
+    Cell 1: 'Summary:
+The trainer involves the learners to summ'
+      colspan: 2
+    Cell 2: 'Summary:
+The trainer involves the learners to summ'
+      colspan: 2
+    Cell 3: 'Computer 
+projector'
+      colspan: 3
+    Cell 4: 'Computer 
+projector'
+      colspan: 3
+    Cell 5: 'Computer 
+projector'
+      colspan: 3
+    Cell 6: '3 minutes'
+
+  Row 19:
+    Cell 1: 'Assessment/Assignment
+Trainer’s activity: 
+Trainer'
+      colspan: 2
+    Cell 2: 'Assessment/Assignment
+Trainer’s activity: 
+Trainer'
+      colspan: 2
+    Cell 3: 'Assessment sheets'
+      colspan: 3
+    Cell 4: 'Assessment sheets'
+      colspan: 3
+    Cell 5: 'Assessment sheets'
+      colspan: 3
+    Cell 6: '5 minutes'
+
+  Row 20:
+    Cell 1: 'Evaluation of the session:
+Trainer’s activity: 
+Tr'
+      colspan: 2
+    Cell 2: 'Evaluation of the session:
+Trainer’s activity: 
+Tr'
+      colspan: 2
+    Cell 3: 'Self-assessment form'
+      colspan: 3
+    Cell 4: 'Self-assessment form'
+      colspan: 3
+    Cell 5: 'Self-assessment form'
+      colspan: 3
+    Cell 6: '2minutes'
+
+  Row 21:
+    Cell 1: 'References:'
+      colspan: 6
+    Cell 2: 'References:'
+      colspan: 6
+    Cell 3: 'References:'
+      colspan: 6
+    Cell 4: 'References:'
+      colspan: 6
+    Cell 5: 'References:'
+      colspan: 6
+    Cell 6: 'References:'
+      colspan: 6
+
+  Row 22:
+    Cell 1: 'Appendices: PPT, Task Sheets, assessment,'
+      colspan: 6
+    Cell 2: 'Appendices: PPT, Task Sheets, assessment,'
+      colspan: 6
+    Cell 3: 'Appendices: PPT, Task Sheets, assessment,'
+      colspan: 6
+    Cell 4: 'Appendices: PPT, Task Sheets, assessment,'
+      colspan: 6
+    Cell 5: 'Appendices: PPT, Task Sheets, assessment,'
+      colspan: 6
+    Cell 6: 'Appendices: PPT, Task Sheets, assessment,'
+      colspan: 6
+
+  Row 23:
+    Cell 1: 'Reflection :'
+      colspan: 6
+    Cell 2: 'Reflection :'
+      colspan: 6
+    Cell 3: 'Reflection :'
+      colspan: 6
+    Cell 4: 'Reflection :'
+      colspan: 6
+    Cell 5: 'Reflection :'
+      colspan: 6
+    Cell 6: 'Reflection :'
+      colspan: 6
+
+--- TABLE 2 ---
+Rows: 8, Columns: 6
+
+  Row 1:
+    Cell 1: 'ASSESSMENT'
+      colspan: 6
+      background: auto
+    Cell 2: 'ASSESSMENT'
+      colspan: 6
+      background: auto
+    Cell 3: 'ASSESSMENT'
+      colspan: 6
+      background: auto
+    Cell 4: 'ASSESSMENT'
+      colspan: 6
+      background: auto
+    Cell 5: 'ASSESSMENT'
+      colspan: 6
+      background: auto
+    Cell 6: 'ASSESSMENT'
+      colspan: 6
+      background: auto
+
+  Row 2:
+    Cell 1: 'Module Detail'
+      colspan: 2
+      background: auto
+    Cell 2: 'Module Detail'
+      colspan: 2
+      background: auto
+    Cell 3: 'Trainee's Detail'
+      colspan: 4
+      background: auto
+    Cell 4: 'Trainee's Detail'
+      colspan: 4
+      background: auto
+    Cell 5: 'Trainee's Detail'
+      colspan: 4
+      background: auto
+    Cell 6: 'Trainee's Detail'
+      colspan: 4
+      background: auto
+
+  Row 3:
+    Cell 1: 'SECTOR:'
+      background: auto
+    Cell 2: 'ICT'
+      background: auto
+    Cell 3: 'Name:'
+      background: auto
+    Cell 4: ''
+      colspan: 3
+      background: auto
+    Cell 5: ''
+      colspan: 3
+      background: auto
+    Cell 6: ''
+      colspan: 3
+      background: auto
+
+  Row 4:
+    Cell 1: 'SUB-SECTOR/TRADE:'
+      background: auto
+    Cell 2: 'Software development'
+      background: auto
+    Cell 3: 'Class:'
+      background: auto
+    Cell 4: ''
+      background: auto
+    Cell 5: 'SCHOOL:RUNDA TSS'
+      colspan: 2
+      background: FFE599
+    Cell 6: 'SCHOOL:RUNDA TSS'
+      colspan: 2
+      background: FFE599
+
+  Row 5:
+    Cell 1: 'LEVEL:'
+      background: auto
+    Cell 2: '3'
+      background: auto
+    Cell 3: 'Trainer's Detail'
+      colspan: 4
+      background: auto
+    Cell 4: 'Trainer's Detail'
+      colspan: 4
+      background: auto
+    Cell 5: 'Trainer's Detail'
+      colspan: 4
+      background: auto
+    Cell 6: 'Trainer's Detail'
+      colspan: 4
+      background: auto
+
+  Row 6:
+    Cell 1: 'MODULE:'
+    Cell 2: 'SWDPR 301 Analyze project requirements'
+    Cell 3: 'Name:'
+      background: auto
+    Cell 4: 'TUYISINGIZE Leonard'
+      colspan: 3
+      background: auto
+    Cell 5: 'TUYISINGIZE Leonard'
+      colspan: 3
+      background: auto
+    Cell 6: 'TUYISINGIZE Leonard'
+      colspan: 3
+      background: auto
+
+  Row 7:
+    Cell 1: 'LO:1'
+    Cell 2: 'Identify customer needs'
+    Cell 3: 'Marks'
+    Cell 4: '………./20'
+      colspan: 2
+    Cell 5: '………./20'
+      colspan: 2
+    Cell 6: 'Decision:
+ C ….         NYC…..'
+
+  Row 8:
+    Cell 1: 'Indicative content'
+    Cell 2: '1.1 Data gathering'
+      colspan: 2
+    Cell 3: '1.1 Data gathering'
+      colspan: 2
+    Cell 4: 'Duration:  8 min'
+      colspan: 3
+    Cell 5: 'Duration:  8 min'
+      colspan: 3
+    Cell 6: 'Duration:  8 min'
+      colspan: 3
+
+================================================================================
+ANALYZING: RTB Templates\CSAPA 301 Scheme of work.docx
+================================================================================
+
+
+--- TABLE 1 ---
+Rows: 8, Columns: 9
+
+  Row 1:
+    Cell 1: 'Weeks'
+      rowspan: restart
+      background: C4BC96
+    Cell 2: 'Competence code and name'
+      colspan: 3
+      background: C4BC96
+    Cell 3: 'Competence code and name'
+      colspan: 3
+      background: C4BC96
+    Cell 4: 'Competence code and name'
+      colspan: 3
+      background: C4BC96
+    Cell 5: 'Learning Activities'
+      rowspan: restart
+      background: C4BC96
+    Cell 6: 'Resources (Equipment, tools, and materials)'
+      rowspan: restart
+      background: C4BC96
+    Cell 7: 'Evidences of formative assessment'
+      rowspan: restart
+      background: C4BC96
+    Cell 8: 'Learning Place'
+      rowspan: restart
+      background: C4BC96
+    Cell 9: 'Observation'
+      rowspan: restart
+      background: C4BC96
+
+  Row 2:
+    Cell 1: 'Weeks'
+      rowspan: restart
+      background: C4BC96
+    Cell 2: 'Learning outcome (LO)'
+      background: DDD9C3
+    Cell 3: 'Duration'
+      background: DDD9C3
+    Cell 4: 'Indicative content (IC)'
+      background: DDD9C3
+    Cell 5: 'Learning Activities'
+      rowspan: restart
+      background: C4BC96
+    Cell 6: 'Resources (Equipment, tools, and materials)'
+      rowspan: restart
+      background: C4BC96
+    Cell 7: 'Evidences of formative assessment'
+      rowspan: restart
+      background: C4BC96
+    Cell 8: 'Learning Place'
+      rowspan: restart
+      background: C4BC96
+    Cell 9: 'Observation'
+      rowspan: restart
+      background: C4BC96
+
+  Row 3:
+    Cell 1: '8 / 9 / 2025 – 19 / 12 / 2025'
+      rowspan: restart
+    Cell 2: 'LO1:   Prepare Tools, material and Equipment'
+      rowspan: restart
+    Cell 3: '10 hours'
+      rowspan: restart
+    Cell 4: 'IC1.1:   Preparation of workplace'
+Traceback (most recent call last):
+  File "c:\Users\PC\Music\Scheme of work and session plan planner\analyze_rtb_template.py", line 55, in <module>
+    analyze_table_structure(r'RTB Templates\CSAPA 301 Scheme of work.docx')
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\PC\Music\Scheme of work and session plan planner\analyze_rtb_template.py", line 40, in analyze_table_structure
+    print(f"    Cell {cell_idx + 1}: '{cell_text}'")
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u25cf' in position 13: character maps to <undefined>

@@ -1,0 +1,1059 @@
+ANALYZING: RTB Templates\TUYISINGIZE LEONARD_SESSION PLAN_S4F3.docx
+================================================================================
+
+
+TABLE 1
+Rows: 23, Columns: 6
+--------------------------------------------------------------------------------
+
+Row 1:
+  Cell 1: ''
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 2: ''
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 3: ''
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 4: ''
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 5: ''
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 6: ''
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+
+Row 2:
+  Cell 1: 'Sector :    ICT & MULTIMEDIA'
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 2: 'Sub-sector: Software Development'
+    COLSPAN: 3
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 3: 'Sub-sector: Software Development'
+    COLSPAN: 3
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 4: 'Sub-sector: Software Development'
+    COLSPAN: 3
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 5: 'Date : 17th October 2025'
+    COLSPAN: 2
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 6: 'Date : 17th October 2025'
+    COLSPAN: 2
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+
+Row 3:
+  Cell 1: 'Lead Trainer’s name : TUYISINGIZE Leonard'
+    COLSPAN: 4
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 2: 'Lead Trainer’s name : TUYISINGIZE Leonard'
+    COLSPAN: 4
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 3: 'Lead Trainer’s name : TUYISINGIZE Leonard'
+    COLSPAN: 4
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 4: 'Lead Trainer’s name : TUYISINGIZE Leonard'
+    COLSPAN: 4
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 5: 'TERM : I'
+    COLSPAN: 2
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 6: 'TERM : I'
+    COLSPAN: 2
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+
+Row 4:
+  Cell 1: 'Module(Code&Name): SWDPR301 Analyze project requirements'
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 2: 'Week : I'
+    COLSPAN: 2
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 3: 'Week : I'
+    COLSPAN: 2
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 4: 'No. Trainees: 57'
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 5: 'Class(es):1'
+    COLSPAN: 2
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 6: 'Class(es):1'
+    COLSPAN: 2
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+
+Row 5:
+  Cell 1: 'Learning outcome:'
+  Cell 2: '1.Identify customer needs'
+    COLSPAN: 5
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 3: '1.Identify customer needs'
+    COLSPAN: 5
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 4: '1.Identify customer needs'
+    COLSPAN: 5
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 5: '1.Identify customer needs'
+    COLSPAN: 5
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 6: '1.Identify customer needs'
+    COLSPAN: 5
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+
+Row 6:
+  Cell 1: 'Indicative contents:'
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 2: '1.1 Data gathering'
+    COLSPAN: 5
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 3: '1.1 Data gathering'
+    COLSPAN: 5
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 4: '1.1 Data gathering'
+    COLSPAN: 5
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 5: '1.1 Data gathering'
+    COLSPAN: 5
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 6: '1.1 Data gathering'
+    COLSPAN: 5
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+
+Row 7:
+  Cell 1: 'Topic of the session: Identification of requirements Gatheri'
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 2: 'Topic of the session: Identification of requirements Gatheri'
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 3: 'Topic of the session: Identification of requirements Gatheri'
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 4: 'Topic of the session: Identification of requirements Gatheri'
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 5: 'Topic of the session: Identification of requirements Gatheri'
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 6: 'Topic of the session: Identification of requirements Gatheri'
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+
+Row 8:
+  Cell 1: 'Range: 
+Key concept definitions 
+Methods of collecting data
+'
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 2: 'Duration of the session: 80min'
+    COLSPAN: 5
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 3: 'Duration of the session: 80min'
+    COLSPAN: 5
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 4: 'Duration of the session: 80min'
+    COLSPAN: 5
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 5: 'Duration of the session: 80min'
+    COLSPAN: 5
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 6: 'Duration of the session: 80min'
+    COLSPAN: 5
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+
+Row 9:
+  Cell 1: 'Objectives: By the end of this session every learner should '
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 2: 'Objectives: By the end of this session every learner should '
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 3: 'Objectives: By the end of this session every learner should '
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 4: 'Objectives: By the end of this session every learner should '
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 5: 'Objectives: By the end of this session every learner should '
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 6: 'Objectives: By the end of this session every learner should '
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+
+Row 10:
+  Cell 1: 'Facilitation technique(s):   JIGSAW'
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 2: 'Facilitation technique(s):   JIGSAW'
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 3: 'Facilitation technique(s):   JIGSAW'
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 4: 'Facilitation technique(s):   JIGSAW'
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 5: 'Facilitation technique(s):   JIGSAW'
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 6: 'Facilitation technique(s):   JIGSAW'
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+
+Row 11:
+  Cell 1: 'Introduction'
+    COLSPAN: 2
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 2: 'Introduction'
+    COLSPAN: 2
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 3: 'Resources'
+    COLSPAN: 3
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 4: 'Resources'
+    COLSPAN: 3
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 5: 'Resources'
+    COLSPAN: 3
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 6: 'Duration'
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+
+Row 12:
+  Cell 1: 'Trainer’s activity: 
+Greets and Make roll calls
+Involves the'
+    COLSPAN: 2
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 2: 'Trainer’s activity: 
+Greets and Make roll calls
+Involves the'
+    COLSPAN: 2
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 3: 'Attendance sheet
+PPT
+Projector
+Computers
+Flipchart or whiteb'
+    COLSPAN: 3
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 4: 'Attendance sheet
+PPT
+Projector
+Computers
+Flipchart or whiteb'
+    COLSPAN: 3
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 5: 'Attendance sheet
+PPT
+Projector
+Computers
+Flipchart or whiteb'
+    COLSPAN: 3
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 6: '5 minutes'
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+
+Row 13:
+  Cell 1: 'Development/Body'
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 2: 'Development/Body'
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 3: 'Development/Body'
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 4: 'Development/Body'
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 5: 'Development/Body'
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 6: 'Development/Body'
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+
+Row 14:
+  Cell 1: 'Step 1: Forming groups (home group and expert group)
+Trainer'
+    COLSPAN: 2
+    ROWSPAN START
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 2: 'Step 1: Forming groups (home group and expert group)
+Trainer'
+    COLSPAN: 2
+    ROWSPAN START
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 3: 'Computer
+projector, 
+PPT
+Installed operating system'
+    COLSPAN: 3
+    ROWSPAN START
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 4: 'Computer
+projector, 
+PPT
+Installed operating system'
+    COLSPAN: 3
+    ROWSPAN START
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 5: 'Computer
+projector, 
+PPT
+Installed operating system'
+    COLSPAN: 3
+    ROWSPAN START
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 6: '25
+minutes'
+    ROWSPAN START
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+
+Row 15:
+  Cell 1: 'Step 1: Forming groups (home group and expert group)
+Trainer'
+    COLSPAN: 2
+    ROWSPAN START
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 2: 'Step 1: Forming groups (home group and expert group)
+Trainer'
+    COLSPAN: 2
+    ROWSPAN START
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 3: 'Computer
+projector, 
+PPT
+Installed operating system'
+    COLSPAN: 3
+    ROWSPAN START
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 4: 'Computer
+projector, 
+PPT
+Installed operating system'
+    COLSPAN: 3
+    ROWSPAN START
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 5: 'Computer
+projector, 
+PPT
+Installed operating system'
+    COLSPAN: 3
+    ROWSPAN START
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 6: '25
+minutes'
+    ROWSPAN START
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+
+Row 16:
+  Cell 1: 'Step 1: Forming groups (home group and expert group)
+Trainer'
+    COLSPAN: 2
+    ROWSPAN START
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 2: 'Step 1: Forming groups (home group and expert group)
+Trainer'
+    COLSPAN: 2
+    ROWSPAN START
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 3: 'Computer
+projector, 
+PPT
+Installed operating system'
+    COLSPAN: 3
+    ROWSPAN START
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 4: 'Computer
+projector, 
+PPT
+Installed operating system'
+    COLSPAN: 3
+    ROWSPAN START
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 5: 'Computer
+projector, 
+PPT
+Installed operating system'
+    COLSPAN: 3
+    ROWSPAN START
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 6: '25
+minutes'
+    ROWSPAN START
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+
+Row 17:
+  Cell 1: 'Conclusion'
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 2: 'Conclusion'
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 3: 'Conclusion'
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 4: 'Conclusion'
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 5: 'Conclusion'
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 6: 'Conclusion'
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+
+Row 18:
+  Cell 1: 'Summary:
+The trainer involves the learners to summarize the '
+    COLSPAN: 2
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 2: 'Summary:
+The trainer involves the learners to summarize the '
+    COLSPAN: 2
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 3: 'Computer 
+projector'
+    COLSPAN: 3
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 4: 'Computer 
+projector'
+    COLSPAN: 3
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 5: 'Computer 
+projector'
+    COLSPAN: 3
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 6: '3 minutes'
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+
+Row 19:
+  Cell 1: 'Assessment/Assignment
+Trainer’s activity: 
+Trainer gives lea'
+    COLSPAN: 2
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 2: 'Assessment/Assignment
+Trainer’s activity: 
+Trainer gives lea'
+    COLSPAN: 2
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 3: 'Assessment sheets'
+    COLSPAN: 3
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 4: 'Assessment sheets'
+    COLSPAN: 3
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 5: 'Assessment sheets'
+    COLSPAN: 3
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 6: '5 minutes'
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+
+Row 20:
+  Cell 1: 'Evaluation of the session:
+Trainer’s activity: 
+Trainer invo'
+    COLSPAN: 2
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 2: 'Evaluation of the session:
+Trainer’s activity: 
+Trainer invo'
+    COLSPAN: 2
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 3: 'Self-assessment form'
+    COLSPAN: 3
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 4: 'Self-assessment form'
+    COLSPAN: 3
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 5: 'Self-assessment form'
+    COLSPAN: 3
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 6: '2minutes'
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+
+Row 21:
+  Cell 1: 'References:'
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 2: 'References:'
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 3: 'References:'
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 4: 'References:'
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 5: 'References:'
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 6: 'References:'
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+
+Row 22:
+  Cell 1: 'Appendices: PPT, Task Sheets, assessment,'
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 2: 'Appendices: PPT, Task Sheets, assessment,'
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 3: 'Appendices: PPT, Task Sheets, assessment,'
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 4: 'Appendices: PPT, Task Sheets, assessment,'
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 5: 'Appendices: PPT, Task Sheets, assessment,'
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 6: 'Appendices: PPT, Task Sheets, assessment,'
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+
+Row 23:
+  Cell 1: 'Reflection :'
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT: Times New Roman
+  Cell 2: 'Reflection :'
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT: Times New Roman
+  Cell 3: 'Reflection :'
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT: Times New Roman
+  Cell 4: 'Reflection :'
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT: Times New Roman
+  Cell 5: 'Reflection :'
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT: Times New Roman
+  Cell 6: 'Reflection :'
+    COLSPAN: 6
+    TEXT: BOLD
+    FONT: Times New Roman
+
+TABLE 2
+Rows: 8, Columns: 6
+--------------------------------------------------------------------------------
+
+Row 1:
+  Cell 1: 'ASSESSMENT'
+    COLSPAN: 6
+    BACKGROUND: auto
+    HAS BORDERS
+  Cell 2: 'ASSESSMENT'
+    COLSPAN: 6
+    BACKGROUND: auto
+    HAS BORDERS
+  Cell 3: 'ASSESSMENT'
+    COLSPAN: 6
+    BACKGROUND: auto
+    HAS BORDERS
+  Cell 4: 'ASSESSMENT'
+    COLSPAN: 6
+    BACKGROUND: auto
+    HAS BORDERS
+  Cell 5: 'ASSESSMENT'
+    COLSPAN: 6
+    BACKGROUND: auto
+    HAS BORDERS
+  Cell 6: 'ASSESSMENT'
+    COLSPAN: 6
+    BACKGROUND: auto
+    HAS BORDERS
+
+Row 2:
+  Cell 1: 'Module Detail'
+    COLSPAN: 2
+    BACKGROUND: auto
+    HAS BORDERS
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 2: 'Module Detail'
+    COLSPAN: 2
+    BACKGROUND: auto
+    HAS BORDERS
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 3: 'Trainee's Detail'
+    COLSPAN: 4
+    BACKGROUND: auto
+    HAS BORDERS
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 4: 'Trainee's Detail'
+    COLSPAN: 4
+    BACKGROUND: auto
+    HAS BORDERS
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 5: 'Trainee's Detail'
+    COLSPAN: 4
+    BACKGROUND: auto
+    HAS BORDERS
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 6: 'Trainee's Detail'
+    COLSPAN: 4
+    BACKGROUND: auto
+    HAS BORDERS
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+
+Row 3:
+  Cell 1: 'SECTOR:'
+    BACKGROUND: auto
+    HAS BORDERS
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 2: 'ICT'
+    BACKGROUND: auto
+    HAS BORDERS
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 3: 'Name:'
+    BACKGROUND: auto
+    HAS BORDERS
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 4: ''
+    COLSPAN: 3
+    BACKGROUND: auto
+    HAS BORDERS
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 5: ''
+    COLSPAN: 3
+    BACKGROUND: auto
+    HAS BORDERS
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 6: ''
+    COLSPAN: 3
+    BACKGROUND: auto
+    HAS BORDERS
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+
+Row 4:
+  Cell 1: 'SUB-SECTOR/TRADE:'
+    BACKGROUND: auto
+    HAS BORDERS
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 2: 'Software development'
+    BACKGROUND: auto
+    HAS BORDERS
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 3: 'Class:'
+    BACKGROUND: auto
+    HAS BORDERS
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 4: ''
+    BACKGROUND: auto
+    HAS BORDERS
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 5: 'SCHOOL:RUNDA TSS'
+    COLSPAN: 2
+    BACKGROUND: FFE599
+    HAS BORDERS
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 6: 'SCHOOL:RUNDA TSS'
+    COLSPAN: 2
+    BACKGROUND: FFE599
+    HAS BORDERS
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+
+Row 5:
+  Cell 1: 'LEVEL:'
+    BACKGROUND: auto
+    HAS BORDERS
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 2: '3'
+    BACKGROUND: auto
+    HAS BORDERS
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 3: 'Trainer's Detail'
+    COLSPAN: 4
+    BACKGROUND: auto
+    HAS BORDERS
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 4: 'Trainer's Detail'
+    COLSPAN: 4
+    BACKGROUND: auto
+    HAS BORDERS
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 5: 'Trainer's Detail'
+    COLSPAN: 4
+    BACKGROUND: auto
+    HAS BORDERS
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 6: 'Trainer's Detail'
+    COLSPAN: 4
+    BACKGROUND: auto
+    HAS BORDERS
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+
+Row 6:
+  Cell 1: 'MODULE:'
+    HAS BORDERS
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 2: 'SWDPR 301 Analyze project requirements'
+    HAS BORDERS
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 3: 'Name:'
+    BACKGROUND: auto
+    HAS BORDERS
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 4: 'TUYISINGIZE Leonard'
+    COLSPAN: 3
+    BACKGROUND: auto
+    HAS BORDERS
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 5: 'TUYISINGIZE Leonard'
+    COLSPAN: 3
+    BACKGROUND: auto
+    HAS BORDERS
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 6: 'TUYISINGIZE Leonard'
+    COLSPAN: 3
+    BACKGROUND: auto
+    HAS BORDERS
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+
+Row 7:
+  Cell 1: 'LO:1'
+    HAS BORDERS
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 2: 'Identify customer needs'
+    HAS BORDERS
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 3: 'Marks'
+    HAS BORDERS
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 4: '………./20'
+    COLSPAN: 2
+    HAS BORDERS
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 5: '………./20'
+    COLSPAN: 2
+    HAS BORDERS
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 6: 'Decision:
+ C ….         NYC…..'
+    HAS BORDERS
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+
+Row 8:
+  Cell 1: 'Indicative content'
+    HAS BORDERS
+    TEXT: BOLD
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 2: '1.1 Data gathering'
+    COLSPAN: 2
+    HAS BORDERS
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 3: '1.1 Data gathering'
+    COLSPAN: 2
+    HAS BORDERS
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 4: 'Duration:  8 min'
+    COLSPAN: 3
+    HAS BORDERS
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 5: 'Duration:  8 min'
+    COLSPAN: 3
+    HAS BORDERS
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman
+  Cell 6: 'Duration:  8 min'
+    COLSPAN: 3
+    HAS BORDERS
+    FONT SIZE: 12.0pt
+    FONT: Times New Roman

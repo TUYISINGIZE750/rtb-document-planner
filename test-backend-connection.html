@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Backend Connection Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 2rem; }
+        .result { padding: 1rem; margin: 1rem 0; border-radius: 0.5rem; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        button { padding: 0.75rem 1.5rem; background: #007bff; color: white; border: none; border-radius: 0.5rem; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Backend Connection Test</h1>
+    <button onclick="testBackend()">Test Backend Connection</button>
+    <div id="results"></div>
+
+    <script>
+        async function testBackend() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<div class="result">🔄 Testing backend connection...</div>';
+            
+            try {
+                console.log('Testing backend at: https://leonardus437.pythonanywhere.com');
+                
+                const response = await fetch('https://leonardus437.pythonanywhere.com/', {
+                    method: 'GET',
+                    mode: 'cors',
+                    credentials: 'omit'
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    resultsDiv.innerHTML = `
+                        <div class="result success">
+                            ✅ Backend is online!<br>
+                            Status: ${data.status}<br>
+                            Version: ${data.version}<br>
+                            Users: ${data.users_count}
+                        </div>
+                    `;
+                } else {
+                    resultsDiv.innerHTML = `
+                        <div class="result error">
+                            ❌ Backend responded with error: ${response.status} ${response.statusText}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <div class="result error">
+                        ❌ Cannot reach backend: ${error.message}<br>
+                        This means the PythonAnywhere backend is not running or has CORS issues.
+                    </div>
+                `;
+            }
+        }
+        
+        // Auto-test on page load
+        window.addEventListener('load', testBackend);
+    </script>
+</body>
+</html>

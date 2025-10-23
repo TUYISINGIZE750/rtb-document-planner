@@ -1,0 +1,701 @@
+ANALYZING: RTB Templates\CSAPA 301 Scheme of work.docx
+================================================================================
+
+
+TABLE 1
+Rows: 8, Columns: 9
+--------------------------------------------------------------------------------
+
+Row 1:
+  Cell 1: 'Weeks'
+    ROWSPAN START
+    BACKGROUND: C4BC96
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 2: 'Competence code and name'
+    COLSPAN: 3
+    BACKGROUND: C4BC96
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 3: 'Competence code and name'
+    COLSPAN: 3
+    BACKGROUND: C4BC96
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 4: 'Competence code and name'
+    COLSPAN: 3
+    BACKGROUND: C4BC96
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 5: 'Learning Activities'
+    ROWSPAN START
+    BACKGROUND: C4BC96
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 6: 'Resources (Equipment, tools, and materials)'
+    ROWSPAN START
+    BACKGROUND: C4BC96
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 7: 'Evidences of formative assessment'
+    ROWSPAN START
+    BACKGROUND: C4BC96
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 8: 'Learning Place'
+    ROWSPAN START
+    BACKGROUND: C4BC96
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 9: 'Observation'
+    ROWSPAN START
+    BACKGROUND: C4BC96
+
+Row 2:
+  Cell 1: 'Weeks'
+    ROWSPAN START
+    BACKGROUND: C4BC96
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 2: 'Learning outcome (LO)'
+    BACKGROUND: DDD9C3
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 3: 'Duration'
+    BACKGROUND: DDD9C3
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 4: 'Indicative content (IC)'
+    BACKGROUND: DDD9C3
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 5: 'Learning Activities'
+    ROWSPAN START
+    BACKGROUND: C4BC96
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 6: 'Resources (Equipment, tools, and materials)'
+    ROWSPAN START
+    BACKGROUND: C4BC96
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 7: 'Evidences of formative assessment'
+    ROWSPAN START
+    BACKGROUND: C4BC96
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 8: 'Learning Place'
+    ROWSPAN START
+    BACKGROUND: C4BC96
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 9: 'Observation'
+    ROWSPAN START
+    BACKGROUND: C4BC96
+
+Row 3:
+  Cell 1: '8 / 9 / 2025 – 19 / 12 / 2025'
+    ROWSPAN START
+    TEXT: BOLD
+    FONT SIZE: 16.0pt
+    FONT: Times New Roman
+  Cell 2: 'LO1:   Prepare Tools, material and Equipment'
+    ROWSPAN START
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 3: '10 hours'
+    ROWSPAN START
+    FONT: Bookman Old Style
+  Cell 4: 'IC1.1:   Preparation of workplace'
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 5: '● Demonstration and simulation
+● Individual and group work
+●'
+    FONT: Bookman Old Style
+  Cell 6: 'Computers, Projector, Projection screen, Printers,
+routers'
+    FONT: Bookman Old Style
+  Cell 7: 'Written and practical assessment'
+    ROWSPAN START
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 8: 'Class
+Computer system and architecture Workshop'
+    ROWSPAN START
+    TEXT: BOLD
+    FONT SIZE: 11.0pt
+    FONT: Bookman Old Style
+  Cell 9: ''
+    ROWSPAN START
+
+Row 4:
+  Cell 1: '8 / 9 / 2025 – 19 / 12 / 2025'
+    ROWSPAN START
+    TEXT: BOLD
+    FONT SIZE: 16.0pt
+    FONT: Times New Roman
+  Cell 2: 'LO1:   Prepare Tools, material and Equipment'
+    ROWSPAN START
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 3: '10 hours'
+    ROWSPAN START
+    FONT: Bookman Old Style
+  Cell 4: 'IC1.2:  Identification of tools, materials and equipment'
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 5: '● Demonstration and simulation
+● Individual and group work
+●'
+    FONT: Bookman Old Style
+  Cell 6: 'Computers, Projector, Projection screen, Printers,
+routers'
+    FONT: Bookman Old Style
+  Cell 7: 'Written and practical assessment'
+    ROWSPAN START
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 8: 'Class
+Computer system and architecture Workshop'
+    ROWSPAN START
+    TEXT: BOLD
+    FONT SIZE: 11.0pt
+    FONT: Bookman Old Style
+  Cell 9: ''
+    ROWSPAN START
+
+Row 5:
+  Cell 1: '8 / 9 / 2025 – 19 / 12 / 2025'
+    ROWSPAN START
+    TEXT: BOLD
+    FONT SIZE: 16.0pt
+    FONT: Times New Roman
+  Cell 2: 'LO1:   Prepare Tools, material and Equipment'
+    ROWSPAN START
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 3: '10 hours'
+    ROWSPAN START
+    FONT: Bookman Old Style
+  Cell 4: 'IC1.3:  
+Calibration of equipment'
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 5: '● Demonstration and simulation
+● Individual and group work
+●'
+    FONT: Bookman Old Style
+  Cell 6: 'Computers, Projector, Projection screen, Printers,
+Routers'
+    FONT: Bookman Old Style
+  Cell 7: 'Written and practical assessment'
+    ROWSPAN START
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 8: 'Class
+Computer system and architecture Workshop'
+    ROWSPAN START
+    TEXT: BOLD
+    FONT SIZE: 11.0pt
+    FONT: Bookman Old Style
+  Cell 9: ''
+    ROWSPAN START
+
+Row 6:
+  Cell 1: '8 / 9 / 2025 – 19 / 12 / 2025'
+    ROWSPAN START
+    TEXT: BOLD
+    FONT SIZE: 16.0pt
+    FONT: Times New Roman
+  Cell 2: 'LO2:   Assemble PCBA using SMT'
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 3: '50 hours'
+    FONT: Bookman Old Style
+  Cell 4: 'IC2.1:    Introduction to PCB'
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 5: '● Demonstration and simulation
+● Individual and group work
+●'
+    FONT: Bookman Old Style
+  Cell 6: 'Computers, Projector, Projection screen, Printers,
+routers'
+    FONT: Bookman Old Style
+  Cell 7: 'Written and practical assessment'
+  Cell 8: ''
+  Cell 9: ''
+
+Row 7:
+  Cell 1: '8 / 9 / 2025 – 19 / 12 / 2025'
+    ROWSPAN START
+    TEXT: BOLD
+    FONT SIZE: 16.0pt
+    FONT: Times New Roman
+  Cell 2: ''
+  Cell 3: ''
+  Cell 4: 'IC2.2:  Identification of PCBA technologies'
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 5: '● Demonstration and simulation
+● Individual and group work
+●'
+    FONT: Bookman Old Style
+  Cell 6: 'Computers, Projector, Projection screen, Printers,
+routers'
+    FONT: Bookman Old Style
+  Cell 7: ''
+    HAS BORDERS
+  Cell 8: ''
+  Cell 9: ''
+
+Row 8:
+  Cell 1: ''
+  Cell 2: 'Integrated Assessment (for specific module)'
+    COLSPAN: 3
+    FONT: Bookman Old Style
+  Cell 3: 'Integrated Assessment (for specific module)'
+    COLSPAN: 3
+    FONT: Bookman Old Style
+  Cell 4: 'Integrated Assessment (for specific module)'
+    COLSPAN: 3
+    FONT: Bookman Old Style
+  Cell 5: 'Task'
+    FONT: Bookman Old Style
+  Cell 6: 'Consumables'
+    FONT: Bookman Old Style
+  Cell 7: ''
+  Cell 8: 'workshop'
+    FONT: Bookman Old Style
+  Cell 9: ''
+
+TABLE 2
+Rows: 5, Columns: 9
+--------------------------------------------------------------------------------
+
+Row 1:
+  Cell 1: 'Weeks'
+    ROWSPAN START
+    BACKGROUND: C4BC96
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 2: 'Competence code and name'
+    COLSPAN: 3
+    BACKGROUND: C4BC96
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 3: 'Competence code and name'
+    COLSPAN: 3
+    BACKGROUND: C4BC96
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 4: 'Competence code and name'
+    COLSPAN: 3
+    BACKGROUND: C4BC96
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 5: 'Learning Activities'
+    ROWSPAN START
+    BACKGROUND: C4BC96
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 6: 'Resources (Equipment, tools, and materials)'
+    ROWSPAN START
+    BACKGROUND: C4BC96
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 7: 'Evidences of formative assessment'
+    ROWSPAN START
+    BACKGROUND: C4BC96
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 8: 'Learning Place'
+    ROWSPAN START
+    BACKGROUND: C4BC96
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 9: 'Observation'
+    ROWSPAN START
+    BACKGROUND: C4BC96
+
+Row 2:
+  Cell 1: 'Weeks'
+    ROWSPAN START
+    BACKGROUND: C4BC96
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 2: 'Learning outcome (LO)'
+    BACKGROUND: DDD9C3
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 3: 'Duration'
+    BACKGROUND: DDD9C3
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 4: 'Indicative content (IC)'
+    BACKGROUND: DDD9C3
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 5: 'Learning Activities'
+    ROWSPAN START
+    BACKGROUND: C4BC96
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 6: 'Resources (Equipment, tools, and materials)'
+    ROWSPAN START
+    BACKGROUND: C4BC96
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 7: 'Evidences of formative assessment'
+    ROWSPAN START
+    BACKGROUND: C4BC96
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 8: 'Learning Place'
+    ROWSPAN START
+    BACKGROUND: C4BC96
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 9: 'Observation'
+    ROWSPAN START
+    BACKGROUND: C4BC96
+
+Row 3:
+  Cell 1: 'January 5, 2026  - April 3, 2026'
+    ROWSPAN START
+  Cell 2: 'LO2:   Assemble PCBA using SMT'
+    ROWSPAN START
+    FONT: Bookman Old Style
+  Cell 3: ''
+    ROWSPAN START
+  Cell 4: 'IC2.3:  Description of Surface Mount technology for PCBA'
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 5: '● Demonstration and simulation
+● Individual and group work
+●'
+    FONT: Bookman Old Style
+  Cell 6: 'Computers, Projector, Projection screen, Printers'
+    FONT: Bookman Old Style
+  Cell 7: 'Written and practical assessment'
+    ROWSPAN START
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 8: 'Class
+Computer system and architecture Workshop'
+    ROWSPAN START
+    TEXT: BOLD
+    FONT SIZE: 11.0pt
+    FONT: Bookman Old Style
+  Cell 9: ''
+    ROWSPAN START
+
+Row 4:
+  Cell 1: 'January 5, 2026  - April 3, 2026'
+    ROWSPAN START
+  Cell 2: 'LO2:   Assemble PCBA using SMT'
+    ROWSPAN START
+    FONT: Bookman Old Style
+  Cell 3: ''
+    ROWSPAN START
+  Cell 4: 'IC2.4:  Perform SMT PCB Assembly process'
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 5: '● Demonstration and simulation
+● Individual and group work
+●'
+    FONT: Bookman Old Style
+  Cell 6: 'Computers, Projector, Projection screen, Printers'
+    FONT: Bookman Old Style
+  Cell 7: 'Written and practical assessment'
+    ROWSPAN START
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 8: 'Class
+Computer system and architecture Workshop'
+    ROWSPAN START
+    TEXT: BOLD
+    FONT SIZE: 11.0pt
+    FONT: Bookman Old Style
+  Cell 9: ''
+    ROWSPAN START
+
+Row 5:
+  Cell 1: 'January 5, 2026  - April 3, 2026'
+    ROWSPAN START
+  Cell 2: 'Integrated Assessment (for specific module)'
+    COLSPAN: 3
+    FONT: Bookman Old Style
+  Cell 3: 'Integrated Assessment (for specific module)'
+    COLSPAN: 3
+    FONT: Bookman Old Style
+  Cell 4: 'Integrated Assessment (for specific module)'
+    COLSPAN: 3
+    FONT: Bookman Old Style
+  Cell 5: 'Task'
+    FONT: Bookman Old Style
+  Cell 6: 'Consumables'
+    FONT: Bookman Old Style
+  Cell 7: ''
+  Cell 8: 'workshop'
+    FONT: Bookman Old Style
+  Cell 9: ''
+
+TABLE 3
+Rows: 8, Columns: 9
+--------------------------------------------------------------------------------
+
+Row 1:
+  Cell 1: 'Weeks'
+    ROWSPAN START
+    BACKGROUND: C4BC96
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 2: 'Competence code and name'
+    COLSPAN: 3
+    BACKGROUND: C4BC96
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 3: 'Competence code and name'
+    COLSPAN: 3
+    BACKGROUND: C4BC96
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 4: 'Competence code and name'
+    COLSPAN: 3
+    BACKGROUND: C4BC96
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 5: 'Learning Activities'
+    ROWSPAN START
+    BACKGROUND: C4BC96
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 6: 'Resources (Equipment, tools, and materials)'
+    ROWSPAN START
+    BACKGROUND: C4BC96
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 7: 'Evidences of formative assessment'
+    ROWSPAN START
+    BACKGROUND: C4BC96
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 8: 'Learning Place'
+    ROWSPAN START
+    BACKGROUND: C4BC96
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 9: 'Observation'
+    ROWSPAN START
+    BACKGROUND: C4BC96
+
+Row 2:
+  Cell 1: 'Weeks'
+    ROWSPAN START
+    BACKGROUND: C4BC96
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 2: 'Learning outcome (LO)'
+    BACKGROUND: DDD9C3
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 3: 'Duration'
+    BACKGROUND: DDD9C3
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 4: 'Indicative content (IC)'
+    BACKGROUND: DDD9C3
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 5: 'Learning Activities'
+    ROWSPAN START
+    BACKGROUND: C4BC96
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 6: 'Resources (Equipment, tools, and materials)'
+    ROWSPAN START
+    BACKGROUND: C4BC96
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 7: 'Evidences of formative assessment'
+    ROWSPAN START
+    BACKGROUND: C4BC96
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 8: 'Learning Place'
+    ROWSPAN START
+    BACKGROUND: C4BC96
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 9: 'Observation'
+    ROWSPAN START
+    BACKGROUND: C4BC96
+
+Row 3:
+  Cell 1: 'on April 20, 2026 - on July 3, 2026'
+    ROWSPAN START
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 2: 'LO3:   Connect computer system parts'
+    ROWSPAN START
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 3: '20 hours'
+    ROWSPAN START
+    FONT: Bookman Old Style
+  Cell 4: 'IC1.1:   Description of computer hardware parts'
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 5: '● Demonstration and simulation
+● Individual and group work
+●'
+    FONT: Bookman Old Style
+  Cell 6: 'Computers, Projector, Projection screen, Printers'
+    FONT: Bookman Old Style
+  Cell 7: 'Written and practical assessment'
+    ROWSPAN START
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 8: 'Class
+Computer system and architecture Workshop'
+    ROWSPAN START
+    TEXT: BOLD
+    FONT SIZE: 11.0pt
+    FONT: Bookman Old Style
+  Cell 9: ''
+    ROWSPAN START
+
+Row 4:
+  Cell 1: 'on April 20, 2026 - on July 3, 2026'
+    ROWSPAN START
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 2: 'LO3:   Connect computer system parts'
+    ROWSPAN START
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 3: '20 hours'
+    ROWSPAN START
+    FONT: Bookman Old Style
+  Cell 4: 'IC1.2:   ● Connection of Desktop Computer parts'
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 5: '● Demonstration and simulation
+● Individual and group work
+●'
+    FONT: Bookman Old Style
+  Cell 6: 'Computers, Projector, Projection screen, Printers'
+    FONT: Bookman Old Style
+  Cell 7: 'Written and practical assessment'
+    ROWSPAN START
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 8: 'Class
+Computer system and architecture Workshop'
+    ROWSPAN START
+    TEXT: BOLD
+    FONT SIZE: 11.0pt
+    FONT: Bookman Old Style
+  Cell 9: ''
+    ROWSPAN START
+
+Row 5:
+  Cell 1: 'on April 20, 2026 - on July 3, 2026'
+    ROWSPAN START
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 2: 'LO3:   Connect computer system parts'
+    ROWSPAN START
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 3: '20 hours'
+    ROWSPAN START
+    FONT: Bookman Old Style
+  Cell 4: 'IC1.3:  Connection of Laptop Computer parts'
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 5: '● Demonstration and simulation
+● Individual and group work
+●'
+    FONT: Bookman Old Style
+  Cell 6: 'Computers, Projector, Projection screen, Printers'
+    FONT: Bookman Old Style
+  Cell 7: 'Written and practical assessment'
+    ROWSPAN START
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 8: 'Class
+Computer system and architecture Workshop'
+    ROWSPAN START
+    TEXT: BOLD
+    FONT SIZE: 11.0pt
+    FONT: Bookman Old Style
+  Cell 9: ''
+    ROWSPAN START
+
+Row 6:
+  Cell 1: 'on April 20, 2026 - on July 3, 2026'
+    ROWSPAN START
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 2: ''
+    HAS BORDERS
+  Cell 3: ''
+    HAS BORDERS
+  Cell 4: 'IC1.3:   Test of assembled computer'
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 5: '● Demonstration and simulation
+● Individual and group work
+●'
+    FONT: Bookman Old Style
+  Cell 6: 'Computers, Projector, Projection screen, Printers'
+    FONT: Bookman Old Style
+  Cell 7: ''
+  Cell 8: ''
+  Cell 9: ''
+
+Row 7:
+  Cell 1: 'on April 20, 2026 - on July 3, 2026'
+    ROWSPAN START
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 2: ''
+    HAS BORDERS
+  Cell 3: ''
+    HAS BORDERS
+  Cell 4: 'I.C 1.4 Documentation of Assembly report'
+    TEXT: BOLD
+    FONT: Bookman Old Style
+  Cell 5: '● Individualized 
+● Trainer guided 
+● Group discussion'
+    FONT: Bookman Old Style
+  Cell 6: 'Computers, screen, Printers'
+    FONT: Bookman Old Style
+  Cell 7: ''
+  Cell 8: ''
+  Cell 9: ''
+
+Row 8:
+  Cell 1: '4'
+    FONT: Bookman Old Style
+  Cell 2: 'Integrated Assessment (for specific module)'
+    COLSPAN: 3
+    FONT: Bookman Old Style
+  Cell 3: 'Integrated Assessment (for specific module)'
+    COLSPAN: 3
+    FONT: Bookman Old Style
+  Cell 4: 'Integrated Assessment (for specific module)'
+    COLSPAN: 3
+    FONT: Bookman Old Style
+  Cell 5: 'Task'
+    FONT: Bookman Old Style
+  Cell 6: 'Consumables'
+    FONT: Bookman Old Style
+  Cell 7: ''
+  Cell 8: 'workshop'
+    FONT: Bookman Old Style
+  Cell 9: ''
