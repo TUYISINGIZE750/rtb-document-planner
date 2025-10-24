@@ -3,62 +3,72 @@ import tempfile
 import os
 
 def fill_session_plan_template(data):
-    """Fill RTB session plan template with user data"""
+    """Fill RTB session plan template with exact user data matching RTB format"""
     template_path = os.path.join(os.path.dirname(__file__), 'rtb_session_plan_template.docx')
     
     if not os.path.exists(template_path):
         raise FileNotFoundError("RTB Session Plan template not found")
     
     doc = Document(template_path)
+    table = doc.tables[0]  # Main session plan table
     
-    # Get the main table (first table)
-    table = doc.tables[0]
-    
-    # Row 2: Sector, Sub-sector, Date
+    # Fill header information (rows 1-3)
     table.rows[1].cells[0].text = f"Sector :    {data.get('sector', '')}"
     table.rows[1].cells[1].text = f"Sub-sector: {data.get('trade', '')}"
     table.rows[1].cells[4].text = f"Date : {data.get('date', '')}"
     
-    # Row 3: Trainer name, Term
     table.rows[2].cells[0].text = f"Lead Trainer's name : {data.get('trainer_name', '')}"
     table.rows[2].cells[4].text = f"TERM : {data.get('term', '')}"
     
-    # Row 4: Module, Week, Trainees, Class
     table.rows[3].cells[0].text = f"Module(Code&Name): {data.get('module_code_title', '')}"
     table.rows[3].cells[1].text = f"Week : {data.get('week', '')}"
     table.rows[3].cells[3].text = f"No. Trainees: {data.get('number_of_trainees', '')}"
     table.rows[3].cells[4].text = f"Class(es): {data.get('class_name', '')}"
     
-    # Row 5: Learning outcome
+    # Fill learning content (rows 4-6)
     table.rows[4].cells[1].text = data.get('learning_outcomes', '')
-    
-    # Row 6: Indicative contents
     table.rows[5].cells[1].text = data.get('indicative_contents', '')
-    
-    # Row 7: Topic
     table.rows[6].cells[0].text = f"Topic of the session: {data.get('topic_of_session', '')}"
     
-    # Row 8: Range and Duration
+    # Fill range and duration (row 7)
+    range_text = f"Range: \n{data.get('indicative_contents', '')}"
+    table.rows[7].cells[0].text = range_text
     table.rows[7].cells[1].text = f"Duration of the session: {data.get('duration', '')}min"
     
-    # Row 10: Facilitation technique
+    # Fill objectives (row 8)
+    objectives_text = data.get('objectives', 'Objectives: By the end of this session every learner should be able to:')
+    table.rows[8].cells[0].text = objectives_text
+    
+    # Fill facilitation technique (row 9)
     table.rows[9].cells[0].text = f"Facilitation technique(s):   {data.get('facilitation_techniques', '')}"
     
-    # Row 11-12: SMART Objectives (if available)
-    if data.get('objectives'):
-        table.rows[10].cells[1].text = data.get('objectives', '')
+    # Fill session activities (rows 11, 13-15)
+    activities = data.get('learning_activities', '')
+    if activities:
+        # Introduction (row 11)
+        table.rows[11].cells[0].text = "Trainer's activity: \nGreets and Make roll calls\nInvolves the learners to set the ground rules\nIntroduces the session topic"
+        table.rows[11].cells[2].text = data.get('resources', 'Attendance sheet\nPPT\nProjector\nComputers\nFlipchart or whiteboard\nMarker pen')
+        table.rows[11].cells[5].text = "5 minutes"
+        
+        # Development/Body (rows 13-15)
+        table.rows[13].cells[0].text = activities[:500] + "..." if len(activities) > 500 else activities
+        table.rows[13].cells[2].text = data.get('resources', 'Computer\nprojector\nPPT\nInstalled operating system')
+        duration_minutes = int(data.get('duration', 40)) - 15  # Total minus intro/conclusion
+        table.rows[13].cells[5].text = f"{duration_minutes}\nminutes"
     
-    # Row 13-15: Learning Activities (if available)
-    if data.get('learning_activities'):
-        table.rows[12].cells[1].text = data.get('learning_activities', '')
+    # Fill conclusion and assessment (rows 17-19)
+    table.rows[17].cells[0].text = "Summary:\nThe trainer involves the learners to summarize the session by asking questions reflecting on the learning objectives"
+    table.rows[17].cells[2].text = "Computer\nprojector"
+    table.rows[17].cells[5].text = "3 minutes"
     
-    # Row 16-17: Resources (if available)
-    if data.get('resources'):
-        table.rows[15].cells[1].text = data.get('resources', '')
+    assessment_text = data.get('assessment_details', 'Trainer gives learners assessment questions related to the session topic')
+    table.rows[18].cells[0].text = f"Assessment/Assignment\nTrainer's activity: \n{assessment_text}"
+    table.rows[18].cells[2].text = "Assessment sheets"
+    table.rows[18].cells[5].text = "5 minutes"
     
-    # Row 18-19: Assessment (if available)
-    if data.get('assessment_details'):
-        table.rows[17].cells[1].text = data.get('assessment_details', '')
+    table.rows[19].cells[0].text = "Evaluation of the session:\nTrainer's activity: \nTrainer involves learners in the evaluation of the session"
+    table.rows[19].cells[2].text = "Self-assessment form"
+    table.rows[19].cells[5].text = "2minutes"
     
     # Save to temp file
     temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
@@ -68,7 +78,7 @@ def fill_session_plan_template(data):
     return temp_file.name
 
 def fill_scheme_template(data):
-    """Fill RTB scheme of work template with user data"""
+    """Fill RTB scheme of work template with exact user data matching RTB format"""
     template_path = os.path.join(os.path.dirname(__file__), 'rtb_scheme_template.docx')
     
     if not os.path.exists(template_path):
@@ -76,33 +86,46 @@ def fill_scheme_template(data):
     
     doc = Document(template_path)
     
-    # Fill Term 1 table (table 0)
+    # Fill header information in first table if it exists
     if len(doc.tables) > 0:
-        table1 = doc.tables[0]
-        # Row 3: Weeks, LO, Duration, IC
-        if len(table1.rows) > 2:
-            table1.rows[2].cells[0].text = data.get('term1_weeks', '')
-            table1.rows[2].cells[1].text = data.get('term1_learning_outcomes', '')
-            table1.rows[2].cells[2].text = data.get('term1_duration', '')
-            table1.rows[2].cells[3].text = data.get('term1_indicative_contents', '')
+        header_table = doc.tables[0]
+        if len(header_table.rows) > 2:
+            # Fill weeks, learning outcomes, duration, indicative contents
+            header_table.rows[2].cells[0].text = data.get('term1_weeks', f"{data.get('date', '')} - End of Term 1")
+            header_table.rows[2].cells[1].text = data.get('term1_learning_outcomes', data.get('learning_outcomes', ''))
+            header_table.rows[2].cells[2].text = data.get('term1_duration', f"{data.get('duration', '40')} hours")
+            header_table.rows[2].cells[3].text = data.get('term1_indicative_contents', data.get('indicative_contents', ''))
+            
+            # Fill learning activities and resources
+            if len(header_table.rows[2].cells) > 4:
+                activities = data.get('learning_activities', 'Practical exercises, Group discussions, Individual assignments')
+                header_table.rows[2].cells[4].text = activities[:200] + "..." if len(activities) > 200 else activities
+                
+                resources = data.get('resources', 'Computers, Projector, Textbooks, Internet access')
+                header_table.rows[2].cells[5].text = resources[:200] + "..." if len(resources) > 200 else resources
+                
+                assessment = data.get('assessment_details', 'Continuous assessment, Practical tests, Portfolio assessment')
+                header_table.rows[2].cells[6].text = assessment[:150] + "..." if len(assessment) > 150 else assessment
+                
+                header_table.rows[2].cells[7].text = "Classroom/Lab"
+                header_table.rows[2].cells[8].text = "Completed successfully"
     
-    # Fill Term 2 table (table 1)
+    # Fill additional term tables if they exist
     if len(doc.tables) > 1:
         table2 = doc.tables[1]
         if len(table2.rows) > 2:
-            table2.rows[2].cells[0].text = data.get('term2_weeks', '')
-            table2.rows[2].cells[1].text = data.get('term2_learning_outcomes', '')
-            table2.rows[2].cells[2].text = data.get('term2_duration', '')
-            table2.rows[2].cells[3].text = data.get('term2_indicative_contents', '')
+            table2.rows[2].cells[0].text = data.get('term2_weeks', 'Term 2 weeks')
+            table2.rows[2].cells[1].text = data.get('term2_learning_outcomes', data.get('learning_outcomes', ''))
+            table2.rows[2].cells[2].text = data.get('term2_duration', f"{data.get('duration', '40')} hours")
+            table2.rows[2].cells[3].text = data.get('term2_indicative_contents', data.get('indicative_contents', ''))
     
-    # Fill Term 3 table (table 2)
     if len(doc.tables) > 2:
         table3 = doc.tables[2]
         if len(table3.rows) > 2:
-            table3.rows[2].cells[0].text = data.get('term3_weeks', '')
-            table3.rows[2].cells[1].text = data.get('term3_learning_outcomes', '')
-            table3.rows[2].cells[2].text = data.get('term3_duration', '')
-            table3.rows[2].cells[3].text = data.get('term3_indicative_contents', '')
+            table3.rows[2].cells[0].text = data.get('term3_weeks', 'Term 3 weeks')
+            table3.rows[2].cells[1].text = data.get('term3_learning_outcomes', data.get('learning_outcomes', ''))
+            table3.rows[2].cells[2].text = data.get('term3_duration', f"{data.get('duration', '40')} hours")
+            table3.rows[2].cells[3].text = data.get('term3_indicative_contents', data.get('indicative_contents', ''))
     
     # Save to temp file
     temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')

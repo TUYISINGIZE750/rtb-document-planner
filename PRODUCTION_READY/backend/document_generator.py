@@ -141,8 +141,14 @@ def generate_session_plan_docx(data):
         content.columns[0].width = Cm(5)
         content.columns[1].width = Cm(12)
         
-        # Fill content
+        # Fill content with all teacher data
         rows_data = [
+            ('Sector', data.get('sector', '')),
+            ('Trade/Sub-sector', data.get('trade', '')),
+            ('RQF Level', data.get('rqf_level', '')),
+            ('Term', data.get('term', '')),
+            ('Week', data.get('week', '')),
+            ('Date', data.get('date', '')),
             ('Trainer Name', data.get('trainer_name', '')),
             ('Class Name', data.get('class_name', '')),
             ('Number of Trainees', str(data.get('number_of_trainees', ''))),
