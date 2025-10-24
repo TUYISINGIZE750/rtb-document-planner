@@ -274,42 +274,40 @@ RESOURCES NEEDED:
 """,
 
         "Jigsaw": f"""
-JIGSAW COOPERATIVE LEARNING STRUCTURE:
+Step 1: Forming groups (home group and expert group)
+Trainer's activity: 
+	• Gives instructions on how to form groups (by counting from 1 to 3)
+	• Asks learners to name their home group
+	• Asks learners who counted same number to join together to form expert groups
 
-1. INTRODUCTION & TOPIC DIVISION ({intro_time} minutes)
-   • Introduce overall topic: {topic}
-   • Divide {topic} into 4-5 subtopics
-   • Explain Jigsaw process and expectations
-   • Form home groups of 4-5 trainees ({num_trainees // 5} groups)
-   • Assign each member a subtopic number
+Learner's activity:
+	• Follow instructions about how to form groups
+	• Name their home groups
+	• Those who counted same number join together
 
-2. EXPERT GROUP PHASE ({main_time // 2} minutes)
-   • Trainees with same subtopic form expert groups
-   • Each expert group studies their assigned subtopic in depth
-   • Use provided resources (texts, videos, materials)
-   • Discuss and master the content together
-   • Prepare to teach others clearly and effectively
-   • Create teaching aids or summaries
+Step 2: Discussion and sharing 
+Trainer's activity: 
+	• Distributes task sheets to expert groups
+	• Monitors expert group discussion
+	• Reminds them of remaining time accordingly
+	• Asks learners to return to their home group
+	• Monitors home group discussion and reminds them of remaining time
 
-3. HOME GROUP TEACHING ({main_time // 2} minutes)
-   • Return to original home groups
-   • Each expert teaches their subtopic (equal time per person)
-   • Home group members take notes and ask questions
-   • Ensure everyone understands all subtopics
-   • Build complete picture of {topic} together
+Learner's activity:
+	• Receive task sheets within their expert group
+	• Discuss their tasks within their expert group
+	• Become aware of remaining time and work accordingly
+	• Re-join their home groups
+	• Everyone explains to his/her group members what he/she learned in expert group
 
-4. ASSESSMENT & SYNTHESIS ({conclusion_time} minutes)
-   • Individual quiz covering all subtopics
-   • Group creates concept map connecting all parts of {topic}
-   • Whole class discussion on how subtopics integrate
-   • Trainer clarifies misconceptions and emphasizes connections
+Step 3: Expert view
+Trainer's activity: 
+	• Gives expert view to whole class
+	• Answers asked questions (if any)
 
-RESOURCES NEEDED:
-• Subtopic resource packets (one per subtopic)
-• Expert group worksheets
-• Teaching planning templates
-• Assessment quiz
-• Concept mapping materials
+Learner's activity:
+	• Follow expert view relating to their topics
+	• Ask questions for clarification if any
 """
     }
     
