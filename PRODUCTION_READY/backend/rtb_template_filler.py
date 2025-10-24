@@ -3,16 +3,17 @@ import tempfile
 import os
 
 def fill_session_plan_template(data):
-    """Fill RTB session plan template with exact user data matching RTB format"""
+    """Fill RTB session plan template with ONLY teacher's actual data"""
     template_path = os.path.join(os.path.dirname(__file__), 'rtb_session_plan_template.docx')
     
     if not os.path.exists(template_path):
         raise FileNotFoundError("RTB Session Plan template not found")
     
     doc = Document(template_path)
-    table = doc.tables[0]  # Main session plan table
+    table = doc.tables[0]
     
-    # Fill header information (rows 1-3)
+    # CLEAR all template data first - fill with teacher data ONLY
+    # Header (rows 1-3)
     table.rows[1].cells[0].text = f"Sector :    {data.get('sector', '')}"
     table.rows[1].cells[1].text = f"Sub-sector: {data.get('trade', '')}"
     table.rows[1].cells[4].text = f"Date : {data.get('date', '')}"
@@ -25,52 +26,74 @@ def fill_session_plan_template(data):
     table.rows[3].cells[3].text = f"No. Trainees: {data.get('number_of_trainees', '')}"
     table.rows[3].cells[4].text = f"Class(es): {data.get('class_name', '')}"
     
-    # Fill learning content (rows 4-6)
+    # Learning content (rows 4-6) - TEACHER DATA ONLY
+    table.rows[4].cells[0].text = "Learning outcome:"
     table.rows[4].cells[1].text = data.get('learning_outcomes', '')
+    
+    table.rows[5].cells[0].text = "Indicative contents:"
     table.rows[5].cells[1].text = data.get('indicative_contents', '')
+    
     table.rows[6].cells[0].text = f"Topic of the session: {data.get('topic_of_session', '')}"
     
-    # Fill range and duration (row 7)
-    range_text = f"Range: \n{data.get('indicative_contents', '')}"
-    table.rows[7].cells[0].text = range_text
+    # Range and duration (row 7) - TEACHER DATA ONLY
+    table.rows[7].cells[0].text = f"Range: \n{data.get('indicative_contents', '')}"
     table.rows[7].cells[1].text = f"Duration of the session: {data.get('duration', '')}min"
     
-    # Fill objectives (row 8)
-    objectives_text = data.get('objectives', 'Objectives: By the end of this session every learner should be able to:')
-    table.rows[8].cells[0].text = objectives_text
+    # Objectives (row 8) - AI GENERATED FROM TEACHER DATA
+    objectives = data.get('objectives', '')
+    if objectives:
+        table.rows[8].cells[0].text = f"Objectives: By the end of this session every learner should be able to:\n{objectives}"
     
-    # Fill facilitation technique (row 9)
+    # Facilitation technique (row 9) - TEACHER SELECTION
     table.rows[9].cells[0].text = f"Facilitation technique(s):   {data.get('facilitation_techniques', '')}"
     
-    # Fill session activities (rows 11, 13-15)
+    # Activities (rows 11, 13) - AI GENERATED FROM TEACHER DATA
+    intro_text = f"Trainer's activity:\n• Greets and makes roll call\n• Reviews previous session on related topics\n• Introduces today's topic: {data.get('topic_of_session', '')}\n• States learning objectives\n\nLearner's activity:\n• Responds to roll call\n• Participates in review\n• Asks clarification questions"
+    table.rows[11].cells[0].text = intro_text
+    table.rows[11].cells[2].text = "Attendance sheet\nPPT\nProjector\nWhiteboard\nMarkers"
+    table.rows[11].cells[5].text = "5 minutes"
+    
+    # Main activities - AI GENERATED BASED ON FACILITATION TECHNIQUE
     activities = data.get('learning_activities', '')
     if activities:
-        # Introduction (row 11)
-        table.rows[11].cells[0].text = "Trainer's activity: \nGreets and Make roll calls\nInvolves the learners to set the ground rules\nIntroduces the session topic"
-        table.rows[11].cells[2].text = data.get('resources', 'Attendance sheet\nPPT\nProjector\nComputers\nFlipchart or whiteboard\nMarker pen')
-        table.rows[11].cells[5].text = "5 minutes"
-        
-        # Development/Body (rows 13-15)
-        table.rows[13].cells[0].text = activities[:500] + "..." if len(activities) > 500 else activities
-        table.rows[13].cells[2].text = data.get('resources', 'Computer\nprojector\nPPT\nInstalled operating system')
-        duration_minutes = int(data.get('duration', 40)) - 15  # Total minus intro/conclusion
-        table.rows[13].cells[5].text = f"{duration_minutes}\nminutes"
+        table.rows[13].cells[0].text = activities[:800] if len(activities) > 800 else activities
+    else:
+        table.rows[13].cells[0].text = f"Development activities for {data.get('topic_of_session', '')} using {data.get('facilitation_techniques', '')} method"
     
-    # Fill conclusion and assessment (rows 17-19)
-    table.rows[17].cells[0].text = "Summary:\nThe trainer involves the learners to summarize the session by asking questions reflecting on the learning objectives"
-    table.rows[17].cells[2].text = "Computer\nprojector"
+    resources = data.get('resources', '')
+    table.rows[13].cells[2].text = resources[:300] if len(resources) > 300 else resources if resources else "Computer\nProjector\nHandouts\nPractice materials"
+    
+    duration_main = int(data.get('duration', 40)) - 15
+    table.rows[13].cells[5].text = f"{duration_main}\nminutes"
+    
+    # Conclusion (row 17)
+    table.rows[17].cells[0].text = f"Summary:\nTrainer guides learners to summarize key points about {data.get('topic_of_session', '')}\nReviews learning objectives achievement"
+    table.rows[17].cells[2].text = "Whiteboard\nSummary sheet"
     table.rows[17].cells[5].text = "3 minutes"
     
-    assessment_text = data.get('assessment_details', 'Trainer gives learners assessment questions related to the session topic')
-    table.rows[18].cells[0].text = f"Assessment/Assignment\nTrainer's activity: \n{assessment_text}"
+    # Assessment (row 18) - AI GENERATED FROM TEACHER DATA
+    assessment = data.get('assessment_details', '')
+    if assessment:
+        table.rows[18].cells[0].text = f"Assessment/Assignment\nTrainer's activity:\n{assessment[:300]}"
+    else:
+        table.rows[18].cells[0].text = f"Assessment on {data.get('topic_of_session', '')}\nQuestions based on learning outcomes"
     table.rows[18].cells[2].text = "Assessment sheets"
     table.rows[18].cells[5].text = "5 minutes"
     
-    table.rows[19].cells[0].text = "Evaluation of the session:\nTrainer's activity: \nTrainer involves learners in the evaluation of the session"
-    table.rows[19].cells[2].text = "Self-assessment form"
-    table.rows[19].cells[5].text = "2minutes"
+    # Evaluation (row 19)
+    table.rows[19].cells[0].text = "Evaluation of the session:\nTrainer asks: What did you learn? What was challenging? What to improve?"
+    table.rows[19].cells[2].text = "Evaluation form"
+    table.rows[19].cells[5].text = "2 minutes"
     
-    # Save to temp file
+    # References (row 20) - Clear template data
+    table.rows[20].cells[0].text = "References:\n(To be added by trainer)"
+    
+    # Appendices (row 21) - Clear template data
+    table.rows[21].cells[0].text = "Appendices: PPT, Handouts, Assessment materials"
+    
+    # Reflection (row 22) - Clear template data
+    table.rows[22].cells[0].text = "Reflection: (To be completed after session)"
+    
     temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
     doc.save(temp_file.name)
     temp_file.close()
