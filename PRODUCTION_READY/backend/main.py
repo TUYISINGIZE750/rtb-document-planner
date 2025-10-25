@@ -23,6 +23,8 @@ CORS(app,
          "https://tuyisingize750.github.io",
          "https://tuyisingize750.github.io/rtb-document-planner",
          "https://schemesession.netlify.app",
+         "https://rtb-document-planner.pages.dev",
+         "https://*.pages.dev",
          "http://localhost:5173",
          "http://localhost:8000"
      ],
@@ -40,7 +42,8 @@ def after_request(response):
         "http://localhost:5173",
         "http://localhost:8000"
     ]
-    if origin in allowed_origins:
+    # Allow all Cloudflare Pages domains
+    if origin and (origin in allowed_origins or '.pages.dev' in origin):
         response.headers.add('Access-Control-Allow-Origin', origin)
     response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
     response.headers.add('Access-Control-Allow-Methods', 'GET,POST,OPTIONS,PUT')
