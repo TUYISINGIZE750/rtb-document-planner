@@ -88,129 +88,101 @@ Learner's activity:
 
 def generate_development_activities(topic, facilitation_technique, learning_activities=None):
     """Generate development/body based on facilitation technique"""
-    if learning_activities:
-        return learning_activities
+    if learning_activities and learning_activities.strip():
+        return learning_activities.strip()
     
     technique_lower = facilitation_technique.lower()
     
     if 'trainer-guided' in technique_lower or 'demonstration' in technique_lower:
         return f"""Trainer's activity:
-\t• Demonstrates {topic} step-by-step
-\t• Explains each step clearly with examples
-\t• Shows best practices and common mistakes to avoid
-\t• Provides guided practice opportunities
-\t• Monitors learner understanding
-\t• Gives immediate feedback
+• Demonstrates {topic} step-by-step
+• Explains each step clearly
+• Provides guided practice
+• Monitors understanding
 
 Learner's activity:
-\t• Observes demonstration carefully
-\t• Takes notes on important steps
-\t• Follows along with trainer's demonstration
-\t• Practices under supervision
-\t• Asks questions when unclear
-\t• Applies learned concepts"""
+• Observes demonstration
+• Takes notes
+• Practices under supervision
+• Asks questions"""
     
     elif 'simulation' in technique_lower or 'role-play' in technique_lower:
         return f"""Trainer's activity:
-\t• Sets up simulation scenario for {topic}
-\t• Assigns roles to learners
-\t• Monitors simulation progress
-\t• Provides guidance when needed
-\t• Facilitates debriefing after simulation
-\t• Highlights key learning points
+• Sets up simulation for {topic}
+• Assigns roles
+• Monitors progress
+• Facilitates debriefing
 
 Learner's activity:
-\t• Participates actively in simulation
-\t• Performs assigned role realistically
-\t• Interacts with other participants
-\t• Applies knowledge to scenario
-\t• Reflects on experience
-\t• Shares observations and insights"""
+• Participates in simulation
+• Performs assigned role
+• Applies knowledge
+• Reflects on experience"""
     
     elif 'group work' in technique_lower or 'collaborative' in technique_lower:
         return f"""Trainer's activity:
-\t• Assigns group tasks related to {topic}
-\t• Provides resources and guidelines
-\t• Circulates among groups to monitor progress
-\t• Facilitates inter-group discussions
-\t• Ensures all members participate
-\t• Guides groups toward solutions
+• Assigns group tasks on {topic}
+• Provides resources
+• Monitors progress
+• Facilitates discussions
 
 Learner's activity:
-\t• Works collaboratively in assigned groups
-\t• Shares ideas and knowledge with team
-\t• Divides tasks among group members
-\t• Researches and analyzes information
-\t• Prepares group presentation
-\t• Presents findings to class"""
+• Works in groups
+• Shares ideas
+• Completes tasks
+• Presents findings"""
     
     elif 'hands-on' in technique_lower or 'practical' in technique_lower:
         return f"""Trainer's activity:
-\t• Provides practical exercises on {topic}
-\t• Demonstrates proper techniques and safety
-\t• Distributes tools and materials
-\t• Supervises hands-on practice
-\t• Provides individual assistance
-\t• Ensures safety protocols are followed
+• Provides practical exercises on {topic}
+• Demonstrates techniques
+• Supervises practice
+• Ensures safety
 
 Learner's activity:
-\t• Performs hands-on practice
-\t• Follows safety procedures
-\t• Uses tools and equipment correctly
-\t• Completes practical tasks
-\t• Troubleshoots problems independently
-\t• Seeks help when needed"""
+• Performs hands-on practice
+• Follows safety procedures
+• Uses tools correctly
+• Completes tasks"""
     
     elif 'discussion' in technique_lower or 'brainstorming' in technique_lower:
         return f"""Trainer's activity:
-\t• Facilitates discussion on {topic}
-\t• Poses open-ended questions
-\t• Encourages diverse viewpoints
-\t• Records key points on board
-\t• Guides discussion toward learning objectives
-\t• Summarizes main ideas
+• Facilitates discussion on {topic}
+• Poses questions
+• Encourages participation
+• Summarizes key points
 
 Learner's activity:
-\t• Participates actively in discussion
-\t• Shares ideas and experiences
-\t• Listens to others' perspectives
-\t• Asks thoughtful questions
-\t• Builds on others' contributions
-\t• Takes notes on key insights"""
+• Participates in discussion
+• Shares ideas
+• Listens to others
+• Takes notes"""
     
     elif 'project-based' in technique_lower:
         return f"""Trainer's activity:
-\t• Introduces project on {topic}
-\t• Explains project requirements and timeline
-\t• Provides resources and support
-\t• Monitors project progress
-\t• Offers feedback and guidance
-\t• Facilitates project presentations
+• Introduces project on {topic}
+• Explains requirements
+• Monitors progress
+• Provides feedback
 
 Learner's activity:
-\t• Plans project approach
-\t• Conducts research on topic
-\t• Develops project deliverables
-\t• Collaborates with team members
-\t• Solves problems creatively
-\t• Presents completed project"""
+• Plans project
+• Conducts research
+• Develops deliverables
+• Presents project"""
     
     else:
         return f"""Trainer's activity:
-\t• Presents content on {topic}
-\t• Provides examples and explanations
-\t• Engages learners with questions
-\t• Monitors understanding
-\t• Provides practice opportunities
-\t• Gives feedback
+• Presents content on {topic}
+• Provides examples
+• Engages learners
+• Monitors understanding
 
 Learner's activity:
-\t• Listens and takes notes
-\t• Participates in activities
-\t• Practices new skills
-\t• Asks questions
-\t• Completes exercises
-\t• Applies learning"""
+• Listens and takes notes
+• Participates in activities
+• Practices skills
+• Asks questions"""
 
 def generate_resources(facilitation_technique, custom_resources=None):
     """Generate resources based on facilitation technique"""
