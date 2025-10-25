@@ -2,89 +2,85 @@
 
 def generate_introduction_activities(topic, facilitation_technique):
     """Generate introduction based on facilitation technique"""
-    base = f"""Trainer's activity: 
-\t• Greets and makes roll call
-\t• Involves learners to set ground rules
-\t• Involves learners to review previous session
-\t• Announces topic: {topic}"""
+    base = f"""Trainer's activity:
+• Greets and makes roll call
+• Involves learners to set ground rules
+• Reviews previous session
+• Announces topic: {topic}"""
     
     technique_lower = facilitation_technique.lower()
     
     if 'trainer-guided' in technique_lower or 'demonstration' in technique_lower:
         return base + """
-\t• Explains objectives and demonstrates key concepts
-\t• Shows examples and models the process
+• Explains objectives clearly
+• Demonstrates key concepts
 
-Learner's activity: 
-\t• Greets and replies to roll call
-\t• Participates in setting ground rules
-\t• Observes demonstration attentively
-\t• Takes notes on key points
-\t• Asks clarifications if any"""
+Learner's activity:
+• Greets and replies to roll call
+• Participates in setting ground rules
+• Observes demonstration
+• Takes notes
+• Asks clarifications"""
     
     elif 'simulation' in technique_lower or 'role-play' in technique_lower:
         return base + """
-\t• Explains objectives and simulation scenario
-\t• Assigns roles and sets up simulation environment
-\t• Provides guidelines for the activity
+• Explains simulation scenario
+• Assigns roles to learners
 
-Learner's activity: 
-\t• Greets and replies to roll call
-\t• Participates in setting ground rules
-\t• Understands assigned roles
-\t• Prepares for simulation activity
-\t• Asks clarifications if any"""
+Learner's activity:
+• Greets and replies to roll call
+• Participates in setting ground rules
+• Understands assigned roles
+• Prepares for simulation
+• Asks clarifications"""
     
     elif 'group work' in technique_lower or 'collaborative' in technique_lower:
         return base + """
-\t• Explains objectives and group work instructions
-\t• Divides learners into groups
-\t• Assigns tasks to each group
+• Explains group work instructions
+• Divides learners into groups
 
-Learner's activity: 
-\t• Greets and replies to roll call
-\t• Participates in setting ground rules
-\t• Forms groups as instructed
-\t• Understands group tasks
-\t• Asks clarifications if any"""
+Learner's activity:
+• Greets and replies to roll call
+• Participates in setting ground rules
+• Forms groups as instructed
+• Understands group tasks
+• Asks clarifications"""
     
     elif 'hands-on' in technique_lower or 'practical' in technique_lower:
         return base + """
-\t• Explains objectives and practical exercise
-\t• Demonstrates safety procedures
-\t• Distributes materials and tools
+• Explains practical exercise
+• Demonstrates safety procedures
 
-Learner's activity: 
-\t• Greets and replies to roll call
-\t• Participates in setting ground rules
-\t• Observes safety demonstration
-\t• Collects materials
-\t• Asks clarifications if any"""
+Learner's activity:
+• Greets and replies to roll call
+• Participates in setting ground rules
+• Observes safety demonstration
+• Collects materials
+• Asks clarifications"""
     
     elif 'discussion' in technique_lower or 'brainstorming' in technique_lower:
         return base + """
-\t• Explains objectives and discussion topics
-\t• Poses thought-provoking questions
-\t• Encourages participation
+• Explains discussion topics
+• Poses thought-provoking questions
 
-Learner's activity: 
-\t• Greets and replies to roll call
-\t• Participates in setting ground rules
-\t• Prepares to share ideas
-\t• Thinks about discussion questions
-\t• Asks clarifications if any"""
+Learner's activity:
+• Greets and replies to roll call
+• Participates in setting ground rules
+• Prepares to share ideas
+• Thinks about questions
+• Asks clarifications"""
     
     else:
         return base + """
-\t• Explains objectives
-\t• Provides overview of the session
+• Explains objectives
+• Provides session overview
 
-Learner's activity: 
-\t• Greets and replies to roll call
-\t• Participates in setting ground rules
-\t• Participates in review
-\t• Reads and participates in explaining objectives
-\t• Asks clarifications if any"""
+Learner's activity:
+• Greets and replies to roll call
+• Participates in setting ground rules
+• Participates in review
+• Listens to objectives
+• Asks clarifications"""
 
 def generate_development_activities(topic, facilitation_technique, learning_activities=None):
     """Generate development/body based on facilitation technique"""

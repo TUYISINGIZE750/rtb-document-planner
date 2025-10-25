@@ -9,7 +9,7 @@ from facilitation_content_generator import (
     generate_resources,
     generate_assessment
 )
-from content_formatter import clean_text, format_objectives, format_resources
+from content_formatter import clean_text, format_objectives, format_resources, generate_references
 
 def preserve_cell_format(cell, new_text):
     """Update cell text while preserving all formatting"""
@@ -83,7 +83,7 @@ def fill_session_plan_template(data):
     preserve_cell_format(table.rows[7].cells[0], f"Range:\n{indicative_contents}")
     preserve_cell_format(table.rows[7].cells[1], f"Duration of the session: {data.get('duration', '')}min")
     
-    # Row 8: Objectives
+    # Row 8: Objectives - SMART formatted
     objectives = format_objectives(data.get('objectives', ''))
     preserve_cell_format(table.rows[8].cells[0], f"Objectives: By the end of this session every learner should be able to:\n{objectives}")
     
@@ -91,12 +91,12 @@ def fill_session_plan_template(data):
     facilitation = clean_text(data.get('facilitation_techniques', ''))
     preserve_cell_format(table.rows[9].cells[0], f"Facilitation technique(s): {facilitation}")
     
-    # Row 11: Introduction - based on facilitation technique
+    # Row 11: Introduction - clean formatting
     topic = data.get('topic_of_session', '')
     facilitation = data.get('facilitation_techniques', 'Trainer-guided')
-    intro = generate_introduction_activities(topic, facilitation)
+    intro = clean_text(generate_introduction_activities(topic, facilitation))
     preserve_cell_format(table.rows[11].cells[0], intro)
-    preserve_cell_format(table.rows[11].cells[2], "Attendance sheet\nPPT\nProjector\nComputers\nFlipchart\nwhiteboard\nMarker pen")
+    preserve_cell_format(table.rows[11].cells[2], "Attendance sheet\nPPT\nProjector\nComputers\nFlipchart\nWhiteboard\nMarker pen")
     preserve_cell_format(table.rows[11].cells[5], "5 minutes")
     
     # Row 13: Development - based on facilitation technique
@@ -108,8 +108,8 @@ def fill_session_plan_template(data):
     duration_main = int(data.get('duration', 40)) - 15
     preserve_cell_format(table.rows[13].cells[5], f"{duration_main}\nminutes")
     
-    # Row 17: Conclusion
-    conclusion = "Summary:\nThe trainer involves learners to summarize the session by asking questions reflecting on learning objectives.\nThe learners summarize the session by responding to asked questions."
+    # Row 17: Conclusion - clean formatting
+    conclusion = "Trainer's activity:\n• Involves learners to summarize the session\n• Asks questions reflecting on learning objectives\n• Links to next session\n\nLearner's activity:\n• Summarizes key points learned\n• Responds to questions\n• Asks clarifications"
     preserve_cell_format(table.rows[17].cells[0], conclusion)
     preserve_cell_format(table.rows[17].cells[2], "Computer\nProjector")
     preserve_cell_format(table.rows[17].cells[5], "3 minutes")
@@ -120,15 +120,25 @@ def fill_session_plan_template(data):
     preserve_cell_format(table.rows[18].cells[2], "Assessment sheets")
     preserve_cell_format(table.rows[18].cells[5], "5 minutes")
     
-    # Row 19: Evaluation
-    evaluation = "Trainer's activity:\n  • Trainer involves learners in session evaluation\n  • Asks: How was the session? What to improve?\n  • Links current session to next one\n\nLearner's activity:\n  • Learners answer questions\n  • Understand what will be covered in next session"
+    # Row 19: Evaluation - clean formatting
+    evaluation = "Trainer's activity:\n• Involves learners in session evaluation\n• Asks: How was the session?\n• Notes areas for improvement\n\nLearner's activity:\n• Provides feedback on session\n• Shares learning experience"
     preserve_cell_format(table.rows[19].cells[0], evaluation)
     preserve_cell_format(table.rows[19].cells[2], "Self-assessment form")
     preserve_cell_format(table.rows[19].cells[5], "2 minutes")
     
-    # Row 20: References
-    references = clean_text(data.get('references', '(To be added by trainer)'))
-    preserve_cell_format(table.rows[20].cells[0], f"References:\nBibliography\n\n{references}")
+    # Row 20: References - AI generated based on content
+    custom_refs = data.get('references', '').strip()
+    if custom_refs and custom_refs != '(To be added by trainer)':
+        references = clean_text(custom_refs)
+    else:
+        # Generate references based on module content
+        references = generate_references(
+            data.get('module_code_title', ''),
+            data.get('topic_of_session', ''),
+            data.get('learning_outcomes', ''),
+            data.get('indicative_contents', '')
+        )
+    preserve_cell_format(table.rows[20].cells[0], f"References:\n\n{references}")
     
     # Row 21: Appendices
     preserve_cell_format(table.rows[21].cells[0], "Appendices: PPT, Task Sheets, assessment")
