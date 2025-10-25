@@ -664,15 +664,19 @@
             document.getElementById('navLinks').classList.toggle('active');
         }
         
-        // Check if user is already logged in
+        // Check if user is already logged in and redirect to appropriate dashboard
         function checkExistingSession() {
             try {
                 const session = localStorage.getItem('rtb_auth_session');
                 if (session) {
                     const sessionData = JSON.parse(session);
                     if (sessionData && sessionData.name) {
-                        // User is logged in, show dashboard link
-                        console.log('User logged in:', sessionData.name);
+                        // User is logged in, redirect to appropriate dashboard
+                        if (sessionData.role === 'admin') {
+                            window.location.replace('admin.html');
+                        } else {
+                            window.location.replace('teacher-dashboard.html');
+                        }
                     }
                 }
             } catch (e) {
