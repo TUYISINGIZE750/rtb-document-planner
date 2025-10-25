@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Sign In - RTB Document Planner</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            padding: 1.5rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #e50914;
+            text-decoration: none;
+        }
+        .main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        .login-container {
+            background: white;
+            padding: 4rem 4.5rem;
+            max-width: 450px;
+            width: 100%;
+            border: 1px solid #e6e6e6;
+            border-radius: 4px;
+        }
+        h1 {
+            font-size: 2rem;
+            font-weight: 500;
+            margin-bottom: 1.75rem;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        input {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border: 1px solid #8c8c8c;
+            border-radius: 4px;
+            font-size: 1rem;
+            background: white;
+            color: #333;
+        }
+        input:focus {
+            outline: none;
+            border-color: #0071eb;
+        }
+        .error-message {
+            color: #e87c03;
+            font-size: 0.8125rem;
+            margin-top: 0.375rem;
+            display: none;
+        }
+        .error-message.show {
+            display: block;
+        }
+        .btn-primary {
+            width: 100%;
+            padding: 1rem;
+            background: #e50914;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 1.5rem;
+            transition: background 0.2s;
+        }
+        .btn-primary:hover {
+            background: #c11119;
+        }
+        .btn-primary:disabled {
+            background: #e50914;
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            margin: 0.75rem 0;
+        }
+        .checkbox-wrapper input[type="checkbox"] {
+            width: auto;
+            margin-right: 0.5rem;
+        }
+        .checkbox-wrapper label {
+            font-size: 0.8125rem;
+            color: #737373;
+        }
+        .footer {
+            background: #f3f3f3;
+            padding: 2rem 3rem;
+            color: #737373;
+            font-size: 0.8125rem;
+            text-align: center;
+        }
+        .recaptcha-text {
+            color: #8c8c8c;
+            font-size: 0.8125rem;
+            margin-top: 1rem;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="index.html" class="logo">RTB Planner</a>
+    </div>
+
+    <div class="main">
+        <div class="login-container">
+            <h1><i class="fas fa-shield-alt" style="color: #e50914; margin-right: 0.5rem;"></i>Administrator Login</h1>
+            <form id="loginForm">
+                <div class="form-group">
+                    <input type="text" id="phone" placeholder="Phone number" value="+250789751597" required>
+                    <div class="error-message" id="phoneError">Please enter a valid phone number.</div>
+                </div>
+                
+                <div class="form-group">
+                    <input type="password" id="password" placeholder="Password" value="admin123" required>
+                    <div class="error-message" id="passwordError">Your password must contain between 4 and 60 characters.</div>
+                </div>
+                
+                <button type="submit" class="btn-primary" id="signInBtn">Sign In</button>
+                
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="remember" checked>
+                    <label for="remember">Remember me</label>
+                </div>
+                
+                <div class="recaptcha-text">
+                    This page is for system administrators only.
+                </div>
+                
+                <div style="text-align: center; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #e6e6e6;">
+                    <p style="color: #737373; font-size: 0.875rem; margin-bottom: 0.5rem;">Are you a teacher?</p>
+                    <a href="login.html" style="color: #10b981; text-decoration: none; font-weight: 600;"><i class="fas fa-chalkboard-teacher"></i> Teacher Login</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="footer">
+        © 2025 RTB Document Planner. All rights reserved. | Developed for TVET Excellence
+    </div>
+
+    <script src="config.js"></script>
+    <script src="auth.js"></script>
+    <script>
+        // Clear any existing session and logout markers on admin login page load
+        localStorage.removeItem('rtb_auth_session');
+        sessionStorage.removeItem('rtb_auth_session');
+        localStorage.removeItem('rtb_logged_out');
+        sessionStorage.removeItem('rtb_logged_out');
+        
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const phone = document.getElementById('phone').value.trim();
+            const password = document.getElementById('password').value;
+            const remember = document.getElementById('remember').checked;
+            
+            document.getElementById('phoneError').classList.remove('show');
+            document.getElementById('passwordError').classList.remove('show');
+            
+            if (!phone) {
+                document.getElementById('phoneError').classList.add('show');
+                return;
+            }
+            
+            if (password.length < 4) {
+                document.getElementById('passwordError').classList.add('show');
+                return;
+            }
+            
+            const btn = document.getElementById('signInBtn');
+            btn.disabled = true;
+            btn.textContent = 'Signing in...';
+            
+            try {
+                const result = await loginUser(phone, password, remember);
+                
+                if (result.success) {
+                    const session = getCurrentSession();
+                    console.log('Admin login successful, redirecting...', session);
+                    
+                    // Use setTimeout to ensure session is saved
+                    setTimeout(() => {
+                        if (session && session.role === 'admin') {
+                            window.location.replace('admin-final.html');
+                        } else {
+                            window.location.replace('index.html');
+                        }
+                    }, 100);
+                } else {
+                    document.getElementById('passwordError').textContent = result.message;
+                    document.getElementById('passwordError').classList.add('show');
+                    btn.disabled = false;
+                    btn.textContent = 'Sign In';
+                }
+            } catch (error) {
+                console.error('Admin login error:', error);
+                document.getElementById('passwordError').textContent = 'An error occurred. Please try again.';
+                document.getElementById('passwordError').classList.add('show');
+                btn.disabled = false;
+                btn.textContent = 'Sign In';
+            }
+        });
+    </script>
+</body>
+</html>

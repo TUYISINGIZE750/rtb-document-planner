@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RTB Admin Panel</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f7fa; }
+        .header { background: #6366f1; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 2rem; }
+        .card { background: white; border-radius: 0.5rem; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .btn { padding: 0.5rem 1rem; border: none; border-radius: 0.25rem; cursor: pointer; font-weight: 600; }
+        .btn-primary { background: #6366f1; color: white; }
+        .btn-success { background: #10b981; color: white; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-secondary { background: #6b7280; color: white; }
+        .users-table { width: 100%; border-collapse: collapse; }
+        .users-table th, .users-table td { padding: 0.75rem; text-align: left; border-bottom: 1px solid #e5e7eb; }
+        .users-table th { background: #f9fafb; font-weight: 600; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .stat-card { background: white; padding: 1.5rem; border-radius: 0.5rem; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .stat-number { font-size: 2rem; font-weight: bold; color: #6366f1; }
+        .stat-label { color: #6b7280; margin-top: 0.5rem; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1><i class="fas fa-shield-alt"></i> RTB Admin Panel</h1>
+        <div>
+            <span id="adminName">Loading...</span>
+            <button onclick="logout()" class="btn btn-secondary" style="margin-left: 1rem;">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <div class="stat-number" id="totalUsers">-</div>
+                <div class="stat-label">Total Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="activeUsers">-</div>
+                <div class="stat-label">Active Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="premiumUsers">-</div>
+                <div class="stat-label">Premium Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalDownloads">-</div>
+                <div class="stat-label">Total Downloads</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2><i class="fas fa-users"></i> Users Management</h2>
+            <button onclick="loadUsers()" class="btn btn-primary" style="margin-bottom: 1rem;">
+                <i class="fas fa-refresh"></i> Refresh Users
+            </button>
+            <div style="overflow-x: auto;">
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Institution</th>
+                            <th>Status</th>
+                            <th>Downloads</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 2rem;">
+                                <i class="fas fa-spinner fa-spin"></i> Loading users...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="auth.js"></script>
+    <script>
+        function checkAdminAuth() {
+            const session = getCurrentSession();
+            if (!session || session.role !== 'admin') {
+                alert('Admin access required');
+                window.location.href = 'login.html';
+                return false;
+            }
+            document.getElementById('adminName').textContent = session.name;
+            return true;
+        }
+
+        function logout() {
+            if (confirm('Logout?')) {
+                logoutUser();
+            }
+        }
+
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_BASE}/stats`);
+                if (response.ok) {
+                    const stats = await response.json();
+                    document.getElementById('totalUsers').textContent = stats.total_users;
+                    document.getElementById('activeUsers').textContent = stats.active_users;
+                    document.getElementById('premiumUsers').textContent = stats.premium_users;
+                    document.getElementById('totalDownloads').textContent = stats.total_downloads;
+                }
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        async function loadUsers() {
+            try {
+                const response = await fetch(`${API_BASE}/users/`);
+                if (response.ok) {
+                    const users = await response.json();
+                    displayUsers(users);
+                }
+            } catch (error) {
+                console.error('Error loading users:', error);
+            }
+        }
+
+        function displayUsers(users) {
+            const tbody = document.getElementById('usersTableBody');
+            if (users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No users found</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = users.map(user => `
+                <tr>
+                    <td>${user.name}</td>
+                    <td>${user.phone}</td>
+                    <td>${user.institution || 'N/A'}</td>
+                    <td>
+                        <span style="background: ${user.is_active ? '#10b981' : '#ef4444'}; color: white; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem;">
+                            ${user.is_active ? 'ACTIVE' : 'INACTIVE'}
+                        </span>
+                        ${user.is_premium ? '<br><span style="background: #f59e0b; color: white; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem;">PREMIUM</span>' : ''}
+                    </td>
+                    <td>
+                        Plans: ${user.session_plans_downloaded}/${user.session_plans_limit}<br>
+                        Schemes: ${user.schemes_downloaded}/${user.schemes_limit}
+                    </td>
+                    <td>
+                        <button onclick="toggleUserStatus('${user.phone}', ${!user.is_active})" class="btn ${user.is_active ? 'btn-danger' : 'btn-success'}" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">
+                            ${user.is_active ? 'Deactivate' : 'Activate'}
+                        </button>
+                        <button onclick="togglePremium('${user.phone}', ${!user.is_premium})" class="btn btn-primary" style="font-size: 0.75rem; padding: 0.25rem 0.5rem; margin-left: 0.25rem;">
+                            ${user.is_premium ? 'Remove Premium' : 'Make Premium'}
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function toggleUserStatus(phone, newStatus) {
+            try {
+                const response = await fetch(`${API_BASE}/users/${encodeURIComponent(phone)}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ is_active: newStatus })
+                });
+                if (response.ok) {
+                    alert(`User ${newStatus ? 'activated' : 'deactivated'} successfully`);
+                    loadUsers();
+                }
+            } catch (error) {
+                alert('Error updating user status');
+            }
+        }
+
+        async function togglePremium(phone, newStatus) {
+            try {
+                const response = await fetch(`${API_BASE}/users/${encodeURIComponent(phone)}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        is_premium: newStatus,
+                        session_plans_limit: newStatus ? 999 : 2,
+                        schemes_limit: newStatus ? 999 : 2
+                    })
+                });
+                if (response.ok) {
+                    alert(`User premium status ${newStatus ? 'enabled' : 'disabled'} successfully`);
+                    loadUsers();
+                }
+            } catch (error) {
+                alert('Error updating premium status');
+            }
+        }
+
+        // Prevent back button after logout
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+                const session = getCurrentSession();
+                if (!session || session.role !== 'admin' || wasExplicitlyLoggedOut()) {
+                    window.location.replace('login.html');
+                }
+            }
+        });
+        
+        window.addEventListener('popstate', function() {
+            if (!getCurrentSession() || wasExplicitlyLoggedOut()) {
+                window.location.replace('login.html');
+            }
+        });
+        
+        // Periodic session check
+        setInterval(function() {
+            const session = getCurrentSession();
+            if (!session || session.role !== 'admin' || wasExplicitlyLoggedOut()) {
+                window.location.replace('login.html');
+            }
+        }, 5000);
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if (checkAdminAuth()) {
+                loadStats();
+                loadUsers();
+            }
+        });
+    </script>
+</body>
+</html>

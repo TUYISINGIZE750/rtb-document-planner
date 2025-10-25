@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Sign In - RTB Document Planner</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            padding: 1.5rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #10b981;
+            text-decoration: none;
+        }
+        .main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        .login-container {
+            background: white;
+            padding: 4rem 4.5rem;
+            max-width: 450px;
+            width: 100%;
+            border: 1px solid #e6e6e6;
+            border-radius: 4px;
+        }
+        h1 {
+            font-size: 2rem;
+            font-weight: 500;
+            margin-bottom: 1.75rem;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        input {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border: 1px solid #8c8c8c;
+            border-radius: 4px;
+            font-size: 1rem;
+            background: white;
+            color: #333;
+        }
+        input:focus {
+            outline: none;
+            border-color: #0071eb;
+        }
+        .error-message {
+            color: #e87c03;
+            font-size: 0.8125rem;
+            margin-top: 0.375rem;
+            display: none;
+        }
+        .error-message.show {
+            display: block;
+        }
+        .btn-primary {
+            width: 100%;
+            padding: 1rem;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 1.5rem;
+            transition: background 0.2s;
+        }
+        .btn-primary:hover {
+            background: #059669;
+        }
+        .btn-primary:disabled {
+            background: #10b981;
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            margin: 0.75rem 0;
+        }
+        .checkbox-wrapper input[type="checkbox"] {
+            width: auto;
+            margin-right: 0.5rem;
+        }
+        .checkbox-wrapper label {
+            font-size: 0.8125rem;
+            color: #737373;
+        }
+        .footer {
+            background: #f3f3f3;
+            padding: 2rem 3rem;
+            color: #737373;
+            font-size: 0.8125rem;
+            text-align: center;
+        }
+        .recaptcha-text {
+            color: #8c8c8c;
+            font-size: 0.8125rem;
+            margin-top: 1rem;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="index.html" class="logo">RTB Planner</a>
+    </div>
+
+    <div class="main">
+        <div class="login-container">
+            <h1><i class="fas fa-chalkboard-teacher" style="color: #10b981; margin-right: 0.5rem;"></i>Teacher Sign In</h1>
+            <form id="loginForm">
+                <div class="form-group">
+                    <input type="text" id="phone" placeholder="Phone number" required>
+                    <div class="error-message" id="phoneError">Please enter a valid phone number.</div>
+                </div>
+                
+                <div class="form-group">
+                    <input type="password" id="password" placeholder="Password" required>
+                    <div class="error-message" id="passwordError">Your password must contain between 4 and 60 characters.</div>
+                </div>
+                
+                <button type="submit" class="btn-primary" id="signInBtn">Sign In</button>
+                
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="remember" checked>
+                    <label for="remember">Remember me</label>
+                </div>
+                
+                <div class="recaptcha-text">
+                    This page is for teachers and staff only.
+                </div>
+                
+                <div style="text-align: center; margin-top: 1.5rem;">
+                    <p style="color: #737373; font-size: 0.875rem; margin-bottom: 0.5rem;">Don't have an account?</p>
+                    <a href="register.html" style="color: #10b981; text-decoration: none; font-weight: 600;">Register as Teacher</a>
+                </div>
+                
+                <div style="text-align: center; margin-top: 1rem;">
+                    <p style="color: #737373; font-size: 0.875rem; margin-bottom: 0.5rem;">Administrator?</p>
+                    <a href="direct-login.html" style="color: #e50914; text-decoration: none; font-weight: 600;"><i class="fas fa-shield-alt"></i> Admin Login</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="footer">
+        © 2025 RTB Document Planner. All rights reserved. | Developed for TVET Excellence
+    </div>
+
+    <!-- Config MUST load first before any auth functions -->
+    <!-- Cache-busting timestamp forces CDN/browser to fetch fresh code -->
+    <script src="config.js?t=20250120T105300Z"></script>
+    <script src="auth.js?t=20250120T105300Z"></script>
+    <script>
+        // Clear any existing session on login page load
+        localStorage.removeItem('rtb_auth_session');
+        sessionStorage.removeItem('rtb_auth_session');
+        
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const phone = document.getElementById('phone').value.trim();
+            const password = document.getElementById('password').value;
+            const remember = document.getElementById('remember').checked;
+            
+            document.getElementById('phoneError').classList.remove('show');
+            document.getElementById('passwordError').classList.remove('show');
+            
+            if (!phone) {
+                document.getElementById('phoneError').classList.add('show');
+                return;
+            }
+            
+            if (password.length < 4) {
+                document.getElementById('passwordError').classList.add('show');
+                return;
+            }
+            
+            const btn = document.getElementById('signInBtn');
+            btn.disabled = true;
+            btn.textContent = 'Signing in...';
+            
+            try {
+                const result = await loginUser(phone, password, remember);
+                
+                if (result.success) {
+                    const session = getCurrentSession();
+                    console.log('Login successful, redirecting...', session);
+                    
+                    // Use setTimeout to ensure session is saved
+                    setTimeout(() => {
+                        if (session && session.role === 'admin') {
+                            window.location.replace('admin.html');
+                        } else {
+                            window.location.replace('teacher-dashboard.html');
+                        }
+                    }, 100);
+                } else {
+                    document.getElementById('phoneError').textContent = result.message;
+                    document.getElementById('phoneError').classList.add('show');
+                    btn.disabled = false;
+                    btn.textContent = 'Sign In';
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                document.getElementById('phoneError').textContent = 'An error occurred. Please try again.';
+                document.getElementById('phoneError').classList.add('show');
+                btn.disabled = false;
+                btn.textContent = 'Sign In';
+            }
+        });
+        
+        // Original inline fallback code (commented for reference)
+        /*
+        try {
+            const response = await fetch(`${API_BASE}/users/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phone, password })
+            });
+            
+            if (response.ok) {
+                const user = await response.json();
+                
+                // Create session with expiry
+                const session = {
+                    ...user,
+                    loggedInAt: new Date().toISOString(),
+                    expiresAt: new Date(Date.now() + (remember ? 30 : 1) * 24 * 60 * 60 * 1000).toISOString(),
+                    remember
+                };
+                    
+                    // Clear any old session data
+                    localStorage.clear();
+                    sessionStorage.clear();
+                    
+                    // Save new session
+                    localStorage.setItem(AUTH_KEY, JSON.stringify(session));
+                    
+                    // Redirect based on role
+                    if (user.role === 'admin') {
+                        window.location.replace('admin-fixed.html');
+                    } else {
+                        window.location.replace('index.html');
+                    }
+                } else {
+                    const error = await response.json();
+                    document.getElementById('passwordError').textContent = error.detail || 'Invalid credentials';
+                    document.getElementById('passwordError').classList.add('show');
+                    btn.disabled = false;
+                    btn.textContent = 'Sign In';
+                }
+            } catch (error) {
+                document.getElementById('passwordError').textContent = 'Network error. Please check if backend is running.';
+                document.getElementById('passwordError').classList.add('show');
+                btn.disabled = false;
+                btn.textContent = 'Sign In';
+            }
+        });
+        */
+    </script>
+    
+
+</body>
+</html>

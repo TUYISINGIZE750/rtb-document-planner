@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register - RTB Document Planner</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .container { background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 10px 40px rgba(0,0,0,0.3); max-width: 400px; width: 90%; }
+        h1 { color: #333; margin-bottom: 1.5rem; text-align: center; }
+        .form-group { margin-bottom: 1rem; }
+        label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: #333; }
+        input { width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 0.5rem; font-size: 1rem; }
+        input:focus { outline: none; border-color: #6366f1; }
+        .btn { width: 100%; padding: 0.75rem; background: #6366f1; color: white; border: none; border-radius: 0.5rem; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 1rem; }
+        .btn:hover { background: #5855eb; }
+        .link { text-align: center; margin-top: 1rem; color: #666; }
+        .link a { color: #6366f1; text-decoration: none; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-user-plus"></i> Create Account</h1>
+        <form id="registerForm">
+            <div class="form-group">
+                <label>Full Name *</label>
+                <input type="text" id="name" required placeholder="John Doe">
+            </div>
+            <div class="form-group">
+                <label>Phone Number *</label>
+                <input type="tel" id="phone" required placeholder="+250788123456">
+            </div>
+            <div class="form-group">
+                <label>Institution</label>
+                <input type="text" id="institution" placeholder="Your School/Institution">
+            </div>
+            <div class="form-group">
+                <label>Password *</label>
+                <input type="password" id="password" required placeholder="Enter password">
+            </div>
+            <div class="form-group">
+                <label>Confirm Password *</label>
+                <input type="password" id="confirmPassword" required placeholder="Confirm password">
+            </div>
+            <button type="submit" class="btn">
+                <i class="fas fa-check"></i> Register
+            </button>
+        </form>
+        <div class="link">
+            Already have an account? <a href="login.html">Login here</a>
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script>
+
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById('name').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const institution = document.getElementById('institution').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (password !== confirmPassword) {
+                alert('Passwords do not match!');
+                return;
+            }
+
+            if (password.length < 6) {
+                alert('Password must be at least 6 characters!');
+                return;
+            }
+
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
+            btn.disabled = true;
+
+            try {
+                console.log('🔄 Registering user:', { name, phone, institution });
+                console.log('🌐 API URL:', `${API_BASE}/users/register`);
+                
+                // Test API connection first
+                const testResponse = await fetch(`${API_BASE}/`, {
+                    method: 'GET',
+                    mode: 'cors',
+                    credentials: 'omit'
+                });
+                console.log('🧪 API test response:', testResponse.status);
+                
+                const response = await fetch(`${API_BASE}/users/register`, {
+                    method: 'POST',
+                    mode: 'cors',
+                    credentials: 'omit',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ name, phone, password, institution })
+                });
+
+                console.log('📡 Registration response status:', response.status);
+
+                if (response.ok) {
+                    alert('✅ Registration successful! You can now login.');
+                    window.location.href = 'login.html';
+                } else {
+                    const errorText = await response.text();
+                    console.error('Registration error:', errorText);
+                    let errorMessage = 'Registration failed';
+                    try {
+                        const error = JSON.parse(errorText);
+                        errorMessage = error.detail || error.message || 'Registration failed';
+                    } catch (e) {
+                        errorMessage = `Registration failed (${response.status})`;
+                    }
+                    alert(`❌ ${errorMessage}`);
+                }
+            } catch (error) {
+                console.error('🚫 Network error details:', error);
+                console.error('🚫 Error name:', error.name);
+                console.error('🚫 Error message:', error.message);
+                
+                let errorMsg = 'Connection error. ';
+                if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                    errorMsg += 'Cannot reach server. Please check if the backend is running.';
+                } else if (error.name === 'TypeError' && error.message.includes('CORS')) {
+                    errorMsg += 'CORS policy error. Please contact support.';
+                } else {
+                    errorMsg += 'Please check your internet connection and try again.';
+                }
+                
+                alert(`❌ ${errorMsg}`);
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
