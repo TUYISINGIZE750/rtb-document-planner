@@ -1,0 +1,495 @@
+
+============================================================
+ANALYZING: RTB SESSION PLAN TEMPLATE
+============================================================
+
+[*] Document has 1 table(s)
+[*] Document has 2 paragraph(s)
+
+
+[TABLE 1]:
+   Rows: 23
+   Columns: 6
+
+   Cell Contents:
+
+   Row 0:
+
+   Row 1:
+      [1,0]: Sector :
+      [1,1]: Sub-sector:
+      [1,2]: Sub-sector:
+      [1,3]: Sub-sector:
+      [1,4]: Date :
+      [1,5]: Date :
+
+   Row 2:
+      [2,0]: Lead Trainer’s name :
+      [2,1]: Lead Trainer’s name :
+      [2,2]: Lead Trainer’s name :
+      [2,3]: Lead Trainer’s name :
+      [2,4]: TERM :
+      [2,5]: TERM :
+
+   Row 3:
+      [3,0]: Module(Code&Name):
+      [3,1]: Week :
+      [3,2]: Week :
+      [3,3]: No. Trainees:
+      [3,4]: Class(es):
+      [3,5]: Class(es):
+
+   Row 4:
+      [4,0]: Learning outcome:
+
+   Row 5:
+      [5,0]: Indicative contents:
+
+   Row 6:
+      [6,0]: Topic of the session:
+      [6,1]: Topic of the session:
+      [6,2]: Topic of the session:
+      [6,3]: Topic of the session:
+      [6,4]: Topic of the session:
+      [6,5]: Topic of the session:
+
+   Row 7:
+      [7,0]: Range:
+      [7,1]: Duration of the session:
+      [7,2]: Duration of the session:
+      [7,3]: Duration of the session:
+      [7,4]: Duration of the session:
+      [7,5]: Duration of the session:
+
+   Row 8:
+      [8,0]: Objectives: By the end of this session every learn
+      [8,1]: Objectives: By the end of this session every learn
+      [8,2]: Objectives: By the end of this session every learn
+      [8,3]: Objectives: By the end of this session every learn
+      [8,4]: Objectives: By the end of this session every learn
+      [8,5]: Objectives: By the end of this session every learn
+
+   Row 9:
+      [9,0]: Facilitation technique(s):
+      [9,1]: Facilitation technique(s):
+      [9,2]: Facilitation technique(s):
+      [9,3]: Facilitation technique(s):
+      [9,4]: Facilitation technique(s):
+      [9,5]: Facilitation technique(s):
+
+   Row 10:
+      [10,0]: Introduction
+      [10,1]: Introduction
+      [10,2]: Resources
+      [10,3]: Resources
+      [10,4]: Resources
+      [10,5]: Duration
+
+   Row 11:
+      [11,2]: Attendance sheet
+PPT
+Projector
+Computers
+Flipchart
+      [11,3]: Attendance sheet
+PPT
+Projector
+Computers
+Flipchart
+      [11,4]: Attendance sheet
+PPT
+Projector
+Computers
+Flipchart
+      [11,5]: 5 minutes
+
+   Row 12:
+      [12,0]: Development/Body
+      [12,1]: Development/Body
+      [12,2]: Development/Body
+      [12,3]: Development/Body
+      [12,4]: Development/Body
+      [12,5]: Development/Body
+
+   Row 13:
+      [13,2]: Computer
+projector, 
+PPT
+Installed operating syste
+      [13,3]: Computer
+projector, 
+PPT
+Installed operating syste
+      [13,4]: Computer
+projector, 
+PPT
+Installed operating syste
+      [13,5]: 25
+minutes
+
+   Row 14:
+      [14,2]: Computer
+projector, 
+PPT
+Installed operating syste
+      [14,3]: Computer
+projector, 
+PPT
+Installed operating syste
+      [14,4]: Computer
+projector, 
+PPT
+Installed operating syste
+      [14,5]: 25
+minutes
+
+   Row 15:
+      [15,2]: Computer
+projector, 
+PPT
+Installed operating syste
+      [15,3]: Computer
+projector, 
+PPT
+Installed operating syste
+      [15,4]: Computer
+projector, 
+PPT
+Installed operating syste
+      [15,5]: 25
+minutes
+
+   Row 16:
+      [16,0]: Conclusion
+      [16,1]: Conclusion
+      [16,2]: Conclusion
+      [16,3]: Conclusion
+      [16,4]: Conclusion
+      [16,5]: Conclusion
+
+   Row 17:
+      [17,0]: Summary:
+The trainer involves the learners to summ
+      [17,1]: Summary:
+The trainer involves the learners to summ
+      [17,2]: Computer 
+projector
+      [17,3]: Computer 
+projector
+      [17,4]: Computer 
+projector
+      [17,5]: 3 minutes
+
+   Row 18:
+      [18,0]: Assessment/Assignment
+      [18,1]: Assessment/Assignment
+      [18,2]: Assessment sheets
+      [18,3]: Assessment sheets
+      [18,4]: Assessment sheets
+      [18,5]: 5 minutes
+
+   Row 19:
+      [19,0]: Evaluation of the session:
+      [19,1]: Evaluation of the session:
+      [19,2]: Self-assessment form
+      [19,3]: Self-assessment form
+      [19,4]: Self-assessment form
+      [19,5]: 2minutes
+
+   Row 20:
+      [20,0]: References:
+Bibliography
+      [20,1]: References:
+Bibliography
+      [20,2]: References:
+Bibliography
+      [20,3]: References:
+Bibliography
+      [20,4]: References:
+Bibliography
+      [20,5]: References:
+Bibliography
+
+   Row 21:
+      [21,0]: Appendices: PPT, Task Sheets, assessment,
+      [21,1]: Appendices: PPT, Task Sheets, assessment,
+      [21,2]: Appendices: PPT, Task Sheets, assessment,
+      [21,3]: Appendices: PPT, Task Sheets, assessment,
+      [21,4]: Appendices: PPT, Task Sheets, assessment,
+      [21,5]: Appendices: PPT, Task Sheets, assessment,
+
+   Row 22:
+      [22,0]: Reflection :
+      [22,1]: Reflection :
+      [22,2]: Reflection :
+      [22,3]: Reflection :
+      [22,4]: Reflection :
+      [22,5]: Reflection :
+
+============================================================
+ANALYZING: RTB SCHEME OF WORK TEMPLATE
+============================================================
+
+[*] Document has 3 table(s)
+[*] Document has 34 paragraph(s)
+
+
+[TABLE 1]:
+   Rows: 8
+   Columns: 9
+
+   Cell Contents:
+
+   Row 0:
+      [0,0]: Weeks
+      [0,1]: Competence code and name
+      [0,2]: Competence code and name
+      [0,3]: Competence code and name
+      [0,4]: Learning Activities
+      [0,5]: Resources (Equipment, tools, and materials)
+      [0,6]: Evidences of formative assessment
+      [0,7]: Learning Place
+      [0,8]: Observation
+
+   Row 1:
+      [1,0]: Weeks
+      [1,1]: Learning outcome (LO)
+      [1,2]: Duration
+      [1,3]: Indicative content (IC)
+      [1,4]: Learning Activities
+      [1,5]: Resources (Equipment, tools, and materials)
+      [1,6]: Evidences of formative assessment
+      [1,7]: Learning Place
+      [1,8]: Observation
+
+   Row 2:
+      [2,0]: 8 / 9 / 2025 – 19 / 12 / 2025
+      [2,1]: LO1:   Prepare Tools, material and Equipment
+      [2,2]: 10 hours
+      [2,3]: IC1.1:   Preparation of workplace
+      [2,4]: [Contains special characters]
+      [2,5]: Computers, Projector, Projection screen, Printers,
+      [2,6]: Written and practical assessment
+      [2,7]: Class
+Computer system and architecture Workshop
+
+   Row 3:
+      [3,0]: 8 / 9 / 2025 – 19 / 12 / 2025
+      [3,1]: LO1:   Prepare Tools, material and Equipment
+      [3,2]: 10 hours
+      [3,3]: IC1.2:  Identification of tools, materials and equ
+      [3,4]: [Contains special characters]
+      [3,5]: Computers, Projector, Projection screen, Printers,
+      [3,6]: Written and practical assessment
+      [3,7]: Class
+Computer system and architecture Workshop
+
+   Row 4:
+      [4,0]: 8 / 9 / 2025 – 19 / 12 / 2025
+      [4,1]: LO1:   Prepare Tools, material and Equipment
+      [4,2]: 10 hours
+      [4,3]: IC1.3:  
+Calibration of equipment
+      [4,4]: [Contains special characters]
+      [4,5]: Computers, Projector, Projection screen, Printers,
+      [4,6]: Written and practical assessment
+      [4,7]: Class
+Computer system and architecture Workshop
+
+   Row 5:
+      [5,0]: 8 / 9 / 2025 – 19 / 12 / 2025
+      [5,1]: LO2:   Assemble PCBA using SMT
+      [5,2]: 50 hours
+      [5,3]: IC2.1:    Introduction to PCB
+      [5,4]: [Contains special characters]
+      [5,5]: Computers, Projector, Projection screen, Printers,
+      [5,6]: Written and practical assessment
+
+   Row 6:
+      [6,0]: 8 / 9 / 2025 – 19 / 12 / 2025
+      [6,3]: IC2.2:  Identification of PCBA technologies
+      [6,4]: [Contains special characters]
+      [6,5]: Computers, Projector, Projection screen, Printers,
+
+   Row 7:
+      [7,1]: Integrated Assessment (for specific module)
+      [7,2]: Integrated Assessment (for specific module)
+      [7,3]: Integrated Assessment (for specific module)
+      [7,4]: Task
+      [7,5]: Consumables
+      [7,7]: workshop
+
+[TABLE 2]:
+   Rows: 5
+   Columns: 9
+
+   Cell Contents:
+
+   Row 0:
+      [0,0]: Weeks
+      [0,1]: Competence code and name
+      [0,2]: Competence code and name
+      [0,3]: Competence code and name
+      [0,4]: Learning Activities
+      [0,5]: Resources (Equipment, tools, and materials)
+      [0,6]: Evidences of formative assessment
+      [0,7]: Learning Place
+      [0,8]: Observation
+
+   Row 1:
+      [1,0]: Weeks
+      [1,1]: Learning outcome (LO)
+      [1,2]: Duration
+      [1,3]: Indicative content (IC)
+      [1,4]: Learning Activities
+      [1,5]: Resources (Equipment, tools, and materials)
+      [1,6]: Evidences of formative assessment
+      [1,7]: Learning Place
+      [1,8]: Observation
+
+   Row 2:
+      [2,0]: January 5, 2026  - April 3, 2026
+      [2,1]: LO2:   Assemble PCBA using SMT
+      [2,3]: IC2.3:  Description of Surface Mount technology fo
+      [2,4]: [Contains special characters]
+      [2,5]: Computers, Projector, Projection screen, Printers
+      [2,6]: Written and practical assessment
+      [2,7]: Class
+Computer system and architecture Workshop
+
+   Row 3:
+      [3,0]: January 5, 2026  - April 3, 2026
+      [3,1]: LO2:   Assemble PCBA using SMT
+      [3,3]: IC2.4:  Perform SMT PCB Assembly process
+      [3,4]: [Contains special characters]
+      [3,5]: Computers, Projector, Projection screen, Printers
+      [3,6]: Written and practical assessment
+      [3,7]: Class
+Computer system and architecture Workshop
+
+   Row 4:
+      [4,0]: January 5, 2026  - April 3, 2026
+      [4,1]: Integrated Assessment (for specific module)
+      [4,2]: Integrated Assessment (for specific module)
+      [4,3]: Integrated Assessment (for specific module)
+      [4,4]: Task
+      [4,5]: Consumables
+      [4,7]: workshop
+
+[TABLE 3]:
+   Rows: 8
+   Columns: 9
+
+   Cell Contents:
+
+   Row 0:
+      [0,0]: Weeks
+      [0,1]: Competence code and name
+      [0,2]: Competence code and name
+      [0,3]: Competence code and name
+      [0,4]: Learning Activities
+      [0,5]: Resources (Equipment, tools, and materials)
+      [0,6]: Evidences of formative assessment
+      [0,7]: Learning Place
+      [0,8]: Observation
+
+   Row 1:
+      [1,0]: Weeks
+      [1,1]: Learning outcome (LO)
+      [1,2]: Duration
+      [1,3]: Indicative content (IC)
+      [1,4]: Learning Activities
+      [1,5]: Resources (Equipment, tools, and materials)
+      [1,6]: Evidences of formative assessment
+      [1,7]: Learning Place
+      [1,8]: Observation
+
+   Row 2:
+      [2,0]: on April 20, 2026 - on July 3, 2026
+      [2,1]: LO3:   Connect computer system parts
+      [2,2]: 20 hours
+      [2,3]: IC1.1:   Description of computer hardware parts
+      [2,4]: [Contains special characters]
+      [2,5]: Computers, Projector, Projection screen, Printers
+      [2,6]: Written and practical assessment
+      [2,7]: Class
+Computer system and architecture Workshop
+
+   Row 3:
+      [3,0]: on April 20, 2026 - on July 3, 2026
+      [3,1]: LO3:   Connect computer system parts
+      [3,2]: 20 hours
+      [3,3]: [Contains special characters]
+      [3,4]: [Contains special characters]
+      [3,5]: Computers, Projector, Projection screen, Printers
+      [3,6]: Written and practical assessment
+      [3,7]: Class
+Computer system and architecture Workshop
+
+   Row 4:
+      [4,0]: on April 20, 2026 - on July 3, 2026
+      [4,1]: LO3:   Connect computer system parts
+      [4,2]: 20 hours
+      [4,3]: IC1.3:  Connection of Laptop Computer parts
+      [4,4]: [Contains special characters]
+      [4,5]: Computers, Projector, Projection screen, Printers
+      [4,6]: Written and practical assessment
+      [4,7]: Class
+Computer system and architecture Workshop
+
+   Row 5:
+      [5,0]: on April 20, 2026 - on July 3, 2026
+      [5,3]: IC1.3:   Test of assembled computer
+      [5,4]: [Contains special characters]
+      [5,5]: Computers, Projector, Projection screen, Printers
+
+   Row 6:
+      [6,0]: on April 20, 2026 - on July 3, 2026
+      [6,3]: I.C 1.4 Documentation of Assembly report
+      [6,4]: [Contains special characters]
+      [6,5]: Computers, screen, Printers
+
+   Row 7:
+      [7,0]: 4
+      [7,1]: Integrated Assessment (for specific module)
+      [7,2]: Integrated Assessment (for specific module)
+      [7,3]: Integrated Assessment (for specific module)
+      [7,4]: Task
+      [7,5]: Consumables
+      [7,7]: workshop
+
+============================================================
+CHECKING rtb_template_filler.py COMPATIBILITY
+============================================================
+
+[*] Template filler expects:
+   - Session Plan: table.rows[1], table.rows[2], table.rows[3], etc.
+   - Uses hardcoded row indices (rows[1] to rows[22])
+
+[WARNING] Hardcoded row indices found!
+   This will FAIL if template structure doesn't match exactly
+
+[OK] Expects first table (tables[0])
+
+============================================================
+VERIFICATION SUMMARY
+============================================================
+
+[OK] Session Plan Template Found
+   - Tables: 1
+   - Main table rows: 23
+   - Main table columns: 6
+
+[OK] Scheme Template Found
+   - Tables: 3
+
+============================================================
+RECOMMENDATIONS:
+============================================================
+
+1. [OK] Templates should be in PRODUCTION_READY/backend/ folder
+2. [OK] rtb_template_filler.py should match template structure EXACTLY
+3. [WARNING] If row indices don't match, documents will be INCORRECT
+4. [TIP] Test by generating a document and comparing with template
+5. [TIP] All user input should fill corresponding template cells
+    

@@ -1,0 +1,177 @@
+
+======================================================================
+ANALYZING: SESSION PLAN TEMPLATE
+======================================================================
+
+
+TABLE 1:
+  Rows: 23, Columns: 6
+
+  MERGED CELLS:
+    Row 0, Col 0: colspan=6, vmerge=False - ''
+    Row 1, Col 1: colspan=3, vmerge=False - 'Sub-sector: 
+'
+    Row 1, Col 4: colspan=2, vmerge=False - 'Date :'
+    Row 2, Col 0: colspan=4, vmerge=False - 'Lead Trainer’s name '
+    Row 3, Col 1: colspan=2, vmerge=False - 'Week : '
+    Row 3, Col 4: colspan=2, vmerge=False - 'Class(es):'
+    Row 15, Col 2: colspan=3, vmerge=True - 'Computer
+projector, '
+    Row 16, Col 0: colspan=6, vmerge=False - 'Conclusion'
+    Row 17, Col 2: colspan=3, vmerge=False - 'Computer 
+projector
+'
+    Row 18, Col 2: colspan=3, vmerge=False - 'Assessment sheets '
+
+  CELL FORMATTING (first 5 rows):
+
+    Row 0:
+
+    Row 1:
+      [1,0]: Sector :            
+        Font: Times New Roman, Size: 12.0, Bold: True
+      [1,1]: Sub-sector: 
+
+        Font: Times New Roman, Size: 12.0, Bold: True
+      [1,2]: Sub-sector: 
+
+        Font: Times New Roman, Size: 12.0, Bold: True
+      [1,3]: Sub-sector: 
+
+        Font: Times New Roman, Size: 12.0, Bold: True
+      [1,4]: Date :
+        Font: Times New Roman, Size: 12.0, Bold: True
+      [1,5]: Date :
+        Font: Times New Roman, Size: 12.0, Bold: True
+
+    Row 2:
+      [2,0]: Lead Trainer’s name 
+        Font: Times New Roman, Size: 12.0, Bold: True
+      [2,1]: Lead Trainer’s name 
+        Font: Times New Roman, Size: 12.0, Bold: True
+      [2,2]: Lead Trainer’s name 
+        Font: Times New Roman, Size: 12.0, Bold: True
+      [2,3]: Lead Trainer’s name 
+        Font: Times New Roman, Size: 12.0, Bold: True
+      [2,4]: TERM : 
+        Font: Times New Roman, Size: 12.0, Bold: True
+      [2,5]: TERM : 
+        Font: Times New Roman, Size: 12.0, Bold: True
+
+    Row 3:
+      [3,0]: Module(Code&Name): 
+        Font: Times New Roman, Size: 12.0, Bold: True
+      [3,1]: Week : 
+        Font: Times New Roman, Size: 12.0, Bold: True
+      [3,2]: Week : 
+        Font: Times New Roman, Size: 12.0, Bold: True
+      [3,3]: No. Trainees: 
+        Font: Times New Roman, Size: 12.0, Bold: True
+      [3,4]: Class(es):
+        Font: Times New Roman, Size: 12.0, Bold: True
+      [3,5]: Class(es):
+        Font: Times New Roman, Size: 12.0, Bold: True
+
+    Row 4:
+      [4,0]: Learning outcome: 
+
+        Font: Times New Roman, Size: 12.0, Bold: True
+
+======================================================================
+ANALYZING: SCHEME OF WORK TEMPLATE
+======================================================================
+
+
+TABLE 1:
+  Rows: 8, Columns: 9
+
+  MERGED CELLS:
+    Row 0, Col 0: colspan=1, vmerge=True - 'Weeks '
+    Row 0, Col 1: colspan=3, vmerge=False - 'Competence code and '
+    Row 0, Col 4: colspan=1, vmerge=True - 'Learning Activities'
+    Row 0, Col 5: colspan=1, vmerge=True - 'Resources (Equipment'
+    Row 0, Col 6: colspan=1, vmerge=True - 'Evidences of formati'
+    Row 0, Col 7: colspan=1, vmerge=True - 'Learning Place'
+    Row 0, Col 8: colspan=1, vmerge=True - '
+Observation'
+    Row 1, Col 0: colspan=1, vmerge=True - 'Weeks '
+    Row 1, Col 4: colspan=1, vmerge=True - 'Learning Activities'
+    Row 1, Col 5: colspan=1, vmerge=True - 'Resources (Equipment'
+    Row 1, Col 6: colspan=1, vmerge=True - 'Evidences of formati'
+    Row 1, Col 7: colspan=1, vmerge=True - 'Learning Place'
+    Row 2, Col 0: colspan=1, vmerge=True - '8 / 9 / 2025 – 19 / '
+    Row 2, Col 8: colspan=1, vmerge=True - ''
+    Row 3, Col 1: colspan=1, vmerge=True - 'LO1:   Prepare Tools'
+    Row 3, Col 2: colspan=1, vmerge=True - '10 hours'
+    Row 3, Col 6: colspan=1, vmerge=True - 'Written and practica'
+    Row 3, Col 7: colspan=1, vmerge=True - 'Class
+Computer syste'
+    Row 4, Col 2: colspan=1, vmerge=True - '10 hours'
+    Row 4, Col 6: colspan=1, vmerge=True - 'Written and practica'
+    Row 5, Col 0: colspan=1, vmerge=True - '8 / 9 / 2025 – 19 / '
+
+  CELL FORMATTING (first 5 rows):
+
+    Row 0:
+      [0,0]: Weeks 
+        Font: Bookman Old Style, Size: None, Bold: True
+        Background: C4BC96
+      [0,1]: Competence code and 
+        Font: Bookman Old Style, Size: None, Bold: True
+        Background: C4BC96
+      [0,2]: Competence code and 
+        Font: Bookman Old Style, Size: None, Bold: True
+        Background: C4BC96
+      [0,3]: Competence code and 
+        Font: Bookman Old Style, Size: None, Bold: True
+        Background: C4BC96
+      [0,4]: Learning Activities
+        Font: Bookman Old Style, Size: None, Bold: True
+        Background: C4BC96
+      [0,5]: Resources (Equipment
+        Font: Bookman Old Style, Size: None, Bold: True
+        Background: C4BC96
+
+    Row 1:
+      [1,0]: Weeks 
+        Font: Bookman Old Style, Size: None, Bold: True
+        Background: C4BC96
+      [1,1]: Learning outcome (LO
+        Font: Bookman Old Style, Size: None, Bold: True
+        Background: DDD9C3
+      [1,2]: Duration
+        Font: Bookman Old Style, Size: None, Bold: True
+        Background: DDD9C3
+      [1,3]: Indicative content (
+        Font: Bookman Old Style, Size: None, Bold: True
+        Background: DDD9C3
+      [1,4]: Learning Activities
+        Font: Bookman Old Style, Size: None, Bold: True
+        Background: C4BC96
+      [1,5]: Resources (Equipment
+        Font: Bookman Old Style, Size: None, Bold: True
+        Background: C4BC96
+
+    Row 2:
+      [2,0]: 8 / 9 / 2025 – 19 / 
+        Font: Times New Roman, Size: 16.0, Bold: True
+      [2,1]: LO1:   Prepare Tools
+        Font: Bookman Old Style, Size: None, Bold: True
+      [2,2]: 10 hours
+        Font: Bookman Old Style, Size: None, Bold: None
+      [2,3]: IC1.1:   Preparation
+        Font: Bookman Old Style, Size: None, Bold: True
+Traceback (most recent call last):
+  File "c:\Users\PC\Music\Scheme of work and session plan planner\PRODUCTION_READY\backend\analyze_template_details.py", line 132, in <module>
+    main()
+    ~~~~^^
+  File "c:\Users\PC\Music\Scheme of work and session plan planner\PRODUCTION_READY\backend\analyze_template_details.py", line 125, in main
+    analyze_template(scheme_template, "SCHEME OF WORK TEMPLATE")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\PC\Music\Scheme of work and session plan planner\PRODUCTION_READY\backend\analyze_template_details.py", line 110, in analyze_template
+    print(f"      [{row_idx},{col_idx}]: {props['text'][:20]}")
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u25cf' in position 13: character maps to <undefined>

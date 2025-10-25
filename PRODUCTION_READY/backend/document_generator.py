@@ -7,10 +7,14 @@ import tempfile
 import os
 
 try:
-    from rtb_template_filler import fill_session_plan_template, fill_scheme_template
+    from rtb_template_filler_exact import fill_session_plan_template, fill_scheme_template
     USE_TEMPLATES = True
 except ImportError:
-    USE_TEMPLATES = False
+    try:
+        from rtb_template_filler import fill_session_plan_template, fill_scheme_template
+        USE_TEMPLATES = True
+    except ImportError:
+        USE_TEMPLATES = False
 
 def set_cell_border(cell, **kwargs):
     """Set cell borders"""

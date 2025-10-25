@@ -1,0 +1,94 @@
+# PythonAnywhere Deployment Commands
+
+## Step 1: Navigate to project folder
+cd ~/rtb-document-planner
+
+## Step 2: Check current files
+ls -la
+
+## Step 3: Initialize database (if init_db.py exists)
+python init_db.py
+
+## Step 4: If init_db.py doesn't exist, create it manually:
+cat > init_db.py << 'EOF'
+from main import Base, engine, SessionLocal, User, hash_password
+
+def init_database():
+    print("Creating database tables...")
+    Base.metadata.create_all(bind=engine)
+    print("✓ Tables created")
+    
+    db = SessionLocal()
+    try:
+        admin = db.query(User).filter(User.phone == "+250789751597").first()
+        if not admin:
+            admin = User(
+                user_id="ADMIN_001",
+                name="Administrator",
+                phone="+250789751597",
+                email="admin@rtb.rw",
+                institution="RTB",
+                password=hash_password("admin123"),
+                role="admin",
+                is_premium=True,
+                is_active=True,
+                session_plans_limit=999,
+                schemes_limit=999
+            )
+            db.add(admin)
+            db.commit()
+            print("✓ Admin user created")
+        else:
+            print("✓ Admin user already exists")
+    finally:
+        db.close()
+    print("✓ Database initialized!")
+
+if __name__ == "__main__":
+    init_database()
+EOF
+
+## Step 5: Run init_db.py
+python init_db.py
+
+## Step 6: Test if database was created
+ls -la *.db
+
+## Step 7: Test API
+python -c "from main import app; print('✓ Main app imports successfully')"
+
+## Step 8: Check if all new files exist
+ls -la rtb_template_filler_exact.py
+ls -la facilitation_content_generator.py
+ls -la content_formatter.py
+
+## Step 9: If files missing, upload them via Files tab in PythonAnywhere
+
+## Step 10: Reload web app
+# Go to Web tab in PythonAnywhere dashboard
+# Click "Reload leonardus437.pythonanywhere.com"
+
+## Step 11: Test API endpoint
+curl https://leonardus437.pythonanywhere.com/
+
+## Expected response:
+# {
+#   "message": "RTB Document Planner API",
+#   "status": "online"
+# }
+
+## Troubleshooting:
+
+# If "Module not found" error:
+pip install --user python-docx flask-cors sqlalchemy
+
+# If database locked:
+pkill python
+rm rtb_planner.db
+python init_db.py
+
+# Check error log:
+tail -50 /var/log/leonardus437.pythonanywhere.com.error.log
+
+# Check if templates exist:
+ls -la rtb_*.docx
