@@ -125,14 +125,17 @@ class SchemeOfWork(Base):
     term1_learning_outcomes = Column(Text)
     term1_indicative_contents = Column(Text)
     term1_duration = Column(Text)
+    term1_learning_place = Column(Text)
     term2_weeks = Column(Text)
     term2_learning_outcomes = Column(Text)
     term2_indicative_contents = Column(Text)
     term2_duration = Column(Text)
+    term2_learning_place = Column(Text)
     term3_weeks = Column(Text)
     term3_learning_outcomes = Column(Text)
     term3_indicative_contents = Column(Text)
     term3_duration = Column(Text)
+    term3_learning_place = Column(Text)
     dos_name = Column(String(255))
     manager_name = Column(String(255))
     created_at = Column(DateTime(timezone=True), server_default=func.now())
@@ -484,14 +487,17 @@ def generate_scheme():
                 term1_learning_outcomes=data.get('term1_learning_outcomes'),
                 term1_indicative_contents=data.get('term1_indicative_contents'),
                 term1_duration=data.get('term1_duration'),
+                term1_learning_place=data.get('term1_learning_place'),
                 term2_weeks=data.get('term2_weeks'),
                 term2_learning_outcomes=data.get('term2_learning_outcomes'),
                 term2_indicative_contents=data.get('term2_indicative_contents'),
                 term2_duration=data.get('term2_duration'),
+                term2_learning_place=data.get('term2_learning_place'),
                 term3_weeks=data.get('term3_weeks'),
                 term3_learning_outcomes=data.get('term3_learning_outcomes'),
                 term3_indicative_contents=data.get('term3_indicative_contents'),
                 term3_duration=data.get('term3_duration'),
+                term3_learning_place=data.get('term3_learning_place'),
                 dos_name=data.get('dos_name'),
                 manager_name=data.get('manager_name')
             )
@@ -550,14 +556,17 @@ def download_scheme_of_work(scheme_id):
                 'term1_learning_outcomes': scheme.term1_learning_outcomes,
                 'term1_indicative_contents': scheme.term1_indicative_contents,
                 'term1_duration': scheme.term1_duration,
+                'term1_learning_place': scheme.term1_learning_place,
                 'term2_weeks': scheme.term2_weeks,
                 'term2_learning_outcomes': scheme.term2_learning_outcomes,
                 'term2_indicative_contents': scheme.term2_indicative_contents,
                 'term2_duration': scheme.term2_duration,
+                'term2_learning_place': scheme.term2_learning_place,
                 'term3_weeks': scheme.term3_weeks,
                 'term3_learning_outcomes': scheme.term3_learning_outcomes,
                 'term3_indicative_contents': scheme.term3_indicative_contents,
                 'term3_duration': scheme.term3_duration,
+                'term3_learning_place': scheme.term3_learning_place,
                 'dos_name': scheme.dos_name,
                 'manager_name': scheme.manager_name
             }

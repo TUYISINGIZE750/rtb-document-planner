@@ -172,11 +172,15 @@ def fill_scheme_template(data):
             outcomes = clean_text(data.get(f'term{term_num}_learning_outcomes', ''))
             duration = clean_text(data.get(f'term{term_num}_duration', ''))
             contents = clean_text(data.get(f'term{term_num}_indicative_contents', ''))
+            learning_place = clean_text(data.get(f'term{term_num}_learning_place', ''))
             
             preserve_cell_format(table.rows[2].cells[0], weeks)
             preserve_cell_format(table.rows[2].cells[1], outcomes)
             preserve_cell_format(table.rows[2].cells[2], duration)
             preserve_cell_format(table.rows[2].cells[3], contents)
+            # Add learning place if column exists (check table structure)
+            if len(table.rows[2].cells) > 4:
+                preserve_cell_format(table.rows[2].cells[4], learning_place)
     
     temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
     doc.save(temp_file.name)
