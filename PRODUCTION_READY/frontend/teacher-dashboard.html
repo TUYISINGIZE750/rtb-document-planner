@@ -419,9 +419,10 @@
                 const schemeRemaining = Math.max(0, currentLimits.schemes_limit - currentLimits.schemes_downloaded);
                 
                 if (sessionRemaining === 0) {
-                    sessionBtn.disabled = true;
+                    sessionBtn.disabled = false;
                     sessionBtn.innerHTML = '<i class="fas fa-lock"></i> Upgrade Required';
                     sessionBtn.onclick = function() { showSubscriptionModal('session_plans'); };
+                    sessionBtn.classList.add('upgrade-btn');
                 }
                 
                 if (schemeRemaining === 0) {

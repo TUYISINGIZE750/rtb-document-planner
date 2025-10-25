@@ -1,125 +1,188 @@
-# 📤 PythonAnywhere Upload Guide
+# PythonAnywhere Upload Guide - Step by Step
 
-## Visual Step-by-Step Instructions
+## Your Current PythonAnywhere Structure
 
-### Step 1: Go to Files Tab
+Your backend files are currently in:
 ```
-[Dashboard] → Click "Files" tab at the top
-```
-
-### Step 2: Navigate to Your Directory
-```
-You should see: /home/leonardus437/
-If not, click "leonardus437" in the breadcrumb
+/home/leonardus437/rtb-document-planner/
 ```
 
-### Step 3: Upload Files (One by One)
+## Files to Upload from Local Computer
 
-#### File 1: rtb_professional_generator.py
-1. Click "Upload a file" button
-2. Select `rtb_professional_generator.py` from UPLOAD_TO_PYTHONANYWHERE folder
-3. Click "Upload"
-4. Wait for confirmation
+From your local folder:
+```
+C:\Users\PC\Music\Scheme of work and session plan planner\PRODUCTION_READY\backend\
+```
 
-#### File 2: main_minimal.py
-1. Click "Upload a file" button again
-2. Select `main_minimal.py`
-3. Click "Upload"
-4. Click "Yes" if asked to overwrite
-
-#### File 3: requirements.txt
-1. Click "Upload a file" button again
-2. Select `requirements.txt`
-3. Click "Upload"
-4. Click "Yes" if asked to overwrite
-
-### Step 4: Verify Files Are There
-You should now see these files in /home/leonardus437/:
-- ✅ rtb_professional_generator.py (NEW!)
-- ✅ main_minimal.py
-- ✅ requirements.txt
+Upload these files:
+1. `main.py` (UPDATED - has Cloudflare CORS)
+2. `facilitation_content_generator.py` (UPDATED - simplified content)
+3. `content_formatter.py`
+4. `rtb_template_filler_exact.py`
+5. `document_generator.py`
 
 ---
 
-## Next: Install Dependencies
+## Step-by-Step Upload Process
 
-### Step 5: Open Bash Console
-```
-[Dashboard] → Click "Consoles" tab
-→ Click "Bash" (or "$ Bash" button)
-```
+### Method 1: Via PythonAnywhere Web Interface (EASIEST)
 
-### Step 6: Run Installation Command
-Copy and paste this EXACT command:
+#### Step 1: Open Files Tab
+1. Login to PythonAnywhere
+2. Click **Files** tab at top
+
+#### Step 2: Navigate to Your Project
+1. You'll see: `/home/leonardus437/`
+2. Click on folder: `rtb-document-planner`
+3. You should now be in: `/home/leonardus437/rtb-document-planner/`
+
+#### Step 3: Upload Files One by One
+For each file:
+
+1. Click **Upload a file** button (top right)
+2. Click **Choose File**
+3. Navigate to: `C:\Users\PC\Music\Scheme of work and session plan planner\PRODUCTION_READY\backend\`
+4. Select file (e.g., `main.py`)
+5. Click **Upload**
+6. If file exists, click **Replace** to overwrite
+
+Repeat for all 5 files.
+
+#### Step 4: Verify Files Uploaded
+In `/home/leonardus437/rtb-document-planner/`, you should see:
+- ✅ main.py (updated today)
+- ✅ facilitation_content_generator.py (updated today)
+- ✅ content_formatter.py
+- ✅ rtb_template_filler_exact.py
+- ✅ document_generator.py
+- ✅ rtb_session_plan_template.docx
+- ✅ rtb_scheme_template.docx
+- ✅ rtb_planner.db
+
+---
+
+### Method 2: Via Git Pull (FASTER)
+
+#### Step 1: Open Bash Console
+1. Click **Consoles** tab
+2. Click **Bash**
+
+#### Step 2: Navigate and Pull
 ```bash
-pip3.10 install --user flask flask-cors python-docx lxml
+cd ~/rtb-document-planner
+git pull origin main
 ```
 
-Press ENTER and wait (takes 30-60 seconds)
+#### Step 3: Copy Files to Root
+```bash
+cp PRODUCTION_READY/backend/*.py .
+```
 
-You should see:
-```
-Successfully installed flask-3.0.0 flask-cors-4.0.0 python-docx-1.1.0 lxml-4.9.3
-```
+This copies all Python files from PRODUCTION_READY/backend to your project root.
 
 ---
 
-## Next: Reload Web App
+## After Upload: Reload Web App
 
-### Step 7: Go to Web Tab
-```
-[Dashboard] → Click "Web" tab at the top
-```
+### Step 1: Go to Web Tab
+1. Click **Web** tab at top
+2. Find your app: `leonardus437.pythonanywhere.com`
 
-### Step 8: Reload Your App
-```
-Find the big green button that says "Reload leonardus437.pythonanywhere.com"
-Click it!
-```
+### Step 2: Reload
+1. Scroll down to **Reload** button (big green button)
+2. Click **Reload leonardus437.pythonanywhere.com**
+3. Wait for green checkmark (5-10 seconds)
 
-Wait 5 seconds for reload to complete.
-
----
-
-## Test It!
-
-### Step 9: Test Backend
-Open new tab and visit:
+### Step 3: Verify
+Open new browser tab:
 ```
 https://leonardus437.pythonanywhere.com/
 ```
 
-You should see:
+Should return:
 ```json
-{"message": "RTB API", "status": "online", "version": "minimal"}
+{
+  "message": "RTB Document Planner API",
+  "status": "online",
+  "version": "2.0"
+}
 ```
 
-If you see this, SUCCESS! ✅
+---
+
+## Test Cloudflare Connection
+
+### Step 1: Open Cloudflare Site
+```
+https://rtb-document-planner.pages.dev
+```
+
+### Step 2: Open Browser Console (F12)
+Look for:
+```
+✅ config.js loaded
+✅ API connection successful
+```
+
+### Step 3: Test Login
+- Phone: `+250789751597`
+- Password: `admin123`
+- Should login successfully
 
 ---
 
-## Troubleshooting
+## File Locations Summary
 
-### If you see an error page:
-1. Go to Web tab
-2. Click "Error log" link
-3. Look at the last few lines
-4. Common issues:
-   - "No module named 'rtb_professional_generator'" → File not uploaded
-   - "No module named 'flask'" → Dependencies not installed
-   - "No module named 'docx'" → Run: `pip3.10 install --user python-docx`
+### Local Computer:
+```
+C:\Users\PC\Music\Scheme of work and session plan planner\
+  └── PRODUCTION_READY\
+      └── backend\
+          ├── main.py ← Upload this
+          ├── facilitation_content_generator.py ← Upload this
+          ├── content_formatter.py ← Upload this
+          ├── rtb_template_filler_exact.py ← Upload this
+          └── document_generator.py ← Upload this
+```
 
-### If backend shows error:
-1. Check all 3 files are uploaded
-2. Re-run the pip install command
-3. Click Reload again
-4. Check error log
+### PythonAnywhere:
+```
+/home/leonardus437/
+  └── rtb-document-planner/
+      ├── main.py ← Files go here
+      ├── facilitation_content_generator.py
+      ├── content_formatter.py
+      ├── rtb_template_filler_exact.py
+      ├── document_generator.py
+      ├── rtb_session_plan_template.docx
+      ├── rtb_scheme_template.docx
+      └── rtb_planner.db
+```
 
 ---
 
-## You're Done When:
-- ✅ Backend URL shows: {"message": "RTB API", "status": "online"}
-- ✅ No errors in error log
-- ✅ All 3 files visible in Files tab
+## Quick Checklist
 
-Then proceed to test the full system!
+- [ ] Login to PythonAnywhere
+- [ ] Go to Files tab
+- [ ] Navigate to `rtb-document-planner` folder
+- [ ] Upload 5 Python files from `PRODUCTION_READY\backend`
+- [ ] Go to Web tab
+- [ ] Click Reload button
+- [ ] Test API: https://leonardus437.pythonanywhere.com/
+- [ ] Test Cloudflare site
+- [ ] Test login and document generation
+
+---
+
+## Need Help?
+
+If files are in wrong location, use Bash console:
+```bash
+cd ~/rtb-document-planner
+ls -la
+```
+
+This shows all files in your project folder.
+
+**Done!** 🎉
