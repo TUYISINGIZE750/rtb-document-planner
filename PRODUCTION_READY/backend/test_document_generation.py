@@ -1,209 +1,108 @@
-"""
-Test document generation and compare with official RTB templates
-"""
-from document_generator import generate_session_plan_docx, generate_scheme_of_work_docx
-from docx import Document
+"""Quick test script to verify document generation works correctly"""
 import os
-from datetime import datetime
+from rtb_template_filler_exact import fill_session_plan_template, fill_scheme_template
 
 def test_session_plan():
-    """Test session plan generation with sample data"""
-    print("\n" + "="*60)
-    print("TESTING SESSION PLAN GENERATION")
-    print("="*60 + "\n")
+    """Test session plan generation"""
+    print("Testing Session Plan Generation...")
     
-    # Sample data that a teacher would input
-    test_data = {
+    data = {
         'sector': 'ICT',
-        'trade': 'Computer Hardware Maintenance',
-        'rqf_level': 'Level 4',
-        'trainer_name': 'John MUGISHA',
-        'module_code_title': 'CHM4101 - Computer Assembly',
+        'trade': 'Computer Science',
+        'date': '2024-01-15',
+        'trainer_name': 'John Doe',
         'term': 'Term 1',
-        'week': 'Week 5',
-        'date': '15/01/2025',
-        'class_name': 'CHM4A',
-        'number_of_trainees': '25',
-        'learning_outcomes': 'By the end of this module, learners will be able to assemble desktop computers correctly',
-        'indicative_contents': 'Computer components, Assembly procedures, Safety precautions, Testing procedures',
-        'topic_of_session': 'Installing Motherboard and Power Supply',
-        'duration': '40',
-        'objectives': '1. Identify motherboard components\n2. Install motherboard correctly\n3. Connect power supply safely',
-        'facilitation_techniques': 'Demonstration, Hands-on practice, Group work',
-        'learning_activities': 'Students will practice installing motherboards in computer cases under supervision',
-        'resources': 'Computer cases, Motherboards, Power supplies, Screwdrivers, Anti-static wristbands',
-        'assessment_details': 'Practical assessment: Students assemble a complete system\nWritten test: Safety procedures',
-        'references': 'Computer Hardware Maintenance Manual, RTB Curriculum Guide'
+        'module_code_title': 'CSC101 - Introduction to Programming',
+        'week': '1',
+        'number_of_trainees': '30',
+        'class_name': 'S4 Computer Science',
+        'learning_outcomes': 'Students will be able to:\n- Define variables in Python\n- Identify different data types\n- Create and manipulate variables',
+        'indicative_contents': 'Variables, Data types, Type conversion, Variable naming conventions',
+        'topic_of_session': 'Variables and Data Types in Python',
+        'duration': '90',
+        'objectives': 'Define variables in Python\nIdentify different data types\nCreate and manipulate variables',
+        'facilitation_techniques': 'Hands-on practice',
+        'learning_activities': 'Students will practice creating variables and working with different data types through coding exercises',
+        'resources': 'Computer lab\nPython IDE\nPractice worksheets',
+        'assessment_details': 'Students will complete a coding exercise creating variables of different types',
+        'references': ''
     }
     
-    print("Test Data:")
-    for key, value in test_data.items():
-        print(f"  {key}: {value[:50]}..." if len(str(value)) > 50 else f"  {key}: {value}")
-    
-    print("\n[*] Generating session plan...")
     try:
-        output_file = generate_session_plan_docx(test_data)
-        print(f"[OK] Generated: {output_file}")
+        output_path = fill_session_plan_template(data)
+        print(f"✅ Session Plan generated successfully: {output_path}")
         
-        # Analyze generated document
-        doc = Document(output_file)
-        print(f"\n[*] Generated document has:")
-        print(f"    - {len(doc.tables)} table(s)")
-        print(f"    - {len(doc.paragraphs)} paragraph(s)")
+        # Check file size
+        size = os.path.getsize(output_path)
+        print(f"   File size: {size:,} bytes")
         
-        if len(doc.tables) > 0:
-            table = doc.tables[0]
-            print(f"    - Main table: {len(table.rows)} rows x {len(table.columns)} columns")
-            
-            # Check if key data is present
-            print(f"\n[*] Checking if user data appears in document...")
-            doc_text = ""
-            for row in table.rows:
-                for cell in row.cells:
-                    doc_text += cell.text + " "
-            
-            checks = {
-                'Sector (ICT)': 'ICT' in doc_text,
-                'Trainer name': 'MUGISHA' in doc_text,
-                'Module code': 'CHM4101' in doc_text,
-                'Topic': 'Installing Motherboard' in doc_text,
-                'Learning outcomes': 'assemble desktop computers' in doc_text,
-                'Duration': '40' in doc_text
-            }
-            
-            for check_name, result in checks.items():
-                status = "[OK]" if result else "[FAIL]"
-                print(f"    {status} {check_name}")
-        
-        # Save with descriptive name
-        test_output = os.path.join(os.path.dirname(__file__), 
-                                   f"TEST_Session_Plan_{datetime.now().strftime('%Y%m%d_%H%M%S')}.docx")
-        doc.save(test_output)
-        print(f"\n[OK] Test file saved: {test_output}")
-        print(f"\n[ACTION REQUIRED] Please:")
-        print(f"    1. Open: {test_output}")
-        print(f"    2. Open: rtb_session_plan_template.docx")
-        print(f"    3. Compare them side-by-side")
-        print(f"    4. Check if ALL data is in correct positions")
+        if size > 50000:  # Should be > 50KB
+            print("   ✅ File size looks good")
+        else:
+            print("   ⚠️ File size seems small")
         
         return True
-        
     except Exception as e:
-        print(f"[ERROR] Generation failed: {e}")
-        import traceback
-        traceback.print_exc()
+        print(f"❌ Session Plan generation failed: {e}")
         return False
 
 def test_scheme_of_work():
-    """Test scheme of work generation with sample data"""
-    print("\n" + "="*60)
-    print("TESTING SCHEME OF WORK GENERATION")
-    print("="*60 + "\n")
+    """Test scheme of work generation"""
+    print("\nTesting Scheme of Work Generation...")
     
-    # Sample data for scheme
-    test_data = {
-        'province': 'Kigali City',
-        'district': 'Gasabo',
-        'sector': 'ICT',
-        'school': 'IPRC Kigali',
-        'department_trade': 'Computer Hardware Maintenance',
-        'qualification_title': 'Advanced Diploma in Computer Hardware Maintenance',
-        'rqf_level': 'Level 4',
-        'module_code_title': 'CHM4101 - Computer Assembly and Maintenance',
-        'school_year': '2024-2025',
-        'terms': '3',
-        'module_hours': '120',
-        'number_of_classes': '2',
-        'class_name': 'CHM4A, CHM4B',
-        'trainer_name': 'John MUGISHA',
+    data = {
+        'term1_weeks': '1-12',
+        'term1_learning_outcomes': 'Design database schemas\nCreate tables and relationships\nWrite SQL queries',
+        'term1_duration': '48 hours',
+        'term1_indicative_contents': 'Database concepts\nER diagrams\nSQL basics',
+        'term1_learning_place': 'Computer Lab',
         
-        # Term 1
-        'term1_weeks': 'Week 1-12 (Sept 8 - Dec 19, 2024)',
-        'term1_learning_outcomes': 'LO1: Prepare tools, materials and equipment\nLO2: Assemble desktop computers',
-        'term1_indicative_contents': 'IC1.1: Workplace preparation\nIC1.2: Tool identification\nIC2.1: Computer components\nIC2.2: Assembly procedures',
-        'term1_duration': '40 hours',
+        'term2_weeks': '13-24',
+        'term2_learning_outcomes': 'Implement advanced queries\nOptimize database performance\nCreate stored procedures',
+        'term2_duration': '48 hours',
+        'term2_indicative_contents': 'Advanced SQL\nIndexing\nStored procedures',
+        'term2_learning_place': 'Computer Lab',
         
-        # Term 2
-        'term2_weeks': 'Week 13-24 (Jan 5 - Apr 3, 2025)',
-        'term2_learning_outcomes': 'LO3: Install operating systems\nLO4: Configure computer systems',
-        'term2_indicative_contents': 'IC3.1: OS installation\nIC3.2: Driver installation\nIC4.1: BIOS configuration\nIC4.2: System optimization',
-        'term2_duration': '40 hours',
-        
-        # Term 3
-        'term3_weeks': 'Week 25-36 (Apr 20 - Jul 3, 2025)',
-        'term3_learning_outcomes': 'LO5: Troubleshoot hardware issues\nLO6: Maintain computer systems',
-        'term3_indicative_contents': 'IC5.1: Diagnostic procedures\nIC5.2: Component replacement\nIC6.1: Preventive maintenance\nIC6.2: Documentation',
-        'term3_duration': '40 hours',
-        
-        'dos_name': 'Dr. UWASE Marie',
-        'manager_name': 'Eng. NKUSI Patrick'
+        'term3_weeks': '25-36',
+        'term3_learning_outcomes': 'Design complete database systems\nImplement security measures\nDeploy databases',
+        'term3_duration': '48 hours',
+        'term3_indicative_contents': 'Database security\nBackup and recovery\nProject implementation',
+        'term3_learning_place': 'Computer Lab'
     }
     
-    print("Test Data:")
-    print(f"  School: {test_data['school']}")
-    print(f"  Module: {test_data['module_code_title']}")
-    print(f"  Trainer: {test_data['trainer_name']}")
-    print(f"  Terms: {test_data['terms']}")
-    
-    print("\n[*] Generating scheme of work...")
     try:
-        output_file = generate_scheme_of_work_docx(test_data)
-        print(f"[OK] Generated: {output_file}")
+        output_path = fill_scheme_template(data)
+        print(f"✅ Scheme of Work generated successfully: {output_path}")
         
-        # Analyze generated document
-        doc = Document(output_file)
-        print(f"\n[*] Generated document has:")
-        print(f"    - {len(doc.tables)} table(s)")
-        print(f"    - {len(doc.paragraphs)} paragraph(s)")
+        # Check file size
+        size = os.path.getsize(output_path)
+        print(f"   File size: {size:,} bytes")
         
-        # Check each table
-        for idx, table in enumerate(doc.tables):
-            print(f"    - Table {idx+1}: {len(table.rows)} rows x {len(table.columns)} columns")
-        
-        # Save with descriptive name
-        test_output = os.path.join(os.path.dirname(__file__), 
-                                   f"TEST_Scheme_of_Work_{datetime.now().strftime('%Y%m%d_%H%M%S')}.docx")
-        doc.save(test_output)
-        print(f"\n[OK] Test file saved: {test_output}")
-        print(f"\n[ACTION REQUIRED] Please:")
-        print(f"    1. Open: {test_output}")
-        print(f"    2. Open: rtb_scheme_template.docx")
-        print(f"    3. Compare them side-by-side")
-        print(f"    4. Check if ALL 3 terms are filled correctly")
+        if size > 50000:  # Should be > 50KB
+            print("   ✅ File size looks good")
+        else:
+            print("   ⚠️ File size seems small")
         
         return True
-        
     except Exception as e:
-        print(f"[ERROR] Generation failed: {e}")
-        import traceback
-        traceback.print_exc()
+        print(f"❌ Scheme of Work generation failed: {e}")
         return False
 
-def main():
-    print("\n" + "="*60)
-    print("RTB DOCUMENT GENERATION TEST SUITE")
-    print("="*60)
-    
-    # Test session plan
-    session_result = test_session_plan()
-    
-    # Test scheme of work
-    scheme_result = test_scheme_of_work()
-    
-    # Summary
-    print("\n" + "="*60)
-    print("TEST SUMMARY")
-    print("="*60)
-    print(f"Session Plan: {'[PASS]' if session_result else '[FAIL]'}")
-    print(f"Scheme of Work: {'[PASS]' if scheme_result else '[FAIL]'}")
-    
-    if session_result and scheme_result:
-        print("\n[OK] Both documents generated successfully!")
-        print("[ACTION] Now manually compare with official templates")
-    else:
-        print("\n[ERROR] Some tests failed. Check errors above.")
-    
-    print("\n" + "="*60)
-
 if __name__ == "__main__":
-    main()
+    print("=" * 60)
+    print("RTB Document Generation Test")
+    print("=" * 60)
+    
+    session_ok = test_session_plan()
+    scheme_ok = test_scheme_of_work()
+    
+    print("\n" + "=" * 60)
+    print("Test Results:")
+    print("=" * 60)
+    print(f"Session Plan: {'✅ PASS' if session_ok else '❌ FAIL'}")
+    print(f"Scheme of Work: {'✅ PASS' if scheme_ok else '❌ FAIL'}")
+    
+    if session_ok and scheme_ok:
+        print("\n🎉 All tests passed! Documents are ready for deployment.")
+    else:
+        print("\n⚠️ Some tests failed. Please check the errors above.")

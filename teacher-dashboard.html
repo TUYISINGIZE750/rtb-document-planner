@@ -231,6 +231,127 @@
             background: #059669;
         }
         
+        .notifications-panel {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            margin-bottom: 2rem;
+            border-left: 4px solid #6366f1;
+        }
+        
+        .notifications-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .notifications-header h3 {
+            margin: 0;
+            color: #1e293b;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .notification-badge {
+            background: #ef4444;
+            color: white;
+            border-radius: 999px;
+            padding: 0.2rem 0.6rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        
+        .notifications-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .notification-item {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+            transition: all 0.2s;
+        }
+        
+        .notification-item:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+        
+        .notification-item.info {
+            border-left: 3px solid #3b82f6;
+        }
+        
+        .notification-item.success {
+            border-left: 3px solid #10b981;
+        }
+        
+        .notification-item.warning {
+            border-left: 3px solid #f59e0b;
+        }
+        
+        .notification-item.alert {
+            border-left: 3px solid #ef4444;
+        }
+        
+        .notification-content {
+            flex: 1;
+        }
+        
+        .notification-title {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.25rem;
+        }
+        
+        .notification-message {
+            color: #64748b;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        .notification-time {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-top: 0.5rem;
+        }
+        
+        .notification-close {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: color 0.2s;
+            padding: 0;
+        }
+        
+        .notification-close:hover {
+            color: #64748b;
+        }
+        
+        .notifications-empty {
+            text-align: center;
+            color: #94a3b8;
+            padding: 2rem 1rem;
+        }
+        
+        .notifications-empty i {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: #cbd5e1;
+        }
+        
         .footer {
             text-align: center;
             padding: 2rem;
@@ -271,6 +392,18 @@
         <div class="welcome">
             <h1>Welcome to Your Dashboard</h1>
             <p>Create professional RTB-compliant documents with ease</p>
+        </div>
+
+        <div class="notifications-panel" id="notificationsPanel" style="display: none;">
+            <div class="notifications-header">
+                <h3><i class="fas fa-bell"></i> Admin Notifications <span class="notification-badge" id="notificationBadge">0</span></h3>
+            </div>
+            <div class="notifications-list" id="notificationsList">
+                <div class="notifications-empty">
+                    <div><i class="fas fa-inbox"></i></div>
+                    <div>No notifications</div>
+                </div>
+            </div>
         </div>
 
         <div class="status-cards" id="statusCards">
@@ -319,6 +452,8 @@
     <script>
         let currentLimits = null;
 
+        let notificationsData = [];
+
         // Check authentication on page load
         function checkAuth() {
             const session = getCurrentSession();
@@ -328,7 +463,66 @@
             }
             document.getElementById('userName').textContent = session.name;
             loadUserStatus();
+            loadNotifications();
             return true;
+        }
+
+        async function loadNotifications() {
+            try {
+                const session = getCurrentSession();
+                if (!session) return;
+                
+                const response = await fetch(`${API_BASE}/users/${encodeURIComponent(session.phone)}/notifications`, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                if (response.ok) {
+                    notificationsData = await response.json();
+                    displayNotifications();
+                }
+            } catch (error) {
+                console.error('Error loading notifications:', error);
+            }
+        }
+
+        function displayNotifications() {
+            const panel = document.getElementById('notificationsPanel');
+            const list = document.getElementById('notificationsList');
+            const badge = document.getElementById('notificationBadge');
+            
+            const unread = notificationsData.filter(n => !n.is_read).length;
+            badge.textContent = unread;
+            
+            if (notificationsData.length === 0) {
+                panel.style.display = 'none';
+                return;
+            }
+            
+            panel.style.display = 'block';
+            list.innerHTML = notificationsData.map((notif, idx) => {
+                const time = new Date(notif.created_at);
+                const timeStr = time.toLocaleDateString() + ' ' + time.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+                const typeClass = notif.type || 'info';
+                
+                return `
+                    <div class="notification-item ${typeClass}">
+                        <div class="notification-content">
+                            <div class="notification-title">${notif.title || 'Notification'}</div>
+                            <div class="notification-message">${notif.message || ''}</div>
+                            <div class="notification-time">${timeStr}</div>
+                        </div>
+                        <button class="notification-close" onclick="dismissNotification(${notif.id})">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function dismissNotification(notificationId) {
+            notificationsData = notificationsData.filter(n => n.id !== notificationId);
+            displayNotifications();
         }
 
         async function loadUserStatus() {

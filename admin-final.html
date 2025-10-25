@@ -501,7 +501,12 @@
                 const response = await fetch(`${apiBase}/notifications/broadcast`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ target: elements.broadcastTarget.value, message })
+                    body: JSON.stringify({ 
+                        target: elements.broadcastTarget.value, 
+                        message,
+                        title: `Admin Notification`,
+                        type: 'info'
+                    })
                 });
                 if (!response.ok) throw new Error('Notification failed');
                 elements.broadcastMessage.value = '';
@@ -559,7 +564,12 @@
                 const response = await fetch(`${apiBase}/notifications/send`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ recipient: selectedUser.phone, message, type: 'personal' })
+                    body: JSON.stringify({ 
+                        recipient: selectedUser.phone, 
+                        message, 
+                        title: 'Personal Message',
+                        type: 'personal' 
+                    })
                 });
                 if (!response.ok) throw new Error('Message failed');
                 elements.messageBody.value = '';

@@ -851,6 +851,35 @@ def update_user(phone):
     except Exception as e:
         return jsonify({"detail": "Failed to update user"}), 500
 
+@app.route('/users/<phone>/notifications', methods=['GET', 'OPTIONS'])
+def get_user_notifications_by_phone(phone):
+    if request.method == 'OPTIONS':
+        return '', 204
+    
+    try:
+        db = SessionLocal()
+        try:
+            user = db.query(User).filter(User.phone == phone).first()
+            if not user:
+                return jsonify([]), 200
+            
+            notifications = db.query(Notification).filter(Notification.user_id == user.id).order_by(Notification.created_at.desc()).all()
+            return jsonify([
+                {
+                    "id": n.id,
+                    "title": n.title,
+                    "message": n.message,
+                    "type": n.type,
+                    "is_read": n.is_read,
+                    "created_at": n.created_at.isoformat() if n.created_at else None
+                } for n in notifications
+            ]), 200
+        finally:
+            db.close()
+    except Exception as e:
+        logger.error(f"Get notifications error: {e}")
+        return jsonify([]), 200
+
 @app.route('/notifications/user/<int:user_id>', methods=['GET', 'OPTIONS'])
 def get_user_notifications(user_id):
     if request.method == 'OPTIONS':
