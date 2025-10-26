@@ -1,0 +1,180 @@
+================================================================================
+TL;DR - DEPLOYMENT IN 60 SECONDS
+================================================================================
+
+WHAT TO DO:
+
+1. GITHUB (Push your code)
+   git add .
+   git commit -m "RTB Document Planner with template fix"
+   git push origin main
+   
+   → Push everything from PRODUCTION_READY folder
+
+2. PYTHONANYWHERE (Upload files)
+   Upload to: /home/YOUR_USERNAME/rtb_planner/
+   
+   Files:
+   ✓ All Python files from backend/
+   ✓ All HTML/JS/CSS from frontend/
+   ✓ RTB Templates folder with .docx files
+   ✓ requirements.txt
+   
+   Reload web app
+
+3. CLOUDFLARE (Configure domain)
+   ✓ Add domain to Cloudflare
+   ✓ Update nameservers at registrar
+   ✓ Add CNAME DNS records
+   ✓ Enable SSL/TLS (Full strict)
+   ✓ Update CORS in main.py
+
+4. TEST
+   ✓ Open https://yourdomain.com
+   ✓ Generate a session plan
+   ✓ Download and verify structure matches RTB template
+
+================================================================================
+FILES TO UPLOAD TO PYTHONANYWHERE
+================================================================================
+
+Required Backend Files:
+  backend/main.py
+  backend/document_generator.py
+  backend/rtb_template_generator.py ← UPDATED VERSION
+  backend/ai_content_generator.py
+  backend/facilitation_content_generator.py
+  backend/smart_content_generator.py
+  backend/content_formatter.py
+  backend/init_db.py
+  backend/requirements.txt
+
+Required Frontend Files:
+  frontend/index.html
+  frontend/wizard.html
+  frontend/scheme-wizard.html
+  frontend/login.html
+  frontend/register.html
+  frontend/admin.html
+  frontend/auth.js
+  frontend/config.js ← UPDATE API_URL
+  frontend/subscription-modal.js
+  frontend/subscription-tracker.js
+  frontend/*.css
+
+Required Templates:
+  RTB Templates/RTB Session plan template.docx
+  RTB Templates/Scheme of work.docx
+
+DON'T UPLOAD:
+  ✗ test_*.py files
+  ✗ __pycache__ folder
+  ✗ .env file
+  ✗ *.pyc files
+
+================================================================================
+CLOUDFLARE CONFIGURATION
+================================================================================
+
+DNS Records:
+  Type: CNAME
+  Name: @
+  Content: YOUR_USERNAME.pythonanywhere.com
+  Proxy: 🟠 Proxied
+
+  Type: CNAME
+  Name: www
+  Content: YOUR_USERNAME.pythonanywhere.com
+  Proxy: 🟠 Proxied
+
+SSL/TLS:
+  Encryption mode: Full (strict)
+  Always use HTTPS: ON
+
+Important Updates:
+  ✓ Update config.js: API_URL = 'https://yourdomain.com'
+  ✓ Update main.py: Add your domain to CORS allowed_origins
+  ✓ Reload PythonAnywhere after changes
+
+================================================================================
+VERIFICATION TESTS
+================================================================================
+
+Test 1: Website loads
+  https://yourdomain.com → Shows app
+  
+Test 2: Has Cloudflare
+  https://yourdomain.com → Browser shows 🔒 Secure + Cloudflare badge
+
+Test 3: Can generate documents
+  → Fill form, click generate, download .docx
+
+Test 4: Document structure correct
+  → Open .docx, verify 23 rows × 6 columns, data in correct cells
+
+================================================================================
+TROUBLESHOOTING
+================================================================================
+
+Issue                     Solution
+────────────────────────────────────────────────────────────────────────────
+404 on website           → Reload PythonAnywhere
+Template not found       → Check RTB Templates folder exists with .docx files
+Document looks wrong     → Verify rtb_template_generator.py uploaded
+CORS errors              → Check main.py CORS includes your domain
+SSL not working          → Wait 24-48 hours for DNS propagation
+PDF download fails       → Ensure docx2pdf in requirements.txt
+
+================================================================================
+QUICK REFERENCE
+================================================================================
+
+Deploy Steps:        4 (GitHub → PythonAnywhere → Cloudflare → Test)
+Time Required:       40 minutes
+Files to Upload:     ~25 files (~350 KB)
+Key File Updated:    rtb_template_generator.py (cell indices fixed)
+Critical Files:      RTB Templates/*.docx (MUST exist or docs will be wrong)
+Testing Time:        5 minutes
+Expected Result:     100% matching official RTB template structure
+
+================================================================================
+FINAL CHECKLIST
+================================================================================
+
+Before deploying:
+  ☐ GitHub repo created and ready
+  ☐ PythonAnywhere account ready
+  ☐ Cloudflare account ready
+  ☐ Domain registered and available
+
+After deploying:
+  ☐ All files uploaded to PythonAnywhere
+  ☐ Web app reloaded successfully
+  ☐ Website loads at https://yourdomain.com
+  ☐ Document generation works
+  ☐ Generated documents match RTB template
+  ☐ Downloaded files are in correct format (.docx or .pdf)
+  ☐ SSL certificate shows as valid
+  ☐ Cloudflare badge visible in browser
+
+Success = All checked ✓
+
+================================================================================
+NEED HELP?
+================================================================================
+
+Detailed Guide:
+  → DEPLOYMENT_GITHUB_PYTHONANYWHERE_CLOUDFLARE.md
+
+File-by-File Breakdown:
+  → FILES_TO_UPLOAD_EXPLANATION.txt
+
+Full Checklist:
+  → QUICK_DEPLOYMENT_CHECKLIST.txt
+
+Template Fix Details:
+  → rtb_template_generator.py (see preserve_cell_format function)
+
+================================================================================
+STATUS: READY FOR DEPLOYMENT ✅
+================================================================================

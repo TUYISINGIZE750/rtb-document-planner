@@ -1,0 +1,269 @@
+================================================================================
+FILES TO UPLOAD TO PYTHONANYWHERE
+================================================================================
+
+DEPLOYMENT: PDF & Multi-Format Download Support
+Current Status: COMPLETE & TESTED ✅
+
+================================================================================
+REQUIRED FILE UPDATES
+================================================================================
+
+Location: /home/leonardus437/rtb_planner/
+
+1. UPLOAD FILE: document_generator.py (REPLACE EXISTING)
+   ┌─ Source: PRODUCTION_READY/backend/document_generator.py
+   ├─ Size: ~17 KB
+   ├─ Changes: Added PDF conversion functions (~220 lines)
+   ├─ Status: ✅ TESTED & WORKING
+   └─ Action: Upload and replace existing file
+
+2. UPLOAD FILE: main.py (REPLACE EXISTING)
+   ┌─ Source: PRODUCTION_READY/backend/main.py
+   ├─ Size: ~42 KB
+   ├─ Changes: Added 4 new endpoints (~180 lines)
+   ├─ Status: ✅ TESTED & WORKING
+   └─ Action: Upload and replace existing file
+
+3. UPDATE FILE: requirements.txt (MODIFY EXISTING)
+   ┌─ Source: PRODUCTION_READY/backend/requirements.txt
+   ├─ Add Line: docx2pdf==0.5.0
+   ├─ Current Content:
+   │   flask==3.0.0
+   │   flask-cors==4.0.0
+   │   python-docx==1.1.0
+   │   lxml==4.9.3
+   │   sqlalchemy==2.0.23
+   ├─ New Content (after update):
+   │   flask==3.0.0
+   │   flask-cors==4.0.0
+   │   python-docx==1.1.0
+   │   lxml==4.9.3
+   │   sqlalchemy==2.0.23
+   │   docx2pdf==0.5.0  ← ADD THIS LINE
+   ├─ Status: ✅ READY
+   └─ Action: Add line and save
+
+================================================================================
+OPTIONAL UPLOADS (FOR REFERENCE)
+================================================================================
+
+These files are optional - for documentation and testing only:
+
+4. test_pdf_multidownload.py
+   └─ Optional local test script (not needed on server)
+
+5. PDF_AND_MULTIDOWNLOAD_GUIDE.md
+   └─ Technical documentation (keep for reference)
+
+6. PDF_MULTIDOWNLOAD_DEPLOYMENT.txt
+   └─ Quick deployment guide (keep for reference)
+
+7. PDF_IMPLEMENTATION_COMPLETE.md
+   └─ Complete implementation summary (keep for reference)
+
+================================================================================
+STEP-BY-STEP DEPLOYMENT
+================================================================================
+
+STEP 1: LOGIN TO PYTHONANYWHERE
+═══════════════════════════════
+1. Open: https://www.pythonanywhere.com
+2. Login with your account
+3. Go to: Web tab (top menu)
+
+STEP 2: UPDATE requirements.txt
+═══════════════════════════════
+Option A - Via Files Manager (Easier):
+  1. Click "Files" 
+  2. Navigate to: /home/leonardus437/rtb_planner/
+  3. Find: requirements.txt
+  4. Click to open
+  5. Add line: docx2pdf==0.5.0
+  6. Save
+
+Option B - Via Console:
+  1. Click "Bash console"
+  2. Run: cd /home/leonardus437/rtb_planner/
+  3. Run: echo "docx2pdf==0.5.0" >> requirements.txt
+  4. Verify: cat requirements.txt
+
+STEP 3: UPLOAD Updated Files
+═════════════════════════════
+Via Files Manager:
+  1. Go to: Web → Files
+  2. Navigate to: /home/leonardus437/rtb_planner/
+  3. Upload document_generator.py
+  4. Upload main.py
+  5. Verify both files uploaded (check timestamps)
+
+Alternative - Via Console (if upload fails):
+  1. Use SCP to upload files
+  2. Or use: git pull if files in GitHub
+
+STEP 4: RELOAD WEB APPLICATION
+═══════════════════════════════
+1. Go to: Web tab
+2. Find: leonardus437.pythonanywhere.com
+3. Click: "Reload leonardus437.pythonanywhere.com"
+4. Wait: 30-45 seconds for reload to complete
+5. Status shows: "Last reload: just now" ✓
+
+STEP 5: VERIFY DEPLOYMENT
+══════════════════════════
+
+Test 1 - API Status:
+  URL: https://leonardus437.pythonanywhere.com/
+  Expected: features includes "pdf_generation" and "multi_format_download"
+
+Test 2 - Format Selection (Session Plan):
+  URL: https://leonardus437.pythonanywhere.com/session-plans/16/download-formats?phone=%2B250789751595
+  Expected: JSON with 2 formats (docx, pdf)
+
+Test 3 - Format Selection (Scheme):
+  URL: https://leonardus437.pythonanywhere.com/schemes-of-work/1/download-formats?phone=%2B250789751595
+  Expected: JSON with 2 formats (docx, pdf)
+
+Test 4 - DOCX Download (should still work):
+  URL: https://leonardus437.pythonanywhere.com/session-plans/16/download?phone=%2B250789751595
+  Expected: .docx file downloads
+
+Test 5 - PDF Download (new):
+  URL: https://leonardus437.pythonanywhere.com/session-plans/16/download-pdf?phone=%2B250789751595
+  Expected: .pdf file downloads (may take 5-10 sec first time)
+
+================================================================================
+QUICK REFERENCE
+================================================================================
+
+Files to Upload:
+  ✓ document_generator.py (REPLACE)
+  ✓ main.py (REPLACE)
+  ✓ requirements.txt (MODIFY - add docx2pdf line)
+
+Upload Location:
+  /home/leonardus437/rtb_planner/
+
+Expected New Endpoints:
+  ✓ /session-plans/<id>/download-pdf
+  ✓ /session-plans/<id>/download-formats
+  ✓ /schemes-of-work/<id>/download-pdf
+  ✓ /schemes-of-work/<id>/download-formats
+
+Upload Time: 5 minutes
+Reload Time: 30-45 seconds
+Testing Time: 2 minutes
+Total: ~10 minutes
+
+================================================================================
+VERIFICATION CHECKLIST
+================================================================================
+
+After Uploading:
+  ☐ Files uploaded successfully
+  ☐ requirements.txt includes docx2pdf==0.5.0
+  ☐ Web app reloaded without errors
+  ☐ API status endpoint returns new features
+  ☐ Format selection endpoint works
+  ☐ PDF download endpoint works
+  ☐ DOCX download still works
+  ☐ No errors in logs
+
+If All Checked: ✅ DEPLOYMENT SUCCESSFUL
+
+================================================================================
+TROUBLESHOOTING
+================================================================================
+
+Problem: 404 Not Found on new endpoints
+Solution: 
+  - Check files uploaded correctly
+  - Check file names are exact (case-sensitive)
+  - Reload web app again
+  - Check browser cache (Ctrl+Shift+R)
+
+Problem: 500 Error when requesting PDF
+Solution:
+  - Check requirements.txt includes docx2pdf
+  - Reload to install dependencies
+  - Check error log
+  - PDF library may need installation time (wait 2 min)
+
+Problem: "No PDF converter available"
+Solution:
+  - docx2pdf not installed yet
+  - Wait 2 minutes after reload for pip install
+  - Try again
+  - If still fails, LibreOffice fallback will be used
+
+Problem: PDF download times out (>60 seconds)
+Solution:
+  - First PDF is slower (normal)
+  - Document may be too large
+  - Try downloading DOCX instead
+  - Contact support if persists
+
+Problem: Downloaded PDF is blank
+Solution:
+  - Check source DOCX is valid
+  - Try downloading again
+  - Check logs for conversion errors
+  - Try DOCX format instead
+
+================================================================================
+SUPPORT & REFERENCE
+================================================================================
+
+Quick Deployment Guide:
+  → PDF_MULTIDOWNLOAD_DEPLOYMENT.txt
+
+Technical Details:
+  → PDF_AND_MULTIDOWNLOAD_GUIDE.md
+
+Implementation Summary:
+  → PDF_IMPLEMENTATION_COMPLETE.md
+
+Local Testing:
+  → test_pdf_multidownload.py (run before uploading)
+
+================================================================================
+AFTER SUCCESSFUL DEPLOYMENT
+================================================================================
+
+1. Announce to Teachers:
+   "You can now download session plans and schemes in PDF format!"
+
+2. Monitor for 24 hours:
+   - Check error logs regularly
+   - Collect user feedback
+   - Note any issues
+
+3. Create Support Documentation:
+   - How to download as PDF
+   - When to use DOCX vs PDF
+   - Troubleshooting guide
+
+4. Track Metrics:
+   - How many use PDF vs DOCX
+   - Average conversion time
+   - Error rates
+
+================================================================================
+ROLLBACK (if needed)
+================================================================================
+
+If everything breaks:
+  1. Remove PDF functions from document_generator.py
+  2. Remove PDF endpoints from main.py
+  3. Remove docx2pdf from requirements.txt
+  4. Reload web app
+  5. System reverts to DOCX-only (no data loss)
+  Rollback time: <5 minutes
+
+================================================================================
+Status: READY FOR DEPLOYMENT ✅
+Quality: TESTED & VERIFIED ✅
+Documentation: COMPLETE ✅
+Risk Level: LOW (graceful fallback) ✅
+Estimated Time: 10 minutes ✅
+================================================================================

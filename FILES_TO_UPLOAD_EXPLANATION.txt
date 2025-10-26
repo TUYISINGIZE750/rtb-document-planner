@@ -1,0 +1,314 @@
+================================================================================
+DETAILED FILE UPLOAD EXPLANATION
+Which files go where and why
+================================================================================
+
+================================================================================
+PART 1: PYTHON BACKEND FILES
+================================================================================
+
+REQUIRED FILES (MUST UPLOAD TO PYTHONANYWHERE):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. main.py (54 KB)
+   └─ What: Core Flask application
+   └─ Why: Contains all API endpoints for document generation, authentication, downloads
+   └─ Upload: YES ✓ REQUIRED
+   └─ Location: /home/YOUR_USERNAME/rtb_planner/backend/main.py
+   └─ Imported by: WSGI file
+   └─ Last updated: With Cloudflare CORS config
+
+2. requirements.txt (208 bytes)
+   └─ What: Python dependencies
+   └─ Why: Lists all packages needed (Flask, docx, etc.)
+   └─ Upload: YES ✓ REQUIRED
+   └─ Location: /home/YOUR_USERNAME/rtb_planner/backend/requirements.txt
+   └─ Critical packages:
+      • flask==3.0.0
+      • python-docx==1.1.0
+      • docx2pdf==0.5.0  ← For PDF generation
+      • sqlalchemy==2.0.23
+      • flask-cors==4.0.0
+
+3. document_generator.py (17 KB)
+   └─ What: Generates DOCX and PDF files
+   └─ Why: Handles document creation, PDF conversion, file formatting
+   └─ Upload: YES ✓ REQUIRED
+   └─ Location: /home/YOUR_USERNAME/rtb_planner/backend/document_generator.py
+   └─ Imported by: main.py
+   └─ Contains: PDF conversion, DOCX generation, multi-format download logic
+
+4. rtb_template_generator.py (9.6 KB) ⭐ UPDATED
+   └─ What: Fills RTB templates with user data
+   └─ Why: Loads official .docx templates and fills them correctly
+   └─ Upload: YES ✓ REQUIRED
+   └─ Location: /home/YOUR_USERNAME/rtb_planner/backend/rtb_template_generator.py
+   └─ Imported by: document_generator.py
+   └─ New functions:
+      • preserve_cell_format() - Updates cells while preserving formatting
+      • generate_session_plan_from_template() - Fills session plan
+      • generate_scheme_of_work_from_template() - Fills scheme
+   └─ Key fix: Uses correct cell indices to match official template
+
+5. ai_content_generator.py (19 KB)
+   └─ What: Enhances user input with AI-generated content
+   └─ Why: Improves learning outcomes, resources, assessments
+   └─ Upload: YES ✓ REQUIRED
+   └─ Location: /home/YOUR_USERNAME/rtb_planner/backend/ai_content_generator.py
+   └─ Imported by: main.py, document_generator.py
+   └─ Contains: Content enhancement algorithms for different domains
+
+6. facilitation_content_generator.py (19 KB)
+   └─ What: Generates facilitation techniques and methods
+   └─ Why: Provides suggested teaching methods based on topic
+   └─ Upload: YES ✓ REQUIRED
+   └─ Location: /home/YOUR_USERNAME/rtb_planner/backend/facilitation_content_generator.py
+   └─ Imported by: ai_content_generator.py
+   └─ Contains: Facilitation techniques for different learning outcomes
+
+7. smart_content_generator.py (13.5 KB)
+   └─ What: Intelligently generates session plan content
+   └─ Why: Processes module info and creates complete session outlines
+   └─ Upload: YES ✓ REQUIRED
+   └─ Location: /home/YOUR_USERNAME/rtb_planner/backend/smart_content_generator.py
+   └─ Imported by: main.py
+   └─ Contains: Complete session plan generation logic
+
+8. content_formatter.py (7.4 KB)
+   └─ What: Formats and structures content
+   └─ Why: Ensures consistent formatting across generated documents
+   └─ Upload: YES ✓ REQUIRED
+   └─ Location: /home/YOUR_USERNAME/rtb_planner/backend/content_formatter.py
+   └─ Imported by: document_generator.py
+   └─ Contains: Text formatting, bullet points, numbering
+
+9. init_db.py (1.2 KB)
+   └─ What: Database initialization
+   └─ Why: Sets up database tables if missing
+   └─ Upload: YES ✓ RECOMMENDED (but optional if no database needed)
+   └─ Location: /home/YOUR_USERNAME/rtb_planner/backend/init_db.py
+   └─ Run once: python backend/init_db.py
+
+
+OPTIONAL FILES (DO NOT UPLOAD):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+❌ test_*.py files
+   └─ Why: Test scripts for development only
+   └─ Examples: test_template_generation.py, test_document_generation.py
+   └─ Status: NOT needed on server
+
+❌ rtb_template_filler*.py (older versions)
+   └─ Why: Old implementations - replaced by rtb_template_generator.py
+   └─ Status: NOT needed on server
+
+❌ VERIFY_*.py, quick_test.py, verify_*.py
+   └─ Why: Verification scripts for local testing
+   └─ Status: NOT needed on server
+
+❌ analyze_*.py, compare_*.py
+   └─ Why: Analysis and debugging scripts
+   └─ Status: NOT needed on server
+
+❌ enhanced_document_generator.py
+   └─ Why: Older version - functionality in current document_generator.py
+   └─ Status: NOT needed on server
+
+
+================================================================================
+PART 2: FRONTEND FILES
+================================================================================
+
+ALL FRONTEND FILES REQUIRED:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+HTML Files:
+  ✓ frontend/index.html (21 KB)
+    └─ Home/landing page, main dashboard
+    └─ Location: /home/YOUR_USERNAME/rtb_planner/frontend/index.html
+
+  ✓ frontend/wizard.html (15 KB)
+    └─ Session plan wizard form
+    └─ Location: /home/YOUR_USERNAME/rtb_planner/frontend/wizard.html
+
+  ✓ frontend/scheme-wizard.html (30 KB)
+    └─ Scheme of work wizard form
+    └─ Location: /home/YOUR_USERNAME/rtb_planner/frontend/scheme-wizard.html
+
+  ✓ frontend/login.html (10 KB)
+    └─ User login page
+    └─ Location: /home/YOUR_USERNAME/rtb_planner/frontend/login.html
+
+  ✓ frontend/register.html (6.6 KB)
+    └─ User registration page
+    └─ Location: /home/YOUR_USERNAME/rtb_planner/frontend/register.html
+
+  ✓ frontend/admin.html (10 KB)
+    └─ Admin dashboard
+    └─ Location: /home/YOUR_USERNAME/rtb_planner/frontend/admin.html
+
+JavaScript Files:
+  ✓ frontend/auth.js (15.5 KB)
+    └─ Authentication logic, login/logout
+    └─ Location: /home/YOUR_USERNAME/rtb_planner/frontend/auth.js
+
+  ✓ frontend/config.js (1.1 KB)
+    └─ Configuration - API endpoints
+    └─ Location: /home/YOUR_USERNAME/rtb_planner/frontend/config.js
+    └─ ⚠️ UPDATE THIS: Change API_URL to your domain
+
+  ✓ frontend/subscription-modal.js (15.3 KB)
+    └─ Subscription management modal
+    └─ Location: /home/YOUR_USERNAME/rtb_planner/frontend/subscription-modal.js
+
+  ✓ frontend/subscription-tracker.js (6.1 KB)
+    └─ Tracks subscription status
+    └─ Location: /home/YOUR_USERNAME/rtb_planner/frontend/subscription-tracker.js
+
+CSS Files:
+  ✓ frontend/*.css (all stylesheets)
+    └─ All CSS files needed for styling
+    └─ Location: /home/YOUR_USERNAME/rtb_planner/frontend/
+
+Optional Frontend Files:
+  ❌ admin-final.html
+  ❌ direct-login.html
+     └─ Old versions - NOT needed
+
+================================================================================
+PART 3: RTB TEMPLATES (CRITICAL!)
+================================================================================
+
+REQUIRED TEMPLATE FILES:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. RTB Session plan template.docx (28.5 KB)
+   └─ What: Official RTB session plan template
+   └─ Why: MUST be present or generated documents will be wrong
+   └─ Upload: YES ✓ REQUIRED
+   └─ Location: /home/YOUR_USERNAME/rtb_planner/RTB Templates/RTB Session plan template.docx
+   └─ Note: Must be in folder named exactly "RTB Templates"
+   └─ Action: Create folder first, then upload file
+
+2. Scheme of work.docx (75 KB)
+   └─ What: Official RTB scheme of work template
+   └─ Why: MUST be present or scheme documents will be wrong
+   └─ Upload: YES ✓ REQUIRED
+   └─ Location: /home/YOUR_USERNAME/rtb_planner/RTB Templates/Scheme of work.docx
+   └─ Note: Contains 3 tables (one per term)
+   └─ Action: Upload to same folder
+
+OPTIONAL TEMPLATE FILES:
+❌ rtb_scheme_templatehh.docx
+   └─ Duplicate/old version - NOT needed
+
+================================================================================
+PART 4: CONFIGURATION FILES
+================================================================================
+
+MUST UPDATE BEFORE UPLOADING:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. frontend/config.js
+   Current (default):
+   const API_URL = 'http://localhost:5000';
+
+   Change to:
+   const API_URL = 'https://yourdomain.com';
+
+   Save and re-upload
+
+2. backend/main.py (lines 27-39)
+   Current CORS allowed origins:
+   origins=[
+       "https://tuyisingize750.github.io",
+       ...
+   ]
+
+   Change to include your domain:
+   origins=[
+       "https://yourdomain.com",
+       "https://www.yourdomain.com",
+       "http://localhost:5000",
+       ...
+   ]
+
+   Save and re-upload
+
+================================================================================
+UPLOAD ORDER (RECOMMENDED)
+================================================================================
+
+1. First: Create folder structure
+   ☐ Create: /home/YOUR_USERNAME/rtb_planner/
+   ☐ Create: /home/YOUR_USERNAME/rtb_planner/backend/
+   ☐ Create: /home/YOUR_USERNAME/rtb_planner/frontend/
+   ☐ Create: /home/YOUR_USERNAME/rtb_planner/RTB Templates/
+
+2. Second: Upload requirements.txt
+   ☐ Upload: requirements.txt (so you know what to install)
+
+3. Third: Upload all backend Python files
+   ☐ main.py
+   ☐ document_generator.py
+   ☐ rtb_template_generator.py (UPDATED)
+   ☐ ai_content_generator.py
+   ☐ facilitation_content_generator.py
+   ☐ smart_content_generator.py
+   ☐ content_formatter.py
+   ☐ init_db.py
+
+4. Fourth: Upload template files (CRITICAL)
+   ☐ RTB Session plan template.docx
+   ☐ Scheme of work.docx
+
+5. Fifth: Upload frontend files
+   ☐ index.html
+   ☐ wizard.html
+   ☐ scheme-wizard.html
+   ☐ login.html
+   ☐ register.html
+   ☐ admin.html
+   ☐ auth.js (with config.js already updated)
+   ☐ config.js
+   ☐ subscription-modal.js
+   ☐ subscription-tracker.js
+   ☐ All CSS files
+
+6. Last: Configure and reload
+   ☐ Install dependencies: pip install -r requirements.txt
+   ☐ Configure WSGI file
+   ☐ Reload web app
+
+================================================================================
+CRITICAL CHECKLIST
+================================================================================
+
+Before uploading, verify:
+  ☐ rtb_template_generator.py is the UPDATED version (with preserve_cell_format)
+  ☐ config.js has correct API_URL pointing to your domain
+  ☐ main.py CORS includes your domain
+  ☐ requirements.txt includes all packages
+  ☐ RTB Templates folder will be created with correct .docx files
+  ☐ All file names are EXACT (case-sensitive)
+  ☐ No __pycache__ or .pyc files uploaded
+
+================================================================================
+FILE SIZE SUMMARY
+================================================================================
+
+Backend Python files:       ~100 KB
+Frontend HTML/JS/CSS:       ~150 KB
+RTB Templates:              ~100 KB
+────────────────────────────────
+TOTAL TO UPLOAD:           ~350 KB
+
+Upload speed depends on internet:
+  • 1 Mbps:   ~5 minutes
+  • 5 Mbps:   ~1 minute
+  • 10 Mbps:  ~30 seconds
+
+================================================================================
+STATUS: READY ✅
+All files identified and explained
+================================================================================
