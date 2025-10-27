@@ -1,188 +1,72 @@
-# PythonAnywhere Upload Guide - Step by Step
+# PythonAnywhere Upload Guide - CORRECT FILES
 
-## Your Current PythonAnywhere Structure
+## Files to Upload to `/home/leonardus437/`
 
-Your backend files are currently in:
-```
-/home/leonardus437/rtb-document-planner/
-```
+Upload these **7 files** from:
+`C:\Users\PC\Music\Scheme of work and session plan planner\PRODUCTION_READY\backend\`
 
-## Files to Upload from Local Computer
+1. **main.py** ✅
+2. **document_generator.py** ✅
+3. **rtb_template_filler_exact.py** ✅ (THIS IS THE CORRECT ONE)
+4. **facilitation_content_generator.py** ✅
+5. **content_formatter.py** ✅
+6. **init_db.py** ✅
+7. **requirements.txt** ✅
 
-From your local folder:
-```
-C:\Users\PC\Music\Scheme of work and session plan planner\PRODUCTION_READY\backend\
-```
+## Templates to Upload
 
-Upload these files:
-1. `main.py` (UPDATED - has Cloudflare CORS)
-2. `facilitation_content_generator.py` (UPDATED - simplified content)
-3. `content_formatter.py`
-4. `rtb_template_filler_exact.py`
-5. `document_generator.py`
+Create folder: `/home/leonardus437/RTB Templates/`
 
----
+Upload these **2 templates**:
+1. **rtb_session_plan_template.docx** (from backend folder)
+2. **rtb_scheme_template.docx** (from backend folder)
 
-## Step-by-Step Upload Process
+**NOT from RTB Templates subfolder - use the ones directly in backend folder!**
 
-### Method 1: Via PythonAnywhere Web Interface (EASIEST)
+## Install Dependencies
 
-#### Step 1: Open Files Tab
-1. Login to PythonAnywhere
-2. Click **Files** tab at top
-
-#### Step 2: Navigate to Your Project
-1. You'll see: `/home/leonardus437/`
-2. Click on folder: `rtb-document-planner`
-3. You should now be in: `/home/leonardus437/rtb-document-planner/`
-
-#### Step 3: Upload Files One by One
-For each file:
-
-1. Click **Upload a file** button (top right)
-2. Click **Choose File**
-3. Navigate to: `C:\Users\PC\Music\Scheme of work and session plan planner\PRODUCTION_READY\backend\`
-4. Select file (e.g., `main.py`)
-5. Click **Upload**
-6. If file exists, click **Replace** to overwrite
-
-Repeat for all 5 files.
-
-#### Step 4: Verify Files Uploaded
-In `/home/leonardus437/rtb-document-planner/`, you should see:
-- ✅ main.py (updated today)
-- ✅ facilitation_content_generator.py (updated today)
-- ✅ content_formatter.py
-- ✅ rtb_template_filler_exact.py
-- ✅ document_generator.py
-- ✅ rtb_session_plan_template.docx
-- ✅ rtb_scheme_template.docx
-- ✅ rtb_planner.db
-
----
-
-### Method 2: Via Git Pull (FASTER)
-
-#### Step 1: Open Bash Console
-1. Click **Consoles** tab
-2. Click **Bash**
-
-#### Step 2: Navigate and Pull
 ```bash
-cd ~/rtb-document-planner
-git pull origin main
+pip install -r requirements.txt
 ```
 
-#### Step 3: Copy Files to Root
-```bash
-cp PRODUCTION_READY/backend/*.py .
+## WSGI Configuration
+
+```python
+import sys
+path = '/home/leonardus437'
+if path not in sys.path:
+    sys.path.insert(0, path)
+
+from main import app
+application = app
 ```
 
-This copies all Python files from PRODUCTION_READY/backend to your project root.
+## Final Structure
 
----
-
-## After Upload: Reload Web App
-
-### Step 1: Go to Web Tab
-1. Click **Web** tab at top
-2. Find your app: `leonardus437.pythonanywhere.com`
-
-### Step 2: Reload
-1. Scroll down to **Reload** button (big green button)
-2. Click **Reload leonardus437.pythonanywhere.com**
-3. Wait for green checkmark (5-10 seconds)
-
-### Step 3: Verify
-Open new browser tab:
-```
-https://leonardus437.pythonanywhere.com/
-```
-
-Should return:
-```json
-{
-  "message": "RTB Document Planner API",
-  "status": "online",
-  "version": "2.0"
-}
-```
-
----
-
-## Test Cloudflare Connection
-
-### Step 1: Open Cloudflare Site
-```
-https://rtb-document-planner.pages.dev
-```
-
-### Step 2: Open Browser Console (F12)
-Look for:
-```
-✅ config.js loaded
-✅ API connection successful
-```
-
-### Step 3: Test Login
-- Phone: `+250789751597`
-- Password: `admin123`
-- Should login successfully
-
----
-
-## File Locations Summary
-
-### Local Computer:
-```
-C:\Users\PC\Music\Scheme of work and session plan planner\
-  └── PRODUCTION_READY\
-      └── backend\
-          ├── main.py ← Upload this
-          ├── facilitation_content_generator.py ← Upload this
-          ├── content_formatter.py ← Upload this
-          ├── rtb_template_filler_exact.py ← Upload this
-          └── document_generator.py ← Upload this
-```
-
-### PythonAnywhere:
 ```
 /home/leonardus437/
-  └── rtb-document-planner/
-      ├── main.py ← Files go here
-      ├── facilitation_content_generator.py
-      ├── content_formatter.py
-      ├── rtb_template_filler_exact.py
-      ├── document_generator.py
-      ├── rtb_session_plan_template.docx
-      ├── rtb_scheme_template.docx
-      └── rtb_planner.db
+├── main.py
+├── document_generator.py
+├── rtb_template_filler_exact.py
+├── facilitation_content_generator.py
+├── content_formatter.py
+├── init_db.py
+├── requirements.txt
+└── RTB Templates/
+    ├── rtb_session_plan_template.docx
+    └── rtb_scheme_template.docx
 ```
 
----
+## Initialize Database
 
-## Quick Checklist
-
-- [ ] Login to PythonAnywhere
-- [ ] Go to Files tab
-- [ ] Navigate to `rtb-document-planner` folder
-- [ ] Upload 5 Python files from `PRODUCTION_READY\backend`
-- [ ] Go to Web tab
-- [ ] Click Reload button
-- [ ] Test API: https://leonardus437.pythonanywhere.com/
-- [ ] Test Cloudflare site
-- [ ] Test login and document generation
-
----
-
-## Need Help?
-
-If files are in wrong location, use Bash console:
+After upload, run in Bash console:
 ```bash
-cd ~/rtb-document-planner
-ls -la
+cd /home/leonardus437
+python init_db.py
 ```
 
-This shows all files in your project folder.
+## Test
 
-**Done!** 🎉
+Visit: https://leonardus437.pythonanywhere.com/
+
+Should see: `{"message": "RTB Document Planner API"}`
