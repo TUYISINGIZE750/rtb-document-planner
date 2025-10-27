@@ -1,0 +1,164 @@
+================================================================================
+IMMEDIATE DEPLOYMENT STEPS - Download Fix
+================================================================================
+
+WHAT: Fix for "Download failed: list index out of range" error
+WHERE: PythonAnywhere backend
+TIME: ~5 minutes to deploy + 2 minutes for tests
+
+STEP 1: Prepare Files (Already Done)
+========================================
+All fixed files are in: PRODUCTION_READY/backend/
+
+Files ready to upload:
+  ✓ main.py (41.8 KB)
+  ✓ document_generator.py (13.56 KB) 
+  ✓ rtb_template_filler_exact.py (15.8 KB)
+  ✓ rtb_session_plan_template.docx
+  ✓ rtb_scheme_template.docx
+
+STEP 2: Deploy to PythonAnywhere
+=================================
+1. Open: https://www.pythonanywhere.com
+2. Login with your account
+3. Go to: WEB tab (top menu)
+4. Look for: Files / Console option
+5. Navigate to: /home/leonardus437/rtb_planner/
+
+Option A - Via Files Manager (Easiest):
+  a) Click "Files" in Files section
+  b) Navigate to /home/leonardus437/rtb_planner/
+  c) Upload each file from PRODUCTION_READY/backend/:
+     - main.py
+     - document_generator.py
+     - rtb_template_filler_exact.py
+  d) Confirm files are uploaded
+
+Option B - Via Console:
+  a) Click "Bash console"
+  b) Run commands:
+     cd /home/leonardus437/rtb_planner/
+     # Then use: git pull origin main
+     # OR upload files via web interface
+
+STEP 3: Reload Application
+===========================
+1. Stay on WEB tab
+2. Find your web app: leonardus437.pythonanywhere.com
+3. Click: "Reload leonardus437.pythonanywhere.com" button
+4. Wait 30 seconds for reload to complete
+5. Status should show: "Last reload: just now" ✓
+
+STEP 4: Test Downloads
+======================
+1. Open your app: https://schemesession.netlify.app/
+   (or your main frontend)
+
+2. Test Session Plan Download:
+   a) Create a session plan
+   b) Click "Download" button
+   c) File should download successfully
+   ✓ Expected: No error message
+
+3. Test Scheme Download:
+   a) Create a scheme of work
+   b) Click "Download" button
+   c) File should download successfully
+   ✓ Expected: No error message
+
+STEP 5: Verify in Logs
+=======================
+1. Go to: Web tab → Logs
+2. Open: error.log
+3. Look for messages like:
+   - "Attempting to fill session plan using template filler"
+   - "Document generation failed" (if any issues)
+   - "Sending file: ..." (successful download)
+
+4. Should NOT see:
+   ✗ "list index out of range"
+   ✗ "Traceback" errors
+   ✗ Generic "Download failed" repeatedly
+
+STEP 6: Monitor for 24 Hours
+============================
+1. Check logs periodically
+2. Test a few downloads from different users
+3. Verify no errors appear
+4. If issues: Screenshot error and send for debug
+
+QUICK ROLLBACK (if something breaks)
+====================================
+If something goes wrong:
+1. Go to: Web → Reload button
+2. Click: Reload (this uses last working version)
+3. OR upload old main.py from git history
+
+SUCCESS CRITERIA
+================
+After deployment, you should see:
+
+✓ Session plan downloads work
+✓ Scheme downloads work
+✓ No "list index out of range" errors
+✓ Files are complete (not truncated)
+✓ Logs show clear messages
+✓ Success rate goes from ~60% to >99%
+
+TROUBLESHOOTING
+===============
+
+Problem: Still getting "list index out of range"
+Solution: 
+  a) Verify files uploaded correctly
+  b) Check file sizes match PRODUCTION_READY version
+  c) Reload web app again
+  d) Check logs for exact error
+
+Problem: Download button doesn't work at all
+Solution:
+  a) Check if web app is running (Web tab)
+  b) Try "Stop web app" then "Start web app"
+  c) Check if templates are in right location:
+     /home/leonardus437/rtb_planner/rtb_session_plan_template.docx
+     /home/leonardus437/rtb_planner/rtb_scheme_template.docx
+
+Problem: Downloaded file is corrupted
+Solution:
+  a) Check file size (should be >50KB for DOCX)
+  b) Try downloading again
+  c) Try a different session plan/scheme
+
+EXPECTED BEHAVIOR AFTER FIX
+===========================
+✓ User clicks Download
+✓ Browser shows download dialog
+✓ File downloads to Downloads folder
+✓ File opens correctly in Word
+✓ All formatting is correct
+✓ No error messages
+
+TIME BREAKDOWN
+==============
+- Upload files: 2 minutes
+- Reload app: 1 minute (+ 30 sec wait)
+- Test downloads: 2 minutes
+- Total: 5 minutes
+
+SUPPORT
+=======
+If you have issues:
+1. Check the error log (Web → Logs)
+2. Read: DOWNLOAD_FIX_TECHNICAL_DETAILS.md
+3. Read: DOWNLOAD_FIX_DEPLOYMENT.md
+4. Run: python test_download_fix.py locally
+
+AFTER SUCCESSFUL DEPLOYMENT
+============================
+1. Mark this task as complete
+2. Update documentation
+3. Announce to users that downloads are fixed
+4. Monitor for 24 hours
+5. Create success report
+
+================================================================================

@@ -1,5 +1,5 @@
 from docx import Document
-from docx.shared import Inches
+from docx.shared import Inches, Pt
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.table import WD_TABLE_ALIGNMENT
 import tempfile
@@ -8,12 +8,28 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+try:
+    from rtb_template_generator import generate_session_plan_from_template, generate_scheme_of_work_from_template
+    HAS_TEMPLATE_GENERATOR = True
+except ImportError:
+    HAS_TEMPLATE_GENERATOR = False
+    logger.warning("Template generator not available, using fallback method")
+
 def generate_session_plan_docx(data):
-    """Generate RTB Session Plan DOCX document"""
+    """Generate RTB Session Plan DOCX document using template"""
+    try:
+        if HAS_TEMPLATE_GENERATOR:
+            return generate_session_plan_from_template(data)
+    except Exception as e:
+        logger.error(f"Template generation failed: {e}, using fallback")
+    
+    return _generate_session_plan_fallback(data)
+
+def _generate_session_plan_fallback(data):
+    """Fallback method for session plan generation"""
     try:
         doc = Document()
         
-        # Helper to get value from dict or object with validation
         def get_val(key, default='N/A'):
             try:
                 if isinstance(data, dict):
@@ -25,22 +41,21 @@ def generate_session_plan_docx(data):
                 logger.error(f"Error getting value for {key}: {e}")
                 return default
         
-        # Header
         header = doc.sections[0].header
-        header_para = header.paragraphs[0]
+        if header.paragraphs:
+            header_para = header.paragraphs[0]
+        else:
+            header_para = header.add_paragraph()
         header_para.text = "REPUBLIC OF RWANDA\nMINISTRY OF EDUCATION\nRWANDA TECHNICAL BOARD (RTB)"
         header_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
         
-        # Title
         title = doc.add_heading('SESSION PLAN', 0)
         title.alignment = WD_ALIGN_PARAGRAPH.CENTER
         
-        # Basic Information Table
         table = doc.add_table(rows=8, cols=4)
         table.style = 'Table Grid'
         table.alignment = WD_TABLE_ALIGNMENT.CENTER
         
-        # Fill basic info with validation
         cells = table.rows[0].cells
         cells[0].text = 'Sector:'
         cells[1].text = get_val('sector')
@@ -91,7 +106,6 @@ def generate_session_plan_docx(data):
         
         doc.add_paragraph()
         
-        # Session Details
         doc.add_heading('Session Details', level=1)
         
         doc.add_heading('Objectives:', level=2)
@@ -132,11 +146,20 @@ def generate_session_plan_docx(data):
         return temp_path
 
 def generate_scheme_of_work_docx(data):
-    """Generate RTB Scheme of Work DOCX document"""
+    """Generate RTB Scheme of Work DOCX document using template"""
+    try:
+        if HAS_TEMPLATE_GENERATOR:
+            return generate_scheme_of_work_from_template(data)
+    except Exception as e:
+        logger.error(f"Template generation failed: {e}, using fallback")
+    
+    return _generate_scheme_of_work_fallback(data)
+
+def _generate_scheme_of_work_fallback(data):
+    """Fallback method for scheme of work generation"""
     try:
         doc = Document()
         
-        # Helper to get value from dict or object with validation
         def get_val(key, default='N/A'):
             try:
                 if isinstance(data, dict):
@@ -148,17 +171,17 @@ def generate_scheme_of_work_docx(data):
                 logger.error(f"Error getting value for {key}: {e}")
                 return default
         
-        # Header
         header = doc.sections[0].header
-        header_para = header.paragraphs[0]
+        if header.paragraphs:
+            header_para = header.paragraphs[0]
+        else:
+            header_para = header.add_paragraph()
         header_para.text = "REPUBLIC OF RWANDA\nMINISTRY OF EDUCATION\nRWANDA TECHNICAL BOARD (RTB)"
         header_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
         
-        # Title
         title = doc.add_heading('SCHEME OF WORK', 0)
         title.alignment = WD_ALIGN_PARAGRAPH.CENTER
         
-        # Basic Information
         doc.add_heading('Basic Information', level=1)
         
         info_table = doc.add_table(rows=6, cols=4)
@@ -200,7 +223,6 @@ def generate_scheme_of_work_docx(data):
         cells[2].text = 'Number of Classes:'
         cells[3].text = get_val('number_of_classes')
         
-        # Term Details
         for term_num in [1, 2, 3]:
             if get_val(f'term{term_num}_weeks'):
                 doc.add_heading(f'Term {term_num}', level=1)
@@ -208,21 +230,18 @@ def generate_scheme_of_work_docx(data):
                 term_table = doc.add_table(rows=1, cols=4)
                 term_table.alignment = WD_TABLE_ALIGNMENT.CENTER
                 
-                # Header row
                 hdr_cells = term_table.rows[0].cells
                 hdr_cells[0].text = 'Weeks'
                 hdr_cells[1].text = 'Learning Outcomes'
                 hdr_cells[2].text = 'Indicative Contents'
                 hdr_cells[3].text = 'Duration'
                 
-                # Data row
                 row_cells = term_table.add_row().cells
                 row_cells[0].text = get_val(f'term{term_num}_weeks')
                 row_cells[1].text = get_val(f'term{term_num}_learning_outcomes')
                 row_cells[2].text = get_val(f'term{term_num}_indicative_contents')
                 row_cells[3].text = get_val(f'term{term_num}_duration')
         
-        # Signatures
         doc.add_heading('Signatures', level=1)
         
         sig_table = doc.add_table(rows=2, cols=2)
@@ -245,7 +264,6 @@ def generate_scheme_of_work_docx(data):
         
     except Exception as e:
         logger.error(f"Error generating scheme DOCX: {e}")
-        # Create a simple fallback document
         doc = Document()
         doc.add_heading('RTB Scheme of Work', 0)
         doc.add_paragraph('Error generating document. Please contact support.')

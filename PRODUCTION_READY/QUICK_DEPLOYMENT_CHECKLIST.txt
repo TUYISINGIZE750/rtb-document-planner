@@ -1,0 +1,289 @@
+================================================================================
+QUICK DEPLOYMENT CHECKLIST: GitHub + PythonAnywhere + Cloudflare
+================================================================================
+
+BEFORE YOU START:
+  ☐ GitHub account ready
+  ☐ PythonAnywhere account ready  
+  ☐ Cloudflare account ready
+  ☐ Domain name registered
+
+================================================================================
+STEP 1: GITHUB SETUP (5 minutes)
+================================================================================
+
+☐ Create .gitignore file in PRODUCTION_READY/
+☐ Create GitHub repository: https://github.com/new
+☐ Repository name: rtb-document-planner
+☐ Make it Public (so it can deploy from GitHub)
+
+From Command Line (Windows):
+  cd PRODUCTION_READY
+  git init
+  git config user.name "Your Name"
+  git config user.email "your@email.com"
+  git add .
+  git commit -m "Initial commit: RTB Document Planner"
+  git branch -M main
+  git remote add origin https://github.com/YOUR_USERNAME/rtb-document-planner.git
+  git push -u origin main
+
+☐ Verify: Files visible on GitHub repo
+☐ Create README.md and commit it
+
+================================================================================
+STEP 2: PYTHONANYWHERE DEPLOYMENT (20 minutes)
+================================================================================
+
+UPLOAD THESE FILES:
+  Backend:
+    ☐ backend/main.py
+    ☐ backend/document_generator.py
+    ☐ backend/rtb_template_generator.py (UPDATED - includes fix)
+    ☐ backend/ai_content_generator.py
+    ☐ backend/facilitation_content_generator.py
+    ☐ backend/smart_content_generator.py
+    ☐ backend/content_formatter.py
+    ☐ backend/init_db.py
+    ☐ backend/requirements.txt
+
+  Frontend:
+    ☐ frontend/index.html
+    ☐ frontend/wizard.html
+    ☐ frontend/scheme-wizard.html
+    ☐ frontend/login.html
+    ☐ frontend/register.html
+    ☐ frontend/admin.html
+    ☐ frontend/auth.js
+    ☐ frontend/config.js
+    ☐ frontend/subscription-modal.js
+    ☐ frontend/subscription-tracker.js
+    ☐ frontend/*.css files
+
+  Templates:
+    ☐ Create folder: RTB Templates/
+    ☐ Upload: RTB Session plan template.docx
+    ☐ Upload: Scheme of work.docx
+
+HOW TO UPLOAD:
+  Option A (Recommended - Web UI):
+    1. Login: https://www.pythonanywhere.com
+    2. Click "Files" tab
+    3. Navigate to: /home/YOUR_USERNAME/rtb_planner/
+    4. Click "Upload a file"
+    5. Upload each file
+
+  Option B (Via Git):
+    1. PythonAnywhere Bash Console
+    2. git clone https://github.com/YOUR_USERNAME/rtb-document-planner.git .
+
+AFTER UPLOAD:
+  ☐ Verify files are in correct directory
+  ☐ Verify RTB Templates folder exists with .docx files
+  ☐ requirements.txt contains: docx2pdf==0.5.0
+
+CONFIGURE PYTHON PATH:
+  1. Web tab → Reload YOUR_USERNAME.pythonanywhere.com
+  2. Edit WSGI configuration file:
+     
+     Change to:
+     import sys
+     import os
+     path = '/home/YOUR_USERNAME/rtb_planner'
+     if path not in sys.path:
+         sys.path.insert(0, path)
+     from backend.main import app as application
+
+  3. Save and reload
+
+RELOAD WEB APP:
+  ☐ Click "Web" tab
+  ☐ Click "Reload YOUR_USERNAME.pythonanywhere.com"
+  ☐ Wait 30-45 seconds
+  ☐ Verify: "Last reload: just now" appears
+
+TEST IT WORKS:
+  ☐ Visit: https://YOUR_USERNAME.pythonanywhere.com/
+  ☐ Should show JSON with API features
+  ☐ Check for "pdf_generation" in response
+
+================================================================================
+STEP 3: CLOUDFLARE SETUP (10 minutes)
+================================================================================
+
+DOMAIN REGISTRATION:
+  ☐ Domain already registered and working
+  ☐ Know the nameserver provider (GoDaddy, Namecheap, etc.)
+
+CLOUDFLARE SETUP:
+  ☐ Login: https://dash.cloudflare.com/
+  ☐ Click "Add a site"
+  ☐ Enter your domain: yourdomain.com
+  ☐ Select "Free" plan
+  ☐ Cloudflare shows nameservers
+
+UPDATE NAMESERVERS:
+  ☐ Go to your domain registrar (GoDaddy, Namecheap, etc.)
+  ☐ Update nameservers to Cloudflare's values
+  ☐ Wait 24-48 hours for DNS propagation
+
+CLOUDFLARE DNS CONFIGURATION:
+  In Cloudflare Dashboard → DNS:
+    ☐ Add CNAME Record:
+        Type: CNAME
+        Name: @
+        Content: YOUR_USERNAME.pythonanywhere.com
+        TTL: Auto
+        Proxy: 🟠 Proxied (orange cloud)
+    
+    ☐ Add CNAME Record:
+        Type: CNAME
+        Name: www
+        Content: YOUR_USERNAME.pythonanywhere.com
+        TTL: Auto
+        Proxy: 🟠 Proxied (orange cloud)
+
+CLOUDFLARE SSL/TLS:
+  ☐ SSL/TLS → Overview
+  ☐ Encryption mode: Full (strict)
+  ☐ Minimum TLS Version: 1.2
+  ☐ Always use HTTPS: ON
+
+CLOUDFLARE CACHING:
+  ☐ Caching → Configuration
+  ☐ Caching Level: Standard
+  ☐ Browser cache TTL: 4 hours
+
+CLOUDFLARE SPEED:
+  ☐ Speed → Optimization
+  ☐ Auto Minify: ✓ ON
+  ☐ Rocket Loader: ✓ ON
+
+UPDATE BACKEND CORS:
+  ☐ Edit backend/main.py (lines 27-39)
+  ☐ Update CORS allowed origins to include your domain:
+     "https://yourdomain.com",
+     "https://www.yourdomain.com"
+  ☐ Re-upload main.py to PythonAnywhere
+  ☐ Reload web app
+
+================================================================================
+STEP 4: FINAL TESTING (5 minutes)
+================================================================================
+
+TEST 1 - Website Load:
+  ☐ Open: https://yourdomain.com/
+  ☐ Should see API page
+  ☐ Check browser: Lock icon + Cloudflare badge
+
+TEST 2 - Generate Session Plan:
+  ☐ Go to: https://yourdomain.com/ (frontend)
+  ☐ Fill in session plan form
+  ☐ Click generate
+  ☐ Should download .docx file
+
+TEST 3 - Verify Document Structure:
+  ☐ Open downloaded .docx file
+  ☐ Check: 23 rows × 6 columns table
+  ☐ Check: Your data is filled in correct cells
+  ☐ Check: Font is Book Antiqua
+  ☐ Check: Matches official RTB template layout
+
+TEST 4 - Generate Scheme of Work:
+  ☐ Go to: https://yourdomain.com/
+  ☐ Fill in scheme form (3 terms)
+  ☐ Click generate
+  ☐ Should download .docx file
+
+TEST 5 - SSL Certificate:
+  ☐ Visit: https://yourdomain.com
+  ☐ Browser shows: 🔒 Secure
+  ☐ Click lock → shows Cloudflare
+
+================================================================================
+TROUBLESHOOTING
+================================================================================
+
+Problem: "404 Not Found" on frontend
+  → Files not uploaded correctly
+  → Check /home/YOUR_USERNAME/rtb_planner/frontend/ folder exists
+  → Reload web app
+
+Problem: "Template not found" error
+  → RTB Templates folder missing
+  → Create: /home/YOUR_USERNAME/rtb_planner/RTB Templates/
+  → Upload .docx files there
+  → Reload web app
+
+Problem: Generated document looks wrong
+  → rtb_template_generator.py may not be updated
+  → Re-upload: backend/rtb_template_generator.py
+  → Reload web app
+
+Problem: SSL certificate not working
+  → Wait 24-48 hours for DNS propagation
+  → Check nameservers updated at registrar
+  → Check Cloudflare status page
+
+Problem: CORS errors in browser
+  → Update CORS in main.py with your domain
+  → Re-upload main.py
+  → Reload web app
+  → Clear browser cache (Ctrl+Shift+Delete)
+
+Problem: PDF download not working
+  → Ensure docx2pdf==0.5.0 in requirements.txt
+  → Reload web app to install
+  → Wait 2-3 minutes for installation
+  → Try again
+
+================================================================================
+QUICK REFERENCE - FILES TO UPLOAD
+================================================================================
+
+TO GITHUB:
+  ✓ All code from PRODUCTION_READY/ folder
+  ✓ Exclude: test files, .env, __pycache__, *.pyc
+  ✓ Include: .gitignore, README.md
+
+TO PYTHONANYWHERE:
+  ✓ All backend/ Python files
+  ✓ All frontend/ HTML/JS/CSS files
+  ✓ RTB Templates/ folder with .docx files
+  ✓ requirements.txt (updated with docx2pdf)
+
+TO CLOUDFLARE:
+  ✓ No files - just configuration
+  ✓ Configure DNS, SSL, caching
+  ✓ Update CORS in code
+
+================================================================================
+DEPLOYMENT TIME ESTIMATES
+================================================================================
+
+GitHub Setup:           5 min
+PythonAnywhere Upload: 15 min
+PythonAnywhere Config: 5 min
+Cloudflare Setup:     10 min
+Testing:               5 min
+─────────────────────────────
+TOTAL:               40 min
+
+Plus waiting for DNS propagation: 24-48 hours (automatic, in background)
+
+================================================================================
+SUCCESS CRITERIA
+================================================================================
+
+You're done when:
+  ✅ GitHub repository is public with all files
+  ✅ PythonAnywhere shows "Last reload: just now"
+  ✅ https://yourdomain.com/ loads without errors
+  ✅ Can generate and download session plans (.docx)
+  ✅ Downloaded .docx matches official RTB template structure
+  ✅ Document data is in correct cells
+  ✅ Browser shows 🔒 Secure + Cloudflare badge
+
+================================================================================
+STATUS: READY FOR DEPLOYMENT ✅
+================================================================================

@@ -30,20 +30,20 @@ def test_session_plan():
     
     try:
         output_path = fill_session_plan_template(data)
-        print(f"✅ Session Plan generated successfully: {output_path}")
+        print(f"[OK] Session Plan generated successfully: {output_path}")
         
         # Check file size
         size = os.path.getsize(output_path)
         print(f"   File size: {size:,} bytes")
         
         if size > 50000:  # Should be > 50KB
-            print("   ✅ File size looks good")
+            print("   [OK] File size looks good")
         else:
-            print("   ⚠️ File size seems small")
+            print("   [WARNING] File size seems small")
         
         return True
     except Exception as e:
-        print(f"❌ Session Plan generation failed: {e}")
+        print(f"[ERROR] Session Plan generation failed: {e}")
         return False
 
 def test_scheme_of_work():
@@ -72,20 +72,20 @@ def test_scheme_of_work():
     
     try:
         output_path = fill_scheme_template(data)
-        print(f"✅ Scheme of Work generated successfully: {output_path}")
+        print(f"[OK] Scheme of Work generated successfully: {output_path}")
         
         # Check file size
         size = os.path.getsize(output_path)
         print(f"   File size: {size:,} bytes")
         
         if size > 50000:  # Should be > 50KB
-            print("   ✅ File size looks good")
+            print("   [OK] File size looks good")
         else:
-            print("   ⚠️ File size seems small")
+            print("   [WARNING] File size seems small")
         
         return True
     except Exception as e:
-        print(f"❌ Scheme of Work generation failed: {e}")
+        print(f"[ERROR] Scheme of Work generation failed: {e}")
         return False
 
 if __name__ == "__main__":
@@ -99,10 +99,10 @@ if __name__ == "__main__":
     print("\n" + "=" * 60)
     print("Test Results:")
     print("=" * 60)
-    print(f"Session Plan: {'✅ PASS' if session_ok else '❌ FAIL'}")
-    print(f"Scheme of Work: {'✅ PASS' if scheme_ok else '❌ FAIL'}")
+    print(f"Session Plan: {'[PASS]' if session_ok else '[FAIL]'}")
+    print(f"Scheme of Work: {'[PASS]' if scheme_ok else '[FAIL]'}")
     
     if session_ok and scheme_ok:
-        print("\n🎉 All tests passed! Documents are ready for deployment.")
+        print("\n[SUCCESS] All tests passed! Documents are ready for deployment.")
     else:
-        print("\n⚠️ Some tests failed. Please check the errors above.")
+        print("\n[WARNING] Some tests failed. Please check the errors above.")

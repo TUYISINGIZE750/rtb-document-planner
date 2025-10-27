@@ -1,2 +1,13 @@
-# Local Netlify folder
-.netlify
+__pycache__/
+*.py[cod]
+.Python
+env/
+venv/
+*.db
+*.sqlite
+*.sqlite3
+.env
+.vscode/
+.idea/
+TEST_*.docx
+test_*.py

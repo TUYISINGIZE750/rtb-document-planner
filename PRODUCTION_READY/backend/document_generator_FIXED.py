@@ -1,17 +1,24 @@
 """
 RTB Document Generator - CLEAN VERSION
 Uses RTB template ONLY - no fallbacks to prevent unstructured documents
-THIS VERSION FIXES THE ISSUE - DOCUMENTS WILL BE PROPERLY FORMATTED
 """
 
 from docx import Document
-from docx.shared import Pt, Cm
+from docx.shared import Pt, Inches, RGBColor, Cm
 from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.oxml.ns import qn
+from docx.oxml import OxmlElement
 import tempfile
 import os
 import logging
 
 logger = logging.getLogger(__name__)
+
+def set_cell_background(cell, fill):
+    """Set cell background color"""
+    shading_elm = OxmlElement('w:shd')
+    shading_elm.set(qn('w:fill'), fill)
+    cell._element.get_or_add_tcPr().append(shading_elm)
 
 def preserve_cell_format(cell, new_text, font_name='Book Antiqua', font_size=12, spacing=1.5):
     """Update cell text while preserving RTB formatting"""
@@ -35,21 +42,20 @@ def preserve_cell_format(cell, new_text, font_name='Book Antiqua', font_size=12,
             run.font.name = font_name
             run.font.size = Pt(font_size)
 
-
 def generate_session_plan_docx(data):
     """
     Generate RTB-compliant session plan - ALWAYS uses RTB structure
-    Never falls back to plain text - THIS IS THE FIX FOR UNSTRUCTURED DOCUMENTS
+    Never falls back to plain text
     """
     
-    logger.info("🚀 Generating RTB Session Plan - Using RTB Template Structure ONLY")
+    logger.info("Generating RTB Session Plan - Using RTB Template Structure")
     
     # First, try to use actual RTB template file
     template_path = os.path.join(os.path.dirname(__file__), 'RTB Templates', 'RTB Session plan template.docx')
     
     if os.path.exists(template_path):
         try:
-            logger.info(f"✅ Loading RTB template from: {template_path}")
+            logger.info(f"Loading RTB template from: {template_path}")
             doc = Document(template_path)
             
             # Fill template cells with data
@@ -73,14 +79,14 @@ def generate_session_plan_docx(data):
             temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
             doc.save(temp_file.name)
             temp_file.close()
-            logger.info(f"✅✅✅ RTB Session Plan generated successfully: {temp_file.name}")
+            logger.info(f"✅ RTB Session Plan generated successfully: {temp_file.name}")
             return temp_file.name
             
         except Exception as e:
-            logger.error(f"❌ Failed to use RTB template: {e}")
+            logger.error(f"Failed to use RTB template: {e}")
     
     # If template not found, create RTB-structured document from scratch
-    logger.warning(f"⚠️ RTB template not found at {template_path}, creating from scratch with RTB structure")
+    logger.warning(f"RTB template not found at {template_path}, creating from scratch with RTB structure")
     
     doc = Document()
     
@@ -103,7 +109,7 @@ def generate_session_plan_docx(data):
     
     doc.add_paragraph()
     
-    # Header table - EXACT RTB FORMAT
+    # Header table
     header_table = doc.add_table(rows=6, cols=4)
     header_table.style = 'Table Grid'
     
@@ -174,21 +180,21 @@ def generate_session_plan_docx(data):
     doc.save(temp_file.name)
     temp_file.close()
     
-    logger.info(f"✅✅✅ RTB Session Plan created from scratch: {temp_file.name}")
+    logger.info(f"✅ RTB Session Plan created from scratch: {temp_file.name}")
     return temp_file.name
 
 
 def generate_scheme_of_work_docx(data):
     """Generate RTB-compliant scheme of work document"""
     
-    logger.info("🚀 Generating RTB Scheme of Work - Using RTB Template Structure ONLY")
+    logger.info("Generating RTB Scheme of Work")
     
     # Try to use template
     template_path = os.path.join(os.path.dirname(__file__), 'RTB Templates', 'Scheme of work.docx')
     
     if os.path.exists(template_path):
         try:
-            logger.info(f"✅ Loading Scheme template from: {template_path}")
+            logger.info(f"Loading Scheme template from: {template_path}")
             doc = Document(template_path)
             
             # Fill template with data
@@ -203,14 +209,14 @@ def generate_scheme_of_work_docx(data):
             temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
             doc.save(temp_file.name)
             temp_file.close()
-            logger.info(f"✅✅✅ RTB Scheme of Work generated: {temp_file.name}")
+            logger.info(f"✅ RTB Scheme of Work generated: {temp_file.name}")
             return temp_file.name
             
         except Exception as e:
-            logger.error(f"❌ Failed to use Scheme template: {e}")
+            logger.error(f"Failed to use Scheme template: {e}")
     
-    # Create from scratch with RTB structure
-    logger.warning(f"⚠️ Scheme template not found, creating from scratch")
+    # Create from scratch
+    logger.warning(f"Scheme template not found, creating from scratch")
     
     doc = Document()
     
@@ -287,7 +293,7 @@ def generate_scheme_of_work_docx(data):
     doc.save(temp_file.name)
     temp_file.close()
     
-    logger.info(f"✅✅✅ RTB Scheme of Work created: {temp_file.name}")
+    logger.info(f"✅ RTB Scheme of Work created: {temp_file.name}")
     return temp_file.name
 
 
@@ -300,8 +306,8 @@ def generate_session_plan_pdf(data):
         from docx2pdf.convert import convert as docx2pdf_convert
         docx2pdf_convert(docx_path, pdf_path)
         return pdf_path
-    except Exception as e:
-        logger.warning(f"PDF conversion not available: {e}, returning DOCX path")
+    except:
+        logger.warning("PDF conversion not available, returning DOCX path")
         return docx_path
 
 
@@ -314,6 +320,6 @@ def generate_scheme_of_work_pdf(data):
         from docx2pdf.convert import convert as docx2pdf_convert
         docx2pdf_convert(docx_path, pdf_path)
         return pdf_path
-    except Exception as e:
-        logger.warning(f"PDF conversion not available: {e}, returning DOCX path")
+    except:
+        logger.warning("PDF conversion not available, returning DOCX path")
         return docx_path

@@ -1,14 +1,24 @@
 // RTB Document Planner - Production Configuration
-console.log('✅ config.js loaded (PRODUCTION-ONLY v2.0)');
+console.log('✅ config.js loaded (PRODUCTION CLOUDFLARE + PYTHONANYWHERE)');
 
-// FORCE PRODUCTION API - NO LOCAL DEVELOPMENT
-const API_BASE = 'https://leonardus437.pythonanywhere.com';
-
-// Note: You need to upload main_production.py to PythonAnywhere as your main WSGI file
+// DYNAMIC API URL - Works on Cloudflare Pages & Local
+const API_BASE = (() => {
+    // Cloudflare Pages deployment
+    if (window.location.hostname.includes('pages.dev') || window.location.hostname.includes('rtb-planner')) {
+        return 'https://leonardus437.pythonanywhere.com';
+    }
+    // Local development
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        return 'http://localhost:8000';
+    }
+    // Default to PythonAnywhere
+    return 'https://leonardus437.pythonanywhere.com';
+})();
 
 console.log('🌐 API Base URL:', API_BASE);
-console.log('🚀 Environment: PRODUCTION ONLY');
-console.log('📡 Backend: PythonAnywhere');
+console.log('🚀 Environment: PRODUCTION');
+console.log('📡 Detected Host:', window.location.hostname);
+console.log('📡 Backend: PythonAnywhere (leonardus437.pythonanywhere.com)');
 
 // Test API connection
 async function testAPIConnection() {
@@ -28,11 +38,16 @@ async function testAPIConnection() {
             return true;
         }
     } catch (error) {
-        console.error('❌ API connection failed:', error);
+        console.error('❌ API connection failed:', error.message);
+        console.error('Attempting connection to:', `${API_BASE}/`);
         return false;
     }
     return false;
 }
 
-// Initialize API test
-setTimeout(testAPIConnection, 100);
+// Initialize API test after DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => setTimeout(testAPIConnection, 500));
+} else {
+    setTimeout(testAPIConnection, 500);
+}

@@ -1,0 +1,178 @@
+===============================================================================
+PYTHONANYWHERE UPDATE - QUICK REFERENCE CARD
+===============================================================================
+
+BEFORE YOU START:
+✓ Login to www.pythonanywhere.com
+✓ Have the 2 new files ready:
+  - rtb_template_filler_100_percent.py
+  - smart_content_generator.py
+
+===============================================================================
+STEP 1: BACKUP CURRENT SYSTEM (2 minutes)
+===============================================================================
+
+1. Go to Files tab → Download main.py as main.py.backup
+2. Store backup somewhere safe on your computer
+
+===============================================================================
+STEP 2: UPLOAD NEW FILES (3 minutes)
+===============================================================================
+
+Method A - Web Interface (EASIEST):
+1. Files tab → Upload a file
+2. Choose rtb_template_filler_100_percent.py → Upload
+3. Click Upload a file again
+4. Choose smart_content_generator.py → Upload
+
+Verify: Both files should appear in file list
+
+===============================================================================
+STEP 3: UPDATE main.py (5 minutes)
+===============================================================================
+
+1. Files tab → Click main.py to edit
+2. Find this line (around line 14-20):
+   
+   from rtb_template_filler_exact import (
+       fill_session_plan_template,
+       fill_scheme_template
+   )
+
+3. Replace with EXACTLY this:
+
+   from rtb_template_filler_100_percent import fill_session_plan_template_100_percent as fill_session_plan_template
+   from rtb_template_filler_exact import fill_scheme_template
+
+4. Click Save
+
+IMPORTANT: Make sure the import is on the right lines!
+
+===============================================================================
+STEP 4: RELOAD WEB APP (2 minutes)
+===============================================================================
+
+1. Click Web tab
+2. Find your Flask app in the list on left
+3. Click on it
+4. Click RELOAD button at top
+5. Wait for "Webapp reloaded at [time]" message
+6. Check Error log - should have NO errors
+
+===============================================================================
+STEP 5: TEST (10 minutes)
+===============================================================================
+
+1. Open your app URL
+2. Login
+3. Create a new session plan:
+   - Sector: Information & Communication Technology
+   - Trade: Software Development
+   - Module: CS401 - Python Programming
+   - Topic: OOP Classes
+   - Facilitation: Trainer-guided instruction
+   - Duration: 90
+   - Learning Outcomes: Test
+   - Resources: Test
+
+4. Download the document
+5. Open in Microsoft Word
+6. Check:
+   ✓ Font is Book Antiqua (select all, check font dropdown)
+   ✓ Size is 12pt
+   ✓ Has Introduction, Development, Assessment sections
+   ✓ Has trainer/learner activities separated
+   ✓ Has References section
+   ✓ Looks professional
+
+===============================================================================
+QUICK TROUBLESHOOTING
+===============================================================================
+
+Problem: "ModuleNotFoundError: No module named smart_content_generator"
+Solution: Both files must be in SAME folder as main.py. Re-upload and reload.
+
+Problem: "main.py line X has syntax error"
+Solution: Check the import statement - ensure no typos, all quotes match.
+
+Problem: Downloaded documents still look old
+Solution: Hard refresh browser (Ctrl+Shift+Del), wait 2 minutes, reload app.
+
+Problem: Error log shows import error
+Solution: Check filenames are EXACT:
+- smart_content_generator.py ✓
+- rtb_template_filler_100_percent.py ✓
+Re-upload if needed and reload.
+
+Problem: Web app won't reload
+Solution: 
+1. Wait 30 seconds and try again
+2. Check error log for messages
+3. Copy exact error and search online
+4. If all else fails: restore main.py.backup and reload
+
+===============================================================================
+ROLLBACK (If something breaks - 5 minutes)
+===============================================================================
+
+1. Files tab → main.py
+2. Select all (Ctrl+A) → Delete
+3. Open main.py.backup (the backup file you saved)
+4. Copy ALL content
+5. Paste into PythonAnywhere main.py editor
+6. Click Save
+7. Web tab → Reload
+8. Check error log - should be fine
+
+===============================================================================
+FILE CHECKLIST
+===============================================================================
+
+After upload, your PythonAnywhere directory should have:
+
+□ main.py (UPDATED)
+□ smart_content_generator.py (NEW - UPLOADED)
+□ rtb_template_filler_100_percent.py (NEW - UPLOADED)
+□ rtb_template_filler_exact.py (UNCHANGED)
+□ document_generator.py (UNCHANGED)
+□ models.py (UNCHANGED)
+□ requirements.txt (UNCHANGED)
+
+===============================================================================
+VERIFICATION CHECKLIST - ALL SHOULD BE ✓
+===============================================================================
+
+□ Both new files uploaded
+□ main.py updated with new import
+□ Web app reloaded successfully
+□ Error log shows no errors
+□ Can login to app
+□ Downloaded document opens without errors
+□ Font is Book Antiqua
+□ Content has trainer/learner sections
+□ References are APA formatted
+□ Looks professional and complete
+
+===============================================================================
+COMMON COPY-PASTE LINES
+===============================================================================
+
+For main.py import section - Copy EXACTLY:
+
+from rtb_template_filler_100_percent import fill_session_plan_template_100_percent as fill_session_plan_template
+from rtb_template_filler_exact import fill_scheme_template
+
+Filenames - Copy EXACTLY:
+- rtb_template_filler_100_percent.py
+- smart_content_generator.py
+
+===============================================================================
+TIME ESTIMATE: 25-30 minutes total
+RISK LEVEL: Very Low (Easy to rollback)
+DIFFICULTY: Easy
+
+===============================================================================
+After you complete all steps - You're DONE! 🎉
+
+Your session plans will now be 100% RTB-compliant with intelligent content!
+===============================================================================
