@@ -1,0 +1,297 @@
+================================================================================
+SESSION PLAN OFFICIAL TEMPLATE ANALYSIS
+================================================================================
+
+Table: 23 rows × 6 columns
+
+--- Row 0 ---
+
+--- Row 1 ---
+  Cell[1,0]: 'Sector :    ICT & MULTIMEDIA' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[1,1]: 'Sub-sector: Software Development' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[1,2]: 'Sub-sector: Software Development' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[1,3]: 'Sub-sector: Software Development' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[1,4]: 'Date : …/…/ 2023' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[1,5]: 'Date : …/…/ 2023' | Font: Times New Roman 12.0pt | Bold: True
+
+--- Row 2 ---
+  Cell[2,0]: 'Lead Trainer’s name : TUYISINGIZE Leonard' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[2,1]: 'Lead Trainer’s name : TUYISINGIZE Leonard' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[2,2]: 'Lead Trainer’s name : TUYISINGIZE Leonard' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[2,3]: 'Lead Trainer’s name : TUYISINGIZE Leonard' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[2,4]: 'TERM : I' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[2,5]: 'TERM : I' | Font: Times New Roman 12.0pt | Bold: True
+
+--- Row 3 ---
+  Cell[3,0]: 'Module(Code&Name): SWDPR301 Analyze project requir' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[3,1]: 'Week : I' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[3,2]: 'Week : I' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[3,3]: 'No. Learners: 54' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[3,4]: 'Class:1' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[3,5]: 'Class:1' | Font: Times New Roman 12.0pt | Bold: True
+
+--- Row 4 ---
+  Cell[4,0]: 'Learning outcome:' | Font: None N/Apt | Bold: None
+  Cell[4,1]: '1.Identify customer needs' | Font: Times New Roman 12.0pt | Bold: None
+  Cell[4,2]: '1.Identify customer needs' | Font: Times New Roman 12.0pt | Bold: None
+  Cell[4,3]: '1.Identify customer needs' | Font: Times New Roman 12.0pt | Bold: None
+  Cell[4,4]: '1.Identify customer needs' | Font: Times New Roman 12.0pt | Bold: None
+  Cell[4,5]: '1.Identify customer needs' | Font: Times New Roman 12.0pt | Bold: None
+
+--- Row 5 ---
+  Cell[5,0]: 'Indicative contents:' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[5,1]: '1.1 Data gathering' | Font: Times New Roman 12.0pt | Bold: None
+  Cell[5,2]: '1.1 Data gathering' | Font: Times New Roman 12.0pt | Bold: None
+  Cell[5,3]: '1.1 Data gathering' | Font: Times New Roman 12.0pt | Bold: None
+  Cell[5,4]: '1.1 Data gathering' | Font: Times New Roman 12.0pt | Bold: None
+  Cell[5,5]: '1.1 Data gathering' | Font: Times New Roman 12.0pt | Bold: None
+
+--- Row 6 ---
+  Cell[6,0]: 'Topic of the session: Identification of requiremen' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[6,1]: 'Topic of the session: Identification of requiremen' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[6,2]: 'Topic of the session: Identification of requiremen' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[6,3]: 'Topic of the session: Identification of requiremen' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[6,4]: 'Topic of the session: Identification of requiremen' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[6,5]: 'Topic of the session: Identification of requiremen' | Font: Times New Roman 12.0pt | Bold: True
+
+--- Row 7 ---
+  Cell[7,0]: 'Range: 
+Methods of collecting data
+Description of ' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[7,1]: 'Duration of the session: 40min' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[7,2]: 'Duration of the session: 40min' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[7,3]: 'Duration of the session: 40min' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[7,4]: 'Duration of the session: 40min' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[7,5]: 'Duration of the session: 40min' | Font: Times New Roman 12.0pt | Bold: True
+
+--- Row 8 ---
+  Cell[8,0]: 'Objectives: By the end of this session every learn' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[8,1]: 'Objectives: By the end of this session every learn' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[8,2]: 'Objectives: By the end of this session every learn' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[8,3]: 'Objectives: By the end of this session every learn' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[8,4]: 'Objectives: By the end of this session every learn' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[8,5]: 'Objectives: By the end of this session every learn' | Font: Times New Roman 12.0pt | Bold: True
+
+--- Row 9 ---
+  Cell[9,0]: 'Facilitation technique(s):   JIGSAW' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[9,1]: 'Facilitation technique(s):   JIGSAW' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[9,2]: 'Facilitation technique(s):   JIGSAW' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[9,3]: 'Facilitation technique(s):   JIGSAW' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[9,4]: 'Facilitation technique(s):   JIGSAW' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[9,5]: 'Facilitation technique(s):   JIGSAW' | Font: Times New Roman 12.0pt | Bold: True
+
+--- Row 10 ---
+  Cell[10,0]: 'Introduction' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[10,1]: 'Introduction' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[10,2]: 'Resources' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[10,3]: 'Resources' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[10,4]: 'Resources' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[10,5]: 'Duration' | Font: Times New Roman 12.0pt | Bold: True
+
+--- Row 11 ---
+  Cell[11,0]: 'Trainer’s activity: 
+Greets and Makes roll calls
+I' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[11,1]: 'Trainer’s activity: 
+Greets and Makes roll calls
+I' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[11,2]: 'Attendance sheet
+PPT
+Projector
+Computer
+Blackboard' | Font: Times New Roman 12.0pt | Bold: None
+  Cell[11,3]: 'Attendance sheet
+PPT
+Projector
+Computer
+Blackboard' | Font: Times New Roman 12.0pt | Bold: None
+  Cell[11,4]: 'Attendance sheet
+PPT
+Projector
+Computer
+Blackboard' | Font: Times New Roman 12.0pt | Bold: None
+  Cell[11,5]: '5 minutes' | Font: Times New Roman 12.0pt | Bold: None
+
+--- Row 12 ---
+  Cell[12,0]: 'Development/Body' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[12,1]: 'Development/Body' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[12,2]: 'Development/Body' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[12,3]: 'Development/Body' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[12,4]: 'Development/Body' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[12,5]: 'Development/Body' | Font: Times New Roman 12.0pt | Bold: True
+
+--- Row 13 ---
+  Cell[13,0]: 'Step 1: Forming groups (home group and expert grou' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[13,1]: 'Step 1: Forming groups (home group and expert grou' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[13,2]: 'Computer
+projector, 
+PPT' | Font: Times New Roman 12.0pt | Bold: None
+  Cell[13,3]: 'Computer
+projector, 
+PPT' | Font: Times New Roman 12.0pt | Bold: None
+  Cell[13,4]: 'Computer
+projector, 
+PPT' | Font: Times New Roman 12.0pt | Bold: None
+  Cell[13,5]: '25
+minutes' | Font: Times New Roman 12.0pt | Bold: None
+
+--- Row 14 ---
+  Cell[14,0]: 'Step 1: Forming groups (home group and expert grou' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[14,1]: 'Step 1: Forming groups (home group and expert grou' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[14,2]: 'Computer
+projector, 
+PPT' | Font: Times New Roman 12.0pt | Bold: None
+  Cell[14,3]: 'Computer
+projector, 
+PPT' | Font: Times New Roman 12.0pt | Bold: None
+  Cell[14,4]: 'Computer
+projector, 
+PPT' | Font: Times New Roman 12.0pt | Bold: None
+  Cell[14,5]: '25
+minutes' | Font: Times New Roman 12.0pt | Bold: None
+
+--- Row 15 ---
+  Cell[15,0]: 'Step 1: Forming groups (home group and expert grou' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[15,1]: 'Step 1: Forming groups (home group and expert grou' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[15,2]: 'Computer
+projector, 
+PPT' | Font: Times New Roman 12.0pt | Bold: None
+  Cell[15,3]: 'Computer
+projector, 
+PPT' | Font: Times New Roman 12.0pt | Bold: None
+  Cell[15,4]: 'Computer
+projector, 
+PPT' | Font: Times New Roman 12.0pt | Bold: None
+  Cell[15,5]: '25
+minutes' | Font: Times New Roman 12.0pt | Bold: None
+
+--- Row 16 ---
+  Cell[16,0]: 'CONCLUSION' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[16,1]: 'CONCLUSION' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[16,2]: 'CONCLUSION' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[16,3]: 'CONCLUSION' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[16,4]: 'CONCLUSION' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[16,5]: 'CONCLUSION' | Font: Times New Roman 12.0pt | Bold: True
+
+--- Row 17 ---
+  Cell[17,0]: 'Summary:
+The trainer involves the learners to summ' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[17,1]: 'Summary:
+The trainer involves the learners to summ' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[17,2]: 'Computer 
+projector' | Font: Times New Roman 12.0pt | Bold: None
+  Cell[17,3]: 'Computer 
+projector' | Font: Times New Roman 12.0pt | Bold: None
+  Cell[17,4]: 'Computer 
+projector' | Font: Times New Roman 12.0pt | Bold: None
+  Cell[17,5]: '3 minutes' | Font: Times New Roman 12.0pt | Bold: None
+
+--- Row 18 ---
+  Cell[18,0]: 'Assessment/Assignment
+The trainer Instructs studen' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[18,1]: 'Assessment/Assignment
+The trainer Instructs studen' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[18,2]: 'Assessment sheets' | Font: Times New Roman 12.0pt | Bold: None
+  Cell[18,3]: 'Assessment sheets' | Font: Times New Roman 12.0pt | Bold: None
+  Cell[18,4]: 'Assessment sheets' | Font: Times New Roman 12.0pt | Bold: None
+  Cell[18,5]: '5 minutes' | Font: Times New Roman 12.0pt | Bold: None
+
+--- Row 19 ---
+  Cell[19,0]: 'Evaluation of the session:
+Trainer involves learne' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[19,1]: 'Evaluation of the session:
+Trainer involves learne' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[19,2]: 'Self-assessment form' | Font: Times New Roman 12.0pt | Bold: None
+  Cell[19,3]: 'Self-assessment form' | Font: Times New Roman 12.0pt | Bold: None
+  Cell[19,4]: 'Self-assessment form' | Font: Times New Roman 12.0pt | Bold: None
+  Cell[19,5]: '2minutes' | Font: Times New Roman 12.0pt | Bold: None
+
+--- Row 20 ---
+  Cell[20,0]: 'References:' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[20,1]: 'References:' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[20,2]: 'References:' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[20,3]: 'References:' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[20,4]: 'References:' | Font: Times New Roman 12.0pt | Bold: True
+  Cell[20,5]: 'References:' | Font: Times New Roman 12.0pt | Bold: True
+
+--- Row 21 ---
+  Cell[21,0]: 'Appendices: 
+PowerPoint
+Task Sheets
+Assessment she' | Font: Times New Roman 11.0pt | Bold: True
+  Cell[21,1]: 'Appendices: 
+PowerPoint
+Task Sheets
+Assessment she' | Font: Times New Roman 11.0pt | Bold: True
+  Cell[21,2]: 'Appendices: 
+PowerPoint
+Task Sheets
+Assessment she' | Font: Times New Roman 11.0pt | Bold: True
+  Cell[21,3]: 'Appendices: 
+PowerPoint
+Task Sheets
+Assessment she' | Font: Times New Roman 11.0pt | Bold: True
+  Cell[21,4]: 'Appendices: 
+PowerPoint
+Task Sheets
+Assessment she' | Font: Times New Roman 11.0pt | Bold: True
+  Cell[21,5]: 'Appendices: 
+PowerPoint
+Task Sheets
+Assessment she' | Font: Times New Roman 11.0pt | Bold: True
+
+--- Row 22 ---
+  Cell[22,0]: 'Reflection :' | Font: Times New Roman 11.0pt | Bold: True
+  Cell[22,1]: 'Reflection :' | Font: Times New Roman 11.0pt | Bold: True
+  Cell[22,2]: 'Reflection :' | Font: Times New Roman 11.0pt | Bold: True
+  Cell[22,3]: 'Reflection :' | Font: Times New Roman 11.0pt | Bold: True
+  Cell[22,4]: 'Reflection :' | Font: Times New Roman 11.0pt | Bold: True
+  Cell[22,5]: 'Reflection :' | Font: Times New Roman 11.0pt | Bold: True
+
+================================================================================
+SCHEME OF WORK OFFICIAL TEMPLATE ANALYSIS
+================================================================================
+
+--- Header Information ---
+Para 0: Southern province
+Para 1: Kamonyi district
+Para 2: Runda sector
+Para 3: Runda TSS
+
+--- Tables: 3 ---
+
+Table 0: 8 rows × 9 columns
+Header cells:
+  Col 0: 'Weeks'
+  Col 1: 'Competence code and name'
+  Col 2: 'Competence code and name'
+  Col 3: 'Competence code and name'
+  Col 4: 'Learning Activities'
+  Col 5: 'Resources (Equipment, tools, and materials)'
+  Col 6: 'Evidences of formative assessment'
+  Col 7: 'Learning Place'
+  Col 8: 'Observation'
+
+Table 1: 5 rows × 9 columns
+Header cells:
+  Col 0: 'Weeks'
+  Col 1: 'Competence code and name'
+  Col 2: 'Competence code and name'
+  Col 3: 'Competence code and name'
+  Col 4: 'Learning Activities'
+  Col 5: 'Resources (Equipment, tools, and materials)'
+  Col 6: 'Evidences of formative assessment'
+  Col 7: 'Learning Place'
+  Col 8: 'Observation'
+
+Table 2: 8 rows × 9 columns
+Header cells:
+  Col 0: 'Weeks'
+  Col 1: 'Competence code and name'
+  Col 2: 'Competence code and name'
+  Col 3: 'Competence code and name'
+  Col 4: 'Learning Activities'
+  Col 5: 'Resources (Equipment, tools, and materials)'
+  Col 6: 'Evidences of formative assessment'
+  Col 7: 'Learning Place'
+  Col 8: 'Observation'
