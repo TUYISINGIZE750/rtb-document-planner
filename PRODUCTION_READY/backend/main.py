@@ -15,7 +15,7 @@ from document_generator import (
     generate_session_plan_docx,
     generate_scheme_of_work_docx
 )
-from ai_content_generator import enhance_session_plan_data
+from ai_content_generator import generate_session_plan_content
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -287,12 +287,9 @@ def generate_session_plan():
                 return jsonify({"detail": "Download limit reached. Please upgrade to premium."}), 403
 
             try:
-                from smart_content_generator import SmartSessionPlanContentGenerator
-                content_generator = SmartSessionPlanContentGenerator(data.get('topic_of_session', 'General'))
-                data = content_generator.generate_complete_session_plan(data)
+                data = generate_session_plan_content(data)
             except Exception as gen_error:
-                logger.warning(f"Smart content generation failed, using basic enhancement: {str(gen_error)}")
-                data = enhance_session_plan_data(data)
+                logger.warning(f"AI content generation failed: {str(gen_error)}")
 
             session_plan = SessionPlan(
                 user_phone=user_phone,
