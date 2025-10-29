@@ -1,12 +1,14 @@
 services:
   - type: web
-    name: rtb-document-planner
+    name: rtb-api
     env: python
-    buildCommand: "pip install -r requirements.txt"
-    startCommand: "cd backend && python -m uvicorn main:app --host 0.0.0.0 --port $PORT"
+    region: oregon
     plan: free
+    branch: main
+    buildCommand: pip install -r PRODUCTION_READY/backend/requirements.txt
+    startCommand: cd PRODUCTION_READY/backend && python main.py
     envVars:
+      - key: GEMINI_API_KEY
+        value: AIzaSyDuEdAygLcQ4aEuq2Vqj-9Kl0qZpJcg3A8
       - key: PYTHON_VERSION
-        value: 3.11.0
-      - key: DATABASE_URL
-        value: sqlite:///./rtb_planner.db
+        value: 3.10.0
