@@ -19,8 +19,8 @@ def set_cell_font(cell, font_name='Bookman Old Style', font_size=12):
             run.font.size = Pt(font_size)
 
 def fill_session_plan_official(data):
-    """Fill SESSION PLAN.docx from DOCS TO REFER TO folder"""
-    template_path = os.path.join(os.path.dirname(__file__), '..', 'DOCS TO REFER TO', 'SESSION PLAN.docx')
+    """Fill RTB Session plan template.docx from RTB Templates folder"""
+    template_path = os.path.join(os.path.dirname(__file__), 'RTB Templates', 'RTB Session plan template.docx')
     doc = Document(template_path)
     
     if not doc.tables:
@@ -83,19 +83,22 @@ def fill_session_plan_official(data):
     set_cell_font(table.rows[9].cells[0])
     
     # Row 11: Introduction activities
-    intro_text = data.get('learning_activities', '').split('\n\n')[0] if data.get('learning_activities') else ''
+    learning_acts = data.get('learning_activities') or ''
+    intro_text = learning_acts.split('\n\n')[0] if learning_acts else ''
     table.rows[11].cells[0].text = f"Trainer's activity:\n{intro_text}"
     set_cell_font(table.rows[11].cells[0])
-    table.rows[11].cells[2].text = data.get('resources', '').split('\n')[0] if data.get('resources') else ''
+    resources = data.get('resources') or ''
+    table.rows[11].cells[2].text = resources.split('\n')[0] if resources else ''
     set_cell_font(table.rows[11].cells[2])
     table.rows[11].cells[5].text = "5 minutes"
     set_cell_font(table.rows[11].cells[5])
     
     # Row 13-15: Development activities
-    dev_text = data.get('learning_activities', '').split('\n\n')[1] if data.get('learning_activities') and len(data.get('learning_activities', '').split('\n\n')) > 1 else ''
+    dev_parts = learning_acts.split('\n\n') if learning_acts else []
+    dev_text = dev_parts[1] if len(dev_parts) > 1 else ''
     table.rows[13].cells[0].text = f"Step 1:\n{dev_text}"
     set_cell_font(table.rows[13].cells[0])
-    table.rows[13].cells[2].text = data.get('resources', '')
+    table.rows[13].cells[2].text = resources
     set_cell_font(table.rows[13].cells[2])
     table.rows[13].cells[5].text = "25\nminutes"
     set_cell_font(table.rows[13].cells[5])
@@ -120,15 +123,15 @@ def fill_session_plan_official(data):
     table.rows[20].cells[0].text = f"References:\n{data.get('references', '')}"
     set_cell_font(table.rows[20].cells[0])
     
-    # Save to temp file
-    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
+    # Save to temp file in /tmp directory
+    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx', dir='/tmp')
     doc.save(temp_file.name)
     temp_file.close()
     return temp_file.name
 
 def fill_scheme_official(data):
-    """Fill CSAPA 301 Scheme of work.docx from DOCS TO REFER TO folder"""
-    template_path = os.path.join(os.path.dirname(__file__), '..', 'DOCS TO REFER TO', 'CSAPA 301 Scheme of work.docx')
+    """Fill Scheme of work.docx from RTB Templates folder"""
+    template_path = os.path.join(os.path.dirname(__file__), 'RTB Templates', 'Scheme of work.docx')
     doc = Document(template_path)
     
     # Update header paragraphs
@@ -201,8 +204,8 @@ def fill_scheme_official(data):
             if i - 1 < len(term3_place):
                 table3.rows[i].cells[7].text = term3_place[i-1]
     
-    # Save to temp file
-    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
+    # Save to temp file in /tmp directory
+    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx', dir='/tmp')
     doc.save(temp_file.name)
     temp_file.close()
     return temp_file.name
