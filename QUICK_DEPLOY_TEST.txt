@@ -1,0 +1,110 @@
+═══════════════════════════════════════════════════════════════
+  🚀 RTB DOCUMENT PLANNER - RENDER DEPLOYMENT QUICK GUIDE
+═══════════════════════════════════════════════════════════════
+
+📋 DO THIS NOW (5 MINUTES):
+
+1️⃣ DEPLOY ON RENDER
+   → Go to: https://dashboard.render.com
+   → Click "Manual Deploy" button
+   → Select "Deploy latest commit"
+   → Wait 2-4 minutes for build
+
+2️⃣ GET YOUR URL
+   → Copy URL from top of Render dashboard
+   → Should be: https://rtb-document-planner.onrender.com
+
+3️⃣ TEST BACKEND
+   → Open: https://rtb-document-planner.onrender.com/
+   → Should see: {"message": "RTB API Online", "status": "ok"}
+
+4️⃣ WAIT FOR FRONTEND UPDATE
+   → Cloudflare Pages auto-deploys in 1-2 minutes
+   → Check: https://rtb-document-planner.pages.dev
+
+5️⃣ TEST FULL SYSTEM
+   → Go to: https://rtb-document-planner.pages.dev
+   → Register new account
+   → Create session plan
+   → Download should work! 🎉
+
+═══════════════════════════════════════════════════════════════
+
+✅ SUCCESS CHECKLIST:
+
+□ Backend deployed on Render
+□ API responds at /
+□ Frontend loads
+□ Can register user
+□ Can login
+□ Can create session plan
+□ Document downloads (NO DISK ERRORS!)
+□ Document has correct formatting
+
+═══════════════════════════════════════════════════════════════
+
+🔗 YOUR LIVE URLS:
+
+Frontend:  https://rtb-document-planner.pages.dev
+Backend:   https://rtb-document-planner.onrender.com
+Admin:     https://rtb-document-planner.pages.dev/admin.html
+
+═══════════════════════════════════════════════════════════════
+
+🚨 IF SOMETHING FAILS:
+
+Backend won't start?
+→ Check Render logs for errors
+→ Verify GEMINI_API_KEY is set in environment variables
+
+Frontend can't connect?
+→ Wait 2 minutes for Cloudflare to redeploy
+→ Clear browser cache (Ctrl+Shift+Delete)
+→ Check browser console (F12) for errors
+
+Downloads fail?
+→ Check Render logs during download
+→ Should NOT see "write error" anymore!
+
+═══════════════════════════════════════════════════════════════
+
+📊 WHAT CHANGED:
+
+✅ Moved from PythonAnywhere → Render.com
+✅ Fixed SQLAlchemy compatibility (2.0.23 → 2.0.36)
+✅ No more disk space issues!
+✅ 512MB RAM (vs limited on PA)
+✅ Auto-deploy from GitHub
+✅ Better performance
+
+═══════════════════════════════════════════════════════════════
+
+🎯 NEXT STEPS AFTER TESTING:
+
+1. Create admin account
+2. Test with real teachers
+3. Monitor Render dashboard for usage
+4. Consider upgrading to paid tier ($7/month) for:
+   - No sleep (always-on)
+   - More RAM
+   - Better performance
+
+═══════════════════════════════════════════════════════════════
+
+💡 FREE TIER NOTES:
+
+- Service sleeps after 15 min inactivity
+- First request after sleep: ~30 seconds to wake
+- Database persists even when sleeping
+- Upgrade to paid for always-on service
+
+═══════════════════════════════════════════════════════════════
+
+📞 NEED HELP?
+
+Check these files:
+- RENDER_TESTING_CHECKLIST.md (detailed tests)
+- RENDER_DEPLOYMENT_GUIDE.md (full guide)
+- Render logs (real-time debugging)
+
+═══════════════════════════════════════════════════════════════
