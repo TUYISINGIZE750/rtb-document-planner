@@ -427,17 +427,22 @@ def download_session_plan(plan_id):
 
 
 
-@app.route('/user-limits/<phone>', methods=['GET', 'OPTIONS'])
+@app.route('/user-limits/<path:phone>', methods=['GET', 'OPTIONS'])
 def get_user_limits(phone):
     if request.method == 'OPTIONS':
         return '', 204
 
     try:
+        from urllib.parse import unquote
+        phone = unquote(phone)
+        logger.info(f"Getting limits for phone: {phone}")
+        
         db = SessionLocal()
         try:
             user = db.query(User).filter(User.phone == phone).first()
             if not user:
-                return jsonify({"detail": "User not found"}), 404
+                logger.warning(f"User not found for phone: {phone}")
+                return jsonify({"detail": "User not found", "phone": phone}), 404
 
             return jsonify({
                 "is_premium": user.is_premium,
@@ -451,7 +456,8 @@ def get_user_limits(phone):
         finally:
             db.close()
     except Exception as e:
-        return jsonify({"detail": "Failed to get limits"}), 500
+        logger.error(f"Error getting limits: {str(e)}")
+        return jsonify({"detail": f"Failed to get limits: {str(e)}"}), 500
 
 @app.route('/schemes/generate', methods=['POST', 'OPTIONS'])
 @app.route('/schemes', methods=['POST', 'OPTIONS'])
