@@ -83,36 +83,55 @@ def fill_session_plan_official(data):
     set_cell_font(table.rows[9].cells[0])
     
     # Row 11: Introduction activities
-    learning_acts = data.get('learning_activities') or ''
-    intro_text = learning_acts.split('\n\n')[0] if learning_acts else ''
-    table.rows[11].cells[0].text = f"Trainer's activity:\n{intro_text}"
+    learning_acts = data.get('learning_activities', '')
+    resources = data.get('resources', '')
+    
+    if learning_acts:
+        parts = learning_acts.split('\n\n')
+        intro = parts[0] if len(parts) > 0 else ''
+        table.rows[11].cells[0].text = intro
+    else:
+        table.rows[11].cells[0].text = "Introduction activity"
     set_cell_font(table.rows[11].cells[0])
-    resources = data.get('resources') or ''
-    table.rows[11].cells[2].text = resources.split('\n')[0] if resources else ''
+    
+    if resources:
+        res_lines = resources.split('\n')
+        table.rows[11].cells[2].text = res_lines[0] if res_lines else resources
+    else:
+        table.rows[11].cells[2].text = "Materials"
     set_cell_font(table.rows[11].cells[2])
     table.rows[11].cells[5].text = "5 minutes"
     set_cell_font(table.rows[11].cells[5])
     
-    # Row 13-15: Development activities
-    dev_parts = learning_acts.split('\n\n') if learning_acts else []
-    dev_text = dev_parts[1] if len(dev_parts) > 1 else ''
-    table.rows[13].cells[0].text = f"Step 1:\n{dev_text}"
+    # Row 13: Development activities
+    if learning_acts:
+        parts = learning_acts.split('\n\n')
+        dev = parts[1] if len(parts) > 1 else learning_acts
+        table.rows[13].cells[0].text = dev
+    else:
+        table.rows[13].cells[0].text = "Development activity"
     set_cell_font(table.rows[13].cells[0])
-    table.rows[13].cells[2].text = resources
+    table.rows[13].cells[2].text = resources if resources else "Materials"
     set_cell_font(table.rows[13].cells[2])
-    table.rows[13].cells[5].text = "25\nminutes"
+    table.rows[13].cells[5].text = "25 minutes"
     set_cell_font(table.rows[13].cells[5])
     
     # Row 17: Conclusion
-    table.rows[17].cells[0].text = "Summary:\nThe trainer involves the learners to summarize the key points"
+    if learning_acts:
+        parts = learning_acts.split('\n\n')
+        conclusion = parts[2] if len(parts) > 2 else "Summary of key points"
+        table.rows[17].cells[0].text = conclusion
+    else:
+        table.rows[17].cells[0].text = "Summary of key points"
     set_cell_font(table.rows[17].cells[0])
-    table.rows[17].cells[2].text = "Computer\nprojector"
+    table.rows[17].cells[2].text = "Projector" if not resources else resources.split('\n')[0]
     set_cell_font(table.rows[17].cells[2])
     table.rows[17].cells[5].text = "3 minutes"
     set_cell_font(table.rows[17].cells[5])
     
     # Row 18: Assessment
-    table.rows[18].cells[0].text = f"Assessment/Assignment\n{data.get('assessment_details', '')}"
+    assessment = data.get('assessment_details', '')
+    table.rows[18].cells[0].text = assessment if assessment else "Assessment activity"
     set_cell_font(table.rows[18].cells[0])
     table.rows[18].cells[2].text = "Assessment sheets"
     set_cell_font(table.rows[18].cells[2])
@@ -120,11 +139,12 @@ def fill_session_plan_official(data):
     set_cell_font(table.rows[18].cells[5])
     
     # Row 20: References
-    table.rows[20].cells[0].text = f"References:\n{data.get('references', '')}"
+    references = data.get('references', '')
+    table.rows[20].cells[0].text = references if references else "References"
     set_cell_font(table.rows[20].cells[0])
     
-    # Save to temp file in /tmp directory
-    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx', dir='/tmp')
+    # Save to temp file
+    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
     doc.save(temp_file.name)
     temp_file.close()
     return temp_file.name
@@ -204,8 +224,8 @@ def fill_scheme_official(data):
             if i - 1 < len(term3_place):
                 table3.rows[i].cells[7].text = term3_place[i-1]
     
-    # Save to temp file in /tmp directory
-    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx', dir='/tmp')
+    # Save to temp file
+    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
     doc.save(temp_file.name)
     temp_file.close()
     return temp_file.name
