@@ -1,24 +1,24 @@
 // RTB Document Planner - Production Configuration
-console.log('✅ config.js loaded (PRODUCTION CLOUDFLARE + PYTHONANYWHERE)');
+console.log('✅ config.js loaded (PRODUCTION CLOUDFLARE + RENDER)');
 
 // DYNAMIC API URL - Works on Cloudflare Pages & Local
 const API_BASE = (() => {
     // Cloudflare Pages deployment
     if (window.location.hostname.includes('pages.dev') || window.location.hostname.includes('rtb-planner')) {
-        return 'https://leonardus437.pythonanywhere.com';
+        return 'https://rtb-document-planner.onrender.com';
     }
     // Local development
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
         return 'http://localhost:8000';
     }
-    // Default to PythonAnywhere
-    return 'https://leonardus437.pythonanywhere.com';
+    // Default to Render
+    return 'https://rtb-document-planner.onrender.com';
 })();
 
 console.log('🌐 API Base URL:', API_BASE);
 console.log('🚀 Environment: PRODUCTION');
 console.log('📡 Detected Host:', window.location.hostname);
-console.log('📡 Backend: PythonAnywhere (leonardus437.pythonanywhere.com)');
+console.log('📡 Backend: Render.com (rtb-document-planner.onrender.com)');
 
 // Test API connection
 async function testAPIConnection() {
