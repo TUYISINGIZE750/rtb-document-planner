@@ -13,9 +13,7 @@ from io import BytesIO
 
 from document_generator import (
     generate_session_plan_docx,
-    generate_scheme_of_work_docx,
-    generate_session_plan_pdf,
-    generate_scheme_of_work_pdf
+    generate_scheme_of_work_docx
 )
 from ai_content_generator import enhance_session_plan_data
 
@@ -181,7 +179,7 @@ def home():
         "cors": "enabled",
         "environment": "production",
         "version": "2.0",
-        "features": ["authentication", "docx_generation", "pdf_generation", "multi_format_download"],
+        "features": ["authentication", "docx_generation"],
         "users_count": users_count
     })
 
@@ -428,138 +426,9 @@ def download_session_plan(plan_id):
         logger.error(f'Session plan download error: {str(e)}')
         return jsonify({"detail": f"Download failed: {str(e)}"}), 500
 
-@app.route('/session-plans/<int:plan_id>/download-pdf', methods=['GET', 'OPTIONS'])
-def download_session_plan_pdf(plan_id):
-    if request.method == 'OPTIONS':
-        return '', 204
 
-    try:
-        phone = request.args.get('phone')
-        if not phone:
-            return jsonify({"detail": "Phone parameter required"}), 400
 
-        db = SessionLocal()
-        try:
-            session_plan = db.query(SessionPlan).filter(SessionPlan.id == plan_id).first()
-            if not session_plan:
-                return jsonify({"detail": "Session plan not found"}), 404
 
-            user = db.query(User).filter(User.phone == phone).first()
-            if not user:
-                return jsonify({"detail": "User not found"}), 404
-
-            data = {
-                'sector': session_plan.sector,
-                'sub_sector': session_plan.sub_sector,
-                'trade': session_plan.trade,
-                'qualification_title': session_plan.qualification_title,
-                'rqf_level': session_plan.rqf_level,
-                'module_code_title': session_plan.module_code_title,
-                'term': session_plan.term,
-                'week': session_plan.week,
-                'date': session_plan.date,
-                'trainer_name': session_plan.trainer_name,
-                'class_name': session_plan.class_name,
-                'number_of_trainees': session_plan.number_of_trainees,
-                'learning_outcomes': session_plan.learning_outcomes,
-                'indicative_contents': session_plan.indicative_contents,
-                'topic_of_session': session_plan.topic_of_session,
-                'duration': session_plan.duration,
-                'objectives': session_plan.objectives,
-                'facilitation_techniques': session_plan.facilitation_techniques,
-                'learning_activities': session_plan.learning_activities,
-                'resources': session_plan.resources,
-                'assessment_details': session_plan.assessment_details,
-                'references': session_plan.references
-            }
-
-            logger.info(f'Generating PDF for session plan {plan_id}')
-            file_path = generate_session_plan_pdf(data)
-
-            if not file_path or not os.path.exists(file_path):
-                logger.error(f'PDF generation failed for plan {plan_id}')
-                return jsonify({"detail": "PDF generation failed"}), 500
-
-            filename = f"RTB_Session_Plan_{plan_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
-            logger.info(f'Sending PDF: {file_path} as {filename}')
-
-            try:
-                with open(file_path, 'rb') as f:
-                    file_data = f.read()
-
-                try:
-                    return send_file(
-                        BytesIO(file_data),
-                        mimetype='application/pdf',
-                        as_attachment=True,
-                        download_name=filename
-                    )
-                except TypeError:
-                    return send_file(
-                        BytesIO(file_data),
-                        mimetype='application/pdf',
-                        as_attachment=True,
-                        attachment_filename=filename
-                    )
-            except Exception as send_error:
-                logger.error(f'Error sending PDF: {str(send_error)}')
-                return jsonify({"detail": f"Download failed: {str(send_error)}"}), 500
-            finally:
-                try:
-                    if file_path and os.path.exists(file_path):
-                        os.remove(file_path)
-                        logger.info(f'Cleaned up temp PDF: {file_path}')
-                except Exception as cleanup_error:
-                    logger.warning(f'Could not clean up temp PDF: {str(cleanup_error)}')
-        finally:
-            db.close()
-    except Exception as e:
-        logger.error(f'Session plan PDF download error: {str(e)}')
-        return jsonify({"detail": f"Download failed: {str(e)}"}), 500
-
-@app.route('/session-plans/<int:plan_id>/download-formats', methods=['GET', 'OPTIONS'])
-def session_plan_download_formats(plan_id):
-    if request.method == 'OPTIONS':
-        return '', 204
-
-    try:
-        phone = request.args.get('phone')
-        if not phone:
-            return jsonify({"detail": "Phone parameter required"}), 400
-
-        db = SessionLocal()
-        try:
-            session_plan = db.query(SessionPlan).filter(SessionPlan.id == plan_id).first()
-            if not session_plan:
-                return jsonify({"detail": "Session plan not found"}), 404
-
-            user = db.query(User).filter(User.phone == phone).first()
-            if not user:
-                return jsonify({"detail": "User not found"}), 404
-
-            return jsonify({
-                "plan_id": plan_id,
-                "plan_title": f"RTB Session Plan - {session_plan.topic_of_session}",
-                "available_formats": [
-                    {
-                        "format": "docx",
-                        "label": "Word Document (.docx)",
-                        "description": "Microsoft Word format with full formatting",
-                        "url": f"/session-plans/{plan_id}/download?phone={phone}"
-                    },
-                    {
-                        "format": "pdf",
-                        "label": "PDF Document (.pdf)",
-                        "description": "Universal PDF format, read-only",
-                        "url": f"/session-plans/{plan_id}/download-pdf?phone={phone}"
-                    }
-                ]
-            }), 200
-        finally:
-            db.close()
-    except Exception as e:
-        logger.error(f'Error getting session plan formats: {str(e)}')
-        return jsonify({"detail": f"Error: {str(e)}"}), 500
 
 @app.route('/user-limits/<phone>', methods=['GET', 'OPTIONS'])
 def get_user_limits(phone):
@@ -760,147 +629,9 @@ def download_scheme_of_work(scheme_id):
         logger.error(f'Scheme download error: {str(e)}')
         return jsonify({"detail": f"Download failed: {str(e)}"}), 500
 
-@app.route('/schemes-of-work/<int:scheme_id>/download-pdf', methods=['GET', 'OPTIONS'])
-def download_scheme_of_work_pdf(scheme_id):
-    if request.method == 'OPTIONS':
-        return '', 204
 
-    try:
-        phone = request.args.get('phone')
-        if not phone:
-            return jsonify({"detail": "Phone parameter required"}), 400
 
-        db = SessionLocal()
-        try:
-            scheme = db.query(SchemeOfWork).filter(SchemeOfWork.id == scheme_id).first()
-            if not scheme:
-                return jsonify({"detail": "Scheme of work not found"}), 404
 
-            user = db.query(User).filter(User.phone == phone).first()
-            if not user:
-                return jsonify({"detail": "User not found"}), 404
-
-            data = {
-                'province': scheme.province,
-                'district': scheme.district,
-                'sector': scheme.sector,
-                'school': scheme.school,
-                'department_trade': scheme.department_trade,
-                'qualification_title': scheme.qualification_title,
-                'rqf_level': scheme.rqf_level,
-                'module_code_title': scheme.module_code_title,
-                'school_year': scheme.school_year,
-                'terms': scheme.terms,
-                'module_hours': scheme.module_hours,
-                'number_of_classes': scheme.number_of_classes,
-                'class_name': scheme.class_name,
-                'trainer_name': scheme.trainer_name,
-                'term1_weeks': scheme.term1_weeks,
-                'term1_learning_outcomes': scheme.term1_learning_outcomes,
-                'term1_indicative_contents': scheme.term1_indicative_contents,
-                'term1_duration': scheme.term1_duration,
-                'term1_learning_place': scheme.term1_learning_place,
-                'term2_weeks': scheme.term2_weeks,
-                'term2_learning_outcomes': scheme.term2_learning_outcomes,
-                'term2_indicative_contents': scheme.term2_indicative_contents,
-                'term2_duration': scheme.term2_duration,
-                'term2_learning_place': scheme.term2_learning_place,
-                'term3_weeks': scheme.term3_weeks,
-                'term3_learning_outcomes': scheme.term3_learning_outcomes,
-                'term3_indicative_contents': scheme.term3_indicative_contents,
-                'term3_duration': scheme.term3_duration,
-                'term3_learning_place': scheme.term3_learning_place,
-                'dos_name': scheme.dos_name,
-                'manager_name': scheme.manager_name
-            }
-
-            logger.info(f'Generating PDF for scheme {scheme_id}')
-            file_path = generate_scheme_of_work_pdf(data)
-
-            if not file_path or not os.path.exists(file_path):
-                logger.error(f'PDF generation failed for scheme {scheme_id}')
-                return jsonify({"detail": "PDF generation failed"}), 500
-
-            filename = f"RTB_Scheme_of_Work_{scheme_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
-            logger.info(f'Sending PDF: {file_path} as {filename}')
-
-            try:
-                with open(file_path, 'rb') as f:
-                    file_data = f.read()
-
-                try:
-                    return send_file(
-                        BytesIO(file_data),
-                        mimetype='application/pdf',
-                        as_attachment=True,
-                        download_name=filename
-                    )
-                except TypeError:
-                    return send_file(
-                        BytesIO(file_data),
-                        mimetype='application/pdf',
-                        as_attachment=True,
-                        attachment_filename=filename
-                    )
-            except Exception as send_error:
-                logger.error(f'Error sending PDF: {str(send_error)}')
-                return jsonify({"detail": f"Download failed: {str(send_error)}"}), 500
-            finally:
-                try:
-                    if file_path and os.path.exists(file_path):
-                        os.remove(file_path)
-                        logger.info(f'Cleaned up temp PDF: {file_path}')
-                except Exception as cleanup_error:
-                    logger.warning(f'Could not clean up temp PDF: {str(cleanup_error)}')
-        finally:
-            db.close()
-    except Exception as e:
-        logger.error(f'Scheme PDF download error: {str(e)}')
-        return jsonify({"detail": f"Download failed: {str(e)}"}), 500
-
-@app.route('/schemes-of-work/<int:scheme_id>/download-formats', methods=['GET', 'OPTIONS'])
-def scheme_download_formats(scheme_id):
-    if request.method == 'OPTIONS':
-        return '', 204
-
-    try:
-        phone = request.args.get('phone')
-        if not phone:
-            return jsonify({"detail": "Phone parameter required"}), 400
-
-        db = SessionLocal()
-        try:
-            scheme = db.query(SchemeOfWork).filter(SchemeOfWork.id == scheme_id).first()
-            if not scheme:
-                return jsonify({"detail": "Scheme of work not found"}), 404
-
-            user = db.query(User).filter(User.phone == phone).first()
-            if not user:
-                return jsonify({"detail": "User not found"}), 404
-
-            return jsonify({
-                "scheme_id": scheme_id,
-                "scheme_title": f"RTB Scheme of Work - {scheme.module_code_title}",
-                "available_formats": [
-                    {
-                        "format": "docx",
-                        "label": "Word Document (.docx)",
-                        "description": "Microsoft Word format with full formatting",
-                        "url": f"/schemes-of-work/{scheme_id}/download?phone={phone}"
-                    },
-                    {
-                        "format": "pdf",
-                        "label": "PDF Document (.pdf)",
-                        "description": "Universal PDF format, read-only",
-                        "url": f"/schemes-of-work/{scheme_id}/download-pdf?phone={phone}"
-                    }
-                ]
-            }), 200
-        finally:
-            db.close()
-    except Exception as e:
-        logger.error(f'Error getting scheme formats: {str(e)}')
-        return jsonify({"detail": f"Error: {str(e)}"}), 500
 
 @app.route('/users/', methods=['GET', 'OPTIONS'])
 @app.route('/admin/users', methods=['GET', 'OPTIONS'])
