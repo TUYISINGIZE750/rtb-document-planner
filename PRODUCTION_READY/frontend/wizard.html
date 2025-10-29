@@ -243,15 +243,28 @@
                     console.log('✅ Session plan created:', result);
                     
                     if (result.id) {
-                        // Download the document
-                        const link = document.createElement('a');
-                        link.href = `${API_BASE}/session-plans/${result.id}/download?phone=${encodeURIComponent(currentUser.phone)}`;
-                        link.download = `RTB_Session_Plan_${result.id}.docx`;
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
+                        console.log('🔽 Triggering download for ID:', result.id);
                         
-                        alert('✅ Session plan created and downloaded successfully!');
+                        // Download the document
+                        const downloadUrl = `${API_BASE}/session-plans/${result.id}/download?phone=${encodeURIComponent(currentUser.phone)}`;
+                        console.log('📥 Download URL:', downloadUrl);
+                        
+                        // Method 1: Try window.open first
+                        window.open(downloadUrl, '_blank');
+                        
+                        // Method 2: Also create link as fallback
+                        setTimeout(() => {
+                            const link = document.createElement('a');
+                            link.href = downloadUrl;
+                            link.download = `RTB_Session_Plan_${result.id}.docx`;
+                            link.target = '_blank';
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                            console.log('✅ Download triggered');
+                        }, 500);
+                        
+                        alert('✅ Session plan created! Download should start automatically.');
                         
                         // Update download counter
                         updateDownloadCounter();
@@ -259,7 +272,10 @@
                         // Redirect back to dashboard after a delay
                         setTimeout(() => {
                             window.location.href = 'teacher-dashboard.html';
-                        }, 2000);
+                        }, 3000);
+                    } else {
+                        console.error('❌ No ID in response:', result);
+                        alert('Session plan created but no ID returned');
                     }
                 } else {
                     const errorData = await response.json().catch(() => ({ detail: 'Unknown error' }));
