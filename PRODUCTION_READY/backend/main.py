@@ -382,8 +382,18 @@ def download_session_plan(plan_id):
             logger.info(f"📊 Data keys: {list(data.keys())}")
             logger.info(f"📝 Objectives length: {len(data.get('objectives', ''))}")
             logger.info(f"📝 Activities length: {len(data.get('learning_activities', ''))}")
-            file_path = generate_session_plan_docx(data)
-            logger.info(f"✅ Document generated at: {file_path}")
+            
+            try:
+                file_path = generate_session_plan_docx(data)
+                logger.info(f"✅ Document generated at: {file_path}")
+                logger.info(f"📂 File path type: {type(file_path)}")
+                logger.info(f"📂 File path value: {file_path}")
+            except Exception as gen_error:
+                logger.error(f"❌ Document generation exception: {str(gen_error)}")
+                logger.error(f"❌ Exception type: {type(gen_error).__name__}")
+                import traceback
+                logger.error(f"❌ Traceback: {traceback.format_exc()}")
+                raise
 
             if not file_path or not os.path.exists(file_path):
                 logger.error(f'❌ Document generation failed for plan {plan_id}')
