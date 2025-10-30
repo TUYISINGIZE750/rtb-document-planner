@@ -35,6 +35,13 @@
         
         <h1><i class="fas fa-chalkboard-teacher"></i> Session Plan Wizard</h1>
         
+        <div id="downloadSection" style="display: none; background: #10b981; color: white; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem; text-align: center;">
+            <p><i class="fas fa-check-circle"></i> <strong>Session plan created successfully!</strong></p>
+            <button id="manualDownloadBtn" class="btn" style="background: white; color: #10b981; margin-top: 0.5rem;">
+                <i class="fas fa-download"></i> Click here if download didn't start
+            </button>
+        </div>
+        
         <form id="sessionForm">
             <div class="form-grid">
                 <div class="form-group">
@@ -245,15 +252,53 @@
                     if (result.id) {
                         console.log('🔽 Triggering download for ID:', result.id);
                         
-                        // Download the document
+                        // Download the document using fetch + blob
                         const downloadUrl = `${API_BASE}/session-plans/${result.id}/download?phone=${encodeURIComponent(currentUser.phone)}`;
                         console.log('📥 Download URL:', downloadUrl);
                         
-                        // Method 1: Try window.open first
-                        window.open(downloadUrl, '_blank');
-                        
-                        // Method 2: Also create link as fallback
-                        setTimeout(() => {
+                        // Fetch and download as blob
+                        try {
+                            const downloadResponse = await fetch(downloadUrl);
+                            if (downloadResponse.ok) {
+                                const blob = await downloadResponse.blob();
+                                const url = window.URL.createObjectURL(blob);
+                                const link = document.createElement('a');
+                                link.href = url;
+                                link.download = `RTB_Session_Plan_${result.id}_${new Date().getTime()}.docx`;
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
+                                window.URL.revokeObjectURL(url);
+                                console.log('✅ Download completed via blob');
+                                
+                                // Show success section with manual download option
+                                const downloadSection = document.getElementById('downloadSection');
+                                const manualBtn = document.getElementById('manualDownloadBtn');
+                                downloadSection.style.display = 'block';
+                                manualBtn.onclick = () => {
+                                    const link = document.createElement('a');
+                                    link.href = downloadUrl;
+                                    link.download = `RTB_Session_Plan_${result.id}.docx`;
+                                    link.click();
+                                };
+                                
+                                // Scroll to top to show success message
+                                window.scrollTo(0, 0);
+                            } else {
+                                console.error('❌ Download failed:', downloadResponse.status);
+                                
+                                // Show manual download button
+                                const downloadSection = document.getElementById('downloadSection');
+                                const manualBtn = document.getElementById('manualDownloadBtn');
+                                downloadSection.style.display = 'block';
+                                downloadSection.style.background = '#f59e0b';
+                                downloadSection.querySelector('p').innerHTML = '<i class="fas fa-exclamation-triangle"></i> <strong>Auto-download failed. Click button below:</strong>';
+                                manualBtn.onclick = () => window.open(downloadUrl, '_blank');
+                                window.scrollTo(0, 0);
+                            }
+                        } catch (downloadError) {
+                            console.error('❌ Download error:', downloadError);
+                            // Fallback: direct link
                             const link = document.createElement('a');
                             link.href = downloadUrl;
                             link.download = `RTB_Session_Plan_${result.id}.docx`;
@@ -261,10 +306,14 @@
                             document.body.appendChild(link);
                             link.click();
                             document.body.removeChild(link);
-                            console.log('✅ Download triggered');
-                        }, 500);
-                        
-                        alert('✅ Session plan created! Download should start automatically.');
+                            
+                            // Show manual download button as fallback
+                            const downloadSection = document.getElementById('downloadSection');
+                            const manualBtn = document.getElementById('manualDownloadBtn');
+                            downloadSection.style.display = 'block';
+                            manualBtn.onclick = () => window.open(downloadUrl, '_blank');
+                            window.scrollTo(0, 0);
+                        }
                         
                         // Update download counter
                         updateDownloadCounter();
