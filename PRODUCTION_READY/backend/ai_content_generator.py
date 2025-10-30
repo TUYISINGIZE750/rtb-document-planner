@@ -11,7 +11,10 @@ def generate_session_plan_content(data):
     
     # If no API key, return original data
     if not GEMINI_API_KEY:
+        print("⚠️ No API key found, returning original data")
         return data
+    
+    print(f"🤖 Starting AI content generation for: {data.get('topic_of_session', 'Unknown topic')}")
     
     module = data.get('module_code_title', '')
     topic = data.get('topic_of_session', '')
@@ -72,9 +75,12 @@ Make it professional, practical, and suitable for TVET training in Rwanda."""
         
         response = requests.post(url, json=payload, timeout=30)
         
+        print(f"📡 API Response status: {response.status_code}")
+        
         if response.status_code == 200:
             result = response.json()
             text = result['candidates'][0]['content']['parts'][0]['text']
+            print(f"✅ AI response received, length: {len(text)} chars")
             
             # Extract JSON from response
             if '```json' in text:
@@ -83,6 +89,10 @@ Make it professional, practical, and suitable for TVET training in Rwanda."""
                 text = text.split('```')[1].split('```')[0].strip()
             
             ai_content = json.loads(text)
+            print(f"✅ AI content parsed successfully")
+            print(f"📊 Generated objectives: {len(ai_content.get('objectives', ''))} chars")
+            print(f"📊 Generated activities: {len(ai_content.get('learning_activities', ''))} chars")
+            print(f"📊 Generated assessment: {len(ai_content.get('assessment_details', ''))} chars")
             
             # Update data with AI-generated content
             data['objectives'] = ai_content.get('objectives', data.get('objectives', ''))
@@ -92,8 +102,11 @@ Make it professional, practical, and suitable for TVET training in Rwanda."""
             data['assessment_details'] = ai_content.get('assessment_details', data.get('assessment_details', ''))
             data['references'] = ai_content.get('references', data.get('references', ''))
             
+            print(f"✅ Data updated with AI content")
             return data
         else:
+            print(f"❌ AI API failed with status: {response.status_code}")
+            print(f"❌ Response: {response.text[:200]}")
             # If AI fails, return original data
             return data
             

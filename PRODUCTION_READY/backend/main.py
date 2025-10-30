@@ -287,9 +287,13 @@ def generate_session_plan():
                 return jsonify({"detail": "Download limit reached. Please upgrade to premium."}), 403
 
             try:
+                logger.info(f"🤖 Generating AI content for topic: {data.get('topic_of_session')}")
                 data = generate_session_plan_content(data)
+                logger.info(f"✅ AI content generated - Objectives: {len(data.get('objectives', ''))} chars")
+                logger.info(f"✅ Learning activities: {len(data.get('learning_activities', ''))} chars")
+                logger.info(f"✅ Assessment: {len(data.get('assessment_details', ''))} chars")
             except Exception as gen_error:
-                logger.warning(f"AI content generation failed: {str(gen_error)}")
+                logger.error(f"❌ AI content generation failed: {str(gen_error)}")
 
             session_plan = SessionPlan(
                 user_phone=user_phone,
@@ -374,10 +378,17 @@ def download_session_plan(plan_id):
                 'references': session_plan.references
             }
 
+            logger.info(f"📄 Generating document for plan ID: {session_plan.id}")
+            logger.info(f"📊 Data keys: {list(data.keys())}")
+            logger.info(f"📝 Objectives length: {len(data.get('objectives', ''))}")
+            logger.info(f"📝 Activities length: {len(data.get('learning_activities', ''))}")
             file_path = generate_session_plan_docx(data)
+            logger.info(f"✅ Document generated at: {file_path}")
 
             if not file_path or not os.path.exists(file_path):
-                logger.error(f'Document generation failed for plan {plan_id}')
+                logger.error(f'❌ Document generation failed for plan {plan_id}')
+                logger.error(f'❌ File path: {file_path}')
+                logger.error(f'❌ File exists: {os.path.exists(file_path) if file_path else "No path"}')  
                 return jsonify({"detail": "Document generation failed"}), 500
 
             filename = f"RTB_Session_Plan_{plan_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.docx"
