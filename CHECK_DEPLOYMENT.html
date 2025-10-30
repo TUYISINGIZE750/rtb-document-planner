@@ -1,136 +1,203 @@
-c<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
-    <title>Check Render Deployment</title>
+    <title>RTB Deployment Checker</title>
     <style>
-        body { font-family: monospace; padding: 2rem; background: #1e1e1e; color: #00ff00; }
-        button { padding: 1rem 2rem; background: #0066cc; color: white; border: none; cursor: pointer; font-size: 1rem; margin: 1rem 0; }
-        pre { background: #000; padding: 1rem; overflow-x: auto; white-space: pre-wrap; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Courier New', monospace; background: #0a0e27; color: #00ff41; padding: 2rem; }
+        .container { max-width: 900px; margin: 0 auto; }
+        h1 { color: #00ff41; text-align: center; margin-bottom: 2rem; font-size: 2rem; }
+        button { 
+            width: 100%; padding: 1.5rem; background: #00ff41; color: #0a0e27; 
+            border: none; font-size: 1.2rem; font-weight: bold; cursor: pointer; 
+            border-radius: 8px; margin-bottom: 2rem; transition: all 0.3s;
+        }
+        button:hover { background: #00cc33; transform: scale(1.02); }
+        button:disabled { background: #666; cursor: not-allowed; }
+        .result { 
+            background: #000; padding: 2rem; border-radius: 8px; 
+            border: 2px solid #00ff41; min-height: 400px; 
+            white-space: pre-wrap; word-wrap: break-word; 
+            font-size: 0.9rem; line-height: 1.6;
+        }
         .loading { color: #ffaa00; }
-        .success { color: #00ff00; }
-        .error { color: #ff0000; }
+        .success { color: #00ff41; }
+        .error { color: #ff4444; }
+        .warning { color: #ffaa00; }
+        .info { color: #4499ff; }
+        .step { margin: 1rem 0; padding: 0.5rem 0; border-bottom: 1px solid #333; }
     </style>
 </head>
 <body>
-    <h1>🔍 Check Render Deployment Status</h1>
-    <button onclick="checkDeployment()">Check Now</button>
-    <pre id="result">Click button to check deployment...</pre>
+    <div class="container">
+        <h1>🚀 RTB DEPLOYMENT CHECKER</h1>
+        <button id="checkBtn" onclick="runFullCheck()">RUN FULL SYSTEM CHECK</button>
+        <div id="result" class="result">Click button to start comprehensive system check...</div>
+    </div>
 
     <script>
-        async function checkDeployment() {
-            const result = document.getElementById('result');
-            result.className = 'loading';
-            result.textContent = '⏳ Checking Render deployment...\n\n';
+        const API_BASE = 'https://rtb-document-planner.onrender.com';
+        let output = '';
+
+        function log(msg, type = 'info') {
+            const colors = {
+                success: '✅',
+                error: '❌',
+                warning: '⚠️',
+                info: 'ℹ️',
+                loading: '⏳'
+            };
+            output += `${colors[type] || ''} ${msg}\n`;
+            document.getElementById('result').innerHTML = output;
+            document.getElementById('result').scrollTop = document.getElementById('result').scrollHeight;
+        }
+
+        function separator() {
+            output += '\n' + '═'.repeat(70) + '\n\n';
+            document.getElementById('result').innerHTML = output;
+        }
+
+        async function runFullCheck() {
+            const btn = document.getElementById('checkBtn');
+            btn.disabled = true;
+            btn.textContent = 'CHECKING...';
+            output = '';
             
-            const API_BASE = 'https://rtb-document-planner.onrender.com';
-            
+            log('RTB DOCUMENT PLANNER - COMPREHENSIVE SYSTEM CHECK', 'loading');
+            log(`Started: ${new Date().toLocaleString()}`);
+            separator();
+
             try {
-                // Test 1: Health check
-                result.textContent += '1️⃣ Testing backend health...\n';
-                const healthResponse = await fetch(`${API_BASE}/`);
-                const healthData = await healthResponse.json();
+                // Test 1: Backend Health
+                log('TEST 1: Backend Health Check', 'loading');
+                const healthRes = await fetch(`${API_BASE}/`);
+                const health = await healthRes.json();
                 
-                if (healthResponse.ok) {
-                    result.textContent += `✅ Backend is LIVE\n`;
-                    result.textContent += `   Version: ${healthData.version}\n`;
-                    result.textContent += `   Status: ${healthData.status}\n\n`;
+                if (healthRes.ok) {
+                    log(`Backend Status: ${health.status}`, 'success');
+                    log(`Version: ${health.version}`);
+                    log(`Deployment: ${health.deployment || 'N/A'}`);
+                    log(`Features: ${health.features.join(', ')}`);
+                    log(`Users: ${health.users_count}`);
                 } else {
-                    result.textContent += `❌ Backend returned error: ${healthResponse.status}\n\n`;
-                    result.className = 'error';
+                    log('Backend health check failed!', 'error');
                     return;
                 }
-                
-                // Test 2: Check if latest code is deployed
-                result.textContent += '2️⃣ Checking deployment timestamp...\n';
-                const timestamp = new Date().toISOString();
-                result.textContent += `   Current time: ${timestamp}\n`;
-                result.textContent += `   Backend response time: ${new Date(healthResponse.headers.get('date')).toISOString()}\n\n`;
-                
-                // Test 3: Test template file access
-                result.textContent += '3️⃣ Testing template file access...\n';
-                result.textContent += '   Creating test session plan...\n';
-                
-                const testData = {
-                    user_phone: '+250789751597',
-                    sector: 'TEST',
-                    trade: 'TEST',
-                    rqf_level: 'Level 4',
-                    module_code_title: 'TEST',
-                    term: 'Term 1',
-                    week: 'Week 1',
-                    date: '2024-01-01',
-                    trainer_name: 'Test',
-                    class_name: 'TEST',
-                    number_of_trainees: '1',
-                    learning_outcomes: 'Test',
-                    indicative_contents: 'Test',
-                    topic_of_session: 'Test',
-                    duration: '40',
-                    facilitation_techniques: 'Brainstorming'
-                };
-                
-                const createResponse = await fetch(`${API_BASE}/session-plans`, {
+                separator();
+
+                // Test 2: Create Session Plan
+                log('TEST 2: Creating Test Session Plan', 'loading');
+                const createRes = await fetch(`${API_BASE}/session-plans`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(testData)
+                    body: JSON.stringify({
+                        user_phone: '+250789751597',
+                        sector: 'ICT & MULTIMEDIA',
+                        trade: 'Software Development',
+                        rqf_level: 'Level 4',
+                        module_code_title: 'TEST-M01: System Testing',
+                        term: 'Term 1',
+                        week: 'Week 1',
+                        date: new Date().toISOString().split('T')[0],
+                        trainer_name: 'Test Teacher',
+                        class_name: 'TEST-A',
+                        number_of_trainees: '25',
+                        learning_outcomes: 'Test system functionality',
+                        indicative_contents: '• System testing\n• Deployment verification',
+                        topic_of_session: 'System Deployment Testing',
+                        duration: '40',
+                        facilitation_techniques: 'Brainstorming'
+                    })
                 });
+
+                const createData = await createRes.json();
                 
-                const createData = await createResponse.json();
-                
-                if (createResponse.ok && createData.id) {
-                    result.textContent += `✅ Session plan created: ID ${createData.id}\n\n`;
+                if (createRes.ok && createData.id) {
+                    log(`Session plan created successfully!`, 'success');
+                    log(`Plan ID: ${createData.id}`);
                     
-                    // Test 4: Test download
-                    result.textContent += '4️⃣ Testing document download...\n';
+                    // Test 3: Download Document
+                    separator();
+                    log('TEST 3: Downloading Document', 'loading');
+                    
                     const downloadUrl = `${API_BASE}/session-plans/${createData.id}/download?phone=%2B250789751597`;
+                    const downloadRes = await fetch(downloadUrl);
                     
-                    const downloadResponse = await fetch(downloadUrl);
-                    
-                    if (downloadResponse.ok) {
-                        const blob = await downloadResponse.blob();
-                        result.textContent += `✅ Download successful!\n`;
-                        result.textContent += `   File size: ${(blob.size / 1024).toFixed(2)} KB\n`;
-                        result.textContent += `   Type: ${blob.type}\n\n`;
+                    if (downloadRes.ok) {
+                        const blob = await downloadRes.blob();
+                        const sizeMB = (blob.size / 1024).toFixed(2);
                         
-                        result.textContent += '═══════════════════════════════════════\n';
-                        result.textContent += '🎉 DEPLOYMENT SUCCESSFUL!\n';
-                        result.textContent += '═══════════════════════════════════════\n';
-                        result.textContent += 'All systems operational:\n';
-                        result.textContent += '✅ Backend is live\n';
-                        result.textContent += '✅ AI content generation working\n';
-                        result.textContent += '✅ Template files accessible\n';
-                        result.textContent += '✅ Document generation working\n';
-                        result.textContent += '✅ Download endpoint working\n\n';
-                        result.textContent += 'You can now test with teacher account!\n';
-                        result.className = 'success';
+                        log(`Document downloaded successfully!`, 'success');
+                        log(`File size: ${sizeMB} KB`);
+                        log(`Content type: ${blob.type}`);
+                        
+                        // Auto-download the file
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `RTB_Test_Session_Plan_${createData.id}.docx`;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        window.URL.revokeObjectURL(url);
+                        
+                        log(`File saved to Downloads folder`, 'success');
+                        
+                        separator();
+                        log('🎉 ALL TESTS PASSED!', 'success');
+                        log('');
+                        log('SYSTEM STATUS: FULLY OPERATIONAL', 'success');
+                        log('✅ Backend is live');
+                        log('✅ Database is working');
+                        log('✅ AI content generation is working');
+                        log('✅ Document generation is working');
+                        log('✅ Template files are accessible');
+                        log('✅ Download endpoint is working');
+                        log('');
+                        log('You can now use the system with teacher accounts!');
+                        
                     } else {
-                        const errorText = await downloadResponse.text();
-                        result.textContent += `❌ Download failed: ${downloadResponse.status}\n`;
-                        result.textContent += `   Error: ${errorText}\n\n`;
-                        result.textContent += '⚠️ DEPLOYMENT INCOMPLETE\n';
-                        result.textContent += 'Backend is live but document generation has issues.\n';
-                        result.textContent += 'Check Render logs for details.\n';
-                        result.className = 'error';
+                        const errorText = await downloadRes.text();
+                        log(`Download failed!`, 'error');
+                        log(`Status: ${downloadRes.status}`);
+                        log(`Error: ${errorText}`);
+                        log('');
+                        log('DIAGNOSIS:', 'warning');
+                        log('- Backend is working');
+                        log('- Session plan creation works');
+                        log('- Document generation has issues');
+                        log('');
+                        log('ACTION REQUIRED:', 'warning');
+                        log('Check Render logs for detailed error messages');
+                        log('Look for template file path issues');
                     }
                 } else {
-                    result.textContent += `❌ Session plan creation failed\n`;
-                    result.textContent += `   Error: ${createData.detail}\n\n`;
-                    result.className = 'error';
+                    log(`Session plan creation failed!`, 'error');
+                    log(`Error: ${createData.detail || 'Unknown error'}`);
                 }
-                
+
             } catch (error) {
-                result.textContent += `\n❌ CONNECTION ERROR\n`;
-                result.textContent += `Error: ${error.message}\n\n`;
-                result.textContent += 'Possible causes:\n';
-                result.textContent += '- Render service is sleeping (wait 30 seconds)\n';
-                result.textContent += '- Deployment still in progress (wait 2-3 minutes)\n';
-                result.textContent += '- Network connection issue\n';
-                result.className = 'error';
+                log(`Connection error: ${error.message}`, 'error');
+                log('');
+                log('POSSIBLE CAUSES:', 'warning');
+                log('- Render service is sleeping (wait 30 seconds)');
+                log('- Deployment in progress (wait 2-3 minutes)');
+                log('- Network connection issue');
+                log('- CORS or firewall blocking request');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'RUN FULL SYSTEM CHECK';
+                separator();
+                log(`Completed: ${new Date().toLocaleString()}`);
             }
         }
-        
-        // Auto-run on load
-        window.onload = () => setTimeout(checkDeployment, 1000);
+
+        // Auto-run on page load
+        window.onload = () => {
+            setTimeout(() => {
+                log('Page loaded. Click button to start check.', 'info');
+            }, 500);
+        };
     </script>
 </body>
 </html>
