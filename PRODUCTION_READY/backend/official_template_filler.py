@@ -201,13 +201,13 @@ def fill_session_plan_official(data):
     # Save to temp file
     try:
         temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
-        print(f"💾 Saving to: {temp_file.name}")
+        logger.info(f"💾 Saving to: {temp_file.name}")
         doc.save(temp_file.name)
         temp_file.close()
-        print(f"✅ Document saved successfully")
+        logger.info(f"✅ Document saved successfully")
         return temp_file.name
     except Exception as e:
-        print(f"❌ Error saving document: {str(e)}")
+        logger.error(f"❌ Error saving document: {str(e)}")
         raise
 
 def fill_scheme_official(data):
