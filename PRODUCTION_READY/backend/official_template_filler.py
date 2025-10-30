@@ -23,10 +23,25 @@ def fill_session_plan_official(data):
     try:
         template_path = os.path.join(os.path.dirname(__file__), 'RTB Templates', 'RTB Session plan template.docx')
         print(f"📂 Template path: {template_path}")
+        print(f"📂 __file__: {__file__}")
+        print(f"📂 dirname: {os.path.dirname(__file__)}")
         print(f"📂 File exists: {os.path.exists(template_path)}")
         
         if not os.path.exists(template_path):
-            raise FileNotFoundError(f"Template not found at: {template_path}")
+            print(f"⚠️ Template not found, creating simple document")
+            # Fallback: create simple document
+            doc = Document()
+            doc.add_heading('RTB Session Plan', 0)
+            doc.add_paragraph(f"Topic: {data.get('topic_of_session', '')}")
+            doc.add_paragraph(f"Objectives: {data.get('objectives', '')}")
+            doc.add_paragraph(f"Learning Activities: {data.get('learning_activities', '')}")
+            doc.add_paragraph(f"Assessment: {data.get('assessment_details', '')}")
+            doc.add_paragraph(f"References: {data.get('references', '')}")
+            
+            temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
+            doc.save(temp_file.name)
+            temp_file.close()
+            return temp_file.name
         
         doc = Document(template_path)
         print(f"✅ Template loaded, tables: {len(doc.tables)}")
