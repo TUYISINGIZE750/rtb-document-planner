@@ -24,9 +24,15 @@ def fill_session_plan_official(data):
     import logging
     logger = logging.getLogger(__name__)
     
+    if data is None:
+        logger.error("❌ Data is None!")
+        raise ValueError("Data cannot be None")
+    
     logger.info(f"🐍 Python version: {sys.version}")
     logger.info(f"📂 Current file: {__file__}")
     logger.info(f"📂 Current dir: {os.getcwd()}")
+    logger.info(f"📊 Data type: {type(data)}")
+    logger.info(f"📊 Data keys: {list(data.keys()) if isinstance(data, dict) else 'NOT A DICT'}")
     
     base_dir = os.path.dirname(os.path.abspath(__file__))
     logger.info(f"📂 Base dir: {base_dir}")
@@ -81,10 +87,15 @@ def fill_session_plan_official(data):
         logger.error(f"❌ Error loading template: {str(e)}")
         raise
     
+    if not doc.tables:
+        logger.error("❌ No tables in template!")
+        raise Exception("Template has no tables")
+    
     table = doc.tables[0]
+    logger.info(f"✅ Table found with {len(table.rows)} rows")
     
     # Row 1: Sector, Sub-sector, Trade, Date
-    table.rows[1].cells[0].text = f"Sector : {data.get('sector', '')}"
+    table.rows[1].cells[0].text = f"Sector : {data.get('sector', '') if data else ''}"
     set_cell_font(table.rows[1].cells[0])
     table.rows[1].cells[1].text = f"Sub-sector: {data.get('sub_sector', '')}"
     set_cell_font(table.rows[1].cells[1])
