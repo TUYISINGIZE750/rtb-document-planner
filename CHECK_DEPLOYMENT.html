@@ -70,7 +70,11 @@
             try {
                 // Test 1: Backend Health
                 log('TEST 1: Backend Health Check', 'loading');
-                const healthRes = await fetch(`${API_BASE}/`);
+                const healthRes = await fetch(`${API_BASE}/`, {
+                    method: 'GET',
+                    mode: 'cors',
+                    cache: 'no-cache'
+                });
                 const health = await healthRes.json();
                 
                 if (healthRes.ok) {
@@ -89,7 +93,12 @@
                 log('TEST 2: Creating Test Session Plan', 'loading');
                 const createRes = await fetch(`${API_BASE}/session-plans`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    mode: 'cors',
+                    cache: 'no-cache',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
                     body: JSON.stringify({
                         user_phone: '+250789751597',
                         sector: 'ICT & MULTIMEDIA',
@@ -121,7 +130,12 @@
                     log('TEST 3: Downloading Document', 'loading');
                     
                     const downloadUrl = `${API_BASE}/session-plans/${createData.id}/download?phone=%2B250789751597`;
-                    const downloadRes = await fetch(downloadUrl);
+                    log(`Download URL: ${downloadUrl}`);
+                    const downloadRes = await fetch(downloadUrl, {
+                        method: 'GET',
+                        mode: 'cors',
+                        cache: 'no-cache'
+                    });
                     
                     if (downloadRes.ok) {
                         const blob = await downloadRes.blob();

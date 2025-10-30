@@ -178,8 +178,8 @@ def home():
         "status": "online",
         "cors": "enabled",
         "environment": "production",
-        "version": "2.2",
-        "deployment": "fdfa42d",
+        "version": "2.3",
+        "deployment": "137519c",
         "features": ["authentication", "docx_generation", "ai_content"],
         "users_count": users_count
     })

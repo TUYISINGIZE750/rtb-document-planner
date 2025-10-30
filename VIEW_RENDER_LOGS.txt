@@ -1,0 +1,71 @@
+═══════════════════════════════════════════════════════════════
+  📋 HOW TO VIEW RENDER LOGS
+═══════════════════════════════════════════════════════════════
+
+STEP 1: Open Render Dashboard
+   → Go to: https://dashboard.render.com
+   → Login with your account
+   → Click on: rtb-document-planner
+
+STEP 2: Check Deployment Status
+   → Click "Events" tab
+   → Look for: "Deploy live" with commit 545f6af
+   → If still deploying, wait 2-3 minutes
+
+STEP 3: View Logs
+   → Click "Logs" tab
+   → Scroll down to see latest logs
+   → Look for these messages:
+
+   🐍 Python version: 3.x.x
+   📂 Current file: /opt/render/project/src/...
+   📂 Current dir: /opt/render/project/src
+   📂 Base dir: /opt/render/project/src/PRODUCTION_READY/backend
+   📂 Files in base dir: [...]
+   📂 RTB Templates path: .../RTB Templates
+   📂 RTB Templates exists: True/False
+   📂 Files in RTB Templates: [...]
+   📂 Full template path: .../RTB Session plan template.docx
+   📂 Template exists: True/False
+
+STEP 4: Interpret Results
+
+IF "Template exists: True":
+   ✅ Template file is there
+   ✅ Document should generate successfully
+   → Run CHECK_DEPLOYMENT.html again
+
+IF "Template exists: False":
+   ❌ Template file is missing on Render
+   → Check if files are in git: git ls-files | findstr RTB
+   → Check .gitignore for *.docx exclusions
+   → May need to use Git LFS for large files
+
+IF "RTB Templates exists: False":
+   ❌ Folder doesn't exist on Render
+   → Folder not deployed or wrong path
+   → Check Render build logs for errors
+
+═══════════════════════════════════════════════════════════════
+
+WHAT TO DO AFTER VIEWING LOGS:
+
+1. Run CHECK_DEPLOYMENT.html
+2. Check if version shows "2.2"
+3. If download still fails, copy the log output
+4. Look for the detailed file path information
+
+═══════════════════════════════════════════════════════════════
+
+EXPECTED TIMELINE:
+
+00:00 - Code pushed to GitHub ✅
+00:30 - Render detects new commit
+01:00 - Render starts building
+02:00 - Build completes
+02:30 - Service restarts with new code
+03:00 - Ready to test ✅
+
+Current time: Wait 3 minutes from push time
+
+═══════════════════════════════════════════════════════════════
