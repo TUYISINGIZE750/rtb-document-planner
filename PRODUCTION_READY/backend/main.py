@@ -374,13 +374,7 @@ def download_session_plan(plan_id):
                 'references': session_plan.references
             }
 
-            try:
-                from rtb_template_filler_100_percent import RTBSessionPlanFiller
-                filler = RTBSessionPlanFiller()
-                file_path = filler.fill_and_generate(data)
-            except Exception as filler_error:
-                logger.warning(f"RTB filler failed, using standard generation: {str(filler_error)}")
-                file_path = generate_session_plan_docx(data)
+            file_path = generate_session_plan_docx(data)
 
             if not file_path or not os.path.exists(file_path):
                 logger.error(f'Document generation failed for plan {plan_id}')
@@ -583,13 +577,7 @@ def download_scheme_of_work(scheme_id):
                 'manager_name': scheme.manager_name
             }
 
-            try:
-                from rtb_template_filler_100_percent import RTBSchemeOfWorkFiller
-                filler = RTBSchemeOfWorkFiller()
-                file_path = filler.fill_and_generate(data)
-            except Exception as filler_error:
-                logger.warning(f"RTB scheme filler failed, using standard generation: {str(filler_error)}")
-                file_path = generate_scheme_of_work_docx(data)
+            file_path = generate_scheme_of_work_docx(data)
 
             if not file_path or not os.path.exists(file_path):
                 logger.error(f'Document generation failed for scheme {scheme_id}')
