@@ -386,21 +386,21 @@ def download_session_plan(plan_id):
             
             try:
                 file_path = generate_session_plan_docx(data)
+                if file_path is None:
+                    logger.error(f"❌ generate_session_plan_docx returned None")
+                    return jsonify({"detail": "Document generation returned None - template file missing"}), 500
+                    
                 logger.info(f"✅ Document generated at: {file_path}")
-                logger.info(f"📂 File path type: {type(file_path)}")
-                logger.info(f"📂 File path value: {file_path}")
+                
+                if not os.path.exists(file_path):
+                    logger.error(f'❌ Generated file does not exist: {file_path}')
+                    return jsonify({"detail": "Generated file not found"}), 500
+                    
             except Exception as gen_error:
                 logger.error(f"❌ Document generation exception: {str(gen_error)}")
-                logger.error(f"❌ Exception type: {type(gen_error).__name__}")
                 import traceback
                 logger.error(f"❌ Traceback: {traceback.format_exc()}")
-                raise
-
-            if not file_path or not os.path.exists(file_path):
-                logger.error(f'❌ Document generation failed for plan {plan_id}')
-                logger.error(f'❌ File path: {file_path}')
-                logger.error(f'❌ File exists: {os.path.exists(file_path) if file_path else "No path"}')  
-                return jsonify({"detail": "Document generation failed"}), 500
+                return jsonify({"detail": f"Document generation error: {str(gen_error)}"}), 500
 
             filename = f"RTB_Session_Plan_{plan_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.docx"
             logger.info(f'Sending file: {file_path} as {filename}')
