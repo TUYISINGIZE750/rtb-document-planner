@@ -21,38 +21,41 @@ def set_cell_font(cell, font_name='Bookman Old Style', font_size=12):
 def fill_session_plan_official(data):
     """Fill RTB Session plan template.docx from RTB Templates folder"""
     import sys
-    print(f"🐍 Python version: {sys.version}")
-    print(f"📂 Current file: {__file__}")
-    print(f"📂 Current dir: {os.getcwd()}")
+    import logging
+    logger = logging.getLogger(__name__)
+    
+    logger.info(f"🐍 Python version: {sys.version}")
+    logger.info(f"📂 Current file: {__file__}")
+    logger.info(f"📂 Current dir: {os.getcwd()}")
     
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    print(f"📂 Base dir: {base_dir}")
+    logger.info(f"📂 Base dir: {base_dir}")
     
     # List files in base directory
     try:
         files = os.listdir(base_dir)
-        print(f"📂 Files in base dir: {files[:10]}")
+        logger.info(f"📂 Files in base dir: {files[:10]}")
     except Exception as e:
-        print(f"❌ Cannot list base dir: {e}")
+        logger.error(f"❌ Cannot list base dir: {e}")
     
     # Check if RTB Templates folder exists
     rtb_folder = os.path.join(base_dir, 'RTB Templates')
-    print(f"📂 RTB Templates path: {rtb_folder}")
-    print(f"📂 RTB Templates exists: {os.path.exists(rtb_folder)}")
+    logger.info(f"📂 RTB Templates path: {rtb_folder}")
+    logger.info(f"📂 RTB Templates exists: {os.path.exists(rtb_folder)}")
     
     if os.path.exists(rtb_folder):
         try:
             template_files = os.listdir(rtb_folder)
-            print(f"📂 Files in RTB Templates: {template_files}")
+            logger.info(f"📂 Files in RTB Templates: {template_files}")
         except Exception as e:
-            print(f"❌ Cannot list RTB Templates: {e}")
+            logger.error(f"❌ Cannot list RTB Templates: {e}")
     
     template_path = os.path.join(base_dir, 'RTB Templates', 'RTB Session plan template.docx')
-    print(f"📂 Full template path: {template_path}")
-    print(f"📂 Template exists: {os.path.exists(template_path)}")
+    logger.info(f"📂 Full template path: {template_path}")
+    logger.info(f"📂 Template exists: {os.path.exists(template_path)}")
     
     if not os.path.exists(template_path):
-        print(f"⚠️ Template not found, creating simple document")
+        logger.warning(f"⚠️ Template not found, creating simple document")
         # Fallback: create simple document
         doc = Document()
         doc.add_heading('RTB Session Plan', 0)
@@ -65,17 +68,17 @@ def fill_session_plan_official(data):
         temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
         doc.save(temp_file.name)
         temp_file.close()
-        print(f"✅ Fallback document created: {temp_file.name}")
+        logger.info(f"✅ Fallback document created: {temp_file.name}")
         return temp_file.name
     
     try:
         doc = Document(template_path)
-        print(f"✅ Template loaded, tables: {len(doc.tables)}")
+        logger.info(f"✅ Template loaded, tables: {len(doc.tables)}")
         
         if not doc.tables:
             raise Exception("No table found in template")
     except Exception as e:
-        print(f"❌ Error loading template: {str(e)}")
+        logger.error(f"❌ Error loading template: {str(e)}")
         raise
     
     table = doc.tables[0]
