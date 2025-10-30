@@ -1,0 +1,160 @@
+═══════════════════════════════════════════════════════════════
+  📋 SIMPLE TESTING INSTRUCTIONS
+═══════════════════════════════════════════════════════════════
+
+STEP 1: CREATE TEACHER ACCOUNT (1 minute)
+═══════════════════════════════════════════════════════════════
+
+1. Find file: CREATE_TEACHER_ACCOUNT.html
+   Location: C:\Users\PC\Music\Scheme of work and session plan planner\
+
+2. Double-click it (opens in your browser)
+
+3. Fill the form:
+   - Name: Test Teacher
+   - Phone: +250788999888
+   - Email: test@school.rw
+   - Institution: IPRC Kigali
+   - Password: teacher123
+
+4. Click "Create Account"
+
+5. You'll see: ✅ Account created successfully!
+
+═══════════════════════════════════════════════════════════════
+
+STEP 2: ACTIVATE THE ACCOUNT (30 seconds)
+═══════════════════════════════════════════════════════════════
+
+1. Go to: https://rtb-document-planner.pages.dev/admin.html
+
+2. Login as admin:
+   - Phone: +250789751597
+   - Password: admin123
+
+3. Find user: Test Teacher (+250788999888)
+
+4. Click "Activate" button (turns green)
+
+═══════════════════════════════════════════════════════════════
+
+STEP 3: TEST SESSION PLAN CREATION (2 minutes)
+═══════════════════════════════════════════════════════════════
+
+1. Go to: https://rtb-document-planner.pages.dev
+
+2. Press Ctrl+Shift+R (clear cache)
+
+3. Login as teacher:
+   - Phone: +250788999888
+   - Password: teacher123
+
+4. Click: "Create Session Plan"
+
+5. Fill form:
+   - Sector: ICT & MULTIMEDIA
+   - Trade: Software Development
+   - RQF Level: Level 4
+   - Teacher Name: Test Teacher
+   - Module: CSA-M01: Introduction to Programming
+   - Term: Term 1
+   - Week: Week 4
+   - Date: (today's date)
+   - Number of Trainees: 25
+   - Class Name: L4CSA-A
+   - Duration: 40
+   - Topic: Variables and Data Types
+   - Learning Outcomes: Students will understand variables
+   - Indicative Contents: • Variables\n• Data types
+   - Facilitation: Brainstorming
+
+6. Click: "Generate Session Plan"
+
+7. Wait 15-20 seconds
+
+8. EXPECTED RESULT:
+   ✅ Green box appears at top
+   ✅ "Session plan created successfully!"
+   ✅ File downloads automatically
+   ✅ OR click manual download button
+
+═══════════════════════════════════════════════════════════════
+
+STEP 4: CHECK THE DOCUMENT
+═══════════════════════════════════════════════════════════════
+
+1. Open downloaded .docx file
+
+2. Check these rows:
+   ✅ Row 8: Objectives (AI generated, 3-5 points)
+   ✅ Row 11: Introduction activity (AI generated)
+   ✅ Row 13: Development activity (AI generated)
+   ✅ Row 17: Conclusion activity (AI generated)
+   ✅ Row 18: Assessment (AI generated)
+   ✅ Row 20: References (AI generated)
+
+═══════════════════════════════════════════════════════════════
+
+OPTIONAL: TEST BACKEND DIRECTLY
+═══════════════════════════════════════════════════════════════
+
+1. Find file: TEST_BACKEND_NOW.html
+   Location: C:\Users\PC\Music\Scheme of work and session plan planner\
+
+2. Double-click it (opens in browser)
+
+3. Run tests in order:
+   - Test 1: Backend Health → Should pass ✅
+   - Test 2: Login Test → Should pass ✅
+   - Test 3: Create Session Plan → Should pass ✅ (gives you ID)
+   - Test 4: Download → Enter ID, should download file ✅
+
+═══════════════════════════════════════════════════════════════
+
+🚨 IF DOWNLOAD DOESN'T START:
+═══════════════════════════════════════════════════════════════
+
+1. Look for green success box at top of page
+2. Click "Click here if download didn't start" button
+3. File downloads immediately
+
+═══════════════════════════════════════════════════════════════
+
+🚨 IF "DOWNLOAD LIMIT REACHED":
+═══════════════════════════════════════════════════════════════
+
+1. Login as admin: https://rtb-document-planner.pages.dev/admin.html
+2. Find the teacher account
+3. Click "Upgrade to Premium" button
+4. Try creating session plan again
+
+═══════════════════════════════════════════════════════════════
+
+✅ SUCCESS CHECKLIST:
+═══════════════════════════════════════════════════════════════
+
+□ Teacher account created
+□ Account activated by admin
+□ Login successful
+□ Session plan form filled
+□ Green success box appeared
+□ File downloaded (auto or manual button)
+□ Document contains AI content
+□ All sections filled properly
+
+═══════════════════════════════════════════════════════════════
+
+📞 STILL NOT WORKING?
+═══════════════════════════════════════════════════════════════
+
+1. Wait 5 minutes (Render might be sleeping)
+2. Try TEST_BACKEND_NOW.html to check backend
+3. Check browser console (F12) for errors
+4. Try different browser (Chrome/Firefox)
+5. Disable popup blocker
+
+═══════════════════════════════════════════════════════════════
+
+That's it! Simple 4-step process.
+
+═══════════════════════════════════════════════════════════════

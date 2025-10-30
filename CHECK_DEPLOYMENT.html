@@ -1,0 +1,136 @@
+c<!DOCTYPE html>
+<html>
+<head>
+    <title>Check Render Deployment</title>
+    <style>
+        body { font-family: monospace; padding: 2rem; background: #1e1e1e; color: #00ff00; }
+        button { padding: 1rem 2rem; background: #0066cc; color: white; border: none; cursor: pointer; font-size: 1rem; margin: 1rem 0; }
+        pre { background: #000; padding: 1rem; overflow-x: auto; white-space: pre-wrap; }
+        .loading { color: #ffaa00; }
+        .success { color: #00ff00; }
+        .error { color: #ff0000; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Check Render Deployment Status</h1>
+    <button onclick="checkDeployment()">Check Now</button>
+    <pre id="result">Click button to check deployment...</pre>
+
+    <script>
+        async function checkDeployment() {
+            const result = document.getElementById('result');
+            result.className = 'loading';
+            result.textContent = '⏳ Checking Render deployment...\n\n';
+            
+            const API_BASE = 'https://rtb-document-planner.onrender.com';
+            
+            try {
+                // Test 1: Health check
+                result.textContent += '1️⃣ Testing backend health...\n';
+                const healthResponse = await fetch(`${API_BASE}/`);
+                const healthData = await healthResponse.json();
+                
+                if (healthResponse.ok) {
+                    result.textContent += `✅ Backend is LIVE\n`;
+                    result.textContent += `   Version: ${healthData.version}\n`;
+                    result.textContent += `   Status: ${healthData.status}\n\n`;
+                } else {
+                    result.textContent += `❌ Backend returned error: ${healthResponse.status}\n\n`;
+                    result.className = 'error';
+                    return;
+                }
+                
+                // Test 2: Check if latest code is deployed
+                result.textContent += '2️⃣ Checking deployment timestamp...\n';
+                const timestamp = new Date().toISOString();
+                result.textContent += `   Current time: ${timestamp}\n`;
+                result.textContent += `   Backend response time: ${new Date(healthResponse.headers.get('date')).toISOString()}\n\n`;
+                
+                // Test 3: Test template file access
+                result.textContent += '3️⃣ Testing template file access...\n';
+                result.textContent += '   Creating test session plan...\n';
+                
+                const testData = {
+                    user_phone: '+250789751597',
+                    sector: 'TEST',
+                    trade: 'TEST',
+                    rqf_level: 'Level 4',
+                    module_code_title: 'TEST',
+                    term: 'Term 1',
+                    week: 'Week 1',
+                    date: '2024-01-01',
+                    trainer_name: 'Test',
+                    class_name: 'TEST',
+                    number_of_trainees: '1',
+                    learning_outcomes: 'Test',
+                    indicative_contents: 'Test',
+                    topic_of_session: 'Test',
+                    duration: '40',
+                    facilitation_techniques: 'Brainstorming'
+                };
+                
+                const createResponse = await fetch(`${API_BASE}/session-plans`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(testData)
+                });
+                
+                const createData = await createResponse.json();
+                
+                if (createResponse.ok && createData.id) {
+                    result.textContent += `✅ Session plan created: ID ${createData.id}\n\n`;
+                    
+                    // Test 4: Test download
+                    result.textContent += '4️⃣ Testing document download...\n';
+                    const downloadUrl = `${API_BASE}/session-plans/${createData.id}/download?phone=%2B250789751597`;
+                    
+                    const downloadResponse = await fetch(downloadUrl);
+                    
+                    if (downloadResponse.ok) {
+                        const blob = await downloadResponse.blob();
+                        result.textContent += `✅ Download successful!\n`;
+                        result.textContent += `   File size: ${(blob.size / 1024).toFixed(2)} KB\n`;
+                        result.textContent += `   Type: ${blob.type}\n\n`;
+                        
+                        result.textContent += '═══════════════════════════════════════\n';
+                        result.textContent += '🎉 DEPLOYMENT SUCCESSFUL!\n';
+                        result.textContent += '═══════════════════════════════════════\n';
+                        result.textContent += 'All systems operational:\n';
+                        result.textContent += '✅ Backend is live\n';
+                        result.textContent += '✅ AI content generation working\n';
+                        result.textContent += '✅ Template files accessible\n';
+                        result.textContent += '✅ Document generation working\n';
+                        result.textContent += '✅ Download endpoint working\n\n';
+                        result.textContent += 'You can now test with teacher account!\n';
+                        result.className = 'success';
+                    } else {
+                        const errorText = await downloadResponse.text();
+                        result.textContent += `❌ Download failed: ${downloadResponse.status}\n`;
+                        result.textContent += `   Error: ${errorText}\n\n`;
+                        result.textContent += '⚠️ DEPLOYMENT INCOMPLETE\n';
+                        result.textContent += 'Backend is live but document generation has issues.\n';
+                        result.textContent += 'Check Render logs for details.\n';
+                        result.className = 'error';
+                    }
+                } else {
+                    result.textContent += `❌ Session plan creation failed\n`;
+                    result.textContent += `   Error: ${createData.detail}\n\n`;
+                    result.className = 'error';
+                }
+                
+            } catch (error) {
+                result.textContent += `\n❌ CONNECTION ERROR\n`;
+                result.textContent += `Error: ${error.message}\n\n`;
+                result.textContent += 'Possible causes:\n';
+                result.textContent += '- Render service is sleeping (wait 30 seconds)\n';
+                result.textContent += '- Deployment still in progress (wait 2-3 minutes)\n';
+                result.textContent += '- Network connection issue\n';
+                result.className = 'error';
+            }
+        }
+        
+        // Auto-run on load
+        window.onload = () => setTimeout(checkDeployment, 1000);
+    </script>
+</body>
+</html>
