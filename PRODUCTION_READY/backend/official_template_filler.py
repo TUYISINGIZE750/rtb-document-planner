@@ -20,11 +20,22 @@ def set_cell_font(cell, font_name='Bookman Old Style', font_size=12):
 
 def fill_session_plan_official(data):
     """Fill RTB Session plan template.docx from RTB Templates folder"""
-    template_path = os.path.join(os.path.dirname(__file__), 'RTB Templates', 'RTB Session plan template.docx')
-    doc = Document(template_path)
-    
-    if not doc.tables:
-        raise Exception("No table found in template")
+    try:
+        template_path = os.path.join(os.path.dirname(__file__), 'RTB Templates', 'RTB Session plan template.docx')
+        print(f"📂 Template path: {template_path}")
+        print(f"📂 File exists: {os.path.exists(template_path)}")
+        
+        if not os.path.exists(template_path):
+            raise FileNotFoundError(f"Template not found at: {template_path}")
+        
+        doc = Document(template_path)
+        print(f"✅ Template loaded, tables: {len(doc.tables)}")
+        
+        if not doc.tables:
+            raise Exception("No table found in template")
+    except Exception as e:
+        print(f"❌ Error loading template: {str(e)}")
+        raise
     
     table = doc.tables[0]
     
@@ -144,10 +155,16 @@ def fill_session_plan_official(data):
     set_cell_font(table.rows[20].cells[0])
     
     # Save to temp file
-    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
-    doc.save(temp_file.name)
-    temp_file.close()
-    return temp_file.name
+    try:
+        temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
+        print(f"💾 Saving to: {temp_file.name}")
+        doc.save(temp_file.name)
+        temp_file.close()
+        print(f"✅ Document saved successfully")
+        return temp_file.name
+    except Exception as e:
+        print(f"❌ Error saving document: {str(e)}")
+        raise
 
 def fill_scheme_official(data):
     """Fill Scheme of work.docx from RTB Templates folder"""
