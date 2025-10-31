@@ -5,18 +5,20 @@ import os
 import tempfile
 from datetime import datetime
 
-def set_cell_font(cell, font_name='Bookman Old Style', font_size=12):
+def set_cell_font(cell, font_name='Bookman Old Style', font_size=12, bold=False):
     """Set font for all paragraphs and runs in a cell"""
     for paragraph in cell.paragraphs:
         for run in paragraph.runs:
             run.font.name = font_name
             run.font.size = Pt(font_size)
+            run.font.bold = bold
         # If no runs, add one with the text
         if not paragraph.runs and paragraph.text:
             run = paragraph.add_run(paragraph.text)
             paragraph.text = ''
             run.font.name = font_name
             run.font.size = Pt(font_size)
+            run.font.bold = bold
 
 def fill_session_plan_official(data):
     """Fill RTB Session plan template.docx from RTB Templates folder"""

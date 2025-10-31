@@ -28,37 +28,153 @@ def generate_session_plan_content(data):
 4. Analyze and solve problems using {topic}
 5. Evaluate the effectiveness of different approaches to {topic}"""
     
-    data['learning_activities'] = f"""Introduction (5 minutes):
-- Welcome learners and introduce the topic: {topic}
-- Review previous knowledge related to {indicative_contents}
-- Explain the learning outcomes and session objectives
-- Use {facilitation} to engage learners from the start
+    # Generate activities based on facilitation technique
+    if facilitation == "Group Discussion":
+        data['learning_activities'] = f"""Introduction (5 minutes):
+- Divide learners into groups of 4-5
+- Introduce discussion topic: {topic}
+- Explain group discussion rules and objectives
+- Assign roles: facilitator, note-taker, presenter
 
 Development (25 minutes):
-- Present key concepts of {topic} using {facilitation} approach
-- Demonstrate practical examples related to {module}
-- Guide learners through hands-on activities on {indicative_contents}
-- Facilitate group discussions and problem-solving exercises
-- Provide individual support as learners practice {topic}
-- Use {facilitation} technique to ensure active participation
+- Groups discuss {indicative_contents}
+- Each group analyzes different aspects of {topic}
+- Groups share findings and debate key points
+- Trainer facilitates inter-group discussions
+- Groups create summary presentations
 
 Conclusion (3 minutes):
-- Summarize key points covered about {topic}
-- Review learning outcomes achievement
-- Answer questions and clarify doubts
-- Preview next session's topic"""
+- Each group presents main conclusions
+- Class votes on best solutions
+- Trainer summarizes key learning points"""
+    elif facilitation == "Simulation":
+        data['learning_activities'] = f"""Introduction (5 minutes):
+- Explain simulation scenario for {topic}
+- Assign roles to learners
+- Distribute simulation materials
+- Brief learners on expected outcomes
+
+Development (25 minutes):
+- Learners perform simulation of {indicative_contents}
+- Practice real-world application of {topic}
+- Trainer observes and provides guidance
+- Learners rotate roles and repeat simulation
+- Debrief after each simulation round
+
+Conclusion (3 minutes):
+- Discuss simulation experience
+- Connect simulation to real workplace scenarios
+- Identify key lessons learned"""
+    elif facilitation == "Brainstorming":
+        data['learning_activities'] = f"""Introduction (5 minutes):
+- Explain brainstorming rules (no criticism, quantity over quality)
+- Present challenge related to {topic}
+- Prepare flip charts and markers
+- Set time limits for each brainstorming round
+
+Development (25 minutes):
+- Learners generate ideas about {indicative_contents}
+- Record all ideas on flip charts
+- Categorize and prioritize ideas
+- Discuss feasibility of top ideas
+- Develop action plans for best solutions
+
+Conclusion (3 minutes):
+- Review all generated ideas
+- Select most innovative solutions
+- Assign follow-up tasks"""
+    elif facilitation == "Jigsaw":
+        data['learning_activities'] = f"""Introduction (5 minutes):
+- Divide {topic} into subtopics
+- Form home groups and expert groups
+- Assign each learner a subtopic
+- Explain jigsaw process
+
+Development (25 minutes):
+- Expert groups study their subtopic of {indicative_contents}
+- Experts return to home groups
+- Each expert teaches their subtopic
+- Home groups compile complete understanding
+- Groups create comprehensive summaries
+
+Conclusion (3 minutes):
+- Test understanding across all subtopics
+- Clarify any misconceptions
+- Emphasize connections between subtopics"""
+    elif facilitation == "Experiential Learning":
+        data['learning_activities'] = f"""Introduction (5 minutes):
+- Present hands-on challenge: {topic}
+- Explain safety procedures
+- Distribute materials and tools
+- Set learning objectives
+
+Development (25 minutes):
+- Learners perform practical tasks on {indicative_contents}
+- Experience real-world application
+- Make mistakes and learn from them
+- Reflect on experience
+- Apply learning to new situations
+
+Conclusion (3 minutes):
+- Share experiences and insights
+- Connect practice to theory
+- Identify skills developed"""
+    else:  # Trainer Guided (default)
+        data['learning_activities'] = f"""Introduction (5 minutes):
+- Welcome learners and introduce {topic}
+- Review previous knowledge of {indicative_contents}
+- Explain learning outcomes
+- Demonstrate key concepts
+
+Development (25 minutes):
+- Present theory of {topic} step-by-step
+- Demonstrate practical examples from {module}
+- Guide learners through exercises on {indicative_contents}
+- Provide individual support
+- Check understanding regularly
+
+Conclusion (3 minutes):
+- Summarize key points of {topic}
+- Answer questions
+- Assign practice exercises"""
     
-    data['assessment_details'] = f"""Formative Assessment:
-- Observe learner participation during {facilitation} activities
-- Ask oral questions to check understanding of {topic}
-- Review practical exercises on {indicative_contents}
-- Provide immediate feedback on learner performance
+    # Generate assessment based on facilitation technique
+    if facilitation in ["Group Discussion", "Brainstorming", "Jigsaw"]:
+        data['assessment_details'] = f"""Formative Assessment:
+- Observe group participation and collaboration
+- Evaluate quality of group discussions
+- Check individual contributions to group work
+- Assess communication and teamwork skills
 
 Summative Assessment:
-- Written test on key concepts of {topic}
-- Practical demonstration of skills learned
-- Group presentation on {learning_outcomes}
-- Individual project applying {topic} to real scenarios"""
+- Group presentation on {topic}
+- Peer evaluation of group members
+- Written reflection on group learning
+- Individual quiz on {indicative_contents}"""  
+    elif facilitation in ["Simulation", "Experiential Learning"]:
+        data['assessment_details'] = f"""Formative Assessment:
+- Observe performance during practical activities
+- Check skill application in real scenarios
+- Evaluate problem-solving approaches
+- Provide feedback during practice
+
+Summative Assessment:
+- Practical demonstration of {topic}
+- Performance test in simulated environment
+- Portfolio of completed tasks
+- Skills checklist evaluation"""  
+    else:  # Trainer Guided
+        data['assessment_details'] = f"""Formative Assessment:
+- Ask oral questions during session
+- Check exercises and practice work
+- Observe learner engagement
+- Provide immediate feedback
+
+Summative Assessment:
+- Written test on {topic}
+- Practical exercise on {indicative_contents}
+- Individual assignment
+- End-of-module assessment"""
     
     data['resources'] = f"""Teaching Materials:
 - Whiteboard and markers
