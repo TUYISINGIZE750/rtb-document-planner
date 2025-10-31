@@ -96,7 +96,7 @@ def fill_session_plan_official(data):
     table = doc.tables[0]
     logger.info(f"✅ Table found with {len(table.rows)} rows")
     
-    # Row 0: Sector, Trade, Level, Date
+    # Row 0: Keep headers, add values
     table.rows[0].cells[0].text = f"Sector : {data.get('sector', '')}"
     set_cell_font(table.rows[0].cells[0])
     table.rows[0].cells[1].text = f"Trade : {data.get('trade', '')}"
@@ -106,13 +106,13 @@ def fill_session_plan_official(data):
     table.rows[0].cells[6].text = f"Date : {data.get('date', '')}"
     set_cell_font(table.rows[0].cells[6])
     
-    # Row 1: Trainer name, School year, Term
+    # Row 1: Keep headers, add values
     table.rows[1].cells[0].text = f"Trainer name : {data.get('trainer_name', '')}"
     set_cell_font(table.rows[1].cells[0])
     table.rows[1].cells[6].text = f"School year: {data.get('school_year', '2024-2025')}\n\nTerm : {data.get('term', '')}"
     set_cell_font(table.rows[1].cells[6])
     
-    # Row 2: Module, Week, Trainees, Class
+    # Row 2: Keep headers, add values
     table.rows[2].cells[0].text = f"Module (Code&Name): {data.get('module_code_title', '')}"
     set_cell_font(table.rows[2].cells[0])
     table.rows[2].cells[1].text = f"Week : {data.get('week', '1')}"
@@ -122,33 +122,33 @@ def fill_session_plan_official(data):
     table.rows[2].cells[6].text = f"Class(es): {data.get('class_name', '')}"
     set_cell_font(table.rows[2].cells[6])
     
-    # Row 3: Learning Outcome
+    # Row 3: Learning Outcome - header in cell 0, value in cell 1
     table.rows[3].cells[1].text = data.get('learning_outcomes', '')
     set_cell_font(table.rows[3].cells[1])
     
-    # Row 4: Indicative content
+    # Row 4: Indicative content - header in cell 0, value in cell 1
     table.rows[4].cells[1].text = data.get('indicative_contents', '')
     set_cell_font(table.rows[4].cells[1])
     
-    # Row 5: Topic of the session
-    table.rows[5].cells[1].text = data.get('topic_of_session', '')
-    set_cell_font(table.rows[5].cells[1])
+    # Row 5: Topic - header already there, just add value
+    table.rows[5].cells[0].text = f"Topic of the session: {data.get('topic_of_session', '')}"
+    set_cell_font(table.rows[5].cells[0])
     
-    # Row 6: Range and Duration
-    table.rows[6].cells[1].text = data.get('range', 'All learners')
-    set_cell_font(table.rows[6].cells[1])
+    # Row 6: Range and Duration - headers already there
+    table.rows[6].cells[0].text = f"Range: {data.get('range', 'All learners')}"
+    set_cell_font(table.rows[6].cells[0])
     table.rows[6].cells[2].text = f"Duration of the session: {data.get('duration', '')}"
     set_cell_font(table.rows[6].cells[2])
     
-    # Row 7: Objectives
+    # Row 7: Objectives - header already there, add value
     objectives = data.get('objectives', '')
     logger.info(f"📝 Filling objectives: {objectives[:100] if objectives else 'EMPTY'}")
-    table.rows[7].cells[1].text = objectives
-    set_cell_font(table.rows[7].cells[1])
+    table.rows[7].cells[0].text = f"Objectives:\n{objectives}"
+    set_cell_font(table.rows[7].cells[0])
     
-    # Row 8: Facilitation techniques
-    table.rows[8].cells[1].text = data.get('facilitation_techniques', '')
-    set_cell_font(table.rows[8].cells[1])
+    # Row 8: Facilitation techniques - header already there, add value
+    table.rows[8].cells[0].text = f"Facilitation technique(s): {data.get('facilitation_techniques', '')}"
+    set_cell_font(table.rows[8].cells[0])
     
     # Parse learning activities and resources
     learning_acts = data.get('learning_activities', '')
