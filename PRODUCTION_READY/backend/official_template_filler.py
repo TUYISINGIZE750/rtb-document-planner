@@ -153,10 +153,13 @@ def fill_session_plan_official(data):
     # Row 11: Introduction activities
     learning_acts = data.get('learning_activities', '')
     resources = data.get('resources', '')
+    logger.info(f"Learning activities length: {len(learning_acts)}")
     
     if learning_acts:
-        parts = learning_acts.split('\n\n')
-        intro = parts[0] if len(parts) > 0 else ''
+        # Split by double newline to get sections
+        sections = learning_acts.split('\n\n')
+        intro = sections[0] if len(sections) > 0 else learning_acts
+        logger.info(f"Introduction section: {intro[:100]}")
         table.rows[11].cells[0].text = intro
     else:
         table.rows[11].cells[0].text = "Introduction activity"
@@ -173,8 +176,9 @@ def fill_session_plan_official(data):
     
     # Row 13: Development activities
     if learning_acts:
-        parts = learning_acts.split('\n\n')
-        dev = parts[1] if len(parts) > 1 else learning_acts
+        sections = learning_acts.split('\n\n')
+        dev = sections[1] if len(sections) > 1 else learning_acts
+        logger.info(f"Development section: {dev[:100]}")
         table.rows[13].cells[0].text = dev
     else:
         table.rows[13].cells[0].text = "Development activity"
@@ -186,8 +190,9 @@ def fill_session_plan_official(data):
     
     # Row 17: Conclusion
     if learning_acts:
-        parts = learning_acts.split('\n\n')
-        conclusion = parts[2] if len(parts) > 2 else "Summary of key points"
+        sections = learning_acts.split('\n\n')
+        conclusion = sections[2] if len(sections) > 2 else "Summary of key points"
+        logger.info(f"Conclusion section: {conclusion[:100]}")
         table.rows[17].cells[0].text = conclusion
     else:
         table.rows[17].cells[0].text = "Summary of key points"
@@ -199,6 +204,8 @@ def fill_session_plan_official(data):
     
     # Row 18: Assessment
     assessment = data.get('assessment_details', '')
+    logger.info(f"Assessment length: {len(assessment)}")
+    logger.info(f"Assessment preview: {assessment[:100] if assessment else 'EMPTY'}")
     table.rows[18].cells[0].text = assessment if assessment else "Assessment activity"
     set_cell_font(table.rows[18].cells[0])
     table.rows[18].cells[2].text = "Assessment sheets"
