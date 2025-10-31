@@ -154,59 +154,63 @@ def fill_session_plan_official(data):
     
     # Parse learning activities and resources
     learning_acts = data.get('learning_activities', '')
-    resources = data.get('resources', '')
+    resources_text = data.get('resources', '')
     
     # Split activities into sections
     sections = learning_acts.split('\n\n') if learning_acts else []
-    intro = sections[0].strip() if len(sections) > 0 else ''
-    dev = sections[1].strip() if len(sections) > 1 else ''
-    conclusion = sections[2].strip() if len(sections) > 2 else ''
+    intro = ''
+    dev = ''
+    conclusion = ''
     
-    # Parse resources
-    resource_lines = [r.strip() for r in resources.split('\n') if r.strip()] if resources else []
+    for section in sections:
+        if 'Introduction:' in section:
+            intro = section.replace('Introduction:', '').strip()
+        elif 'Development:' in section:
+            dev = section.replace('Development:', '').strip()
+        elif 'Conclusion:' in section:
+            conclusion = section.replace('Conclusion:', '').strip()
     
-    # Row 10: Introduction - fill activities and resources
-    table.rows[10].cells[0].text = intro
-    set_cell_font(table.rows[10].cells[0])
-    if len(resource_lines) > 0:
-        table.rows[10].cells[3].text = resource_lines[0]
-        set_cell_font(table.rows[10].cells[3])
-    table.rows[10].cells[6].text = "5 min"
-    set_cell_font(table.rows[10].cells[6])
+    # Parse resources - split by newline
+    resource_lines = [r.strip() for r in resources_text.split('\n') if r.strip()] if resources_text else []
+    all_resources = ', '.join(resource_lines) if resource_lines else 'Whiteboard, markers, handouts'
     
-    # Row 12: Development - fill activities and resources
-    table.rows[12].cells[0].text = dev
-    set_cell_font(table.rows[12].cells[0])
-    if len(resource_lines) > 1:
-        table.rows[12].cells[3].text = '\n'.join(resource_lines[1:4])
-        set_cell_font(table.rows[12].cells[3])
-    table.rows[12].cells[6].text = "30 min"
-    set_cell_font(table.rows[12].cells[6])
+    # Row 10: Introduction
+    table.rows[10].cells[1].text = intro
+    set_cell_font(table.rows[10].cells[1])
+    table.rows[10].cells[4].text = all_resources
+    set_cell_font(table.rows[10].cells[4])
+    table.rows[10].cells[7].text = "5 min"
+    set_cell_font(table.rows[10].cells[7])
     
-    # Row 16: Conclusion - fill summary and resources
-    table.rows[16].cells[0].text = conclusion
-    set_cell_font(table.rows[16].cells[0])
-    if len(resource_lines) > 4:
-        table.rows[16].cells[3].text = resource_lines[4]
-        set_cell_font(table.rows[16].cells[3])
-    table.rows[16].cells[6].text = "5 min"
-    set_cell_font(table.rows[16].cells[6])
+    # Row 12: Development
+    table.rows[12].cells[1].text = dev
+    set_cell_font(table.rows[12].cells[1])
+    table.rows[12].cells[4].text = all_resources
+    set_cell_font(table.rows[12].cells[4])
+    table.rows[12].cells[7].text = "30 min"
+    set_cell_font(table.rows[12].cells[7])
+    
+    # Row 16: Conclusion
+    table.rows[16].cells[1].text = conclusion
+    set_cell_font(table.rows[16].cells[1])
+    table.rows[16].cells[4].text = all_resources
+    set_cell_font(table.rows[16].cells[4])
+    table.rows[16].cells[7].text = "5 min"
+    set_cell_font(table.rows[16].cells[7])
     
     # Row 17: Assessment
     assessment = data.get('assessment_details', '').strip()
-    table.rows[17].cells[0].text = assessment
-    set_cell_font(table.rows[17].cells[0])
-    table.rows[17].cells[6].text = "5 min"
-    set_cell_font(table.rows[17].cells[6])
-    table.rows[18].cells[2].text = "Assessment sheets"
-    set_cell_font(table.rows[18].cells[2])
-    table.rows[18].cells[5].text = "5 minutes"
-    set_cell_font(table.rows[18].cells[5])
+    table.rows[17].cells[1].text = assessment
+    set_cell_font(table.rows[17].cells[1])
+    table.rows[17].cells[4].text = "Assessment sheets"
+    set_cell_font(table.rows[17].cells[4])
+    table.rows[17].cells[7].text = "5 min"
+    set_cell_font(table.rows[17].cells[7])
     
     # Row 19: References
     references = data.get('references', '')
-    table.rows[19].cells[0].text = references if references else "References"
-    set_cell_font(table.rows[19].cells[0])
+    table.rows[19].cells[1].text = references if references else "References"
+    set_cell_font(table.rows[19].cells[1])
     
     # Save to temp file
     try:

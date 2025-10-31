@@ -30,164 +30,79 @@ def generate_session_plan_content(data):
     
     # Generate activities based on facilitation technique
     if facilitation == "Group Discussion":
-        data['learning_activities'] = f"""Introduction (5 minutes):
-- Divide learners into groups of 4-5
-- Introduce discussion topic: {topic}
-- Explain group discussion rules and objectives
-- Assign roles: facilitator, note-taker, presenter
+        data['learning_activities'] = f"""Introduction:
+Divide learners into groups of 4-5 members. Introduce the topic "{topic}" and explain group discussion rules. Assign roles: facilitator, note-taker, and presenter.
 
-Development (25 minutes):
-- Groups discuss {indicative_contents}
-- Each group analyzes different aspects of {topic}
-- Groups share findings and debate key points
-- Trainer facilitates inter-group discussions
-- Groups create summary presentations
+Development:
+Groups discuss {indicative_contents}. Each group analyzes different aspects of {topic}. Groups share findings and debate key points. Trainer facilitates inter-group discussions and guides learning process.
 
-Conclusion (3 minutes):
-- Each group presents main conclusions
-- Class votes on best solutions
-- Trainer summarizes key learning points"""
+Conclusion:
+Each group presents main conclusions. Class votes on best solutions. Trainer summarizes key learning points and connects to learning outcomes."""
     elif facilitation == "Simulation":
-        data['learning_activities'] = f"""Introduction (5 minutes):
-- Explain simulation scenario for {topic}
-- Assign roles to learners
-- Distribute simulation materials
-- Brief learners on expected outcomes
+        data['learning_activities'] = f"""Introduction:
+Explain simulation scenario for {topic}. Assign roles to learners and distribute simulation materials. Brief learners on expected outcomes and safety procedures.
 
-Development (25 minutes):
-- Learners perform simulation of {indicative_contents}
-- Practice real-world application of {topic}
-- Trainer observes and provides guidance
-- Learners rotate roles and repeat simulation
-- Debrief after each simulation round
+Development:
+Learners perform simulation of {indicative_contents}. Practice real-world application of {topic}. Trainer observes and provides guidance. Learners rotate roles and repeat simulation with feedback.
 
-Conclusion (3 minutes):
-- Discuss simulation experience
-- Connect simulation to real workplace scenarios
-- Identify key lessons learned"""
+Conclusion:
+Discuss simulation experience and lessons learned. Connect simulation to real workplace scenarios. Identify key competencies developed."""
     elif facilitation == "Brainstorming":
-        data['learning_activities'] = f"""Introduction (5 minutes):
-- Explain brainstorming rules (no criticism, quantity over quality)
-- Present challenge related to {topic}
-- Prepare flip charts and markers
-- Set time limits for each brainstorming round
+        data['learning_activities'] = f"""Introduction:
+Explain brainstorming rules (no criticism, quantity over quality). Present challenge related to {topic}. Prepare flip charts and markers.
 
-Development (25 minutes):
-- Learners generate ideas about {indicative_contents}
-- Record all ideas on flip charts
-- Categorize and prioritize ideas
-- Discuss feasibility of top ideas
-- Develop action plans for best solutions
+Development:
+Learners generate ideas about {indicative_contents}. Record all ideas on flip charts. Categorize and prioritize ideas. Discuss feasibility of top ideas and develop action plans.
 
-Conclusion (3 minutes):
-- Review all generated ideas
-- Select most innovative solutions
-- Assign follow-up tasks"""
+Conclusion:
+Review all generated ideas. Select most innovative solutions. Assign follow-up tasks for implementation."""
     elif facilitation == "Jigsaw":
-        data['learning_activities'] = f"""Introduction (5 minutes):
-- Divide {topic} into subtopics
-- Form home groups and expert groups
-- Assign each learner a subtopic
-- Explain jigsaw process
+        data['learning_activities'] = f"""Introduction:
+Divide {topic} into subtopics. Form home groups and expert groups. Assign each learner a subtopic and explain jigsaw process.
 
-Development (25 minutes):
-- Expert groups study their subtopic of {indicative_contents}
-- Experts return to home groups
-- Each expert teaches their subtopic
-- Home groups compile complete understanding
-- Groups create comprehensive summaries
+Development:
+Expert groups study their subtopic of {indicative_contents}. Experts return to home groups and teach their subtopic. Home groups compile complete understanding and create comprehensive summaries.
 
-Conclusion (3 minutes):
-- Test understanding across all subtopics
-- Clarify any misconceptions
-- Emphasize connections between subtopics"""
+Conclusion:
+Test understanding across all subtopics. Clarify any misconceptions. Emphasize connections between subtopics."""
     elif facilitation == "Experiential Learning":
-        data['learning_activities'] = f"""Introduction (5 minutes):
-- Present hands-on challenge: {topic}
-- Explain safety procedures
-- Distribute materials and tools
-- Set learning objectives
+        data['learning_activities'] = f"""Introduction:
+Present hands-on challenge: {topic}. Explain safety procedures. Distribute materials and tools. Set clear learning objectives.
 
-Development (25 minutes):
-- Learners perform practical tasks on {indicative_contents}
-- Experience real-world application
-- Make mistakes and learn from them
-- Reflect on experience
-- Apply learning to new situations
+Development:
+Learners perform practical tasks on {indicative_contents}. Experience real-world application. Make mistakes and learn from them. Reflect on experience and apply learning to new situations.
 
-Conclusion (3 minutes):
-- Share experiences and insights
-- Connect practice to theory
-- Identify skills developed"""
+Conclusion:
+Share experiences and insights. Connect practice to theory. Identify skills developed through hands-on practice."""
     else:  # Trainer Guided (default)
-        data['learning_activities'] = f"""Introduction (5 minutes):
-- Welcome learners and introduce {topic}
-- Review previous knowledge of {indicative_contents}
-- Explain learning outcomes
-- Demonstrate key concepts
+        data['learning_activities'] = f"""Introduction:
+Welcome learners and introduce {topic}. Review previous knowledge of {indicative_contents}. Explain learning outcomes and demonstrate key concepts.
 
-Development (25 minutes):
-- Present theory of {topic} step-by-step
-- Demonstrate practical examples from {module}
-- Guide learners through exercises on {indicative_contents}
-- Provide individual support
-- Check understanding regularly
+Development:
+Present theory of {topic} step-by-step. Demonstrate practical examples from {module}. Guide learners through exercises on {indicative_contents}. Provide individual support and check understanding regularly.
 
-Conclusion (3 minutes):
-- Summarize key points of {topic}
-- Answer questions
-- Assign practice exercises"""
+Conclusion:
+Summarize key points of {topic}. Answer questions and clarify doubts. Assign practice exercises for reinforcement."""
     
     # Generate assessment based on facilitation technique
     if facilitation in ["Group Discussion", "Brainstorming", "Jigsaw"]:
-        data['assessment_details'] = f"""Formative Assessment:
-- Observe group participation and collaboration
-- Evaluate quality of group discussions
-- Check individual contributions to group work
-- Assess communication and teamwork skills
+        data['assessment_details'] = f"""Formative: Observe group participation, evaluate discussion quality, check individual contributions, assess teamwork skills.
 
-Summative Assessment:
-- Group presentation on {topic}
-- Peer evaluation of group members
-- Written reflection on group learning
-- Individual quiz on {indicative_contents}"""  
+Summative: Group presentation on {topic}, peer evaluation, written reflection, individual quiz on {indicative_contents}."""  
     elif facilitation in ["Simulation", "Experiential Learning"]:
-        data['assessment_details'] = f"""Formative Assessment:
-- Observe performance during practical activities
-- Check skill application in real scenarios
-- Evaluate problem-solving approaches
-- Provide feedback during practice
+        data['assessment_details'] = f"""Formative: Observe performance during activities, check skill application, evaluate problem-solving, provide feedback during practice.
 
-Summative Assessment:
-- Practical demonstration of {topic}
-- Performance test in simulated environment
-- Portfolio of completed tasks
-- Skills checklist evaluation"""  
+Summative: Practical demonstration of {topic}, performance test, portfolio of completed tasks, skills checklist evaluation."""  
     else:  # Trainer Guided
-        data['assessment_details'] = f"""Formative Assessment:
-- Ask oral questions during session
-- Check exercises and practice work
-- Observe learner engagement
-- Provide immediate feedback
+        data['assessment_details'] = f"""Formative: Ask oral questions during session, check exercises, observe learner engagement, provide immediate feedback.
 
-Summative Assessment:
-- Written test on {topic}
-- Practical exercise on {indicative_contents}
-- Individual assignment
-- End-of-module assessment"""
+Summative: Written test on {topic}, practical exercise on {indicative_contents}, individual assignment, end-of-module assessment."""
     
-    data['resources'] = f"""Teaching Materials:
-- Whiteboard and markers
-- Projector and laptop
-- Handouts on {topic}
-- Practical examples related to {module}
-- Assessment sheets and rubrics
-
-Learning Resources:
-- Textbooks on {module}
-- Online tutorials and videos
-- Practice exercises on {indicative_contents}
-- Reference materials for {topic}"""
+    data['resources'] = f"""Whiteboard and markers
+Projector and laptop
+Handouts on {topic}
+Textbooks on {module}
+Assessment sheets"""
     
     data['references'] = f"""1. {module} - Official Curriculum Guide, Rwanda Technical Board
 2. Technical and Vocational Education Training Manual - {topic}
