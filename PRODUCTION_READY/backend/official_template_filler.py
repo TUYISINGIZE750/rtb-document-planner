@@ -12,13 +12,27 @@ def set_cell_font(cell, font_name='Bookman Old Style', font_size=12, bold=False)
             run.font.name = font_name
             run.font.size = Pt(font_size)
             run.font.bold = bold
-        # If no runs, add one with the text
         if not paragraph.runs and paragraph.text:
             run = paragraph.add_run(paragraph.text)
             paragraph.text = ''
             run.font.name = font_name
             run.font.size = Pt(font_size)
             run.font.bold = bold
+
+def set_cell_text_with_bold_label(cell, label, value, font_name='Bookman Old Style', font_size=12):
+    """Set cell text with bold label and normal value"""
+    cell.text = ''
+    p = cell.paragraphs[0] if cell.paragraphs else cell.add_paragraph()
+    
+    label_run = p.add_run(label)
+    label_run.font.name = font_name
+    label_run.font.size = Pt(font_size)
+    label_run.font.bold = True
+    
+    value_run = p.add_run(value)
+    value_run.font.name = font_name
+    value_run.font.size = Pt(font_size)
+    value_run.font.bold = False
 
 def fill_session_plan_official(data):
     """Fill RTB Session plan template.docx from RTB Templates folder"""
@@ -96,59 +110,63 @@ def fill_session_plan_official(data):
     table = doc.tables[0]
     logger.info(f"✅ Table found with {len(table.rows)} rows")
     
-    # Row 0: Keep headers, add values
-    table.rows[0].cells[0].text = f"Sector : {data.get('sector', '')}"
-    set_cell_font(table.rows[0].cells[0])
-    table.rows[0].cells[1].text = f"Trade : {data.get('trade', '')}"
-    set_cell_font(table.rows[0].cells[1])
-    table.rows[0].cells[4].text = f"Level  : {data.get('level', 'Level 4')}"
-    set_cell_font(table.rows[0].cells[4])
-    table.rows[0].cells[6].text = f"Date : {data.get('date', '')}"
-    set_cell_font(table.rows[0].cells[6])
+    # Row 0: Bold headers
+    set_cell_text_with_bold_label(table.rows[0].cells[0], "Sector: ", data.get('sector', ''))
+    set_cell_text_with_bold_label(table.rows[0].cells[1], "Trade: ", data.get('trade', ''))
+    set_cell_text_with_bold_label(table.rows[0].cells[4], "Level: ", data.get('level', 'Level 4'))
+    set_cell_text_with_bold_label(table.rows[0].cells[6], "Date: ", data.get('date', ''))
     
-    # Row 1: Keep headers, add values
-    table.rows[1].cells[0].text = f"Trainer name : {data.get('trainer_name', '')}"
-    set_cell_font(table.rows[1].cells[0])
-    table.rows[1].cells[6].text = f"School year: {data.get('school_year', '2024-2025')}\n\nTerm : {data.get('term', '')}"
-    set_cell_font(table.rows[1].cells[6])
+    # Row 1: Bold headers
+    set_cell_text_with_bold_label(table.rows[1].cells[0], "Trainer name: ", data.get('trainer_name', ''))
+    cell = table.rows[1].cells[6]
+    cell.text = ''
+    p = cell.paragraphs[0]
+    r1 = p.add_run("School year: ")
+    r1.font.bold = True
+    r1.font.name = 'Bookman Old Style'
+    r1.font.size = Pt(12)
+    r2 = p.add_run(data.get('school_year', '2024-2025'))
+    r2.font.name = 'Bookman Old Style'
+    r2.font.size = Pt(12)
+    p.add_run('\n')
+    r3 = p.add_run("Term: ")
+    r3.font.bold = True
+    r3.font.name = 'Bookman Old Style'
+    r3.font.size = Pt(12)
+    r4 = p.add_run(data.get('term', ''))
+    r4.font.name = 'Bookman Old Style'
+    r4.font.size = Pt(12)
     
-    # Row 2: Keep headers, add values
-    table.rows[2].cells[0].text = f"Module (Code&Name): {data.get('module_code_title', '')}"
-    set_cell_font(table.rows[2].cells[0])
-    table.rows[2].cells[1].text = f"Week : {data.get('week', '1')}"
-    set_cell_font(table.rows[2].cells[1])
-    table.rows[2].cells[5].text = f"No. Trainees: {data.get('number_of_trainees', '')}"
-    set_cell_font(table.rows[2].cells[5])
-    table.rows[2].cells[6].text = f"Class(es): {data.get('class_name', '')}"
-    set_cell_font(table.rows[2].cells[6])
+    # Row 2: Bold headers
+    set_cell_text_with_bold_label(table.rows[2].cells[0], "Module (Code&Name): ", data.get('module_code_title', ''))
+    set_cell_text_with_bold_label(table.rows[2].cells[1], "Week: ", data.get('week', '1'))
+    set_cell_text_with_bold_label(table.rows[2].cells[5], "No. Trainees: ", data.get('number_of_trainees', ''))
+    set_cell_text_with_bold_label(table.rows[2].cells[6], "Class(es): ", data.get('class_name', ''))
     
-    # Row 3: Learning Outcome - header in cell 0, value in cell 1
+    # Row 3: Learning Outcome - bold header
+    set_cell_font(table.rows[3].cells[0], bold=True)
     table.rows[3].cells[1].text = data.get('learning_outcomes', '')
     set_cell_font(table.rows[3].cells[1])
     
-    # Row 4: Indicative content - header in cell 0, value in cell 1
+    # Row 4: Indicative content - bold header
+    set_cell_font(table.rows[4].cells[0], bold=True)
     table.rows[4].cells[1].text = data.get('indicative_contents', '')
     set_cell_font(table.rows[4].cells[1])
     
-    # Row 5: Topic - header already there, just add value
-    table.rows[5].cells[0].text = f"Topic of the session: {data.get('topic_of_session', '')}"
-    set_cell_font(table.rows[5].cells[0])
+    # Row 5: Topic - bold header
+    set_cell_text_with_bold_label(table.rows[5].cells[0], "Topic of the session: ", data.get('topic_of_session', ''))
     
-    # Row 6: Range and Duration - headers already there
-    table.rows[6].cells[0].text = f"Range: {data.get('range', 'All learners')}"
-    set_cell_font(table.rows[6].cells[0])
-    table.rows[6].cells[2].text = f"Duration of the session: {data.get('duration', '')}"
-    set_cell_font(table.rows[6].cells[2])
+    # Row 6: Range and Duration - bold headers
+    set_cell_text_with_bold_label(table.rows[6].cells[0], "Range: ", data.get('range', 'All learners'))
+    set_cell_text_with_bold_label(table.rows[6].cells[2], "Duration of the session: ", data.get('duration', ''))
     
-    # Row 7: Objectives - header already there, add value
+    # Row 7: Objectives - bold header
     objectives = data.get('objectives', '')
     logger.info(f"📝 Filling objectives: {objectives[:100] if objectives else 'EMPTY'}")
-    table.rows[7].cells[0].text = f"Objectives:\n{objectives}"
-    set_cell_font(table.rows[7].cells[0])
+    set_cell_text_with_bold_label(table.rows[7].cells[0], "Objectives:\n", objectives)
     
-    # Row 8: Facilitation techniques - header already there, add value
-    table.rows[8].cells[0].text = f"Facilitation technique(s): {data.get('facilitation_techniques', '')}"
-    set_cell_font(table.rows[8].cells[0])
+    # Row 8: Facilitation techniques - bold header
+    set_cell_text_with_bold_label(table.rows[8].cells[0], "Facilitation technique(s): ", data.get('facilitation_techniques', ''))
     
     # Parse learning activities and resources
     learning_acts = data.get('learning_activities', '')
@@ -172,31 +190,68 @@ def fill_session_plan_official(data):
     resource_lines = [r.strip() for r in resources_text.split('\n') if r.strip()] if resources_text else []
     all_resources = ', '.join(resource_lines) if resource_lines else 'Whiteboard, markers, handouts'
     
+    # Row 9: Bold headers
+    set_cell_font(table.rows[9].cells[0], bold=True)
+    set_cell_font(table.rows[9].cells[3], bold=True)
+    set_cell_font(table.rows[9].cells[7], bold=True)
+    
     # Row 10: Introduction
-    table.rows[10].cells[0].text = f"Trainer's activity: {intro}\n\nLearner's activity: Participate actively and ask questions"
-    set_cell_font(table.rows[10].cells[0])
+    set_cell_text_with_bold_label(table.rows[10].cells[0], "Trainer's activity: ", f"{intro}\n\n")
+    cell = table.rows[10].cells[0]
+    p = cell.paragraphs[0]
+    r = p.add_run("Learner's activity: ")
+    r.font.bold = True
+    r.font.name = 'Bookman Old Style'
+    r.font.size = Pt(12)
+    r2 = p.add_run("Participate actively and ask questions")
+    r2.font.name = 'Bookman Old Style'
+    r2.font.size = Pt(12)
     table.rows[10].cells[3].text = all_resources
     set_cell_font(table.rows[10].cells[3])
     table.rows[10].cells[7].text = "5 min"
     set_cell_font(table.rows[10].cells[7])
     
+    # Row 11: Bold header
+    set_cell_font(table.rows[11].cells[0], bold=True)
+    
     # Row 12: Development
-    table.rows[12].cells[0].text = f"Step 1:\nTrainer's activity: {dev}\n\nLearner's activity: Practice and apply concepts"
-    set_cell_font(table.rows[12].cells[0])
+    cell = table.rows[12].cells[0]
+    cell.text = ''
+    p = cell.paragraphs[0]
+    r1 = p.add_run("Step 1:\n")
+    r1.font.bold = True
+    r1.font.name = 'Bookman Old Style'
+    r1.font.size = Pt(12)
+    r2 = p.add_run("Trainer's activity: ")
+    r2.font.bold = True
+    r2.font.name = 'Bookman Old Style'
+    r2.font.size = Pt(12)
+    r3 = p.add_run(f"{dev}\n\n")
+    r3.font.name = 'Bookman Old Style'
+    r3.font.size = Pt(12)
+    r4 = p.add_run("Learner's activity: ")
+    r4.font.bold = True
+    r4.font.name = 'Bookman Old Style'
+    r4.font.size = Pt(12)
+    r5 = p.add_run("Practice and apply concepts")
+    r5.font.name = 'Bookman Old Style'
+    r5.font.size = Pt(12)
     table.rows[12].cells[3].text = all_resources
     set_cell_font(table.rows[12].cells[3])
     table.rows[12].cells[7].text = "30 min"
     set_cell_font(table.rows[12].cells[7])
     
+    # Row 15: Bold header
+    set_cell_font(table.rows[15].cells[0], bold=True)
+    
     # Row 16: Conclusion
-    table.rows[16].cells[0].text = f"Summary: {conclusion}"
-    set_cell_font(table.rows[16].cells[0])
+    set_cell_text_with_bold_label(table.rows[16].cells[0], "Summary: ", conclusion)
     table.rows[16].cells[3].text = all_resources
     set_cell_font(table.rows[16].cells[3])
     table.rows[16].cells[7].text = "5 min"
     set_cell_font(table.rows[16].cells[7])
     
-    # Row 17: Assessment
+    # Row 17: Assessment - bold header
     assessment = data.get('assessment_details', '').strip()
     table.rows[17].cells[0].text = assessment
     set_cell_font(table.rows[17].cells[0])
@@ -205,10 +260,10 @@ def fill_session_plan_official(data):
     table.rows[17].cells[7].text = "5 min"
     set_cell_font(table.rows[17].cells[7])
     
-    # Row 19: References
+    # Row 19: References - bold header
     references = data.get('references', '')
-    table.rows[19].cells[0].text = references if references else "No references"
-    set_cell_font(table.rows[19].cells[0])
+    set_cell_text_with_bold_label(table.rows[19].cells[0], "References:\n", references if references else "No references")
+    set_cell_font(table.rows[19].cells[0], bold=True)
     
     # Save to temp file
     try:
