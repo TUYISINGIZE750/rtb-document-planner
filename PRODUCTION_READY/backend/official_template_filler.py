@@ -157,7 +157,7 @@ def fill_session_plan_official(data):
     set_cell_text_with_bold_label(table.rows[5].cells[0], "Topic of the session: ", data.get('topic_of_session', ''))
     
     # Row 6: Range and Duration - bold headers
-    set_cell_text_with_bold_label(table.rows[6].cells[0], "Range: ", data.get('range', 'All learners'))
+    set_cell_text_with_bold_label(table.rows[6].cells[0], "Range: ", data.get('range', ''))
     set_cell_text_with_bold_label(table.rows[6].cells[2], "Duration of the session: ", data.get('duration', ''))
     
     # Row 7: Objectives - bold header
@@ -262,8 +262,16 @@ def fill_session_plan_official(data):
     
     # Row 19: References - bold header
     references = data.get('references', '')
-    set_cell_text_with_bold_label(table.rows[19].cells[0], "References:\n", references if references else "No references")
-    set_cell_font(table.rows[19].cells[0], bold=True)
+    set_cell_text_with_bold_label(table.rows[19].cells[0], "References:\n", references if references else "")
+    
+    # Row 20: Appendix (if exists in template)
+    if len(table.rows) > 20:
+        appendix = data.get('appendix', '')
+        if appendix:
+            set_cell_text_with_bold_label(table.rows[20].cells[0], "Appendix:\n", appendix)
+        else:
+            table.rows[20].cells[0].text = "Appendix:"
+            set_cell_font(table.rows[20].cells[0], bold=True)
     
     # Save to temp file
     try:

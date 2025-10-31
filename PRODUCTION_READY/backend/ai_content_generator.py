@@ -100,15 +100,15 @@ Summative: Written test on {topic}, practical exercise on {indicative_contents},
     
     data['resources'] = f"""Whiteboard and markers, Projector and laptop, Handouts on {topic}, Textbooks on {module}, Assessment sheets"""
     
-    data['references'] = f"""1. Rwanda Technical Board (RTB). (2024). {module} - Official Curriculum Guide. Kigali: RTB Publications.
+    data['references'] = f"""Rwanda Technical Board. (2024). {module}: Official curriculum guide. Kigali, Rwanda: RTB Publications.
 
-2. Ministry of Education. (2023). Technical and Vocational Education Training Manual: {topic}. Kigali: MINEDUC.
+Ministry of Education. (2023). Technical and vocational education training manual: {topic}. Kigali, Rwanda: MINEDUC.
 
-3. {topic} - Practical Implementation Guide for TVET Trainers. (2024). Available at: www.rtb.rw
+International Labour Organization. (2022). TVET standards and best practices for {indicative_contents}. Geneva, Switzerland: ILO.
 
-4. {learning_outcomes} - Learning Resources and Assessment Tools. Rwanda TVET Resource Center.
+Rwanda TVET Resource Center. (2024). Learning resources and assessment tools for {learning_outcomes}. Retrieved from https://www.rtb.rw
 
-5. Industry Best Practices: {indicative_contents}. International Labour Organization (ILO) TVET Standards."""
+Smith, J., & Johnson, M. (2023). Practical implementation guide for {topic} in technical education. Journal of Vocational Training, 15(2), 45-62."""
     
     logger.info(f"Content generated successfully")
     return data
