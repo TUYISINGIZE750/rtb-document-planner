@@ -96,61 +96,59 @@ def fill_session_plan_official(data):
     table = doc.tables[0]
     logger.info(f"✅ Table found with {len(table.rows)} rows")
     
-    # Row 1: Sector, Sub-sector, Trade, Date
-    table.rows[1].cells[0].text = f"Sector : {data.get('sector', '') if data else ''}"
+    # Row 0: Sector, Trade, Level, Date
+    table.rows[0].cells[0].text = f"Sector : {data.get('sector', '')}"
+    set_cell_font(table.rows[0].cells[0])
+    table.rows[0].cells[1].text = f"Trade : {data.get('trade', '')}"
+    set_cell_font(table.rows[0].cells[1])
+    table.rows[0].cells[4].text = f"Level  : {data.get('level', 'Level 4')}"
+    set_cell_font(table.rows[0].cells[4])
+    table.rows[0].cells[6].text = f"Date : {data.get('date', '')}"
+    set_cell_font(table.rows[0].cells[6])
+    
+    # Row 1: Trainer name, School year, Term
+    table.rows[1].cells[0].text = f"Trainer name : {data.get('trainer_name', '')}"
     set_cell_font(table.rows[1].cells[0])
-    table.rows[1].cells[1].text = f"Sub-sector: {data.get('sub_sector', '')}"
-    set_cell_font(table.rows[1].cells[1])
-    table.rows[1].cells[2].text = f"Trade: {data.get('trade', '')}"
-    set_cell_font(table.rows[1].cells[2])
-    table.rows[1].cells[4].text = f"Date : {data.get('date', '')}"
-    set_cell_font(table.rows[1].cells[4])
+    table.rows[1].cells[6].text = f"School year: {data.get('school_year', '2024-2025')}\n\nTerm : {data.get('term', '')}"
+    set_cell_font(table.rows[1].cells[6])
     
-    # Row 2: Trainer name, Term
-    table.rows[2].cells[0].text = f"Lead Trainer's name : {data.get('trainer_name', '')}"
+    # Row 2: Module, Week, Trainees, Class
+    table.rows[2].cells[0].text = f"Module (Code&Name): {data.get('module_code_title', '')}"
     set_cell_font(table.rows[2].cells[0])
-    table.rows[2].cells[4].text = f"TERM : {data.get('term', '')}"
-    set_cell_font(table.rows[2].cells[4])
+    table.rows[2].cells[1].text = f"Week : {data.get('week', '1')}"
+    set_cell_font(table.rows[2].cells[1])
+    table.rows[2].cells[5].text = f"No. Trainees: {data.get('number_of_trainees', '')}"
+    set_cell_font(table.rows[2].cells[5])
+    table.rows[2].cells[6].text = f"Class(es): {data.get('class_name', '')}"
+    set_cell_font(table.rows[2].cells[6])
     
-    # Row 3: Module, Week, Learners, Class
-    table.rows[3].cells[0].text = f"Module(Code&Name): {data.get('module_code_title', '')}"
-    set_cell_font(table.rows[3].cells[0])
-    table.rows[3].cells[1].text = f"Week : {data.get('week', '')}"
+    # Row 3: Learning Outcome
+    table.rows[3].cells[1].text = data.get('learning_outcomes', '')
     set_cell_font(table.rows[3].cells[1])
-    table.rows[3].cells[3].text = f"No. Learners: {data.get('number_of_trainees', '')}"
-    set_cell_font(table.rows[3].cells[3])
-    table.rows[3].cells[4].text = f"Class: {data.get('class_name', '')}"
-    set_cell_font(table.rows[3].cells[4])
     
-    # Row 4: Learning outcome
-    table.rows[4].cells[0].text = "Learning outcome:"
-    set_cell_font(table.rows[4].cells[0])
-    table.rows[4].cells[1].text = data.get('learning_outcomes', '')
+    # Row 4: Indicative content
+    table.rows[4].cells[1].text = data.get('indicative_contents', '')
     set_cell_font(table.rows[4].cells[1])
     
-    # Row 5: Indicative contents
-    table.rows[5].cells[0].text = "Indicative contents:"
-    set_cell_font(table.rows[5].cells[0])
-    table.rows[5].cells[1].text = data.get('indicative_contents', '')
+    # Row 5: Topic of the session
+    table.rows[5].cells[1].text = data.get('topic_of_session', '')
     set_cell_font(table.rows[5].cells[1])
     
-    # Row 6: Topic
-    table.rows[6].cells[0].text = f"Topic of the session: {data.get('topic_of_session', '')}"
-    set_cell_font(table.rows[6].cells[0])
+    # Row 6: Range and Duration
+    table.rows[6].cells[1].text = data.get('range', 'All learners')
+    set_cell_font(table.rows[6].cells[1])
+    table.rows[6].cells[2].text = f"Duration of the session: {data.get('duration', '')}"
+    set_cell_font(table.rows[6].cells[2])
     
-    # Row 7: Duration
-    table.rows[7].cells[1].text = f"Duration of the session: {data.get('duration', '')}"
-    set_cell_font(table.rows[7].cells[1])
-    
-    # Row 8: Objectives - LOG IT
+    # Row 7: Objectives
     objectives = data.get('objectives', '')
     logger.info(f"📝 Filling objectives: {objectives[:100] if objectives else 'EMPTY'}")
-    table.rows[8].cells[0].text = f"Objectives: {objectives}"
-    set_cell_font(table.rows[8].cells[0])
+    table.rows[7].cells[1].text = objectives
+    set_cell_font(table.rows[7].cells[1])
     
-    # Row 9: Facilitation techniques
-    table.rows[9].cells[0].text = f"Facilitation technique(s): {data.get('facilitation_techniques', '')}"
-    set_cell_font(table.rows[9].cells[0])
+    # Row 8: Facilitation techniques
+    table.rows[8].cells[1].text = data.get('facilitation_techniques', '')
+    set_cell_font(table.rows[8].cells[1])
     
     # Parse learning activities and resources
     learning_acts = data.get('learning_activities', '')
@@ -170,47 +168,47 @@ def fill_session_plan_official(data):
         elif 'Conclusion:' in section:
             conclusion = section.replace('Conclusion:', '').strip()
     
-    # Parse resources - split by newline
+    # Parse resources
     resource_lines = [r.strip() for r in resources_text.split('\n') if r.strip()] if resources_text else []
     all_resources = ', '.join(resource_lines) if resource_lines else 'Whiteboard, markers, handouts'
     
     # Row 10: Introduction
-    table.rows[10].cells[1].text = intro
-    set_cell_font(table.rows[10].cells[1])
-    table.rows[10].cells[4].text = all_resources
-    set_cell_font(table.rows[10].cells[4])
+    table.rows[10].cells[0].text = f"Trainer's activity: {intro}\n\nLearner's activity: Participate actively and ask questions"
+    set_cell_font(table.rows[10].cells[0])
+    table.rows[10].cells[3].text = all_resources
+    set_cell_font(table.rows[10].cells[3])
     table.rows[10].cells[7].text = "5 min"
     set_cell_font(table.rows[10].cells[7])
     
     # Row 12: Development
-    table.rows[12].cells[1].text = dev
-    set_cell_font(table.rows[12].cells[1])
-    table.rows[12].cells[4].text = all_resources
-    set_cell_font(table.rows[12].cells[4])
+    table.rows[12].cells[0].text = f"Step 1:\nTrainer's activity: {dev}\n\nLearner's activity: Practice and apply concepts"
+    set_cell_font(table.rows[12].cells[0])
+    table.rows[12].cells[3].text = all_resources
+    set_cell_font(table.rows[12].cells[3])
     table.rows[12].cells[7].text = "30 min"
     set_cell_font(table.rows[12].cells[7])
     
     # Row 16: Conclusion
-    table.rows[16].cells[1].text = conclusion
-    set_cell_font(table.rows[16].cells[1])
-    table.rows[16].cells[4].text = all_resources
-    set_cell_font(table.rows[16].cells[4])
+    table.rows[16].cells[0].text = f"Summary: {conclusion}"
+    set_cell_font(table.rows[16].cells[0])
+    table.rows[16].cells[3].text = all_resources
+    set_cell_font(table.rows[16].cells[3])
     table.rows[16].cells[7].text = "5 min"
     set_cell_font(table.rows[16].cells[7])
     
     # Row 17: Assessment
     assessment = data.get('assessment_details', '').strip()
-    table.rows[17].cells[1].text = assessment
-    set_cell_font(table.rows[17].cells[1])
-    table.rows[17].cells[4].text = "Assessment sheets"
-    set_cell_font(table.rows[17].cells[4])
+    table.rows[17].cells[0].text = assessment
+    set_cell_font(table.rows[17].cells[0])
+    table.rows[17].cells[3].text = "Assessment sheets"
+    set_cell_font(table.rows[17].cells[3])
     table.rows[17].cells[7].text = "5 min"
     set_cell_font(table.rows[17].cells[7])
     
     # Row 19: References
     references = data.get('references', '')
-    table.rows[19].cells[1].text = references if references else "References"
-    set_cell_font(table.rows[19].cells[1])
+    table.rows[19].cells[0].text = references if references else "No references"
+    set_cell_font(table.rows[19].cells[0])
     
     # Save to temp file
     try:
