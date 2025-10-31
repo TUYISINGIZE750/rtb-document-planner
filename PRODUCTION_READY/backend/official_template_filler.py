@@ -150,73 +150,43 @@ def fill_session_plan_official(data):
     table.rows[9].cells[0].text = f"Facilitation technique(s): {data.get('facilitation_techniques', '')}"
     set_cell_font(table.rows[9].cells[0])
     
-    # Row 11: Introduction activities
+    # Row 10: Introduction
     learning_acts = data.get('learning_activities', '')
     resources = data.get('resources', '')
-    logger.info(f"Learning activities length: {len(learning_acts)}")
     
     if learning_acts:
-        # Split by double newline to get sections
         sections = learning_acts.split('\n\n')
         intro = sections[0] if len(sections) > 0 else learning_acts
-        logger.info(f"Introduction section: {intro[:100]}")
-        table.rows[11].cells[0].text = intro
-    else:
-        table.rows[11].cells[0].text = "Introduction activity"
-    set_cell_font(table.rows[11].cells[0])
+        table.rows[10].cells[0].text = intro
+    set_cell_font(table.rows[10].cells[0])
     
-    if resources:
-        res_lines = resources.split('\n')
-        table.rows[11].cells[2].text = res_lines[0] if res_lines else resources
-    else:
-        table.rows[11].cells[2].text = "Materials"
-    set_cell_font(table.rows[11].cells[2])
-    table.rows[11].cells[5].text = "5 minutes"
-    set_cell_font(table.rows[11].cells[5])
-    
-    # Row 13: Development activities
+    # Rows 12-14: Development steps
     if learning_acts:
         sections = learning_acts.split('\n\n')
         dev = sections[1] if len(sections) > 1 else learning_acts
-        logger.info(f"Development section: {dev[:100]}")
-        table.rows[13].cells[0].text = dev
-    else:
-        table.rows[13].cells[0].text = "Development activity"
-    set_cell_font(table.rows[13].cells[0])
-    table.rows[13].cells[2].text = resources if resources else "Materials"
-    set_cell_font(table.rows[13].cells[2])
-    table.rows[13].cells[5].text = "25 minutes"
-    set_cell_font(table.rows[13].cells[5])
+        table.rows[12].cells[0].text = dev
+    set_cell_font(table.rows[12].cells[0])
     
-    # Row 17: Conclusion
+    # Row 16: Conclusion/Summary
     if learning_acts:
         sections = learning_acts.split('\n\n')
-        conclusion = sections[2] if len(sections) > 2 else "Summary of key points"
-        logger.info(f"Conclusion section: {conclusion[:100]}")
-        table.rows[17].cells[0].text = conclusion
-    else:
-        table.rows[17].cells[0].text = "Summary of key points"
-    set_cell_font(table.rows[17].cells[0])
-    table.rows[17].cells[2].text = "Projector" if not resources else resources.split('\n')[0]
-    set_cell_font(table.rows[17].cells[2])
-    table.rows[17].cells[5].text = "3 minutes"
-    set_cell_font(table.rows[17].cells[5])
+        conclusion = sections[2] if len(sections) > 2 else "Summary"
+        table.rows[16].cells[0].text = conclusion
+    set_cell_font(table.rows[16].cells[0])
     
-    # Row 18: Assessment
+    # Row 17: Assessment
     assessment = data.get('assessment_details', '')
-    logger.info(f"Assessment length: {len(assessment)}")
-    logger.info(f"Assessment preview: {assessment[:100] if assessment else 'EMPTY'}")
-    table.rows[18].cells[0].text = assessment if assessment else "Assessment activity"
-    set_cell_font(table.rows[18].cells[0])
+    table.rows[17].cells[0].text = assessment if assessment else "Assessment"
+    set_cell_font(table.rows[17].cells[0])
     table.rows[18].cells[2].text = "Assessment sheets"
     set_cell_font(table.rows[18].cells[2])
     table.rows[18].cells[5].text = "5 minutes"
     set_cell_font(table.rows[18].cells[5])
     
-    # Row 20: References
+    # Row 19: References
     references = data.get('references', '')
-    table.rows[20].cells[0].text = references if references else "References"
-    set_cell_font(table.rows[20].cells[0])
+    table.rows[19].cells[0].text = references if references else "References"
+    set_cell_font(table.rows[19].cells[0])
     
     # Save to temp file
     try:
