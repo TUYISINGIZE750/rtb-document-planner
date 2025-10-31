@@ -287,14 +287,12 @@ def generate_session_plan():
             if not user.is_premium and user.session_plans_downloaded >= user.session_plans_limit:
                 return jsonify({"detail": "Download limit reached. Please upgrade to premium."}), 403
 
-            try:
-                logger.info(f"🤖 Generating AI content for topic: {data.get('topic_of_session')}")
-                data = generate_session_plan_content(data)
-                logger.info(f"✅ AI content generated - Objectives: {len(data.get('objectives', ''))} chars")
-                logger.info(f"✅ Learning activities: {len(data.get('learning_activities', ''))} chars")
-                logger.info(f"✅ Assessment: {len(data.get('assessment_details', ''))} chars")
-            except Exception as gen_error:
-                logger.error(f"❌ AI content generation failed: {str(gen_error)}")
+            logger.info(f"🤖 Generating AI content for topic: {data.get('topic_of_session')}")
+            data = generate_session_plan_content(data)
+            logger.info(f"✅ AI returned - Objectives: {len(data.get('objectives', ''))} chars")
+            logger.info(f"✅ Activities: {len(data.get('learning_activities', ''))} chars")
+            logger.info(f"✅ Assessment: {len(data.get('assessment_details', ''))} chars")
+            logger.info(f"✅ References: {len(data.get('references', ''))} chars")
 
             session_plan = SessionPlan(
                 user_phone=user_phone,
