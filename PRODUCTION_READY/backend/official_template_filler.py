@@ -111,13 +111,13 @@ def fill_session_plan_official(data):
     logger.info(f"✅ Table found with {len(table.rows)} rows")
     
     # Row 0: Bold headers
-    set_cell_text_with_bold_label(table.rows[0].cells[0], "Sector: ", data.get('sector', ''))
-    set_cell_text_with_bold_label(table.rows[0].cells[1], "Trade: ", data.get('trade', ''))
-    set_cell_text_with_bold_label(table.rows[0].cells[4], "Level: ", data.get('level', 'Level 4'))
-    set_cell_text_with_bold_label(table.rows[0].cells[6], "Date: ", data.get('date', ''))
+    set_cell_text_with_bold_label(table.rows[0].cells[0], "Sector: ", data.get('sector', '').strip())
+    set_cell_text_with_bold_label(table.rows[0].cells[1], "Trade: ", data.get('trade', '').strip())
+    set_cell_text_with_bold_label(table.rows[0].cells[4], "Level: ", data.get('level', 'Level 4').strip())
+    set_cell_text_with_bold_label(table.rows[0].cells[6], "Date: ", data.get('date', '').strip())
     
     # Row 1: Bold headers
-    set_cell_text_with_bold_label(table.rows[1].cells[0], "Trainer name: ", data.get('trainer_name', ''))
+    set_cell_text_with_bold_label(table.rows[1].cells[0], "Trainer name: ", data.get('trainer_name', '').strip())
     cell = table.rows[1].cells[6]
     cell.text = ''
     p = cell.paragraphs[0]
@@ -138,35 +138,37 @@ def fill_session_plan_official(data):
     r4.font.size = Pt(12)
     
     # Row 2: Bold headers
-    set_cell_text_with_bold_label(table.rows[2].cells[0], "Module (Code&Name): ", data.get('module_code_title', ''))
-    set_cell_text_with_bold_label(table.rows[2].cells[1], "Week: ", data.get('week', '1'))
-    set_cell_text_with_bold_label(table.rows[2].cells[5], "No. Trainees: ", data.get('number_of_trainees', ''))
-    set_cell_text_with_bold_label(table.rows[2].cells[6], "Class(es): ", data.get('class_name', ''))
+    set_cell_text_with_bold_label(table.rows[2].cells[0], "Module (Code&Name): ", data.get('module_code_title', '').strip())
+    set_cell_text_with_bold_label(table.rows[2].cells[1], "Week: ", data.get('week', '1').strip())
+    set_cell_text_with_bold_label(table.rows[2].cells[5], "No. Trainees: ", data.get('number_of_trainees', '').strip())
+    set_cell_text_with_bold_label(table.rows[2].cells[6], "Class(es): ", data.get('class_name', '').strip())
     
-    # Row 3: Learning Outcome - bold header
+    # Row 3: Learning Outcome
     set_cell_font(table.rows[3].cells[0], bold=True)
-    table.rows[3].cells[1].text = data.get('learning_outcomes', '')
+    table.rows[3].cells[1].text = data.get('learning_outcomes', '').strip()
     set_cell_font(table.rows[3].cells[1])
     
-    # Row 4: Indicative content - bold header
+    # Row 4: Indicative content
     set_cell_font(table.rows[4].cells[0], bold=True)
-    table.rows[4].cells[1].text = data.get('indicative_contents', '')
+    table.rows[4].cells[1].text = data.get('indicative_contents', '').strip()
     set_cell_font(table.rows[4].cells[1])
     
-    # Row 5: Topic - bold header
-    set_cell_text_with_bold_label(table.rows[5].cells[0], "Topic of the session: ", data.get('topic_of_session', ''))
+    # Row 5: Topic
+    set_cell_text_with_bold_label(table.rows[5].cells[0], "Topic of the session: ", data.get('topic_of_session', '').strip())
     
-    # Row 6: Range and Duration - bold headers
-    set_cell_text_with_bold_label(table.rows[6].cells[0], "Range: ", data.get('range', ''))
-    set_cell_text_with_bold_label(table.rows[6].cells[2], "Duration of the session: ", data.get('duration', ''))
+    # Row 6: Range and Duration
+    range_val = data.get('range', '').strip()
+    if range_val:
+        set_cell_text_with_bold_label(table.rows[6].cells[0], "Range: ", range_val)
+    set_cell_text_with_bold_label(table.rows[6].cells[2], "Duration of the session: ", data.get('duration', '').strip())
     
-    # Row 7: Objectives - bold header
-    objectives = data.get('objectives', '')
+    # Row 7: Objectives
+    objectives = data.get('objectives', '').strip()
     logger.info(f"📝 Filling objectives: {objectives[:100] if objectives else 'EMPTY'}")
     set_cell_text_with_bold_label(table.rows[7].cells[0], "Objectives:\n", objectives)
     
-    # Row 8: Facilitation techniques - bold header
-    set_cell_text_with_bold_label(table.rows[8].cells[0], "Facilitation technique(s): ", data.get('facilitation_techniques', ''))
+    # Row 8: Facilitation techniques
+    set_cell_text_with_bold_label(table.rows[8].cells[0], "Facilitation technique(s): ", data.get('facilitation_techniques', '').strip())
     
     # Parse learning activities and resources
     learning_acts = data.get('learning_activities', '')
@@ -260,18 +262,17 @@ def fill_session_plan_official(data):
     table.rows[17].cells[7].text = "5 min"
     set_cell_font(table.rows[17].cells[7])
     
-    # Row 19: References - bold header
-    references = data.get('references', '')
-    set_cell_text_with_bold_label(table.rows[19].cells[0], "References:\n", references if references else "")
+    # Row 19: References
+    references = data.get('references', '').strip()
+    set_cell_text_with_bold_label(table.rows[19].cells[0], "References:\n", references)
     
-    # Row 20: Appendix (if exists in template)
-    if len(table.rows) > 20:
-        appendix = data.get('appendix', '')
-        if appendix:
-            set_cell_text_with_bold_label(table.rows[20].cells[0], "Appendix:\n", appendix)
-        else:
-            table.rows[20].cells[0].text = "Appendix:"
-            set_cell_font(table.rows[20].cells[0], bold=True)
+    # Row 20: Appendices
+    appendix = data.get('appendix', '').strip()
+    if appendix:
+        set_cell_text_with_bold_label(table.rows[20].cells[0], "Appendices:\n", appendix)
+    else:
+        table.rows[20].cells[0].text = "Appendices:"
+        set_cell_font(table.rows[20].cells[0], bold=True)
     
     # Save to temp file
     try:
