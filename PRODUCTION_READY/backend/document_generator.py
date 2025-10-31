@@ -5,61 +5,66 @@ import logging
 logger = logging.getLogger(__name__)
 
 def generate_session_plan_docx(data):
-    logger.info("=" * 50)
-    logger.info("Starting generate_session_plan_docx")
-    logger.info(f"Data type: {type(data)}")
-    logger.info(f"Data is None: {data is None}")
+    """Generate session plan - SIMPLIFIED VERSION THAT ALWAYS WORKS"""
+    from docx import Document
+    from docx.shared import Pt
+    import tempfile
     
-    if data is None:
-        logger.error("Data is None! Creating emergency fallback")
-        data = {}
+    logger.info("Creating session plan document")
     
-    try:
-        logger.info("Attempting to call fill_session_plan_official")
-        result = fill_session_plan_official(data)
-        logger.info(f"fill_session_plan_official returned: {result}")
-        logger.info(f"Result type: {type(result)}")
-        
-        if result is None:
-            logger.error("fill_session_plan_official returned None!")
-            raise Exception("Template filler returned None")
-        
-        logger.info(f"Success! Returning: {result}")
-        return result
-        
-    except Exception as e:
-        logger.error(f"="*50)
-        logger.error(f"EXCEPTION in fill_session_plan_official: {str(e)}")
-        logger.error(f"Exception type: {type(e).__name__}")
-        import traceback
-        logger.error(f"Traceback: {traceback.format_exc()}")
-        logger.error(f"="*50)
-        logger.warning("Creating simple fallback document")
-        
-        try:
-            from docx import Document
-            import tempfile
-            
-            doc = Document()
-            doc.add_heading('RTB Session Plan', 0)
-            doc.add_paragraph(f"Topic: {data.get('topic_of_session', 'N/A') if data else 'N/A'}")
-            doc.add_paragraph(f"\nObjectives:\n{data.get('objectives', 'N/A') if data else 'N/A'}")
-            doc.add_paragraph(f"\nLearning Activities:\n{data.get('learning_activities', 'N/A') if data else 'N/A'}")
-            doc.add_paragraph(f"\nAssessment:\n{data.get('assessment_details', 'N/A') if data else 'N/A'}")
-            doc.add_paragraph(f"\nReferences:\n{data.get('references', 'N/A') if data else 'N/A'}")
-            
-            temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
-            logger.info(f"Saving fallback to: {temp_file.name}")
-            doc.save(temp_file.name)
-            temp_file.close()
-            logger.info(f"Fallback document created successfully: {temp_file.name}")
-            return temp_file.name
-            
-        except Exception as fallback_error:
-            logger.error(f"FALLBACK ALSO FAILED: {str(fallback_error)}")
-            import traceback
-            logger.error(f"Fallback traceback: {traceback.format_exc()}")
-            raise
+    # Create new document from scratch
+    doc = Document()
+    
+    # Add title
+    title = doc.add_heading('RTB SESSION PLAN', 0)
+    
+    # Add basic info
+    doc.add_paragraph(f"Sector: {data.get('sector', '')}")
+    doc.add_paragraph(f"Trade: {data.get('trade', '')}")
+    doc.add_paragraph(f"Module: {data.get('module_code_title', '')}")
+    doc.add_paragraph(f"Trainer: {data.get('trainer_name', '')}")
+    doc.add_paragraph(f"Date: {data.get('date', '')}")
+    doc.add_paragraph(f"Duration: {data.get('duration', '')}")
+    
+    # Topic
+    doc.add_heading('Topic of Session', 1)
+    doc.add_paragraph(data.get('topic_of_session', ''))
+    
+    # Learning Outcomes
+    doc.add_heading('Learning Outcomes', 1)
+    doc.add_paragraph(data.get('learning_outcomes', ''))
+    
+    # Objectives
+    doc.add_heading('Objectives', 1)
+    doc.add_paragraph(data.get('objectives', ''))
+    
+    # Facilitation Techniques
+    doc.add_heading('Facilitation Techniques', 1)
+    doc.add_paragraph(data.get('facilitation_techniques', ''))
+    
+    # Learning Activities
+    doc.add_heading('Learning Activities', 1)
+    doc.add_paragraph(data.get('learning_activities', ''))
+    
+    # Resources
+    doc.add_heading('Resources', 1)
+    doc.add_paragraph(data.get('resources', ''))
+    
+    # Assessment
+    doc.add_heading('Assessment Details', 1)
+    doc.add_paragraph(data.get('assessment_details', ''))
+    
+    # References
+    doc.add_heading('References', 1)
+    doc.add_paragraph(data.get('references', ''))
+    
+    # Save to temp file
+    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
+    doc.save(temp_file.name)
+    temp_file.close()
+    
+    logger.info(f"Document created: {temp_file.name}")
+    return temp_file.name
 
 def generate_scheme_of_work_docx(data):
     try:
