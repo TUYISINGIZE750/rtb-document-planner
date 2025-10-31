@@ -339,99 +339,90 @@ def download_session_plan(plan_id):
     if request.method == 'OPTIONS':
         return '', 204
 
+    phone = request.args.get('phone')
+    if not phone:
+        return jsonify({"detail": "Phone parameter required"}), 400
+
+    db = SessionLocal()
     try:
-        phone = request.args.get('phone')
-        if not phone:
-            return jsonify({"detail": "Phone parameter required"}), 400
+        session_plan = db.query(SessionPlan).filter(SessionPlan.id == plan_id).first()
+        if not session_plan:
+            return jsonify({"detail": "Session plan not found"}), 404
 
-        db = SessionLocal()
+        user = db.query(User).filter(User.phone == phone).first()
+        if not user:
+            return jsonify({"detail": "User not found"}), 404
+
+        data = {
+            'sector': session_plan.sector or '',
+            'sub_sector': session_plan.sub_sector or '',
+            'trade': session_plan.trade or '',
+            'qualification_title': session_plan.qualification_title or '',
+            'rqf_level': session_plan.rqf_level or '',
+            'module_code_title': session_plan.module_code_title or '',
+            'term': session_plan.term or '',
+            'week': session_plan.week or '',
+            'date': session_plan.date or '',
+            'trainer_name': session_plan.trainer_name or '',
+            'class_name': session_plan.class_name or '',
+            'number_of_trainees': session_plan.number_of_trainees or '',
+            'learning_outcomes': session_plan.learning_outcomes or '',
+            'indicative_contents': session_plan.indicative_contents or '',
+            'topic_of_session': session_plan.topic_of_session or '',
+            'duration': session_plan.duration or '',
+            'objectives': session_plan.objectives or '',
+            'facilitation_techniques': session_plan.facilitation_techniques or '',
+            'learning_activities': session_plan.learning_activities or '',
+            'resources': session_plan.resources or '',
+            'assessment_details': session_plan.assessment_details or '',
+            'references': session_plan.references or ''
+        }
+
+        logger.info(f"📄 Generating document for plan ID: {session_plan.id}")
+        
+        file_path = generate_session_plan_docx(data)
+        
+        if not file_path:
+            logger.error(f"❌ generate_session_plan_docx returned None")
+            return jsonify({"detail": "Document generation failed"}), 500
+            
+        logger.info(f"✅ Document generated at: {file_path}")
+        
+        if not os.path.exists(file_path):
+            logger.error(f'❌ Generated file does not exist: {file_path}')
+            return jsonify({"detail": "Generated file not found"}), 500
+
+        filename = f"RTB_Session_Plan_{plan_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.docx"
+
+        with open(file_path, 'rb') as f:
+            file_data = f.read()
+
         try:
-            session_plan = db.query(SessionPlan).filter(SessionPlan.id == plan_id).first()
-            if not session_plan:
-                return jsonify({"detail": "Session plan not found"}), 404
+            os.remove(file_path)
+        except:
+            pass
 
-            user = db.query(User).filter(User.phone == phone).first()
-            if not user:
-                return jsonify({"detail": "User not found"}), 404
-
-            data = {
-                'sector': session_plan.sector,
-                'sub_sector': session_plan.sub_sector,
-                'trade': session_plan.trade,
-                'qualification_title': session_plan.qualification_title,
-                'rqf_level': session_plan.rqf_level,
-                'module_code_title': session_plan.module_code_title,
-                'term': session_plan.term,
-                'week': session_plan.week,
-                'date': session_plan.date,
-                'trainer_name': session_plan.trainer_name,
-                'class_name': session_plan.class_name,
-                'number_of_trainees': session_plan.number_of_trainees,
-                'learning_outcomes': session_plan.learning_outcomes,
-                'indicative_contents': session_plan.indicative_contents,
-                'topic_of_session': session_plan.topic_of_session,
-                'duration': session_plan.duration,
-                'objectives': session_plan.objectives,
-                'facilitation_techniques': session_plan.facilitation_techniques,
-                'learning_activities': session_plan.learning_activities,
-                'resources': session_plan.resources,
-                'assessment_details': session_plan.assessment_details,
-                'references': session_plan.references
-            }
-
-            logger.info(f"📄 Generating document for plan ID: {session_plan.id}")
-            logger.info(f"📊 Data keys: {list(data.keys())}")
-            logger.info(f"📝 Objectives: {data.get('objectives', 'NONE')[:100]}")
-            logger.info(f"📝 Activities: {data.get('learning_activities', 'NONE')[:100]}")
-            
-            file_path = generate_session_plan_docx(data)
-            
-            if file_path is None:
-                logger.error(f"❌ generate_session_plan_docx returned None")
-                return jsonify({"detail": "Document generation returned None"}), 500
-                
-            logger.info(f"✅ Document generated at: {file_path}")
-            
-            if not os.path.exists(file_path):
-                logger.error(f'❌ Generated file does not exist: {file_path}')
-                return jsonify({"detail": "Generated file not found"}), 500
-
-            filename = f"RTB_Session_Plan_{plan_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.docx"
-            logger.info(f'Sending file: {file_path} as {filename}')
-
-            try:
-                with open(file_path, 'rb') as f:
-                    file_data = f.read()
-
-                try:
-                    return send_file(
-                        BytesIO(file_data),
-                        mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                        as_attachment=True,
-                        download_name=filename
-                    )
-                except TypeError:
-                    return send_file(
-                        BytesIO(file_data),
-                        mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                        as_attachment=True,
-                        attachment_filename=filename
-                    )
-            except Exception as send_error:
-                logger.error(f'Error sending file: {str(send_error)}')
-                return jsonify({"detail": f"Download failed: {str(send_error)}"}), 500
-            finally:
-                try:
-                    if file_path and os.path.exists(file_path):
-                        os.remove(file_path)
-                        logger.info(f'Cleaned up temp file: {file_path}')
-                except Exception as cleanup_error:
-                    logger.warning(f'Could not clean up temp file: {str(cleanup_error)}')
-        finally:
-            db.close()
+        try:
+            return send_file(
+                BytesIO(file_data),
+                mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                as_attachment=True,
+                download_name=filename
+            )
+        except TypeError:
+            return send_file(
+                BytesIO(file_data),
+                mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                as_attachment=True,
+                attachment_filename=filename
+            )
     except Exception as e:
         logger.error(f'Session plan download error: {str(e)}')
+        import traceback
+        logger.error(traceback.format_exc())
         return jsonify({"detail": f"Download failed: {str(e)}"}), 500
+    finally:
+        db.close()
 
 
 
