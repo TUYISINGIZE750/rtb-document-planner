@@ -152,34 +152,52 @@ def fill_session_plan_official(data):
     table.rows[9].cells[0].text = f"Facilitation technique(s): {data.get('facilitation_techniques', '')}"
     set_cell_font(table.rows[9].cells[0])
     
-    # Row 10: Introduction
+    # Parse learning activities and resources
     learning_acts = data.get('learning_activities', '')
     resources = data.get('resources', '')
     
-    if learning_acts:
-        sections = learning_acts.split('\n\n')
-        intro = sections[0] if len(sections) > 0 else learning_acts
-        table.rows[10].cells[0].text = intro
+    # Split activities into sections
+    sections = learning_acts.split('\n\n') if learning_acts else []
+    intro = sections[0].strip() if len(sections) > 0 else ''
+    dev = sections[1].strip() if len(sections) > 1 else ''
+    conclusion = sections[2].strip() if len(sections) > 2 else ''
+    
+    # Parse resources
+    resource_lines = [r.strip() for r in resources.split('\n') if r.strip()] if resources else []
+    
+    # Row 10: Introduction - fill activities and resources
+    table.rows[10].cells[0].text = intro
     set_cell_font(table.rows[10].cells[0])
+    if len(resource_lines) > 0:
+        table.rows[10].cells[3].text = resource_lines[0]
+        set_cell_font(table.rows[10].cells[3])
+    table.rows[10].cells[6].text = "5 min"
+    set_cell_font(table.rows[10].cells[6])
     
-    # Rows 12-14: Development steps
-    if learning_acts:
-        sections = learning_acts.split('\n\n')
-        dev = sections[1] if len(sections) > 1 else learning_acts
-        table.rows[12].cells[0].text = dev
+    # Row 12: Development - fill activities and resources
+    table.rows[12].cells[0].text = dev
     set_cell_font(table.rows[12].cells[0])
+    if len(resource_lines) > 1:
+        table.rows[12].cells[3].text = '\n'.join(resource_lines[1:4])
+        set_cell_font(table.rows[12].cells[3])
+    table.rows[12].cells[6].text = "30 min"
+    set_cell_font(table.rows[12].cells[6])
     
-    # Row 16: Conclusion/Summary
-    if learning_acts:
-        sections = learning_acts.split('\n\n')
-        conclusion = sections[2] if len(sections) > 2 else "Summary"
-        table.rows[16].cells[0].text = conclusion
+    # Row 16: Conclusion - fill summary and resources
+    table.rows[16].cells[0].text = conclusion
     set_cell_font(table.rows[16].cells[0])
+    if len(resource_lines) > 4:
+        table.rows[16].cells[3].text = resource_lines[4]
+        set_cell_font(table.rows[16].cells[3])
+    table.rows[16].cells[6].text = "5 min"
+    set_cell_font(table.rows[16].cells[6])
     
     # Row 17: Assessment
-    assessment = data.get('assessment_details', '')
-    table.rows[17].cells[0].text = assessment if assessment else "Assessment"
+    assessment = data.get('assessment_details', '').strip()
+    table.rows[17].cells[0].text = assessment
     set_cell_font(table.rows[17].cells[0])
+    table.rows[17].cells[6].text = "5 min"
+    set_cell_font(table.rows[17].cells[6])
     table.rows[18].cells[2].text = "Assessment sheets"
     set_cell_font(table.rows[18].cells[2])
     table.rows[18].cells[5].text = "5 minutes"
