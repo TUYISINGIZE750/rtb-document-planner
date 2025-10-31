@@ -140,8 +140,10 @@ def fill_session_plan_official(data):
     table.rows[7].cells[1].text = f"Duration of the session: {data.get('duration', '')}"
     set_cell_font(table.rows[7].cells[1])
     
-    # Row 8: Objectives
-    table.rows[8].cells[0].text = f"Objectives: {data.get('objectives', '')}"
+    # Row 8: Objectives - LOG IT
+    objectives = data.get('objectives', '')
+    logger.info(f"📝 Filling objectives: {objectives[:100] if objectives else 'EMPTY'}")
+    table.rows[8].cells[0].text = f"Objectives: {objectives}"
     set_cell_font(table.rows[8].cells[0])
     
     # Row 9: Facilitation techniques

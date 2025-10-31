@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Final System Test</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #f5f5f5; }
+        .test { background: white; padding: 20px; margin: 10px 0; border-radius: 8px; }
+        button { background: #2196F3; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 4px; margin: 5px; }
+        button:hover { background: #1976D2; }
+        .success { color: green; font-weight: bold; }
+        .error { color: red; font-weight: bold; }
+        pre { background: #f5f5f5; padding: 10px; overflow-x: auto; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <h1>🎯 Final System Test - RTB Document Planner</h1>
+    
+    <div class="test">
+        <h3>Test: Create Session Plan with AI Content</h3>
+        <button onclick="testFullSystem()">Run Full Test</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        async function testFullSystem() {
+            const result = document.getElementById('result');
+            result.innerHTML = '<p>⏳ Testing...</p>';
+            
+            // Test data with rich content for AI
+            const testData = {
+                user_phone: "+250789751597",
+                sector: "ICT",
+                sub_sector: "Software Development",
+                trade: "Programming",
+                qualification_title: "Certificate in Programming",
+                rqf_level: "Level 4",
+                module_code_title: "PRG101 - Introduction to C Programming",
+                term: "Term 1",
+                week: "Week 5",
+                date: "2024-01-15",
+                trainer_name: "John Doe",
+                class_name: "Class A",
+                number_of_trainees: "25",
+                learning_outcomes: "Students will understand and apply WHILE loops in C programming",
+                indicative_contents: "WHILE loop syntax, control flow, loop conditions, practical examples",
+                topic_of_session: "Application of WHILE loop in C Programming",
+                duration: "45 minutes",
+                facilitation_techniques: "Trainer Guided"
+            };
+            
+            try {
+                // Step 1: Create session plan
+                result.innerHTML += '<p>📝 Step 1: Creating session plan with AI content...</p>';
+                const createResponse = await fetch('https://rtb-document-planner.onrender.com/session-plans', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(testData)
+                });
+                
+                const createData = await createResponse.json();
+                
+                if (!createResponse.ok) {
+                    result.innerHTML += `<p class="error">❌ Failed to create: ${JSON.stringify(createData)}</p>`;
+                    return;
+                }
+                
+                result.innerHTML += `<p class="success">✅ Session plan created! ID: ${createData.id}</p>`;
+                
+                // Step 2: Download document
+                result.innerHTML += '<p>📥 Step 2: Downloading document with official RTB template...</p>';
+                
+                const downloadUrl = `https://rtb-document-planner.onrender.com/session-plans/${createData.id}/download?phone=%2B250789751597`;
+                const downloadResponse = await fetch(downloadUrl);
+                
+                if (!downloadResponse.ok) {
+                    const errorText = await downloadResponse.text();
+                    result.innerHTML += `<p class="error">❌ Download failed: ${errorText}</p>`;
+                    return;
+                }
+                
+                const blob = await downloadResponse.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `RTB_Session_Plan_Test_${createData.id}.docx`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+                
+                result.innerHTML += `
+                    <p class="success">✅ Download successful!</p>
+                    <p><strong>File size:</strong> ${blob.size} bytes</p>
+                    <p><strong>Expected content:</strong></p>
+                    <ul>
+                        <li>✅ Official RTB template format</li>
+                        <li>✅ AI-generated objectives (3-5 specific objectives)</li>
+                        <li>✅ AI-generated learning activities (Introduction, Development, Conclusion)</li>
+                        <li>✅ AI-generated assessment details</li>
+                        <li>✅ AI-generated references (3-5 resources)</li>
+                        <li>✅ Trainer Guided facilitation technique applied throughout</li>
+                    </ul>
+                    <p class="success">🎉 Check your Downloads folder and open the document to verify!</p>
+                `;
+                
+            } catch (error) {
+                result.innerHTML += `<p class="error">❌ Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
