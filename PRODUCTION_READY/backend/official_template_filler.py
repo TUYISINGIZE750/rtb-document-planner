@@ -6,8 +6,6 @@ import os
 import tempfile
 from datetime import datetime
 import base64
-import io
-from PIL import Image
 
 def set_cell_font(cell, font_name='Bookman Old Style', font_size=12, bold=False):
     """Set font for all paragraphs and runs in a cell"""
@@ -108,65 +106,65 @@ def fill_session_plan_official(data):
         logger.info(f"✅ Template loaded, tables: {len(doc.tables)}")
         
         # Add header with logos and school info
-        section = doc.sections[0]
-        header = section.header
-        header_table = header.add_table(rows=1, cols=3, width=Inches(6.5))
-        header_table.autofit = False
+        try:
+            section = doc.sections[0]
+            header = section.header
+            header_table = header.add_table(rows=1, cols=3, width=Inches(6.5))
+            header_table.autofit = False
+            
+            # Left cell: RTB Logo (default)
+            left_cell = header_table.rows[0].cells[0]
+            left_cell.width = Inches(2.0)
+            rtb_logo_path = os.path.join(os.path.dirname(__file__), 'rtb_logo.png')
+            if os.path.exists(rtb_logo_path):
+                try:
+                    left_para = left_cell.paragraphs[0]
+                    left_run = left_para.add_run()
+                    left_run.add_picture(rtb_logo_path, width=Inches(1.5))
+                except:
+                    left_cell.text = 'RTB'
+                    left_cell.paragraphs[0].runs[0].font.bold = True
+                    left_cell.paragraphs[0].runs[0].font.size = Pt(16)
+            else:
+                left_cell.text = 'RTB'
+                left_para = left_cell.paragraphs[0]
+                left_run = left_para.runs[0] if left_para.runs else left_para.add_run('RTB')
+                left_run.font.bold = True
+                left_run.font.size = Pt(16)
+            
+            # Center cell: School Name
+            center_cell = header_table.rows[0].cells[1]
+            center_cell.width = Inches(2.5)
+            school_name = data.get('school_name', '')
+            center_para = center_cell.paragraphs[0]
+            center_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            center_run = center_para.add_run(school_name)
+            center_run.font.bold = True
+            center_run.font.size = Pt(14)
+            center_run.font.name = 'Bookman Old Style'
+            
+            # Right cell: School Logo (if uploaded)
+            right_cell = header_table.rows[0].cells[2]
+            right_cell.width = Inches(2.0)
+            school_logo_base64 = data.get('school_logo', '')
+            if school_logo_base64 and school_logo_base64.startswith('data:image'):
+                try:
+                    logo_data = school_logo_base64.split(',')[1]
+                    logo_bytes = base64.b64decode(logo_data)
+                    temp_logo = tempfile.NamedTemporaryFile(delete=False, suffix='.png')
+                    temp_logo.write(logo_bytes)
+                    temp_logo.close()
+                    right_para = right_cell.paragraphs[0]
+                    right_para.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+                    right_run = right_para.add_run()
+                    right_run.add_picture(temp_logo.name, width=Inches(1.5))
+                    os.remove(temp_logo.name)
+                except Exception as e:
+                    logger.error(f"Error adding school logo: {e}")
+        except Exception as header_error:
+            logger.error(f"Error creating header: {header_error}")
         
-        # Left cell: RTB Logo (default)
-        left_cell = header_table.rows[0].cells[0]
-        left_cell.width = Inches(2.0)
-        rtb_logo_path = os.path.join(os.path.dirname(__file__), 'rtb_logo.png')
-        if os.path.exists(rtb_logo_path):
-            left_para = left_cell.paragraphs[0]
-            left_run = left_para.add_run()
-            left_run.add_picture(rtb_logo_path, width=Inches(1.5))
-        else:
-            left_cell.text = 'RTB'
-            left_cell.paragraphs[0].runs[0].font.bold = True
-            left_cell.paragraphs[0].runs[0].font.size = Pt(16)
-        
-        # Center cell: School Name
-        center_cell = header_table.rows[0].cells[1]
-        center_cell.width = Inches(2.5)
-        school_name = data.get('school_name', '')
-        center_para = center_cell.paragraphs[0]
-        center_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        center_run = center_para.add_run(school_name)
-        center_run.font.bold = True
-        center_run.font.size = Pt(14)
-        center_run.font.name = 'Bookman Old Style'
-        
-        # Right cell: School Logo (if uploaded)
-        right_cell = header_table.rows[0].cells[2]
-        right_cell.width = Inches(2.0)
-        school_logo_base64 = data.get('school_logo', '')
-        if school_logo_base64 and school_logo_base64.startswith('data:image'):
-            try:
-                # Extract base64 data
-                logo_data = school_logo_base64.split(',')[1]
-                logo_bytes = base64.b64decode(logo_data)
-                
-                # Save temporarily
-                temp_logo = tempfile.NamedTemporaryFile(delete=False, suffix='.png')
-                temp_logo.write(logo_bytes)
-                temp_logo.close()
-                
-                # Add to document
-                right_para = right_cell.paragraphs[0]
-                right_para.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-                right_run = right_para.add_run()
-                right_run.add_picture(temp_logo.name, width=Inches(1.5))
-                
-                # Clean up
-                os.remove(temp_logo.name)
-            except Exception as e:
-                logger.error(f"Error adding school logo: {e}")
-                right_cell.text = ''
-        else:
-            right_cell.text = ''
-        
-        if len(doc.tables) < 1:
+        if not doc.tables:
             raise Exception("No table found in template")
     except Exception as e:
         logger.error(f"❌ Error loading template: {str(e)}")
