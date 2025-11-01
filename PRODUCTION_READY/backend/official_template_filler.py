@@ -158,7 +158,7 @@ def fill_session_plan_official(data):
     
     # Row 6: Range and Duration
     range_val = data.get('range', '').strip()
-    set_cell_text_with_bold_label(table.rows[6].cells[0], "Range: ", range_val if range_val else "All learners")
+    set_cell_text_with_bold_label(table.rows[6].cells[0], "Range: ", range_val)
     set_cell_text_with_bold_label(table.rows[6].cells[2], "Duration of the session: ", data.get('duration', '').strip())
     
     # Row 7: Objectives
@@ -267,7 +267,9 @@ def fill_session_plan_official(data):
     
     # Row 20: Appendices
     appendix = data.get('appendix', '').strip()
-    set_cell_text_with_bold_label(table.rows[20].cells[0], "Appendices:\n", appendix if appendix else "None")
+    if not appendix:
+        appendix = "PPT, Task Sheets, Assessment"
+    set_cell_text_with_bold_label(table.rows[20].cells[0], "Appendices:\n", appendix)
     
     # Save to temp file
     try:

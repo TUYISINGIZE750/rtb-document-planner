@@ -20,85 +20,84 @@ def generate_session_plan_content(data):
     
     logger.info(f"Generating content for: {topic}")
     
-    # Generate rich content based on input
+    # Generate SMART objectives (3-4 objectives)
     data['objectives'] = f"""By the end of this session, learners will be able to:
-1. Understand the concept and purpose of {topic}
-2. Apply {topic} in practical scenarios related to {module}
-3. Demonstrate proficiency in {learning_outcomes}
-4. Analyze and solve problems using {topic}
-5. Evaluate the effectiveness of different approaches to {topic}"""
+1. Explain the key concepts of {topic} with 80% accuracy
+2. Demonstrate practical application of {topic} in {module} through hands-on exercises
+3. Analyze and solve at least 3 problems related to {indicative_contents}
+4. Evaluate their own work using provided assessment criteria"""
     
     # Generate activities based on facilitation technique
     if facilitation == "Group Discussion":
         data['learning_activities'] = f"""Introduction:
-Divide learners into groups of 4-5 members. Introduce the topic "{topic}" and explain group discussion rules. Assign roles: facilitator, note-taker, and presenter.
+Divide learners into groups of 4-5 members. Introduce {topic} and explain group discussion objectives. Assign roles: facilitator, note-taker, timekeeper, and presenter. Provide discussion guidelines and expected outcomes.
 
 Development:
-Groups discuss {indicative_contents}. Each group analyzes different aspects of {topic}. Groups share findings and debate key points. Trainer facilitates inter-group discussions and guides learning process.
+Groups discuss {indicative_contents} using structured discussion questions. Each group analyzes different aspects of {topic}. Groups document key findings and prepare presentations. Trainer circulates to facilitate discussions and provide guidance. Groups share findings with the class and engage in constructive debate.
 
 Conclusion:
-Each group presents main conclusions. Class votes on best solutions. Trainer summarizes key learning points and connects to learning outcomes."""
+Each group presents main conclusions (2 minutes per group). Facilitate class discussion on common themes. Summarize key learning points and connect to {learning_outcomes}."""
     elif facilitation == "Simulation":
         data['learning_activities'] = f"""Introduction:
-Explain simulation scenario for {topic}. Assign roles to learners and distribute simulation materials. Brief learners on expected outcomes and safety procedures.
+Explain simulation scenario related to {topic}. Assign specific roles to learners based on real workplace situations. Distribute simulation materials and brief learners on objectives, procedures, and safety guidelines.
 
 Development:
-Learners perform simulation of {indicative_contents}. Practice real-world application of {topic}. Trainer observes and provides guidance. Learners rotate roles and repeat simulation with feedback.
+Learners perform simulation of {indicative_contents} in assigned roles. Practice real-world application of {topic} in controlled environment. Trainer observes performance and takes notes. Learners rotate roles to experience different perspectives. After each round, conduct brief debrief session. Provide constructive feedback and allow learners to improve in subsequent rounds.
 
 Conclusion:
-Discuss simulation experience and lessons learned. Connect simulation to real workplace scenarios. Identify key competencies developed."""
+Facilitate group reflection on simulation experience. Discuss what worked well and areas for improvement. Connect simulation outcomes to real workplace scenarios. Identify key competencies developed and how to apply them professionally."""
     elif facilitation == "Brainstorming":
         data['learning_activities'] = f"""Introduction:
-Explain brainstorming rules (no criticism, quantity over quality). Present challenge related to {topic}. Prepare flip charts and markers.
+Explain brainstorming rules: defer judgment, encourage wild ideas, build on others' ideas, stay focused, one conversation at a time. Present challenge or problem related to {topic}. Prepare flip charts, markers, and sticky notes.
 
 Development:
-Learners generate ideas about {indicative_contents}. Record all ideas on flip charts. Categorize and prioritize ideas. Discuss feasibility of top ideas and develop action plans.
+Learners generate ideas about {indicative_contents} individually (2 minutes silent brainstorming). Share ideas in round-robin format and record all ideas on flip charts. Continue group brainstorming to build on initial ideas. Categorize ideas into themes. Use dot voting to prioritize top ideas. Discuss feasibility and impact of top 5 ideas. Develop action plans for most promising solutions.
 
 Conclusion:
-Review all generated ideas. Select most innovative solutions. Assign follow-up tasks for implementation."""
+Review all generated ideas and selected solutions. Discuss how ideas address {learning_outcomes}. Assign follow-up tasks for implementation and testing."""
     elif facilitation == "Jigsaw":
         data['learning_activities'] = f"""Introduction:
-Divide {topic} into subtopics. Form home groups and expert groups. Assign each learner a subtopic and explain jigsaw process.
+Divide {topic} into 4-5 subtopics covering {indicative_contents}. Form home groups (4-5 members each) and assign each member a subtopic number. Explain jigsaw process: expert groups study, then teach home groups.
 
 Development:
-Expert groups study their subtopic of {indicative_contents}. Experts return to home groups and teach their subtopic. Home groups compile complete understanding and create comprehensive summaries.
+Form expert groups (all learners with same subtopic number). Expert groups study their subtopic using provided materials for 10 minutes. Experts discuss and prepare teaching strategy. Learners return to home groups. Each expert teaches their subtopic to home group (3 minutes per expert). Home groups ask questions and take notes. Home groups compile complete understanding and create comprehensive summary integrating all subtopics.
 
 Conclusion:
-Test understanding across all subtopics. Clarify any misconceptions. Emphasize connections between subtopics."""
+Conduct quick quiz to test understanding across all subtopics. Clarify any misconceptions through class discussion. Emphasize connections between subtopics and how they relate to {learning_outcomes}."""
     elif facilitation == "Experiential Learning":
         data['learning_activities'] = f"""Introduction:
-Present hands-on challenge: {topic}. Explain safety procedures. Distribute materials and tools. Set clear learning objectives.
+Present hands-on challenge related to {topic}. Explain safety procedures and proper use of materials/tools. Distribute materials and demonstrate proper techniques. Set clear learning objectives and success criteria.
 
 Development:
-Learners perform practical tasks on {indicative_contents}. Experience real-world application. Make mistakes and learn from them. Reflect on experience and apply learning to new situations.
+Learners perform practical tasks on {indicative_contents} individually or in pairs. Experience real-world application through concrete experience. Trainer circulates to observe and provide minimal guidance. Allow learners to make mistakes and discover solutions. After initial attempt, facilitate reflection: What happened? What worked? What didn't? Why? Guide learners to form conclusions and generalizations. Learners apply learning to new situations or variations of the task. Repeat cycle: experience, reflect, conceptualize, apply.
 
 Conclusion:
-Share experiences and insights. Connect practice to theory. Identify skills developed through hands-on practice."""
+Facilitate group sharing of experiences and insights. Connect hands-on practice to theoretical concepts. Identify specific skills developed and how to transfer them to other contexts."""
     else:  # Trainer Guided (default)
         data['learning_activities'] = f"""Introduction:
-Welcome learners and introduce {topic}. Review previous knowledge of {indicative_contents}. Explain learning outcomes and demonstrate key concepts.
+Welcome learners and conduct brief review of previous session. Introduce {topic} and explain its relevance to {module}. Present learning outcomes and success criteria. Conduct diagnostic questions to assess prior knowledge of {indicative_contents}.
 
 Development:
-Present theory of {topic} step-by-step. Demonstrate practical examples from {module}. Guide learners through exercises on {indicative_contents}. Provide individual support and check understanding regularly.
+Present theory of {topic} using clear explanations and visual aids. Break content into manageable chunks. Demonstrate practical examples from {module} step-by-step. Check understanding after each concept using questioning techniques. Guide learners through structured exercises on {indicative_contents}. Provide individual support and immediate feedback. Use think-pair-share for peer learning. Conduct formative assessment to identify learning gaps.
 
 Conclusion:
-Summarize key points of {topic}. Answer questions and clarify doubts. Assign practice exercises for reinforcement."""
+Summarize key points of {topic} using learner contributions. Address remaining questions and clarify common misconceptions. Assign practice exercises for reinforcement and skill consolidation."""
     
     # Generate assessment based on facilitation technique
     if facilitation in ["Group Discussion", "Brainstorming", "Jigsaw"]:
-        data['assessment_details'] = f"""Formative: Observe group participation, evaluate discussion quality, check individual contributions, assess teamwork skills.
+        data['assessment_details'] = f"""Formative Assessment: Observe group participation and collaboration skills. Evaluate quality of contributions and critical thinking. Use questioning to check understanding. Provide immediate feedback during group work.
 
-Summative: Group presentation on {topic}, peer evaluation, written reflection, individual quiz on {indicative_contents}."""  
+Summative Assessment: Group presentation on {topic} (rubric-based). Peer evaluation using structured criteria. Individual written reflection (300 words). Quiz on {indicative_contents} (10 questions, 70% pass mark)."""  
     elif facilitation in ["Simulation", "Experiential Learning"]:
-        data['assessment_details'] = f"""Formative: Observe performance during activities, check skill application, evaluate problem-solving, provide feedback during practice.
+        data['assessment_details'] = f"""Formative Assessment: Observe performance during practical activities using observation checklist. Evaluate skill application and problem-solving approaches. Provide constructive feedback after each attempt. Check safety compliance.
 
-Summative: Practical demonstration of {topic}, performance test, portfolio of completed tasks, skills checklist evaluation."""  
+Summative Assessment: Practical demonstration of {topic} (performance test with criteria). Skills checklist evaluation (competent/not yet competent). Portfolio of completed tasks with reflection. Written report on learning outcomes achieved."""  
     else:  # Trainer Guided
-        data['assessment_details'] = f"""Formative: Ask oral questions during session, check exercises, observe learner engagement, provide immediate feedback.
+        data['assessment_details'] = f"""Formative Assessment: Ask targeted oral questions throughout session. Check exercise completion and accuracy. Observe learner engagement and participation. Provide immediate corrective feedback. Use exit tickets to assess understanding.
 
-Summative: Written test on {topic}, practical exercise on {indicative_contents}, individual assignment, end-of-module assessment."""
+Summative Assessment: Written test on {topic} (20 marks, 60% pass). Practical exercise on {indicative_contents} (rubric-based). Individual assignment (due next session). End-of-module comprehensive assessment."""
     
-    data['resources'] = f"""Whiteboard and markers, Projector and laptop, Handouts on {topic}, Textbooks on {module}, Assessment sheets"""
+    data['resources'] = f"""Whiteboard and markers, Projector and laptop, Handouts on {topic}, Textbooks: {module}, Assessment sheets, Flip charts, Markers"""
     
     data['references'] = f"""Rwanda Technical Board. (2024). {module}: Official curriculum guide. Kigali, Rwanda: RTB Publications.
 
