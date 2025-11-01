@@ -75,6 +75,8 @@ class SessionPlan(Base):
     resources = Column(Text)
     assessment_details = Column(Text)
     references = Column(Text)
+    range = Column(Text)
+    appendix = Column(Text)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 class SchemeOfWork(Base):
@@ -300,7 +302,7 @@ def generate_session_plan():
                 sub_sector=data.get('sub_sector'),
                 trade=data.get('trade'),
                 qualification_title=data.get('qualification_title'),
-                rqf_level=data.get('rqf_level'),
+                rqf_level=data.get('rqf_level') or data.get('level'),
                 module_code_title=data.get('module_code_title'),
                 term=data.get('term'),
                 week=data.get('week'),
@@ -317,7 +319,9 @@ def generate_session_plan():
                 learning_activities=data.get('learning_activities'),
                 resources=data.get('resources'),
                 assessment_details=data.get('assessment_details'),
-                references=data.get('references')
+                references=data.get('references'),
+                range=data.get('range'),
+                appendix=data.get('appendix')
             )
 
             db.add(session_plan)
@@ -356,7 +360,7 @@ def download_session_plan(plan_id):
             'sub_sector': session_plan.sub_sector or '',
             'trade': session_plan.trade or '',
             'qualification_title': session_plan.qualification_title or '',
-            'rqf_level': session_plan.rqf_level or '',
+            'level': session_plan.rqf_level or '',
             'module_code_title': session_plan.module_code_title or '',
             'term': session_plan.term or '',
             'week': session_plan.week or '',
@@ -373,7 +377,9 @@ def download_session_plan(plan_id):
             'learning_activities': session_plan.learning_activities or '',
             'resources': session_plan.resources or '',
             'assessment_details': session_plan.assessment_details or '',
-            'references': session_plan.references or ''
+            'references': session_plan.references or '',
+            'range': session_plan.range or '',
+            'appendix': session_plan.appendix or ''
         }
 
         logger.info(f"📄 Generating document for plan ID: {session_plan.id}")
