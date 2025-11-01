@@ -150,28 +150,31 @@
                     <label><i class="fas fa-map-marked-alt"></i> Province *</label>
                     <select name="province" id="provinceSelect" required>
                         <option value="">Select Province</option>
-                        <option value="Kigali City">Kigali City</option>
-                        <option value="Eastern Province">Eastern Province</option>
-                        <option value="Northern Province">Northern Province</option>
-                        <option value="Southern Province">Southern Province</option>
-                        <option value="Western Province">Western Province</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label><i class="fas fa-map-marker-alt"></i> District *</label>
-                    <input type="text" name="district" required placeholder="e.g., Gasabo">
+                    <select name="district" id="districtSelect" required>
+                        <option value="">Select District</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label><i class="fas fa-map-pin"></i> Sector *</label>
-                    <input type="text" name="sector_location" required placeholder="e.g., Remera">
+                    <select name="sector_location" id="sectorSelect" required>
+                        <option value="">Select Sector</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label><i class="fas fa-location-arrow"></i> Cell *</label>
-                    <input type="text" name="cell" required placeholder="e.g., Rukiri">
+                    <select name="cell" id="cellSelect" required>
+                        <option value="">Select Cell</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label><i class="fas fa-home"></i> Village *</label>
-                    <input type="text" name="village" required placeholder="e.g., Nyabisindu">
+                    <select name="village" id="villageSelect" required>
+                        <option value="">Select Village</option>
+                    </select>
                 </div>
             </div>
             
@@ -197,6 +200,7 @@
     <script src="auth.js"></script>
     <script src="subscription-modal.js"></script>
     <script src="subscription-tracker.js"></script>
+    <script src="location-handler.js"></script>
     <script>
         let currentUser = null;
 

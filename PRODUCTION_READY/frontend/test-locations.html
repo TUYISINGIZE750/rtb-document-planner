@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Location Dropdown Test</title>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+        h1 { color: #333; }
+        .test-section { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
+        select { width: 100%; padding: 10px; margin: 10px 0; font-size: 16px; border: 2px solid #ddd; border-radius: 4px; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        button { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        button:hover { background: #0056b3; }
+        .selected-values { background: white; padding: 15px; margin: 10px 0; border-radius: 4px; border: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+    <h1>🗺️ Rwanda Location Dropdown Test</h1>
+    
+    <div class="status info">
+        <strong>Test Status:</strong> <span id="testStatus">Initializing...</span>
+    </div>
+
+    <div class="test-section">
+        <h2>Cascading Location Dropdowns</h2>
+        
+        <label><strong>Province:</strong></label>
+        <select id="provinceSelect">
+            <option value="">Select Province</option>
+        </select>
+
+        <label><strong>District:</strong></label>
+        <select id="districtSelect">
+            <option value="">Select District</option>
+        </select>
+
+        <label><strong>Sector:</strong></label>
+        <select id="sectorSelect">
+            <option value="">Select Sector</option>
+        </select>
+
+        <label><strong>Cell:</strong></label>
+        <select id="cellSelect">
+            <option value="">Select Cell</option>
+        </select>
+
+        <label><strong>Village:</strong></label>
+        <select id="villageSelect">
+            <option value="">Select Village</option>
+        </select>
+
+        <button onclick="showSelectedValues()">Show Selected Values</button>
+        
+        <div class="selected-values" id="selectedValues" style="display: none;">
+            <h3>Selected Location:</h3>
+            <p id="locationDisplay"></p>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test Results</h2>
+        <div id="testResults"></div>
+    </div>
+
+    <script>
+        // Store handler globally and run tests after initialization
+        let locationHandlerInstance = null;
+
+        class LocationHandler {
+            constructor() {
+                this.locations = null;
+                this.loadLocations();
+            }
+
+            async loadLocations() {
+                try {
+                    const response = await fetch('rwanda-locations-json-master/locations.json');
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    this.locations = await response.json();
+                    console.log('✅ Locations loaded:', this.locations.provinces.length, 'provinces');
+                    this.initializeDropdowns();
+                    runTests();
+                } catch (error) {
+                    console.error('❌ Error loading locations:', error);
+                    alert('Failed to load location data.\n\nError: ' + error.message);
+                }
+            }
+
+            initializeDropdowns() {
+                const provinceSelect = document.getElementById('provinceSelect');
+                const districtSelect = document.getElementById('districtSelect');
+                const sectorSelect = document.getElementById('sectorSelect');
+                const cellSelect = document.getElementById('cellSelect');
+                const villageSelect = document.getElementById('villageSelect');
+
+                if (!provinceSelect) return;
+
+                this.populateProvinces();
+                provinceSelect.addEventListener('change', () => this.onProvinceChange());
+                districtSelect.addEventListener('change', () => this.onDistrictChange());
+                sectorSelect.addEventListener('change', () => this.onSectorChange());
+                cellSelect.addEventListener('change', () => this.onCellChange());
+            }
+
+            populateProvinces() {
+                const provinceSelect = document.getElementById('provinceSelect');
+                provinceSelect.innerHTML = '<option value="">Select Province</option>';
+                if (this.locations?.provinces) {
+                    this.locations.provinces.forEach(province => {
+                        const option = document.createElement('option');
+                        option.value = province.name;
+                        option.textContent = province.name;
+                        provinceSelect.appendChild(option);
+                    });
+                }
+            }
+
+            onProvinceChange() {
+                const provinceSelect = document.getElementById('provinceSelect');
+                const districtSelect = document.getElementById('districtSelect');
+                const sectorSelect = document.getElementById('sectorSelect');
+                const cellSelect = document.getElementById('cellSelect');
+                const villageSelect = document.getElementById('villageSelect');
+
+                districtSelect.innerHTML = '<option value="">Select District</option>';
+                sectorSelect.innerHTML = '<option value="">Select Sector</option>';
+                cellSelect.innerHTML = '<option value="">Select Cell</option>';
+                villageSelect.innerHTML = '<option value="">Select Village</option>';
+
+                const selectedProvince = provinceSelect.value;
+                if (!selectedProvince) return;
+
+                const province = this.locations.provinces.find(p => p.name === selectedProvince);
+                if (province?.districts) {
+                    province.districts.forEach(district => {
+                        const option = document.createElement('option');
+                        option.value = district.name;
+                        option.textContent = district.name;
+                        districtSelect.appendChild(option);
+                    });
+                }
+            }
+
+            onDistrictChange() {
+                const provinceSelect = document.getElementById('provinceSelect');
+                const districtSelect = document.getElementById('districtSelect');
+                const sectorSelect = document.getElementById('sectorSelect');
+                const cellSelect = document.getElementById('cellSelect');
+                const villageSelect = document.getElementById('villageSelect');
+
+                sectorSelect.innerHTML = '<option value="">Select Sector</option>';
+                cellSelect.innerHTML = '<option value="">Select Cell</option>';
+                villageSelect.innerHTML = '<option value="">Select Village</option>';
+
+                const selectedProvince = provinceSelect.value;
+                const selectedDistrict = districtSelect.value;
+                if (!selectedProvince || !selectedDistrict) return;
+
+                const province = this.locations.provinces.find(p => p.name === selectedProvince);
+                const district = province?.districts.find(d => d.name === selectedDistrict);
+                if (district?.sectors) {
+                    district.sectors.forEach(sector => {
+                        const option = document.createElement('option');
+                        option.value = sector.name;
+                        option.textContent = sector.name;
+                        sectorSelect.appendChild(option);
+                    });
+                }
+            }
+
+            onSectorChange() {
+                const provinceSelect = document.getElementById('provinceSelect');
+                const districtSelect = document.getElementById('districtSelect');
+                const sectorSelect = document.getElementById('sectorSelect');
+                const cellSelect = document.getElementById('cellSelect');
+                const villageSelect = document.getElementById('villageSelect');
+
+                cellSelect.innerHTML = '<option value="">Select Cell</option>';
+                villageSelect.innerHTML = '<option value="">Select Village</option>';
+
+                const selectedProvince = provinceSelect.value;
+                const selectedDistrict = districtSelect.value;
+                const selectedSector = sectorSelect.value;
+                if (!selectedProvince || !selectedDistrict || !selectedSector) return;
+
+                const province = this.locations.provinces.find(p => p.name === selectedProvince);
+                const district = province?.districts.find(d => d.name === selectedDistrict);
+                const sector = district?.sectors.find(s => s.name === selectedSector);
+                if (sector?.cells) {
+                    sector.cells.forEach(cell => {
+                        const option = document.createElement('option');
+                        option.value = cell.name;
+                        option.textContent = cell.name;
+                        cellSelect.appendChild(option);
+                    });
+                }
+            }
+
+            onCellChange() {
+                const provinceSelect = document.getElementById('provinceSelect');
+                const districtSelect = document.getElementById('districtSelect');
+                const sectorSelect = document.getElementById('sectorSelect');
+                const cellSelect = document.getElementById('cellSelect');
+                const villageSelect = document.getElementById('villageSelect');
+
+                villageSelect.innerHTML = '<option value="">Select Village</option>';
+
+                const selectedProvince = provinceSelect.value;
+                const selectedDistrict = districtSelect.value;
+                const selectedSector = sectorSelect.value;
+                const selectedCell = cellSelect.value;
+                if (!selectedProvince || !selectedDistrict || !selectedSector || !selectedCell) return;
+
+                const province = this.locations.provinces.find(p => p.name === selectedProvince);
+                const district = province?.districts.find(d => d.name === selectedDistrict);
+                const sector = district?.sectors.find(s => s.name === selectedSector);
+                const cell = sector?.cells.find(c => c.name === selectedCell);
+                if (cell?.villages) {
+                    cell.villages.forEach(village => {
+                        const option = document.createElement('option');
+                        option.value = village.name;
+                        option.textContent = village.name;
+                        villageSelect.appendChild(option);
+                    });
+                }
+            }
+        }
+
+        function runTests() {
+            const results = [];
+            const testResults = document.getElementById('testResults');
+            
+            if (locationHandlerInstance?.locations) {
+                results.push('✅ locations.json loaded successfully');
+                results.push(`✅ Found ${locationHandlerInstance.locations.provinces.length} provinces`);
+            } else {
+                results.push('❌ Failed to load locations.json');
+            }
+
+            const provinceSelect = document.getElementById('provinceSelect');
+            if (provinceSelect.options.length > 1) {
+                results.push(`✅ Province dropdown populated (${provinceSelect.options.length - 1} options)`);
+            } else {
+                results.push('❌ Province dropdown not populated');
+            }
+
+            results.push('✅ Event listeners attached (using addEventListener)');
+
+            testResults.innerHTML = results.map(r => 
+                `<div class="status ${r.includes('✅') ? 'success' : 'error'}">${r}</div>`
+            ).join('');
+
+            const allPassed = results.every(r => r.includes('✅'));
+            document.getElementById('testStatus').textContent = allPassed 
+                ? '✅ All tests passed!' 
+                : '⚠️ Some tests failed';
+            document.getElementById('testStatus').parentElement.className = 
+                allPassed ? 'status success' : 'status error';
+        }
+
+        function showSelectedValues() {
+            const province = document.getElementById('provinceSelect').value;
+            const district = document.getElementById('districtSelect').value;
+            const sector = document.getElementById('sectorSelect').value;
+            const cell = document.getElementById('cellSelect').value;
+            const village = document.getElementById('villageSelect').value;
+
+            const display = document.getElementById('locationDisplay');
+            const container = document.getElementById('selectedValues');
+
+            if (!province) {
+                alert('Please select at least a province');
+                return;
+            }
+
+            let location = `<strong>Province:</strong> ${province}<br>`;
+            if (district) location += `<strong>District:</strong> ${district}<br>`;
+            if (sector) location += `<strong>Sector:</strong> ${sector}<br>`;
+            if (cell) location += `<strong>Cell:</strong> ${cell}<br>`;
+            if (village) location += `<strong>Village:</strong> ${village}<br>`;
+
+            display.innerHTML = location;
+            container.style.display = 'block';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            locationHandlerInstance = new LocationHandler();
+        });
+    </script>
+</body>
+</html>

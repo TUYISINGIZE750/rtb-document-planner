@@ -110,9 +110,12 @@
                     <p class="step-description">Basic details about your institution and module</p>
                     
                     <div class="form-grid">
-                        <div class="form-group"><label>Province</label><input type="text" name="province" placeholder="e.g., Kigali City" required></div>
-                        <div class="form-group"><label>District</label><input type="text" name="district" placeholder="e.g., Gasabo" required></div>
-                        <div class="form-group"><label>Sector</label><input type="text" name="sector" placeholder="e.g., ICT & MULTIMEDIA" required></div>
+                        <div class="form-group"><label>Province</label><select name="province" id="provinceSelect" required><option value="">Select Province</option></select></div>
+                        <div class="form-group"><label>District</label><select name="district" id="districtSelect" required><option value="">Select District</option></select></div>
+                        <div class="form-group"><label>Sector (Location)</label><select name="sector_location" id="sectorSelect" required><option value="">Select Sector</option></select></div>
+                        <div class="form-group"><label>Cell</label><select name="cell" id="cellSelect" required><option value="">Select Cell</option></select></div>
+                        <div class="form-group"><label>Village</label><select name="village" id="villageSelect" required><option value="">Select Village</option></select></div>
+                        <div class="form-group"><label>Sector (Trade)</label><input type="text" name="sector" placeholder="e.g., ICT & MULTIMEDIA" required></div>
                         <div class="form-group"><label>School</label><input type="text" name="school" placeholder="e.g., IPRC Kigali" required></div>
                         <div class="form-group"><label>Department/Trade</label><input type="text" name="trade" placeholder="e.g., Software Development" required></div>
                         <div class="form-group"><label>Qualification Title</label><input type="text" name="qualification_title" placeholder="e.g., Diploma in Software Development" required></div>
@@ -239,6 +242,7 @@
     <script src="subscription-modal.js"></script>
     <script src="notifications.js"></script>
     <script src="user-registration.js"></script>
+    <script src="location-handler.js"></script>
     <script>
         // Check authentication on page load
         if (!canAccessUserPages()) {

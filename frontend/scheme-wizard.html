@@ -110,9 +110,12 @@
                     <p class="step-description">Basic details about your institution and module</p>
                     
                     <div class="form-grid">
-                        <div class="form-group"><label>Province</label><input type="text" name="province" placeholder="e.g., Kigali City" required></div>
-                        <div class="form-group"><label>District</label><input type="text" name="district" placeholder="e.g., Gasabo" required></div>
-                        <div class="form-group"><label>Sector</label><input type="text" name="sector" placeholder="e.g., ICT & MULTIMEDIA" required></div>
+                        <div class="form-group"><label>Province</label><select name="province" id="provinceSelect" required><option value="">Select Province</option></select></div>
+                        <div class="form-group"><label>District</label><select name="district" id="districtSelect" required><option value="">Select District</option></select></div>
+                        <div class="form-group"><label>Sector (Location)</label><select name="sector_location" id="sectorSelect" required><option value="">Select Sector</option></select></div>
+                        <div class="form-group"><label>Cell</label><select name="cell" id="cellSelect" required><option value="">Select Cell</option></select></div>
+                        <div class="form-group"><label>Village</label><select name="village" id="villageSelect" required><option value="">Select Village</option></select></div>
+                        <div class="form-group"><label>Sector (Trade)</label><input type="text" name="sector" placeholder="e.g., ICT & MULTIMEDIA" required></div>
                         <div class="form-group"><label>School</label><input type="text" name="school" placeholder="e.g., IPRC Kigali" required></div>
                         <div class="form-group"><label>Department/Trade</label><input type="text" name="trade" placeholder="e.g., Software Development" required></div>
                         <div class="form-group"><label>Qualification Title</label><input type="text" name="qualification_title" placeholder="e.g., Diploma in Software Development" required></div>
@@ -157,6 +160,7 @@
                     <div class="form-group"><label>Learning Outcomes (LOs)</label><textarea name="term1_learning_outcomes" rows="4" placeholder="LO1: First outcome&#10;LO2: Second outcome" required></textarea></div>
                     <div class="form-group"><label>Duration (hours)</label><input type="text" name="term1_duration" placeholder="e.g., 40 hours" required></div>
                     <div class="form-group"><label>Indicative Content (ICs)</label><textarea name="term1_indicative_contents" rows="4" placeholder="IC1: First content&#10;IC2: Second content" required></textarea></div>
+                    <div class="form-group"><label>Learning Place</label><input type="text" name="term1_learning_place" placeholder="e.g., Classroom, Workshop, Lab" required></div>
                     
                     <div class="btn-group"><button type="button" class="btn btn-secondary" onclick="prevStep()"><i class="fas fa-arrow-left"></i> Previous</button><button type="button" class="btn btn-primary" onclick="nextStep()">Next <i class="fas fa-arrow-right"></i></button></div>
                 </div>
@@ -170,6 +174,7 @@
                     <div class="form-group"><label>Learning Outcomes (LOs)</label><textarea name="term2_learning_outcomes" rows="4" placeholder="LO3: Third outcome&#10;LO4: Fourth outcome" required></textarea></div>
                     <div class="form-group"><label>Duration (hours)</label><input type="text" name="term2_duration" placeholder="e.g., 40 hours" required></div>
                     <div class="form-group"><label>Indicative Content (ICs)</label><textarea name="term2_indicative_contents" rows="4" placeholder="IC3: Third content&#10;IC4: Fourth content" required></textarea></div>
+                    <div class="form-group"><label>Learning Place</label><input type="text" name="term2_learning_place" placeholder="e.g., Classroom, Workshop, Lab" required></div>
                     
                     <div class="btn-group"><button type="button" class="btn btn-secondary" onclick="prevStep()"><i class="fas fa-arrow-left"></i> Previous</button><button type="button" class="btn btn-primary" onclick="nextStep()">Next <i class="fas fa-arrow-right"></i></button></div>
                 </div>
@@ -183,6 +188,7 @@
                     <div class="form-group"><label>Learning Outcomes (LOs)</label><textarea name="term3_learning_outcomes" rows="4" placeholder="LO5: Fifth outcome&#10;LO6: Sixth outcome" required></textarea></div>
                     <div class="form-group"><label>Duration (hours)</label><input type="text" name="term3_duration" placeholder="e.g., 40 hours" required></div>
                     <div class="form-group"><label>Indicative Content (ICs)</label><textarea name="term3_indicative_contents" rows="4" placeholder="IC5: Fifth content&#10;IC6: Sixth content" required></textarea></div>
+                    <div class="form-group"><label>Learning Place</label><input type="text" name="term3_learning_place" placeholder="e.g., Classroom, Workshop, Lab" required></div>
                     
                     <div class="btn-group"><button type="button" class="btn btn-secondary" onclick="prevStep()"><i class="fas fa-arrow-left"></i> Previous</button><button type="button" class="btn btn-primary" onclick="nextStep()">Next <i class="fas fa-arrow-right"></i></button></div>
                 </div>
@@ -230,47 +236,20 @@
     
     <!-- Config MUST load first before any auth functions -->
     <!-- Cache-busting timestamp forces CDN/browser to fetch fresh code -->
-    <script src="config.js?t=20250120T105300Z"></script>
+    <script src="config.js"></script>
     <script src="offline-docx-generator.js"></script>
-    <script src="auth-fixed.js?t=20250120T105300Z"></script>
-    <script>
-        // STRICT authentication enforcement for scheme wizard page
-        (function() {
-            const session = getCurrentSession();
-            if (!session || !session.name) {
-                console.log('❌ No valid session - redirecting');
-                alert('Please login to access the Scheme of Work Wizard');
-                window.location.replace('index.html');
-                throw new Error('Authentication required');
-            }
-            console.log('✅ User authenticated:', session.name);
-        })();
-        
-        // Prevent back button after logout
-        window.addEventListener('pageshow', function(event) {
-            const session = getCurrentSession();
-            if (!session || sessionStorage.getItem('rtb_logged_out')) {
-                window.location.replace('index.html');
-            }
-        });
-        
-        // Block form submission if not authenticated
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('wizardForm').addEventListener('submit', function(e) {
-                const session = getCurrentSession();
-                if (!session || !session.name) {
-                    e.preventDefault();
-                    alert('Session expired. Please login again.');
-                    window.location.replace('index.html');
-                    return false;
-                }
-            });
-        });
-    </script>
+    <script src="auth.js"></script>
     <script src="subscription-modal.js"></script>
     <script src="notifications.js"></script>
     <script src="user-registration.js"></script>
+    <script src="location-handler.js"></script>
     <script>
+        // Check authentication on page load
+        if (!canAccessUserPages()) {
+            alert('Please login to access the Scheme of Work Wizard');
+            window.location.replace('login.html');
+        }
+        
         let currentStep = 1;
         const totalSteps = 8;
         
@@ -454,80 +433,7 @@
             }
         }
         
-        async function checkDownloadLimits(type, id) {
-            console.log('Checking limits for:', type, 'ID:', id); // Debug log
-            
-            if (!id || id === 'undefined' || id === undefined) {
-                showNotification('Error: Invalid document ID', 'error');
-                return;
-            }
-            
-            const session = getCurrentSession();
-            if (!session) {
-                showNotification('Please login to download documents', 'error');
-                return;
-            }
-            
-            try {
-                const response = await fetch(`${API_BASE}/user-limits/${encodeURIComponent(session.phone)}`, {
-                    method: 'GET',
-                    mode: 'cors',
-                    credentials: 'omit',
-                    headers: {
-                        'Accept': 'application/json'
-                    }
-                });
-                if (response.ok) {
-                    const limits = await response.json();
-                    
-                    if (type === 'session_plan') {
-                        if (limits.is_premium || limits.session_plans_remaining > 0) {
-                            downloadSessionPlan(id);
-                            if (!limits.is_premium) {
-                                showNotification(`Download successful! ${limits.session_plans_remaining - 1} session plans remaining`, 'success');
-                            }
-                        } else {
-                            showSubscriptionModal('session_plans');
-                        }
-                    } else if (type === 'scheme') {
-                        if (limits.is_premium || limits.schemes_remaining > 0) {
-                            downloadScheme(id);
-                            if (!limits.is_premium) {
-                                showNotification(`Download successful! ${limits.schemes_remaining - 1} schemes remaining`, 'success');
-                            }
-                        } else {
-                            showSubscriptionModal('schemes');
-                        }
-                    }
-                } else {
-                    showNotification('Error checking download limits', 'error');
-                }
-            } catch (error) {
-                showNotification('Network error: ' + error.message, 'error');
-            }
-        }
-        
-        function downloadScheme(id) {
-            if (!id || id === 'undefined') {
-                showNotification('Error: Invalid scheme ID', 'error');
-                return;
-            }
-            const session = getCurrentSession();
-            const phone = session ? encodeURIComponent(session.phone) : '';
-            const link = document.createElement('a');
-            link.href = `${API_BASE}/schemes-of-work/${id}/download?phone=${phone}`;
-            link.download = `scheme_of_work_${id}.docx`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-        
-        function updateDownloadCounter() {
-            const remaining = getRemainingDownloads();
-            if (!remaining.isPremium) {
-                showNotification(`Free downloads remaining: ${remaining.sessionPlans} session plans, ${remaining.schemes} schemes`, 'success');
-            }
-        }
+
         
         function showNotification(message, type) {
             const notification = document.createElement('div');
