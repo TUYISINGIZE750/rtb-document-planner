@@ -1,0 +1,133 @@
+========================================
+URGENT: UPLOAD THESE FILES TO PYTHONANYWHERE NOW
+========================================
+
+The error "Document generation not available yet" means these files are MISSING on PythonAnywhere!
+
+📁 FILES TO UPLOAD (from your computer):
+========================================
+
+1. DOCUMENT_GENERATOR.PY (REPLACE OLD ONE)
+   Location: C:\Users\PC\Music\Scheme of work and session plan planner\PRODUCTION_READY\backend\document_generator.py
+   Upload to: /home/leonardus437/mysite/document_generator.py
+   Action: REPLACE the existing file
+
+2. OFFICIAL_TEMPLATE_FILLER.PY (NEW FILE)
+   Location: C:\Users\PC\Music\Scheme of work and session plan planner\PRODUCTION_READY\backend\official_template_filler.py
+   Upload to: /home/leonardus437/mysite/official_template_filler.py
+   Action: Upload as NEW file
+
+3. MAIN_MINIMAL.PY → RENAME TO MAIN.PY (REPLACE OLD ONE)
+   Location: C:\Users\PC\Music\Scheme of work and session plan planner\PRODUCTION_READY\backend\main_minimal.py
+   Upload to: /home/leonardus437/mysite/main.py
+   Action: DELETE old main.py first, then upload and rename
+
+4. CREATE FOLDER: "DOCS TO REFER TO"
+   In PythonAnywhere Files:
+   - Click "New directory"
+   - Type exactly: DOCS TO REFER TO
+   - Press Enter
+
+5. SESSION PLAN.DOCX (UPLOAD TO FOLDER)
+   Location: C:\Users\PC\Music\Scheme of work and session plan planner\PRODUCTION_READY\DOCS TO REFER TO\SESSION PLAN.docx
+   Upload to: /home/leonardus437/mysite/DOCS TO REFER TO/SESSION PLAN.docx
+
+6. CSAPA 301 SCHEME OF WORK.DOCX (UPLOAD TO FOLDER)
+   Location: C:\Users\PC\Music\Scheme of work and session plan planner\PRODUCTION_READY\DOCS TO REFER TO\CSAPA 301 Scheme of work.docx
+   Upload to: /home/leonardus437/mysite/DOCS TO REFER TO/CSAPA 301 Scheme of work.docx
+
+========================================
+STEP-BY-STEP UPLOAD PROCESS
+========================================
+
+STEP 1: Go to PythonAnywhere
+→ https://www.pythonanywhere.com
+→ Login
+→ Click "Files" tab
+→ Navigate to: /home/leonardus437/mysite/
+
+STEP 2: Delete old main.py
+→ Find "main.py" in file list
+→ Click the trash icon
+→ Confirm deletion
+
+STEP 3: Upload main_minimal.py
+→ Click "Upload a file" button
+→ Select: C:\Users\PC\Music\Scheme of work and session plan planner\PRODUCTION_READY\backend\main_minimal.py
+→ After upload, click on filename
+→ Click "Rename" button
+→ Change name to: main.py
+→ Save
+
+STEP 4: Upload document_generator.py (replace)
+→ Click "Upload a file" button
+→ Select: C:\Users\PC\Music\Scheme of work and session plan planner\PRODUCTION_READY\backend\document_generator.py
+→ If asked to replace, click YES
+
+STEP 5: Upload official_template_filler.py (new)
+→ Click "Upload a file" button
+→ Select: C:\Users\PC\Music\Scheme of work and session plan planner\PRODUCTION_READY\backend\official_template_filler.py
+→ Upload
+
+STEP 6: Create DOCS TO REFER TO folder
+→ Click "New directory" button
+→ Type exactly: DOCS TO REFER TO
+→ Press Enter
+→ Click on the folder name to enter it
+
+STEP 7: Upload SESSION PLAN.docx
+→ Inside "DOCS TO REFER TO" folder
+→ Click "Upload a file" button
+→ Select: C:\Users\PC\Music\Scheme of work and session plan planner\PRODUCTION_READY\DOCS TO REFER TO\SESSION PLAN.docx
+→ Upload
+
+STEP 8: Upload CSAPA 301 Scheme of work.docx
+→ Still inside "DOCS TO REFER TO" folder
+→ Click "Upload a file" button
+→ Select: C:\Users\PC\Music\Scheme of work and session plan planner\PRODUCTION_READY\DOCS TO REFER TO\CSAPA 301 Scheme of work.docx
+→ Upload
+
+STEP 9: Verify file structure
+Your /home/leonardus437/mysite/ should now have:
+✓ main.py
+✓ document_generator.py
+✓ official_template_filler.py
+✓ DOCS TO REFER TO/
+  ✓ SESSION PLAN.docx
+  ✓ CSAPA 301 Scheme of work.docx
+
+STEP 10: Reload application
+→ Click "Web" tab
+→ Click green "Reload" button
+→ Wait 10 seconds
+
+STEP 11: Test
+→ Go to: https://rtb-document-planner.pages.dev
+→ Login as teacher
+→ Create session plan
+→ Download
+→ Should work now!
+
+========================================
+VERIFICATION
+========================================
+
+After upload, check:
+1. File count in /home/leonardus437/mysite/ should increase by 3
+2. DOCS TO REFER TO folder should exist
+3. Folder should contain 2 .docx files
+4. main.py should be the NEW version (from main_minimal.py)
+
+========================================
+IF STILL NOT WORKING
+========================================
+
+Check PythonAnywhere error log:
+→ Web tab
+→ Click "Error log" link
+→ Look for import errors
+→ Should NOT see "ModuleNotFoundError: No module named 'official_template_filler'"
+
+========================================
+
+DO THIS NOW! The files are ready on your computer, just need to upload them!

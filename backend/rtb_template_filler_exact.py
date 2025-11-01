@@ -341,10 +341,10 @@ def fill_scheme_template(data):
     # Set document margins
     sections = doc.sections
     for section in sections:
-        section.top_margin = 1.27 * 914400
-        section.bottom_margin = 1.27 * 914400
-        section.left_margin = 1.27 * 914400
-        section.right_margin = 1.27 * 914400
+        section.top_margin = int(1.27 * 914400)
+        section.bottom_margin = int(1.27 * 914400)
+        section.left_margin = int(1.27 * 914400)
+        section.right_margin = int(1.27 * 914400)
     
     # Fill all 3 term tables
     for term_idx in range(min(3, len(doc.tables))):

@@ -1,0 +1,44 @@
+===============================================
+PYTHONANYWHERE WSGI CONFIGURATION FILE
+===============================================
+
+LOCATION: /var/www/leonardus437_pythonanywhere_com_wsgi.py
+
+COPY AND PASTE the content below into your WSGI file on PythonAnywhere:
+
+===============================================
+
+import sys
+import os
+
+# Add the project directory to the Python path
+project_home = '/home/leonardus437/rtb-document-planner'
+if project_home not in sys.path:
+    sys.path.insert(0, project_home)
+
+# Change to project directory
+os.chdir(project_home)
+
+# Import the Flask app from main.py
+from main import app as application
+
+# Ensure environment is production
+os.environ['FLASK_ENV'] = 'production'
+os.environ['DATABASE_URL'] = 'sqlite:////home/leonardus437/rtb_planner.db'
+
+===============================================
+
+STEPS TO APPLY:
+1. Go to https://www.pythonanywhere.com
+2. Log in with your account
+3. Go to WEB tab
+4. Click on your web app (leonardus437.pythonanywhere.com)
+5. Scroll to "WSGI configuration file" section
+6. Click on the path shown (usually /var/www/...)
+7. Replace entire file content with code above
+8. Click "Save"
+9. Go back to WEB tab
+10. Click green "Reload" button
+11. Test: https://leonardus437.pythonanywhere.com/
+
+===============================================
