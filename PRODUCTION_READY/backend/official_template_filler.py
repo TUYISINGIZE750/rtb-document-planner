@@ -105,10 +105,10 @@ def fill_session_plan_official(data):
         doc = Document(template_path)
         logger.info(f"✅ Template loaded, tables: {len(doc.tables)}")
         
-        # Add header with logos and school info before main table
+        # Add header with logos and school info at the very beginning
         try:
-            # Create header table for logos and school info
-            header_table = doc.add_table(rows=2, cols=3)
+            # Insert header table at position 0 (before everything)
+            header_table = doc.add_table(rows=1, cols=3)
             header_table.autofit = False
             
             # Row 1: Logos
