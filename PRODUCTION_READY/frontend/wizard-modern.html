@@ -139,12 +139,16 @@
                         </div>
                         <div class="form-group">
                             <label><i class="fas fa-location-arrow"></i> Cell <span class="required">*</span></label>
-                            <input type="text" name="cell" required placeholder="e.g., Rukiri">
+                            <select name="cell" id="cellSelect" required disabled>
+                                <option value="">Select Cell</option>
+                            </select>
                         </div>
                     </div>
                     <div class="form-group">
                         <label><i class="fas fa-home"></i> Village <span class="required">*</span></label>
-                        <input type="text" name="village" required placeholder="e.g., Nyabisindu">
+                        <select name="village" id="villageSelect" required disabled>
+                            <option value="">Select Village</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label><i class="fas fa-image"></i> School Logo (Optional)</label>
@@ -245,94 +249,12 @@
         </div>
     </div>
 
+    <script src="location-handler.js"></script>
     <script src="config.js"></script>
     <script src="auth.js"></script>
     <script>
         let currentStep = 1;
         let currentUser = null;
-        let rwandaData = [];
-
-        // Load Rwanda location data
-        async function loadRwandaData() {
-            try {
-                const response = await fetch('../rwanda og.csv');
-                const text = await response.text();
-                const lines = text.split('\n');
-                
-                for (let i = 1; i < lines.length; i++) {
-                    const line = lines[i].trim();
-                    if (!line) continue;
-                    
-                    const parts = line.split(',');
-                    if (parts.length >= 13) {
-                        rwandaData.push({
-                            province: parts[6],
-                            district: parts[10],
-                            sector: parts[12]
-                        });
-                    }
-                }
-                
-                populateProvinces();
-            } catch (error) {
-                console.error('Error loading Rwanda data:', error);
-            }
-        }
-
-        function populateProvinces() {
-            const provinces = [...new Set(rwandaData.map(d => d.province))].sort();
-            const select = document.getElementById('provinceSelect');
-            provinces.forEach(province => {
-                const option = document.createElement('option');
-                option.value = province;
-                option.textContent = province;
-                select.appendChild(option);
-            });
-        }
-
-        document.getElementById('provinceSelect').addEventListener('change', function() {
-            const province = this.value;
-            const districtSelect = document.getElementById('districtSelect');
-            const sectorSelect = document.getElementById('sectorSelect');
-            
-            districtSelect.innerHTML = '<option value="">Select District</option>';
-            sectorSelect.innerHTML = '<option value="">Select Sector</option>';
-            sectorSelect.disabled = true;
-            
-            if (province) {
-                const districts = [...new Set(rwandaData.filter(d => d.province === province).map(d => d.district))].sort();
-                districts.forEach(district => {
-                    const option = document.createElement('option');
-                    option.value = district;
-                    option.textContent = district;
-                    districtSelect.appendChild(option);
-                });
-                districtSelect.disabled = false;
-            } else {
-                districtSelect.disabled = true;
-            }
-        });
-
-        document.getElementById('districtSelect').addEventListener('change', function() {
-            const province = document.getElementById('provinceSelect').value;
-            const district = this.value;
-            const sectorSelect = document.getElementById('sectorSelect');
-            
-            sectorSelect.innerHTML = '<option value="">Select Sector</option>';
-            
-            if (district) {
-                const sectors = [...new Set(rwandaData.filter(d => d.province === province && d.district === district).map(d => d.sector))].sort();
-                sectors.forEach(sector => {
-                    const option = document.createElement('option');
-                    option.value = sector;
-                    option.textContent = sector;
-                    sectorSelect.appendChild(option);
-                });
-                sectorSelect.disabled = false;
-            } else {
-                sectorSelect.disabled = true;
-            }
-        });
 
         function validateUser() {
             try {
@@ -466,7 +388,6 @@
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             if (!validateUser()) return;
-            loadRwandaData();
             
             // Set today's date
             const today = new Date().toISOString().split('T')[0];
