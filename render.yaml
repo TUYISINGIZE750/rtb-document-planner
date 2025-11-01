@@ -3,7 +3,7 @@ services:
     name: rtb-document-planner
     env: python
     region: oregon
-    buildCommand: "cd backend && pip install -r requirements.txt && python create_db.py"
+    buildCommand: "pip install -r backend/requirements.txt && python backend/create_db.py"
     startCommand: "cd backend && python main.py"
     envVars:
       - key: PYTHON_VERSION
