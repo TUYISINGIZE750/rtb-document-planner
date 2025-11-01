@@ -271,6 +271,8 @@
             }
         }
 
+        let locationHandlerInitialized = false;
+        
         function changeStep(direction) {
             const steps = document.querySelectorAll('.step-content');
             const currentStepElement = steps[currentStep - 1];
@@ -303,6 +305,15 @@
                     step.classList.add('active');
                 }
             });
+            
+            // Initialize location handler when reaching Step 2
+            if (currentStep === 2 && !locationHandlerInitialized) {
+                console.log('🔧 Initializing LocationHandler for Step 2');
+                setTimeout(() => {
+                    window.locationHandlerInstance = new LocationHandler();
+                    locationHandlerInitialized = true;
+                }, 100);
+            }
             
             // Update progress
             document.querySelectorAll('.progress-step').forEach((step, index) => {
