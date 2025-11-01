@@ -67,17 +67,26 @@ class LocationHandler {
         const cellSelect = document.getElementById('cellSelect');
         const villageSelect = document.getElementById('villageSelect');
 
+        console.log('🔄 Province changed to:', provinceSelect.value);
+
         // Reset dependent dropdowns
         districtSelect.innerHTML = '<option value="">Select District</option>';
         sectorSelect.innerHTML = '<option value="">Select Sector</option>';
         cellSelect.innerHTML = '<option value="">Select Cell</option>';
         villageSelect.innerHTML = '<option value="">Select Village</option>';
+        
+        // Re-enable disabled dropdowns
+        districtSelect.disabled = false;
+        sectorSelect.disabled = true;
+        cellSelect.disabled = true;
+        villageSelect.disabled = true;
 
         const selectedProvince = provinceSelect.value;
         if (!selectedProvince) return;
 
         const province = this.locations.provinces.find(p => p.name === selectedProvince);
         if (province && province.districts) {
+            console.log('✅ Found', province.districts.length, 'districts');
             province.districts.forEach(district => {
                 const option = document.createElement('option');
                 option.value = district.name;
@@ -98,6 +107,10 @@ class LocationHandler {
         sectorSelect.innerHTML = '<option value="">Select Sector</option>';
         cellSelect.innerHTML = '<option value="">Select Cell</option>';
         villageSelect.innerHTML = '<option value="">Select Village</option>';
+        
+        sectorSelect.disabled = false;
+        cellSelect.disabled = true;
+        villageSelect.disabled = true;
 
         const selectedProvince = provinceSelect.value;
         const selectedDistrict = districtSelect.value;
@@ -127,6 +140,9 @@ class LocationHandler {
         // Reset dependent dropdowns
         cellSelect.innerHTML = '<option value="">Select Cell</option>';
         villageSelect.innerHTML = '<option value="">Select Village</option>';
+        
+        cellSelect.disabled = false;
+        villageSelect.disabled = true;
 
         const selectedProvince = provinceSelect.value;
         const selectedDistrict = districtSelect.value;
@@ -159,6 +175,7 @@ class LocationHandler {
 
         // Reset village dropdown
         villageSelect.innerHTML = '<option value="">Select Village</option>';
+        villageSelect.disabled = false;
 
         const selectedProvince = provinceSelect.value;
         const selectedDistrict = districtSelect.value;
