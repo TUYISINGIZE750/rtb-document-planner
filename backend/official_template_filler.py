@@ -105,88 +105,6 @@ def fill_session_plan_official(data):
         doc = Document(template_path)
         logger.info(f"✅ Template loaded, tables: {len(doc.tables)}")
         
-        # Add header with logos and school info at the very beginning
-        try:
-            # Insert header table at position 0 (before everything)
-            header_table = doc.add_table(rows=1, cols=3)
-            header_table.autofit = False
-            
-            # Row 1: Logos
-            # Left: RTB Logo
-            left_cell = header_table.rows[0].cells[0]
-            left_para = left_cell.paragraphs[0]
-            left_run = left_para.add_run('RWANDA\nTVET BOARD')
-            left_run.font.bold = True
-            left_run.font.size = Pt(12)
-            left_run.font.name = 'Bookman Old Style'
-            
-            # Center: School Name and Location
-            center_cell = header_table.rows[0].cells[1]
-            center_para = center_cell.paragraphs[0]
-            center_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
-            
-            school_name = data.get('school_name', '')
-            province = data.get('province', '')
-            district = data.get('district', '')
-            sector_loc = data.get('sector_location', '')
-            cell_loc = data.get('cell', '')
-            village = data.get('village', '')
-            
-            # School name
-            name_run = center_para.add_run(school_name + '\n')
-            name_run.font.bold = True
-            name_run.font.size = Pt(14)
-            name_run.font.name = 'Bookman Old Style'
-            
-            # Location info
-            location_text = f"{province} - {district} - {sector_loc} - {cell_loc} - {village}"
-            loc_run = center_para.add_run(location_text)
-            loc_run.font.size = Pt(10)
-            loc_run.font.name = 'Bookman Old Style'
-            
-            # Right: School Logo
-            right_cell = header_table.rows[0].cells[2]
-            right_para = right_cell.paragraphs[0]
-            right_para.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-            
-            school_logo_base64 = data.get('school_logo', '')
-            if school_logo_base64 and 'base64' in school_logo_base64:
-                try:
-                    if ',' in school_logo_base64:
-                        logo_data = school_logo_base64.split(',')[1]
-                    else:
-                        logo_data = school_logo_base64
-                    
-                    logo_bytes = base64.b64decode(logo_data)
-                    temp_logo = tempfile.NamedTemporaryFile(delete=False, suffix='.png')
-                    temp_logo.write(logo_bytes)
-                    temp_logo.close()
-                    
-                    right_run = right_para.add_run()
-                    right_run.add_picture(temp_logo.name, width=Inches(1.2))
-                    
-                    try:
-                        os.remove(temp_logo.name)
-                    except:
-                        pass
-                    
-                    logger.info('School logo added successfully')
-                except Exception as e:
-                    logger.error(f"Error adding school logo: {e}")
-                    right_run = right_para.add_run('SCHOOL\nLOGO')
-                    right_run.font.size = Pt(10)
-            else:
-                right_run = right_para.add_run('SCHOOL\nLOGO')
-                right_run.font.size = Pt(10)
-            
-            # Add spacing after header
-            doc.add_paragraph()
-            
-        except Exception as header_error:
-            logger.error(f"Error creating header: {header_error}")
-            import traceback
-            logger.error(traceback.format_exc())
-        
         if not doc.tables:
             raise Exception("No table found in template")
     except Exception as e:
@@ -258,11 +176,11 @@ def fill_session_plan_official(data):
     
     # Row 8: Facilitation techniques
     facilitation = data.get('facilitation_techniques', '').strip()
+    logger.info(f"📝 Facilitation: '{facilitation}'")
     if facilitation:
         set_cell_text_with_bold_label(table.rows[8].cells[0], "Facilitation technique(s): ", facilitation)
     else:
-        table.rows[8].cells[0].text = "Facilitation technique(s):"
-        set_cell_font(table.rows[8].cells[0], bold=True)
+        set_cell_text_with_bold_label(table.rows[8].cells[0], "Facilitation technique(s): ", "Trainer Guided")
     
     # Parse learning activities and resources
     learning_acts = data.get('learning_activities', '')
