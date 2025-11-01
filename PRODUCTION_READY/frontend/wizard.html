@@ -130,6 +130,16 @@
                 </select>
             </div>
             
+            <div class="form-group">
+                <label><i class="fas fa-users-cog"></i> Range *</label>
+                <input type="text" name="range" required placeholder="e.g., All learners in Level 4 Programming class">
+            </div>
+            
+            <div class="form-group">
+                <label><i class="fas fa-paperclip"></i> Appendix (Optional)</label>
+                <textarea name="appendix" rows="2" placeholder="e.g., PPT slides, Task sheets, Assessment rubrics"></textarea>
+            </div>
+            
             <div style="text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 2px solid #e5e7eb;">
                 <button type="button" onclick="goBack()" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i> Back to Home
@@ -204,11 +214,12 @@
             const formData = new FormData(e.target);
             const data = Object.fromEntries(formData);
             
-            // Add user phone to data
+            // Add user phone and level to data
             data.user_phone = currentUser.phone;
+            data.level = data.rqf_level;
             
             // Validate required fields
-            const requiredFields = ['sector', 'trade', 'rqf_level', 'trainer_name', 'module_code_title', 'term', 'week', 'date', 'number_of_trainees', 'class_name', 'duration', 'topic_of_session', 'learning_outcomes', 'indicative_contents'];
+            const requiredFields = ['sector', 'trade', 'rqf_level', 'trainer_name', 'module_code_title', 'term', 'week', 'date', 'number_of_trainees', 'class_name', 'duration', 'topic_of_session', 'learning_outcomes', 'indicative_contents', 'range'];
             
             for (const field of requiredFields) {
                 if (!data[field] || data[field].trim() === '') {
