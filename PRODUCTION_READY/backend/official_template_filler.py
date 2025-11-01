@@ -8,6 +8,9 @@ from datetime import datetime
 def set_cell_font(cell, font_name='Bookman Old Style', font_size=12, bold=False):
     """Set font for all paragraphs and runs in a cell"""
     for paragraph in cell.paragraphs:
+        paragraph.paragraph_format.space_before = Pt(0)
+        paragraph.paragraph_format.space_after = Pt(0)
+        paragraph.paragraph_format.line_spacing = 1.0
         for run in paragraph.runs:
             run.font.name = font_name
             run.font.size = Pt(font_size)
@@ -23,13 +26,16 @@ def set_cell_text_with_bold_label(cell, label, value, font_name='Bookman Old Sty
     """Set cell text with bold label and normal value"""
     cell.text = ''
     p = cell.paragraphs[0] if cell.paragraphs else cell.add_paragraph()
+    p.paragraph_format.space_before = Pt(0)
+    p.paragraph_format.space_after = Pt(0)
+    p.paragraph_format.line_spacing = 1.0
     
     label_run = p.add_run(label)
     label_run.font.name = font_name
     label_run.font.size = Pt(font_size)
     label_run.font.bold = True
     
-    value_run = p.add_run(value)
+    value_run = p.add_run(value.strip())
     value_run.font.name = font_name
     value_run.font.size = Pt(font_size)
     value_run.font.bold = False
@@ -167,7 +173,12 @@ def fill_session_plan_official(data):
     set_cell_text_with_bold_label(table.rows[7].cells[0], "Objectives:\n", objectives)
     
     # Row 8: Facilitation techniques
-    set_cell_text_with_bold_label(table.rows[8].cells[0], "Facilitation technique(s): ", data.get('facilitation_techniques', '').strip())
+    facilitation = data.get('facilitation_techniques', '').strip()
+    if facilitation:
+        set_cell_text_with_bold_label(table.rows[8].cells[0], "Facilitation technique(s): ", facilitation)
+    else:
+        table.rows[8].cells[0].text = "Facilitation technique(s):"
+        set_cell_font(table.rows[8].cells[0], bold=True)
     
     # Parse learning activities and resources
     learning_acts = data.get('learning_activities', '')
