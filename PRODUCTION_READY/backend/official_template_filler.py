@@ -276,6 +276,12 @@ def fill_session_plan_official(data):
     references = data.get('references', '').strip()
     set_cell_text_with_bold_label(table.rows[19].cells[0], "References:\n", references)
     
+    # Row 18: Evaluation of the session
+    evaluation = data.get('evaluation', '').strip()
+    if not evaluation:
+        evaluation = "Self-assessment form"
+    set_cell_text_with_bold_label(table.rows[18].cells[0], "Evaluation of the session: ", evaluation)
+    
     # Row 20: Appendices
     appendix = data.get('appendix', '').strip()
     if not appendix:
