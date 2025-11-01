@@ -145,9 +145,39 @@
                 <input type="text" name="school_name" required placeholder="e.g., IPRC Kigali">
             </div>
             
+            <div class="form-grid">
+                <div class="form-group">
+                    <label><i class="fas fa-map-marked-alt"></i> Province *</label>
+                    <select name="province" id="provinceSelect" required>
+                        <option value="">Select Province</option>
+                        <option value="Kigali City">Kigali City</option>
+                        <option value="Eastern Province">Eastern Province</option>
+                        <option value="Northern Province">Northern Province</option>
+                        <option value="Southern Province">Southern Province</option>
+                        <option value="Western Province">Western Province</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-map-marker-alt"></i> District *</label>
+                    <input type="text" name="district" required placeholder="e.g., Gasabo">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-map-pin"></i> Sector *</label>
+                    <input type="text" name="sector_location" required placeholder="e.g., Remera">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-location-arrow"></i> Cell *</label>
+                    <input type="text" name="cell" required placeholder="e.g., Rukiri">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-home"></i> Village *</label>
+                    <input type="text" name="village" required placeholder="e.g., Nyabisindu">
+                </div>
+            </div>
+            
             <div class="form-group full-width">
                 <label><i class="fas fa-image"></i> School Logo (Optional)</label>
-                <input type="file" name="school_logo" accept="image/*" id="schoolLogoInput">
+                <input type="file" name="school_logo" accept="image/png,image/jpeg,image/jpg" id="schoolLogoInput">
                 <small style="color: #6b7280;">Upload your school logo (PNG, JPG). RTB logo will be added automatically.</small>
             </div>
             
@@ -229,11 +259,17 @@
             let schoolLogoBase64 = '';
             
             if (schoolLogoFile) {
-                schoolLogoBase64 = await new Promise((resolve) => {
-                    const reader = new FileReader();
-                    reader.onload = (e) => resolve(e.target.result);
-                    reader.readAsDataURL(schoolLogoFile);
-                });
+                try {
+                    schoolLogoBase64 = await new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = (e) => resolve(e.target.result);
+                        reader.onerror = (e) => reject(e);
+                        reader.readAsDataURL(schoolLogoFile);
+                    });
+                    console.log('School logo loaded:', schoolLogoBase64.substring(0, 50));
+                } catch (error) {
+                    console.error('Error reading logo file:', error);
+                }
             }
             
             const data = Object.fromEntries(formData);
@@ -244,7 +280,7 @@
             data.school_logo = schoolLogoBase64;
             
             // Validate required fields
-            const requiredFields = ['sector', 'trade', 'rqf_level', 'trainer_name', 'module_code_title', 'term', 'week', 'date', 'number_of_trainees', 'class_name', 'duration', 'topic_of_session', 'learning_outcomes', 'indicative_contents', 'range', 'school_name'];
+            const requiredFields = ['sector', 'trade', 'rqf_level', 'trainer_name', 'module_code_title', 'term', 'week', 'date', 'number_of_trainees', 'class_name', 'duration', 'topic_of_session', 'learning_outcomes', 'indicative_contents', 'range', 'school_name', 'province', 'district', 'sector_location', 'cell', 'village'];
             
             for (const field of requiredFields) {
                 if (!data[field] || data[field].trim() === '') {

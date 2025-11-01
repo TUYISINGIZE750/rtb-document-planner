@@ -105,64 +105,87 @@ def fill_session_plan_official(data):
         doc = Document(template_path)
         logger.info(f"✅ Template loaded, tables: {len(doc.tables)}")
         
-        # Add header with logos and school info
+        # Add header with logos and school info before main table
         try:
-            section = doc.sections[0]
-            header = section.header
-            header_table = header.add_table(rows=1, cols=3, width=Inches(6.5))
+            # Create header table for logos and school info
+            header_table = doc.add_table(rows=2, cols=3)
             header_table.autofit = False
             
-            # Left cell: RTB Logo (default)
+            # Row 1: Logos
+            # Left: RTB Logo
             left_cell = header_table.rows[0].cells[0]
-            left_cell.width = Inches(2.0)
-            rtb_logo_path = os.path.join(os.path.dirname(__file__), 'rtb_logo.png')
-            if os.path.exists(rtb_logo_path):
-                try:
-                    left_para = left_cell.paragraphs[0]
-                    left_run = left_para.add_run()
-                    left_run.add_picture(rtb_logo_path, width=Inches(1.5))
-                except:
-                    left_cell.text = 'RTB'
-                    left_cell.paragraphs[0].runs[0].font.bold = True
-                    left_cell.paragraphs[0].runs[0].font.size = Pt(16)
-            else:
-                left_cell.text = 'RTB'
-                left_para = left_cell.paragraphs[0]
-                left_run = left_para.runs[0] if left_para.runs else left_para.add_run('RTB')
-                left_run.font.bold = True
-                left_run.font.size = Pt(16)
+            left_para = left_cell.paragraphs[0]
+            left_run = left_para.add_run('RWANDA\nTVET BOARD')
+            left_run.font.bold = True
+            left_run.font.size = Pt(12)
+            left_run.font.name = 'Bookman Old Style'
             
-            # Center cell: School Name
+            # Center: School Name and Location
             center_cell = header_table.rows[0].cells[1]
-            center_cell.width = Inches(2.5)
-            school_name = data.get('school_name', '')
             center_para = center_cell.paragraphs[0]
             center_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
-            center_run = center_para.add_run(school_name)
-            center_run.font.bold = True
-            center_run.font.size = Pt(14)
-            center_run.font.name = 'Bookman Old Style'
             
-            # Right cell: School Logo (if uploaded)
+            school_name = data.get('school_name', '')
+            province = data.get('province', '')
+            district = data.get('district', '')
+            sector_loc = data.get('sector_location', '')
+            cell_loc = data.get('cell', '')
+            village = data.get('village', '')
+            
+            # School name
+            name_run = center_para.add_run(school_name + '\n')
+            name_run.font.bold = True
+            name_run.font.size = Pt(14)
+            name_run.font.name = 'Bookman Old Style'
+            
+            # Location info
+            location_text = f"{province} - {district} - {sector_loc} - {cell_loc} - {village}"
+            loc_run = center_para.add_run(location_text)
+            loc_run.font.size = Pt(10)
+            loc_run.font.name = 'Bookman Old Style'
+            
+            # Right: School Logo
             right_cell = header_table.rows[0].cells[2]
-            right_cell.width = Inches(2.0)
+            right_para = right_cell.paragraphs[0]
+            right_para.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+            
             school_logo_base64 = data.get('school_logo', '')
-            if school_logo_base64 and school_logo_base64.startswith('data:image'):
+            if school_logo_base64 and 'base64' in school_logo_base64:
                 try:
-                    logo_data = school_logo_base64.split(',')[1]
+                    if ',' in school_logo_base64:
+                        logo_data = school_logo_base64.split(',')[1]
+                    else:
+                        logo_data = school_logo_base64
+                    
                     logo_bytes = base64.b64decode(logo_data)
                     temp_logo = tempfile.NamedTemporaryFile(delete=False, suffix='.png')
                     temp_logo.write(logo_bytes)
                     temp_logo.close()
-                    right_para = right_cell.paragraphs[0]
-                    right_para.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+                    
                     right_run = right_para.add_run()
-                    right_run.add_picture(temp_logo.name, width=Inches(1.5))
-                    os.remove(temp_logo.name)
+                    right_run.add_picture(temp_logo.name, width=Inches(1.2))
+                    
+                    try:
+                        os.remove(temp_logo.name)
+                    except:
+                        pass
+                    
+                    logger.info('School logo added successfully')
                 except Exception as e:
                     logger.error(f"Error adding school logo: {e}")
+                    right_run = right_para.add_run('SCHOOL\nLOGO')
+                    right_run.font.size = Pt(10)
+            else:
+                right_run = right_para.add_run('SCHOOL\nLOGO')
+                right_run.font.size = Pt(10)
+            
+            # Add spacing after header
+            doc.add_paragraph()
+            
         except Exception as header_error:
             logger.error(f"Error creating header: {header_error}")
+            import traceback
+            logger.error(traceback.format_exc())
         
         if not doc.tables:
             raise Exception("No table found in template")

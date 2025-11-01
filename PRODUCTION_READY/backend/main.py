@@ -79,6 +79,11 @@ class SessionPlan(Base):
     appendix = Column(Text)
     school_name = Column(String(500))
     school_logo = Column(Text)
+    province = Column(String(255))
+    district = Column(String(255))
+    sector_location = Column(String(255))
+    cell = Column(String(255))
+    village = Column(String(255))
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 class SchemeOfWork(Base):
@@ -325,7 +330,12 @@ def generate_session_plan():
                 range=data.get('range'),
                 appendix=data.get('appendix'),
                 school_name=data.get('school_name'),
-                school_logo=data.get('school_logo')
+                school_logo=data.get('school_logo'),
+                province=data.get('province'),
+                district=data.get('district'),
+                sector_location=data.get('sector_location'),
+                cell=data.get('cell'),
+                village=data.get('village')
             )
 
             db.add(session_plan)
@@ -385,7 +395,12 @@ def download_session_plan(plan_id):
             'range': session_plan.range or '',
             'appendix': session_plan.appendix or '',
             'school_name': session_plan.school_name or '',
-            'school_logo': session_plan.school_logo or ''
+            'school_logo': session_plan.school_logo or '',
+            'province': session_plan.province or '',
+            'district': session_plan.district or '',
+            'sector_location': session_plan.sector_location or '',
+            'cell': session_plan.cell or '',
+            'village': session_plan.village or ''
         }
 
         logger.info(f"📄 Generating document for plan ID: {session_plan.id}")
