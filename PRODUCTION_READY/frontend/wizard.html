@@ -140,6 +140,17 @@
                 <textarea name="appendix" rows="2" placeholder="e.g., PPT slides, Task sheets, Assessment rubrics"></textarea>
             </div>
             
+            <div class="form-group full-width">
+                <label><i class="fas fa-school"></i> School Name *</label>
+                <input type="text" name="school_name" required placeholder="e.g., IPRC Kigali">
+            </div>
+            
+            <div class="form-group full-width">
+                <label><i class="fas fa-image"></i> School Logo (Optional)</label>
+                <input type="file" name="school_logo" accept="image/*" id="schoolLogoInput">
+                <small style="color: #6b7280;">Upload your school logo (PNG, JPG). RTB logo will be added automatically.</small>
+            </div>
+            
             <div style="text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 2px solid #e5e7eb;">
                 <button type="button" onclick="goBack()" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i> Back to Home
@@ -212,14 +223,28 @@
             }
 
             const formData = new FormData(e.target);
+            
+            // Handle school logo upload
+            const schoolLogoFile = document.getElementById('schoolLogoInput').files[0];
+            let schoolLogoBase64 = '';
+            
+            if (schoolLogoFile) {
+                schoolLogoBase64 = await new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => resolve(e.target.result);
+                    reader.readAsDataURL(schoolLogoFile);
+                });
+            }
+            
             const data = Object.fromEntries(formData);
             
-            // Add user phone and level to data
+            // Add user phone, level, and logo
             data.user_phone = currentUser.phone;
             data.level = data.rqf_level;
+            data.school_logo = schoolLogoBase64;
             
             // Validate required fields
-            const requiredFields = ['sector', 'trade', 'rqf_level', 'trainer_name', 'module_code_title', 'term', 'week', 'date', 'number_of_trainees', 'class_name', 'duration', 'topic_of_session', 'learning_outcomes', 'indicative_contents', 'range'];
+            const requiredFields = ['sector', 'trade', 'rqf_level', 'trainer_name', 'module_code_title', 'term', 'week', 'date', 'number_of_trainees', 'class_name', 'duration', 'topic_of_session', 'learning_outcomes', 'indicative_contents', 'range', 'school_name'];
             
             for (const field of requiredFields) {
                 if (!data[field] || data[field].trim() === '') {

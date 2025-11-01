@@ -77,6 +77,8 @@ class SessionPlan(Base):
     references = Column(Text)
     range = Column(Text)
     appendix = Column(Text)
+    school_name = Column(String(500))
+    school_logo = Column(Text)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 class SchemeOfWork(Base):
@@ -321,7 +323,9 @@ def generate_session_plan():
                 assessment_details=data.get('assessment_details'),
                 references=data.get('references'),
                 range=data.get('range'),
-                appendix=data.get('appendix')
+                appendix=data.get('appendix'),
+                school_name=data.get('school_name'),
+                school_logo=data.get('school_logo')
             )
 
             db.add(session_plan)
@@ -379,7 +383,9 @@ def download_session_plan(plan_id):
             'assessment_details': session_plan.assessment_details or '',
             'references': session_plan.references or '',
             'range': session_plan.range or '',
-            'appendix': session_plan.appendix or ''
+            'appendix': session_plan.appendix or '',
+            'school_name': session_plan.school_name or '',
+            'school_logo': session_plan.school_logo or ''
         }
 
         logger.info(f"📄 Generating document for plan ID: {session_plan.id}")
