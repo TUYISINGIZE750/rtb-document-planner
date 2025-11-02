@@ -29,14 +29,13 @@
             justify-content: space-between;
             align-items: center;
             z-index: 1000;
-            background: linear-gradient(180deg, rgba(0,0,0,0.7) 0%, transparent 100%);
+            background: transparent;
             transition: background 0.3s;
         }
 
         .header.scrolled {
             background: rgba(255,255,255,0.98);
             backdrop-filter: blur(10px);
-            box-shadow: 0 1px 0 rgba(0,0,0,0.05);
         }
 
         .logo {
@@ -439,6 +438,154 @@
             }
         }
 
+        /* Developer Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            animation: fadeIn 0.3s;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 1rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideUp 0.3s;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 2rem;
+            border-radius: 1rem 1rem 0 0;
+            text-align: center;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .modal-close:hover {
+            background: rgba(255,255,255,0.3);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .dev-avatar {
+            width: 120px;
+            height: 120px;
+            background: white;
+            border-radius: 50%;
+            margin: -60px auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .dev-info h3 {
+            font-size: 1.75rem;
+            color: #141414;
+            margin-bottom: 0.5rem;
+        }
+
+        .dev-info p {
+            color: #6b7280;
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+
+        .dev-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .skill-tag {
+            background: #f0fdf4;
+            color: #10b981;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .dev-contact {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: #f9fafb;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            color: #141414;
+            transition: all 0.3s;
+        }
+
+        .contact-item:hover {
+            background: #f0fdf4;
+            transform: translateX(5px);
+        }
+
+        .contact-icon {
+            width: 40px;
+            height: 40px;
+            background: #10b981;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
         /* Smooth Scroll */
         html {
             scroll-behavior: smooth;
@@ -450,8 +597,9 @@
     <header class="header" id="header">
         <div class="logo">RTB Planner</div>
         <div class="nav-buttons">
-            <a href="login.html" class="btn-nav btn-login">Sign In</a>
-            <a href="register.html" class="btn-nav btn-register">Get Started</a>
+            <a href="register.html" class="btn-nav btn-register">Create Account</a>
+            <a href="login.html" class="btn-nav btn-login">Login</a>
+            <button onclick="openDeveloperModal()" class="btn-nav btn-login" style="background: transparent; border: 1px solid currentColor;">About Developer</button>
         </div>
     </header>
 
@@ -465,32 +613,7 @@
                     <span>Start Creating</span>
                     <span>→</span>
                 </a>
-                <a href="#features" class="btn-hero btn-secondary">Learn More</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="features" id="features">
-        <div class="section-header">
-            <h2>Everything You Need</h2>
-            <p>Professional tools designed specifically for TVET educators</p>
-        </div>
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon">✓</div>
-                <h3>RTB Compliant</h3>
-                <p>All documents follow official Rwanda Technical Board standards and formatting</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">⚡</div>
-                <h3>Instant Generation</h3>
-                <p>Create professional documents in minutes with our guided wizards</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">📱</div>
-                <h3>Works Everywhere</h3>
-                <p>Access from any device - desktop, tablet, or smartphone</p>
+                <a href="#services" class="btn-hero btn-secondary">Our Services</a>
             </div>
         </div>
     </section>
@@ -527,15 +650,59 @@
         </div>
     </section>
 
-    <!-- CTA Section -->
-    <section class="cta">
-        <h2>Ready to Get Started?</h2>
-        <p>Join TVET educators using RTB Document Planner to create professional documents</p>
-        <a href="register.html" class="btn-cta">
-            <span>Create Free Account</span>
-            <span>→</span>
-        </a>
-    </section>
+    <!-- Developer Modal -->
+    <div class="modal" id="developerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="modal-close" onclick="closeDeveloperModal()">×</button>
+                <div class="dev-avatar">👨‍💻</div>
+                <h2>Meet the Developer</h2>
+            </div>
+            <div class="modal-body">
+                <div class="dev-info">
+                    <h3>TUYISINGIZE Leonardus</h3>
+                    <p><strong>Full-Stack Developer & TVET Specialist</strong></p>
+                    <p>Passionate about creating innovative solutions for education technology. Specialized in building professional tools that empower TVET educators across Rwanda.</p>
+                    
+                    <div class="dev-skills">
+                        <span class="skill-tag">Python</span>
+                        <span class="skill-tag">JavaScript</span>
+                        <span class="skill-tag">Flask</span>
+                        <span class="skill-tag">React</span>
+                        <span class="skill-tag">SQL</span>
+                        <span class="skill-tag">UI/UX Design</span>
+                    </div>
+
+                    <p><strong>About This Project:</strong></p>
+                    <p>RTB Document Planner was developed to streamline the document creation process for TVET educators, ensuring compliance with Rwanda Technical Board standards while saving valuable time.</p>
+                </div>
+
+                <div class="dev-contact">
+                    <a href="tel:+250789751597" class="contact-item">
+                        <div class="contact-icon">📞</div>
+                        <div>
+                            <strong>Phone</strong><br>
+                            <span>+250 789 751 597</span>
+                        </div>
+                    </a>
+                    <a href="mailto:tuyisingize750@gmail.com" class="contact-item">
+                        <div class="contact-icon">✉️</div>
+                        <div>
+                            <strong>Email</strong><br>
+                            <span>tuyisingize750@gmail.com</span>
+                        </div>
+                    </a>
+                    <a href="https://github.com/TUYISINGIZE750" target="_blank" class="contact-item">
+                        <div class="contact-icon">👨‍💻</div>
+                        <div>
+                            <strong>GitHub</strong><br>
+                            <span>@TUYISINGIZE750</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer class="footer">
@@ -581,6 +748,31 @@
         }
 
         document.addEventListener('DOMContentLoaded', checkExistingSession);
+
+        // Developer Modal Functions
+        function openDeveloperModal() {
+            document.getElementById('developerModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDeveloperModal() {
+            document.getElementById('developerModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal on outside click
+        document.getElementById('developerModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDeveloperModal();
+            }
+        });
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeDeveloperModal();
+            }
+        });
     </script>
 </body>
 </html>
