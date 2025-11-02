@@ -9,45 +9,33 @@ import hashlib
 import tempfile
 import os
 import logging
+from io import BytesIO
 
-from document_generator import generate_session_plan_docx, generate_scheme_of_work_docx, generate_session_plan_pdf, generate_scheme_of_work_pdf
+from document_generator import (
+    generate_session_plan_docx,
+    generate_scheme_of_work_docx
+)
+from ai_content_generator import generate_session_plan_content
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
-CORS(app, 
-     origins=[
-         "https://tuyisingize750.github.io",
-         "https://tuyisingize750.github.io/rtb-document-planner",
-         "https://schemesession.netlify.app",
-         "http://localhost:5173",
-         "http://localhost:8000"
-     ],
-     methods=["GET", "POST", "OPTIONS", "PUT"],
-     allow_headers=["Content-Type", "Authorization"],
-     supports_credentials=False)
+CORS(app, origins=["*"])
 
-@app.after_request
-def after_request(response):
-    origin = request.headers.get('Origin')
-    allowed_origins = [
-        "https://tuyisingize750.github.io",
-        "https://tuyisingize750.github.io/rtb-document-planner", 
-        "https://schemesession.netlify.app",
-        "http://localhost:5173",
-        "http://localhost:8000"
-    ]
-    if origin in allowed_origins:
-        response.headers.add('Access-Control-Allow-Origin', origin)
-    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-    response.headers.add('Access-Control-Allow-Methods', 'GET,POST,OPTIONS,PUT')
-    return response
+# Use PostgreSQL in production, SQLite for local development
+DATABASE_URL = os.environ.get('DATABASE_URL', 'sqlite:///./rtb_planner.db')
 
-# Database setup
-DATABASE_URL = "sqlite:///./rtb_planner.db"
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+# Fix for Render PostgreSQL URL (postgres:// -> postgresql://)
+if DATABASE_URL.startswith('postgres://'):
+    DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
+
+# Create engine with appropriate settings
+if DATABASE_URL.startswith('postgresql://'):
+    engine = create_engine(DATABASE_URL)
+else:
+    engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
@@ -97,6 +85,15 @@ class SessionPlan(Base):
     resources = Column(Text)
     assessment_details = Column(Text)
     references = Column(Text)
+    range = Column(Text)
+    appendix = Column(Text)
+    school_name = Column(String(500))
+    school_logo = Column(Text)
+    province = Column(String(255))
+    district = Column(String(255))
+    sector_location = Column(String(255))
+    cell = Column(String(255))
+    village = Column(String(255))
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 class SchemeOfWork(Base):
@@ -121,14 +118,17 @@ class SchemeOfWork(Base):
     term1_learning_outcomes = Column(Text)
     term1_indicative_contents = Column(Text)
     term1_duration = Column(Text)
+    term1_learning_place = Column(Text)
     term2_weeks = Column(Text)
     term2_learning_outcomes = Column(Text)
     term2_indicative_contents = Column(Text)
     term2_duration = Column(Text)
+    term2_learning_place = Column(Text)
     term3_weeks = Column(Text)
     term3_learning_outcomes = Column(Text)
     term3_indicative_contents = Column(Text)
     term3_duration = Column(Text)
+    term3_learning_place = Column(Text)
     dos_name = Column(String(255))
     manager_name = Column(String(255))
     created_at = Column(DateTime(timezone=True), server_default=func.now())
@@ -182,7 +182,7 @@ init_admin()
 def home():
     if request.method == 'OPTIONS':
         return '', 204
-    
+
     try:
         db = SessionLocal()
         try:
@@ -191,37 +191,92 @@ def home():
             db.close()
     except:
         users_count = 0
-    
+
     return jsonify({
         "message": "RTB Document Planner API",
         "status": "online",
         "cors": "enabled",
         "environment": "production",
-        "version": "2.0",
-        "features": ["authentication", "docx_generation", "pdf_generation"],
+        "version": "2.5",
+        "deployment": "SCHEME_FIX_DEPLOYED",
+        "features": ["authentication", "docx_generation", "ai_content"],
         "users_count": users_count
     })
+
+@app.route('/test-scheme', methods=['GET', 'OPTIONS'])
+def test_scheme():
+    """Test endpoint to verify scheme generation works"""
+    if request.method == 'OPTIONS':
+        return '', 204
+    
+    try:
+        test_data = {
+            'province': 'Kigali City',
+            'district': 'Gasabo',
+            'sector': 'ICT',
+            'school': 'Test School',
+            'trainer_name': 'Test Trainer',
+            'department_trade': 'ICT',
+            'module_code_title': 'TEST101',
+            'school_year': '2024-2025',
+            'module_hours': '120',
+            'qualification_title': 'Test Qualification',
+            'terms': 'Term 1',
+            'rqf_level': 'Level 5',
+            'number_of_classes': '1',
+            'class_name': 'Test Class',
+            'term1_weeks': '1-4',
+            'term1_learning_outcomes': 'LO1: Test outcome 1\nLO2: Test outcome 2',
+            'term1_indicative_contents': 'IC1: Test content 1\nIC2: Test content 2',
+            'term1_duration': '40 hours',
+            'term1_learning_place': 'Lab'
+        }
+        
+        logger.info("Testing scheme generation...")
+        file_path = generate_scheme_of_work_docx(test_data)
+        
+        if file_path and os.path.exists(file_path):
+            file_size = os.path.getsize(file_path)
+            os.remove(file_path)
+            return jsonify({
+                "status": "success",
+                "message": "Scheme generation working",
+                "file_size": file_size
+            }), 200
+        else:
+            return jsonify({
+                "status": "error",
+                "message": "File not generated"
+            }), 500
+    except Exception as e:
+        logger.error(f"Test scheme error: {str(e)}")
+        import traceback
+        return jsonify({
+            "status": "error",
+            "message": str(e),
+            "traceback": traceback.format_exc()
+        }), 500
 
 @app.route('/users/register', methods=['POST', 'OPTIONS'])
 def register():
     if request.method == 'OPTIONS':
         return '', 204
-    
+
     try:
         data = request.get_json()
         phone = data.get('phone')
         password = data.get('password')
         name = data.get('name')
-        
+
         if not all([phone, password, name]):
             return jsonify({"detail": "Phone, password, and name are required"}), 400
-        
+
         db = SessionLocal()
         try:
             existing_user = db.query(User).filter(User.phone == phone).first()
             if existing_user:
                 return jsonify({"detail": "Phone number already registered"}), 400
-            
+
             user = User(
                 user_id=f"USER_{datetime.now().strftime('%Y%m%d%H%M%S')}",
                 name=name,
@@ -230,7 +285,7 @@ def register():
                 institution=data.get('institution', ''),
                 password=hash_password(password)
             )
-            
+
             db.add(user)
             db.commit()
             return jsonify({"message": "User registered successfully"}), 201
@@ -243,25 +298,25 @@ def register():
 def login():
     if request.method == 'OPTIONS':
         return '', 204
-    
+
     try:
         data = request.get_json()
         phone = data.get('phone')
         password = data.get('password')
-        
+
         if not all([phone, password]):
             return jsonify({"detail": "Phone and password are required"}), 400
-        
+
         db = SessionLocal()
         try:
             user = db.query(User).filter(User.phone == phone).first()
-            
+
             if not user or not verify_password(password, user.password):
                 return jsonify({"detail": "Invalid credentials"}), 401
-            
+
             if not user.is_active:
                 return jsonify({"detail": "Account not activated"}), 403
-            
+
             return jsonify({
                 "message": "Login successful",
                 "user": {
@@ -287,32 +342,38 @@ def login():
 def generate_session_plan():
     if request.method == 'OPTIONS':
         return '', 204
-    
+
     try:
         data = request.get_json()
         user_phone = data.get('user_phone')
         format_type = data.get('format', 'docx')
-        
+
         if not user_phone:
             return jsonify({"detail": "User phone required"}), 400
-        
+
         db = SessionLocal()
         try:
             user = db.query(User).filter(User.phone == user_phone).first()
             if not user:
                 return jsonify({"detail": "User not found"}), 404
-            
+
             if not user.is_premium and user.session_plans_downloaded >= user.session_plans_limit:
                 return jsonify({"detail": "Download limit reached. Please upgrade to premium."}), 403
-            
-            # Save session plan
+
+            logger.info(f"🤖 Generating AI content for topic: {data.get('topic_of_session')}")
+            data = generate_session_plan_content(data)
+            logger.info(f"✅ AI returned - Objectives: {len(data.get('objectives', ''))} chars")
+            logger.info(f"✅ Activities: {len(data.get('learning_activities', ''))} chars")
+            logger.info(f"✅ Assessment: {len(data.get('assessment_details', ''))} chars")
+            logger.info(f"✅ References: {len(data.get('references', ''))} chars")
+
             session_plan = SessionPlan(
                 user_phone=user_phone,
                 sector=data.get('sector'),
                 sub_sector=data.get('sub_sector'),
                 trade=data.get('trade'),
                 qualification_title=data.get('qualification_title'),
-                rqf_level=data.get('rqf_level'),
+                rqf_level=data.get('rqf_level') or data.get('level'),
                 module_code_title=data.get('module_code_title'),
                 term=data.get('term'),
                 week=data.get('week'),
@@ -329,17 +390,24 @@ def generate_session_plan():
                 learning_activities=data.get('learning_activities'),
                 resources=data.get('resources'),
                 assessment_details=data.get('assessment_details'),
-                references=data.get('references')
+                references=data.get('references'),
+                range=data.get('range'),
+                appendix=data.get('appendix'),
+                school_name=data.get('school_name'),
+                school_logo=data.get('school_logo'),
+                province=data.get('province'),
+                district=data.get('district'),
+                sector_location=data.get('sector_location'),
+                cell=data.get('cell'),
+                village=data.get('village')
             )
-            
+
             db.add(session_plan)
-            
-            # Update download count first
+
             if not user.is_premium:
                 user.session_plans_downloaded += 1
             db.commit()
-            
-            # Return session plan ID for download
+
             return jsonify({"id": session_plan.id, "message": "Session plan created successfully"}), 201
         finally:
             db.close()
@@ -350,75 +418,123 @@ def generate_session_plan():
 def download_session_plan(plan_id):
     if request.method == 'OPTIONS':
         return '', 204
-    
-    try:
-        phone = request.args.get('phone')
-        if not phone:
-            return jsonify({"detail": "Phone parameter required"}), 400
-        
-        db = SessionLocal()
-        try:
-            session_plan = db.query(SessionPlan).filter(SessionPlan.id == plan_id).first()
-            if not session_plan:
-                return jsonify({"detail": "Session plan not found"}), 404
-            
-            user = db.query(User).filter(User.phone == phone).first()
-            if not user:
-                return jsonify({"detail": "User not found"}), 404
-            
-            # Convert session plan to dict for document generation
-            data = {
-                'sector': session_plan.sector,
-                'sub_sector': session_plan.sub_sector,
-                'trade': session_plan.trade,
-                'qualification_title': session_plan.qualification_title,
-                'rqf_level': session_plan.rqf_level,
-                'module_code_title': session_plan.module_code_title,
-                'term': session_plan.term,
-                'week': session_plan.week,
-                'date': session_plan.date,
-                'trainer_name': session_plan.trainer_name,
-                'class_name': session_plan.class_name,
-                'number_of_trainees': session_plan.number_of_trainees,
-                'learning_outcomes': session_plan.learning_outcomes,
-                'indicative_contents': session_plan.indicative_contents,
-                'topic_of_session': session_plan.topic_of_session,
-                'duration': session_plan.duration,
-                'objectives': session_plan.objectives,
-                'facilitation_techniques': session_plan.facilitation_techniques,
-                'learning_activities': session_plan.learning_activities,
-                'resources': session_plan.resources,
-                'assessment_details': session_plan.assessment_details,
-                'references': session_plan.references
-            }
-            
-            # Generate document
-            file_path = generate_session_plan_docx(data)
-            filename = f"RTB_Session_Plan_{plan_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.docx"
-            
-            return send_file(
-                file_path,
-                as_attachment=True,
-                download_name=filename,
-                mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-            )
-        finally:
-            db.close()
-    except Exception as e:
-        return jsonify({"detail": "Download failed"}), 500
 
-@app.route('/user-limits/<phone>', methods=['GET', 'OPTIONS'])
+    phone = request.args.get('phone')
+    if not phone:
+        return jsonify({"detail": "Phone parameter required"}), 400
+
+    db = SessionLocal()
+    try:
+        session_plan = db.query(SessionPlan).filter(SessionPlan.id == plan_id).first()
+        if not session_plan:
+            return jsonify({"detail": "Session plan not found"}), 404
+
+        user = db.query(User).filter(User.phone == phone).first()
+        if not user:
+            return jsonify({"detail": "User not found"}), 404
+
+        data = {
+            'sector': session_plan.sector or '',
+            'sub_sector': session_plan.sub_sector or '',
+            'trade': session_plan.trade or '',
+            'qualification_title': session_plan.qualification_title or '',
+            'level': session_plan.rqf_level or '',
+            'module_code_title': session_plan.module_code_title or '',
+            'term': session_plan.term or '',
+            'week': session_plan.week or '',
+            'date': session_plan.date or '',
+            'trainer_name': session_plan.trainer_name or '',
+            'class_name': session_plan.class_name or '',
+            'number_of_trainees': session_plan.number_of_trainees or '',
+            'learning_outcomes': session_plan.learning_outcomes or '',
+            'indicative_contents': session_plan.indicative_contents or '',
+            'topic_of_session': session_plan.topic_of_session or '',
+            'duration': session_plan.duration or '',
+            'objectives': session_plan.objectives or '',
+            'facilitation_techniques': session_plan.facilitation_techniques or '',
+            'learning_activities': session_plan.learning_activities or '',
+            'resources': session_plan.resources or '',
+            'assessment_details': session_plan.assessment_details or '',
+            'references': session_plan.references or '',
+            'range': session_plan.range or '',
+            'appendix': session_plan.appendix or '',
+            'school_name': session_plan.school_name or '',
+            'school_logo': session_plan.school_logo or '',
+            'school_year': '2024-2025',
+            'province': session_plan.province or '',
+            'district': session_plan.district or '',
+            'sector_location': session_plan.sector_location or '',
+            'cell': session_plan.cell or '',
+            'village': session_plan.village or ''
+        }
+
+        logger.info(f"📄 Generating document for plan ID: {session_plan.id}")
+        
+        file_path = generate_session_plan_docx(data)
+        
+        if not file_path:
+            logger.error(f"❌ generate_session_plan_docx returned None")
+            return jsonify({"detail": "Document generation failed"}), 500
+            
+        logger.info(f"✅ Document generated at: {file_path}")
+        
+        if not os.path.exists(file_path):
+            logger.error(f'❌ Generated file does not exist: {file_path}')
+            return jsonify({"detail": "Generated file not found"}), 500
+
+        filename = f"RTB_Session_Plan_{plan_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.docx"
+
+        with open(file_path, 'rb') as f:
+            file_data = f.read()
+
+        try:
+            os.remove(file_path)
+        except:
+            pass
+
+        try:
+            return send_file(
+                BytesIO(file_data),
+                mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                as_attachment=True,
+                download_name=filename
+            )
+        except TypeError:
+            return send_file(
+                BytesIO(file_data),
+                mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                as_attachment=True,
+                attachment_filename=filename
+            )
+    except Exception as e:
+        logger.error(f'Session plan download error: {str(e)}')
+        import traceback
+        logger.error(traceback.format_exc())
+        return jsonify({"detail": f"Download failed: {str(e)}"}), 500
+    finally:
+        db.close()
+
+
+
+
+
+@app.route('/user-limits/<path:phone>', methods=['GET', 'OPTIONS'])
 def get_user_limits(phone):
     if request.method == 'OPTIONS':
         return '', 204
-    
+
     try:
+        from urllib.parse import unquote
+        phone = unquote(phone)
+        logger.info(f"Getting limits for phone: {phone}")
+        
         db = SessionLocal()
         try:
             user = db.query(User).filter(User.phone == phone).first()
             if not user:
-                return jsonify({"detail": "User not found"}), 404
-            
+                logger.warning(f"User not found for phone: {phone}")
+                return jsonify({"detail": "User not found", "phone": phone}), 404
+
             return jsonify({
                 "is_premium": user.is_premium,
                 "session_plans_limit": user.session_plans_limit,
@@ -431,32 +547,32 @@ def get_user_limits(phone):
         finally:
             db.close()
     except Exception as e:
-        return jsonify({"detail": "Failed to get limits"}), 500
+        logger.error(f"Error getting limits: {str(e)}")
+        return jsonify({"detail": f"Failed to get limits: {str(e)}"}), 500
 
 @app.route('/schemes/generate', methods=['POST', 'OPTIONS'])
 @app.route('/schemes', methods=['POST', 'OPTIONS'])
 def generate_scheme():
     if request.method == 'OPTIONS':
         return '', 204
-    
+
     try:
         data = request.get_json()
         user_phone = data.get('user_phone')
         format_type = data.get('format', 'docx')
-        
+
         if not user_phone:
             return jsonify({"detail": "User phone required"}), 400
-        
+
         db = SessionLocal()
         try:
             user = db.query(User).filter(User.phone == user_phone).first()
             if not user:
                 return jsonify({"detail": "User not found"}), 404
-            
+
             if not user.is_premium and user.schemes_downloaded >= user.schemes_limit:
                 return jsonify({"detail": "Download limit reached. Please upgrade to premium."}), 403
-            
-            # Save scheme
+
             scheme = SchemeOfWork(
                 user_phone=user_phone,
                 province=data.get('province'),
@@ -477,26 +593,27 @@ def generate_scheme():
                 term1_learning_outcomes=data.get('term1_learning_outcomes'),
                 term1_indicative_contents=data.get('term1_indicative_contents'),
                 term1_duration=data.get('term1_duration'),
+                term1_learning_place=data.get('term1_learning_place'),
                 term2_weeks=data.get('term2_weeks'),
                 term2_learning_outcomes=data.get('term2_learning_outcomes'),
                 term2_indicative_contents=data.get('term2_indicative_contents'),
                 term2_duration=data.get('term2_duration'),
+                term2_learning_place=data.get('term2_learning_place'),
                 term3_weeks=data.get('term3_weeks'),
                 term3_learning_outcomes=data.get('term3_learning_outcomes'),
                 term3_indicative_contents=data.get('term3_indicative_contents'),
                 term3_duration=data.get('term3_duration'),
+                term3_learning_place=data.get('term3_learning_place'),
                 dos_name=data.get('dos_name'),
                 manager_name=data.get('manager_name')
             )
-            
+
             db.add(scheme)
-            
-            # Update download count first
+
             if not user.is_premium:
                 user.schemes_downloaded += 1
             db.commit()
-            
-            # Return scheme ID for download
+
             return jsonify({"id": scheme.id, "message": "Scheme of work created successfully"}), 201
         finally:
             db.close()
@@ -506,24 +623,27 @@ def generate_scheme():
 @app.route('/schemes-of-work/<int:scheme_id>/download', methods=['GET', 'OPTIONS'])
 def download_scheme_of_work(scheme_id):
     if request.method == 'OPTIONS':
-        return '', 204
-    
+        response = jsonify({})
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+        response.headers.add('Access-Control-Allow-Methods', 'GET, OPTIONS')
+        return response, 204
+
     try:
         phone = request.args.get('phone')
         if not phone:
             return jsonify({"detail": "Phone parameter required"}), 400
-        
+
         db = SessionLocal()
         try:
             scheme = db.query(SchemeOfWork).filter(SchemeOfWork.id == scheme_id).first()
             if not scheme:
                 return jsonify({"detail": "Scheme of work not found"}), 404
-            
+
             user = db.query(User).filter(User.phone == phone).first()
             if not user:
                 return jsonify({"detail": "User not found"}), 404
-            
-            # Convert scheme to dict for document generation
+
             data = {
                 'province': scheme.province,
                 'district': scheme.district,
@@ -543,39 +663,92 @@ def download_scheme_of_work(scheme_id):
                 'term1_learning_outcomes': scheme.term1_learning_outcomes,
                 'term1_indicative_contents': scheme.term1_indicative_contents,
                 'term1_duration': scheme.term1_duration,
+                'term1_learning_place': scheme.term1_learning_place,
                 'term2_weeks': scheme.term2_weeks,
                 'term2_learning_outcomes': scheme.term2_learning_outcomes,
                 'term2_indicative_contents': scheme.term2_indicative_contents,
                 'term2_duration': scheme.term2_duration,
+                'term2_learning_place': scheme.term2_learning_place,
                 'term3_weeks': scheme.term3_weeks,
                 'term3_learning_outcomes': scheme.term3_learning_outcomes,
                 'term3_indicative_contents': scheme.term3_indicative_contents,
                 'term3_duration': scheme.term3_duration,
+                'term3_learning_place': scheme.term3_learning_place,
                 'dos_name': scheme.dos_name,
                 'manager_name': scheme.manager_name
             }
+
+            logger.info(f'📄 Generating scheme document for ID: {scheme_id}')
+            logger.info(f'📊 Data keys: {list(data.keys())}')
             
-            # Generate document
             file_path = generate_scheme_of_work_docx(data)
-            filename = f"RTB_Scheme_of_Work_{scheme_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.docx"
             
-            return send_file(
-                file_path,
-                as_attachment=True,
-                download_name=filename,
-                mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-            )
+            logger.info(f'📄 Generated file path: {file_path}')
+            
+            if not file_path:
+                logger.error(f'❌ generate_scheme_of_work_docx returned None')
+                return jsonify({"detail": "Document generation returned no file"}), 500
+                
+            if not os.path.exists(file_path):
+                logger.error(f'❌ Generated file does not exist: {file_path}')
+                return jsonify({"detail": "Generated file not found"}), 500
+
+            filename = f"RTB_Scheme_of_Work_{scheme_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.docx"
+            logger.info(f'Sending file: {file_path} as {filename}')
+
+            try:
+                with open(file_path, 'rb') as f:
+                    file_data = f.read()
+
+                try:
+                    response = send_file(
+                        BytesIO(file_data),
+                        mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                        as_attachment=True,
+                        download_name=filename
+                    )
+                except TypeError:
+                    response = send_file(
+                        BytesIO(file_data),
+                        mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                        as_attachment=True,
+                        attachment_filename=filename
+                    )
+                
+                # Add CORS and download headers
+                response.headers['Access-Control-Allow-Origin'] = '*'
+                response.headers['Access-Control-Expose-Headers'] = 'Content-Disposition'
+                response.headers['Content-Disposition'] = f'attachment; filename="{filename}"'
+                response.headers['Content-Type'] = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                return response
+            except Exception as send_error:
+                logger.error(f'Error sending file: {str(send_error)}')
+                return jsonify({"detail": f"Download failed: {str(send_error)}"}), 500
+            finally:
+                try:
+                    if file_path and os.path.exists(file_path):
+                        os.remove(file_path)
+                        logger.info(f'Cleaned up temp file: {file_path}')
+                except Exception as cleanup_error:
+                    logger.warning(f'Could not clean up temp file: {str(cleanup_error)}')
         finally:
             db.close()
     except Exception as e:
-        return jsonify({"detail": "Download failed"}), 500
+        logger.error(f'Scheme download error: {str(e)}')
+        import traceback
+        logger.error(traceback.format_exc())
+        return jsonify({"detail": f"Download failed: {str(e)}"}), 500
+
+
+
+
 
 @app.route('/users/', methods=['GET', 'OPTIONS'])
 @app.route('/admin/users', methods=['GET', 'OPTIONS'])
 def get_all_users():
     if request.method == 'OPTIONS':
         return '', 204
-    
+
     try:
         db = SessionLocal()
         try:
@@ -596,8 +769,7 @@ def get_all_users():
                 "schemes_downloaded": user.schemes_downloaded,
                 "created_at": user.created_at.isoformat() if user.created_at else None
             } for user in users]
-            
-            # Return array directly for admin-clean.html compatibility
+
             return jsonify(users_list), 200
         finally:
             db.close()
@@ -609,14 +781,14 @@ def get_all_users():
 def activate_user(user_id):
     if request.method == 'OPTIONS':
         return '', 204
-    
+
     try:
         db = SessionLocal()
         try:
             user = db.query(User).filter(User.id == user_id).first()
             if not user:
                 return jsonify({"detail": "User not found"}), 404
-            
+
             user.is_active = True
             db.commit()
             return jsonify({"message": "User activated successfully"}), 200
@@ -629,14 +801,14 @@ def activate_user(user_id):
 def deactivate_user(user_id):
     if request.method == 'OPTIONS':
         return '', 204
-    
+
     try:
         db = SessionLocal()
         try:
             user = db.query(User).filter(User.id == user_id).first()
             if not user:
                 return jsonify({"detail": "User not found"}), 404
-            
+
             user.is_active = False
             db.commit()
             return jsonify({"message": "User deactivated successfully"}), 200
@@ -649,7 +821,7 @@ def deactivate_user(user_id):
 def upgrade_user(user_id):
     if request.method == 'OPTIONS':
         return '', 204
-    
+
     try:
         data = request.get_json() or {}
         db = SessionLocal()
@@ -657,7 +829,7 @@ def upgrade_user(user_id):
             user = db.query(User).filter(User.id == user_id).first()
             if not user:
                 return jsonify({"detail": "User not found"}), 404
-            
+
             user.is_premium = True
             user.session_plans_limit = 999
             user.schemes_limit = 999
@@ -672,14 +844,14 @@ def upgrade_user(user_id):
 def downgrade_user(user_id):
     if request.method == 'OPTIONS':
         return '', 204
-    
+
     try:
         db = SessionLocal()
         try:
             user = db.query(User).filter(User.id == user_id).first()
             if not user:
                 return jsonify({"detail": "User not found"}), 404
-            
+
             user.is_premium = False
             user.session_plans_limit = 2
             user.schemes_limit = 2
@@ -694,18 +866,18 @@ def downgrade_user(user_id):
 def get_stats():
     if request.method == 'OPTIONS':
         return '', 204
-    
+
     try:
         db = SessionLocal()
         try:
             total_users = db.query(User).count()
             premium_users = db.query(User).filter(User.is_premium == True).count()
             active_users = db.query(User).filter(User.is_active == True).count()
-            
+
             total_session_downloads = db.query(func.sum(User.session_plans_downloaded)).scalar() or 0
             total_scheme_downloads = db.query(func.sum(User.schemes_downloaded)).scalar() or 0
             total_downloads = total_session_downloads + total_scheme_downloads
-            
+
             return jsonify({
                 "total_users": total_users,
                 "premium_users": premium_users,
@@ -723,23 +895,23 @@ def get_stats():
 def send_notification():
     if request.method == 'OPTIONS':
         return '', 204
-    
+
     try:
         data = request.get_json()
         user_ids = data.get('user_ids', [])
         message = data.get('message', '')
         title = data.get('title', 'Notification')
         notif_type = data.get('type', 'info')
-        
+
         if not user_ids or not message:
             return jsonify({"detail": "User IDs and message required"}), 400
-        
+
         db = SessionLocal()
         try:
             users = db.query(User).filter(User.id.in_(user_ids)).all()
             if not users:
                 return jsonify({"detail": "No valid users found"}), 404
-            
+
             for user in users:
                 notification = Notification(
                     user_id=user.id,
@@ -760,17 +932,17 @@ def send_notification():
 def update_user_status(phone):
     if request.method == 'OPTIONS':
         return '', 204
-    
+
     try:
         data = request.get_json()
         is_active = data.get('is_active')
-        
+
         db = SessionLocal()
         try:
             user = db.query(User).filter(User.phone == phone).first()
             if not user:
                 return jsonify({"detail": "User not found"}), 404
-            
+
             user.is_active = is_active
             db.commit()
             return jsonify({"message": "Status updated"}), 200
@@ -783,17 +955,17 @@ def update_user_status(phone):
 def update_user_premium(phone):
     if request.method == 'OPTIONS':
         return '', 204
-    
+
     try:
         data = request.get_json()
         is_premium = data.get('is_premium')
-        
+
         db = SessionLocal()
         try:
             user = db.query(User).filter(User.phone == phone).first()
             if not user:
                 return jsonify({"detail": "User not found"}), 404
-            
+
             user.is_premium = is_premium
             if is_premium:
                 user.session_plans_limit = 999
@@ -812,16 +984,16 @@ def update_user_premium(phone):
 def update_user(phone):
     if request.method == 'OPTIONS':
         return '', 204
-    
+
     try:
         data = request.get_json()
-        
+
         db = SessionLocal()
         try:
             user = db.query(User).filter(User.phone == phone).first()
             if not user:
                 return jsonify({"detail": "User not found"}), 404
-            
+
             user.name = data.get('name', user.name)
             user.institution = data.get('institution', user.institution)
             user.session_plans_limit = data.get('session_plans_limit', user.session_plans_limit)
@@ -835,11 +1007,40 @@ def update_user(phone):
     except Exception as e:
         return jsonify({"detail": "Failed to update user"}), 500
 
+@app.route('/users/<phone>/notifications', methods=['GET', 'OPTIONS'])
+def get_user_notifications_by_phone(phone):
+    if request.method == 'OPTIONS':
+        return '', 204
+
+    try:
+        db = SessionLocal()
+        try:
+            user = db.query(User).filter(User.phone == phone).first()
+            if not user:
+                return jsonify([]), 200
+
+            notifications = db.query(Notification).filter(Notification.user_id == user.id).order_by(Notification.created_at.desc()).all()
+            return jsonify([
+                {
+                    "id": n.id,
+                    "title": n.title,
+                    "message": n.message,
+                    "type": n.type,
+                    "is_read": n.is_read,
+                    "created_at": n.created_at.isoformat() if n.created_at else None
+                } for n in notifications
+            ]), 200
+        finally:
+            db.close()
+    except Exception as e:
+        logger.error(f"Get notifications error: {e}")
+        return jsonify([]), 200
+
 @app.route('/notifications/user/<int:user_id>', methods=['GET', 'OPTIONS'])
 def get_user_notifications(user_id):
     if request.method == 'OPTIONS':
         return '', 204
-    
+
     try:
         db = SessionLocal()
         try:
@@ -864,7 +1065,7 @@ def get_user_notifications(user_id):
 def mark_notification_read(notification_id):
     if request.method == 'OPTIONS':
         return '', 204
-    
+
     try:
         db = SessionLocal()
         try:
@@ -884,7 +1085,7 @@ def mark_notification_read(notification_id):
 def get_unread_count(user_id):
     if request.method == 'OPTIONS':
         return '', 204
-    
+
     try:
         db = SessionLocal()
         try:
@@ -900,17 +1101,17 @@ def get_unread_count(user_id):
 def broadcast_notification():
     if request.method == 'OPTIONS':
         return '', 204
-    
+
     try:
         data = request.get_json()
         target = data.get('target', 'all')
         message = data.get('message', '')
         title = data.get('title', 'Notification')
         notif_type = data.get('type', 'info')
-        
+
         if not message:
             return jsonify({"detail": "Message required"}), 400
-        
+
         db = SessionLocal()
         try:
             query = db.query(User)
@@ -921,10 +1122,10 @@ def broadcast_notification():
             elif target == 'inactive':
                 query = query.filter(User.is_active == False)
             users = query.all()
-            
+
             if not users:
                 return jsonify({"detail": "No users for selected target"}), 404
-            
+
             for user in users:
                 notification = Notification(
                     user_id=user.id,
@@ -945,23 +1146,23 @@ def broadcast_notification():
 def send_personal_notification():
     if request.method == 'OPTIONS':
         return '', 204
-    
+
     try:
         data = request.get_json()
         recipient = data.get('recipient', '')
         message = data.get('message', '')
         title = data.get('title', 'Message')
         notif_type = data.get('type', 'info')
-        
+
         if not recipient or not message:
             return jsonify({"detail": "Recipient and message required"}), 400
-        
+
         db = SessionLocal()
         try:
             user = db.query(User).filter(User.phone == recipient).first()
             if not user:
                 return jsonify({"detail": "Recipient not found"}), 404
-            
+
             notification = Notification(
                 user_id=user.id,
                 title=title,
@@ -978,4 +1179,5 @@ def send_personal_notification():
         return jsonify({"detail": "Failed to send message"}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 10000))
+    app.run(host='0.0.0.0', port=port, debug=False)
