@@ -80,7 +80,14 @@ def fill_session_plan_official(data):
         except Exception as e:
             logger.error(f"❌ Cannot list RTB Templates: {e}")
     
-    template_path = os.path.join(base_dir, 'RTB Templates', 'RTB Session plan template.docx')
+    # Use edited template from OFFICIALRTBTEMPLATES (no shapes)
+    parent_dir = os.path.dirname(base_dir)
+    template_path = os.path.join(parent_dir, 'OFFICIALRTBTEMPLATES', 'SESSION PLAN TEMPLATES.docx')
+    
+    # Fallback to old template if new one doesn't exist
+    if not os.path.exists(template_path):
+        template_path = os.path.join(base_dir, 'RTB Templates', 'RTB Session plan template.docx')
+        logger.info(f"⚠️ Using fallback template: {template_path}")
     logger.info(f"📂 Full template path: {template_path}")
     logger.info(f"📂 Template exists: {os.path.exists(template_path)}")
     
@@ -105,88 +112,6 @@ def fill_session_plan_official(data):
         doc = Document(template_path)
         logger.info(f"✅ Template loaded, tables: {len(doc.tables)}")
         
-        # Add header with logos and school info at the very beginning
-        try:
-            # Insert header table at position 0 (before everything)
-            header_table = doc.add_table(rows=1, cols=3)
-            header_table.autofit = False
-            
-            # Row 1: Logos
-            # Left: RTB Logo
-            left_cell = header_table.rows[0].cells[0]
-            left_para = left_cell.paragraphs[0]
-            left_run = left_para.add_run('RWANDA\nTVET BOARD')
-            left_run.font.bold = True
-            left_run.font.size = Pt(12)
-            left_run.font.name = 'Bookman Old Style'
-            
-            # Center: School Name and Location
-            center_cell = header_table.rows[0].cells[1]
-            center_para = center_cell.paragraphs[0]
-            center_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
-            
-            school_name = data.get('school_name', '')
-            province = data.get('province', '')
-            district = data.get('district', '')
-            sector_loc = data.get('sector_location', '')
-            cell_loc = data.get('cell', '')
-            village = data.get('village', '')
-            
-            # School name
-            name_run = center_para.add_run(school_name + '\n')
-            name_run.font.bold = True
-            name_run.font.size = Pt(14)
-            name_run.font.name = 'Bookman Old Style'
-            
-            # Location info
-            location_text = f"{province} - {district} - {sector_loc} - {cell_loc} - {village}"
-            loc_run = center_para.add_run(location_text)
-            loc_run.font.size = Pt(10)
-            loc_run.font.name = 'Bookman Old Style'
-            
-            # Right: School Logo
-            right_cell = header_table.rows[0].cells[2]
-            right_para = right_cell.paragraphs[0]
-            right_para.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-            
-            school_logo_base64 = data.get('school_logo', '')
-            if school_logo_base64 and 'base64' in school_logo_base64:
-                try:
-                    if ',' in school_logo_base64:
-                        logo_data = school_logo_base64.split(',')[1]
-                    else:
-                        logo_data = school_logo_base64
-                    
-                    logo_bytes = base64.b64decode(logo_data)
-                    temp_logo = tempfile.NamedTemporaryFile(delete=False, suffix='.png')
-                    temp_logo.write(logo_bytes)
-                    temp_logo.close()
-                    
-                    right_run = right_para.add_run()
-                    right_run.add_picture(temp_logo.name, width=Inches(1.2))
-                    
-                    try:
-                        os.remove(temp_logo.name)
-                    except:
-                        pass
-                    
-                    logger.info('School logo added successfully')
-                except Exception as e:
-                    logger.error(f"Error adding school logo: {e}")
-                    right_run = right_para.add_run('SCHOOL\nLOGO')
-                    right_run.font.size = Pt(10)
-            else:
-                right_run = right_para.add_run('SCHOOL\nLOGO')
-                right_run.font.size = Pt(10)
-            
-            # Add spacing after header
-            doc.add_paragraph()
-            
-        except Exception as header_error:
-            logger.error(f"Error creating header: {header_error}")
-            import traceback
-            logger.error(traceback.format_exc())
-        
         if not doc.tables:
             raise Exception("No table found in template")
     except Exception as e:
@@ -197,8 +122,82 @@ def fill_session_plan_official(data):
         logger.error("❌ No tables in template!")
         raise Exception("Template has no tables")
     
-    table = doc.tables[0]
-    logger.info(f"✅ Table found with {len(table.rows)} rows")
+    # Add header section at top of document
+    school_name = data.get('school_name', '')
+    province = data.get('province', '')
+    district = data.get('district', '')
+    sector_loc = data.get('sector_location', '')
+    cell_loc = data.get('cell', '')
+    village = data.get('village', '')
+    
+    # Insert header table at beginning
+    header_table = doc.add_table(rows=1, cols=3)
+    header_table.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    
+    # LEFT: RTB Logo
+    left_cell = header_table.rows[0].cells[0]
+    left_para = left_cell.paragraphs[0]
+    left_para.alignment = WD_ALIGN_PARAGRAPH.LEFT
+    left_run = left_para.add_run('RWANDA\nTVET BOARD')
+    left_run.font.bold = True
+    left_run.font.size = Pt(12)
+    left_run.font.name = 'Bookman Old Style'
+    
+    # CENTER: School info
+    center_cell = header_table.rows[0].cells[1]
+    center_para = center_cell.paragraphs[0]
+    center_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    
+    name_run = center_para.add_run(school_name + '\n')
+    name_run.font.bold = True
+    name_run.font.size = Pt(14)
+    name_run.font.name = 'Bookman Old Style'
+    
+    location_text = f"{province} - {district} - {sector_loc} - {cell_loc} - {village}"
+    loc_run = center_para.add_run(location_text)
+    loc_run.font.size = Pt(10)
+    loc_run.font.name = 'Bookman Old Style'
+    
+    # RIGHT: School logo
+    right_cell = header_table.rows[0].cells[2]
+    right_para = right_cell.paragraphs[0]
+    right_para.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+    
+    school_logo_base64 = data.get('school_logo', '')
+    if school_logo_base64 and 'base64' in school_logo_base64:
+        try:
+            logo_data = school_logo_base64.split(',')[1] if ',' in school_logo_base64 else school_logo_base64
+            logo_bytes = base64.b64decode(logo_data)
+            temp_logo = tempfile.NamedTemporaryFile(delete=False, suffix='.png')
+            temp_logo.write(logo_bytes)
+            temp_logo.close()
+            
+            right_run = right_para.add_run()
+            right_run.add_picture(temp_logo.name, width=Inches(1.2))
+            
+            try:
+                os.remove(temp_logo.name)
+            except:
+                pass
+            logger.info('✅ School logo added')
+        except Exception as e:
+            logger.error(f"Logo error: {e}")
+            right_run = right_para.add_run('SCHOOL\nLOGO')
+            right_run.font.size = Pt(10)
+            right_run.font.name = 'Bookman Old Style'
+    else:
+        right_run = right_para.add_run('SCHOOL\nLOGO')
+        right_run.font.size = Pt(10)
+        right_run.font.name = 'Bookman Old Style'
+    
+    # Move header table to beginning
+    header_element = header_table._element
+    doc._element.body.insert(0, header_element)
+    logger.info('✅ Header table added at top')
+    
+    # Main session plan table (first table after moving header)
+    table = doc.tables[1]
+    logger.info(f"✅ Main table found with {len(table.rows)} rows")
     
     # Row 0: Bold headers
     set_cell_text_with_bold_label(table.rows[0].cells[0], "Sector: ", data.get('sector', '').strip())
@@ -208,14 +207,20 @@ def fill_session_plan_official(data):
     
     # Row 1: Bold headers
     set_cell_text_with_bold_label(table.rows[1].cells[0], "Trainer name: ", data.get('trainer_name', '').strip())
+    
+    # School year and term in cell 6
     cell = table.rows[1].cells[6]
     cell.text = ''
     p = cell.paragraphs[0]
+    p.paragraph_format.space_before = Pt(0)
+    p.paragraph_format.space_after = Pt(0)
+    p.paragraph_format.line_spacing = 1.0
+    
     r1 = p.add_run("School year: ")
     r1.font.bold = True
     r1.font.name = 'Bookman Old Style'
     r1.font.size = Pt(12)
-    r2 = p.add_run(data.get('school_year', '2024-2025'))
+    r2 = p.add_run(data.get('school_year', '2024-2025').strip())
     r2.font.name = 'Bookman Old Style'
     r2.font.size = Pt(12)
     p.add_run('\n')
@@ -223,7 +228,7 @@ def fill_session_plan_official(data):
     r3.font.bold = True
     r3.font.name = 'Bookman Old Style'
     r3.font.size = Pt(12)
-    r4 = p.add_run(data.get('term', ''))
+    r4 = p.add_run(data.get('term', '').strip())
     r4.font.name = 'Bookman Old Style'
     r4.font.size = Pt(12)
     
@@ -258,11 +263,11 @@ def fill_session_plan_official(data):
     
     # Row 8: Facilitation techniques
     facilitation = data.get('facilitation_techniques', '').strip()
+    logger.info(f"📝 Facilitation: '{facilitation}'")
     if facilitation:
         set_cell_text_with_bold_label(table.rows[8].cells[0], "Facilitation technique(s): ", facilitation)
     else:
-        table.rows[8].cells[0].text = "Facilitation technique(s):"
-        set_cell_font(table.rows[8].cells[0], bold=True)
+        set_cell_text_with_bold_label(table.rows[8].cells[0], "Facilitation technique(s): ", "Trainer Guided")
     
     # Parse learning activities and resources
     learning_acts = data.get('learning_activities', '')
@@ -386,81 +391,212 @@ def fill_session_plan_official(data):
 
 def fill_scheme_official(data):
     """Fill Scheme of work.docx from RTB Templates folder"""
-    template_path = os.path.join(os.path.dirname(__file__), 'RTB Templates', 'Scheme of work.docx')
-    doc = Document(template_path)
+    import logging
+    logger = logging.getLogger(__name__)
     
-    # Update header paragraphs
-    if len(doc.paragraphs) > 3:
-        doc.paragraphs[0].text = data.get('province', '')
-        doc.paragraphs[1].text = data.get('district', '')
-        doc.paragraphs[2].text = data.get('sector', '')
-        doc.paragraphs[3].text = data.get('school', '')
+    logger.info("=== SCHEME GENERATION START ===")
+    logger.info(f"Current dir: {os.getcwd()}")
+    logger.info(f"File location: {__file__}")
+    
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    logger.info(f"Base dir: {base_dir}")
+    
+    template_path = os.path.join(base_dir, 'RTB Templates', 'Scheme of work.docx')
+    logger.info(f"Template path: {template_path}")
+    logger.info(f"Template exists: {os.path.exists(template_path)}")
+    
+    # List files in base dir
+    try:
+        files = os.listdir(base_dir)
+        logger.info(f"Files in base dir: {files}")
+    except Exception as e:
+        logger.error(f"Cannot list base dir: {e}")
+    
+    # Check RTB Templates folder
+    rtb_folder = os.path.join(base_dir, 'RTB Templates')
+    if os.path.exists(rtb_folder):
+        try:
+            rtb_files = os.listdir(rtb_folder)
+            logger.info(f"Files in RTB Templates: {rtb_files}")
+        except Exception as e:
+            logger.error(f"Cannot list RTB Templates: {e}")
+    else:
+        logger.error(f"RTB Templates folder not found: {rtb_folder}")
+    
+    if not os.path.exists(template_path):
+        logger.error(f"Template not found: {template_path}")
+        logger.error("Creating fallback document...")
+        doc = Document()
+        doc.add_heading('Scheme of Work', 0)
+        doc.add_paragraph(f"Province: {data.get('province', '')}")
+        doc.add_paragraph(f"District: {data.get('district', '')}")
+        doc.add_paragraph(f"School: {data.get('school', '')}")
+        temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
+        doc.save(temp_file.name)
+        temp_file.close()
+        return temp_file.name
+    
+    doc = Document(template_path)
+    logger.info(f"Scheme template loaded, tables: {len(doc.tables)}")
+    
+    # Fill header table (Table 0) - Match exact RTB template structure
+    if len(doc.tables) > 0:
+        h = doc.tables[0]
+        try:
+            # Row 0: Sector (cell 1), Trainer (cell 3)
+            h.rows[0].cells[1].text = data.get('sector') or ''
+            h.rows[0].cells[3].text = data.get('trainer_name') or ''
+            
+            # Row 1: Trade (cell 1), School Year (cell 3)
+            h.rows[1].cells[1].text = data.get('department_trade') or data.get('trade') or ''
+            h.rows[1].cells[3].text = data.get('school_year') or ''
+            
+            # Row 2: Qualification (cell 1), Term (cell 3)
+            h.rows[2].cells[1].text = data.get('qualification_title') or ''
+            h.rows[2].cells[3].text = data.get('terms') or ''
+            
+            # Row 3: RQF Level (cell 1)
+            h.rows[3].cells[1].text = data.get('rqf_level') or ''
+            
+            # Row 4: Module code and title (cell 3)
+            h.rows[4].cells[3].text = data.get('module_code_title') or ''
+            
+            # Row 5: Learning hours (cell 3)
+            h.rows[5].cells[3].text = data.get('module_hours') or ''
+            
+            # Row 6: Number of Classes (cell 3)
+            h.rows[6].cells[3].text = data.get('number_of_classes') or ''
+            
+            # Row 7: Date (cell 1), Class Name (cell 3)
+            h.rows[7].cells[1].text = datetime.now().strftime('%d/%m/%Y')
+            h.rows[7].cells[3].text = data.get('class_name') or ''
+            
+            logger.info("Header table filled successfully")
+        except Exception as e:
+            logger.error(f"Error filling header: {e}")
+            import traceback
+            logger.error(traceback.format_exc())
     
     # Fill Term 1 table
-    if len(doc.tables) > 0:
-        table1 = doc.tables[0]
-        term1_weeks = data.get('term1_weeks', '').split('\n')
-        term1_outcomes = data.get('term1_learning_outcomes', '').split('\n')
-        term1_contents = data.get('term1_indicative_contents', '').split('\n')
-        term1_duration = data.get('term1_duration', '').split('\n')
-        term1_place = data.get('term1_learning_place', '').split('\n')
+    if len(doc.tables) > 1:
+        table1 = doc.tables[1]
+        term1_weeks = (data.get('term1_weeks') or '').strip()
+        term1_outcomes_raw = (data.get('term1_learning_outcomes') or '').strip()
+        term1_contents_raw = (data.get('term1_indicative_contents') or '').strip()
+        term1_duration = (data.get('term1_duration') or '').strip()
+        term1_place = (data.get('term1_learning_place') or '').strip()
         
-        for i in range(1, min(len(table1.rows), len(term1_weeks) + 1)):
-            if i - 1 < len(term1_weeks):
-                table1.rows[i].cells[0].text = term1_weeks[i-1]
-            if i - 1 < len(term1_outcomes):
-                table1.rows[i].cells[1].text = term1_outcomes[i-1]
-            if i - 1 < len(term1_contents):
-                table1.rows[i].cells[3].text = term1_contents[i-1]
-            if i - 1 < len(term1_duration):
-                table1.rows[i].cells[4].text = term1_duration[i-1]
-            if i - 1 < len(term1_place):
-                table1.rows[i].cells[7].text = term1_place[i-1]
+        # Split by newline and filter empty lines
+        term1_outcomes = [lo.strip() for lo in term1_outcomes_raw.replace('\r\n', '\n').split('\n') if lo.strip()]
+        term1_contents = [ic.strip() for ic in term1_contents_raw.replace('\r\n', '\n').split('\n') if ic.strip()]
+        
+        logger.info(f"Term 1: {len(term1_outcomes)} LOs, {len(term1_contents)} ICs")
+        
+        # Keep existing rows and fill them, add more if needed
+        data_row_start = 2
+        for i, (lo, ic) in enumerate(zip(term1_outcomes, term1_contents)):
+            row_idx = data_row_start + i
+            
+            # Add row if needed
+            if row_idx >= len(table1.rows):
+                # Copy structure from row 2 (first data row)
+                from copy import deepcopy
+                new_row = deepcopy(table1.rows[2]._element)
+                table1._element.append(new_row)
+            
+            row = table1.rows[row_idx]
+            row.cells[0].text = term1_weeks
+            row.cells[1].text = lo
+            row.cells[2].text = term1_duration
+            row.cells[3].text = ic
+            if len(row.cells) > 7:
+                row.cells[7].text = term1_place
+            logger.info(f"  Term 1 Row {row_idx}: {lo[:30]}")
     
     # Fill Term 2 table
-    if len(doc.tables) > 1:
-        table2 = doc.tables[1]
-        term2_weeks = data.get('term2_weeks', '').split('\n')
-        term2_outcomes = data.get('term2_learning_outcomes', '').split('\n')
-        term2_contents = data.get('term2_indicative_contents', '').split('\n')
-        term2_duration = data.get('term2_duration', '').split('\n')
-        term2_place = data.get('term2_learning_place', '').split('\n')
+    if len(doc.tables) > 2:
+        table2 = doc.tables[2]
+        term2_weeks = (data.get('term2_weeks') or '').strip()
+        term2_outcomes_raw = (data.get('term2_learning_outcomes') or '').strip()
+        term2_contents_raw = (data.get('term2_indicative_contents') or '').strip()
+        term2_duration = (data.get('term2_duration') or '').strip()
+        term2_place = (data.get('term2_learning_place') or '').strip()
         
-        for i in range(1, min(len(table2.rows), len(term2_weeks) + 1)):
-            if i - 1 < len(term2_weeks):
-                table2.rows[i].cells[0].text = term2_weeks[i-1]
-            if i - 1 < len(term2_outcomes):
-                table2.rows[i].cells[1].text = term2_outcomes[i-1]
-            if i - 1 < len(term2_contents):
-                table2.rows[i].cells[3].text = term2_contents[i-1]
-            if i - 1 < len(term2_duration):
-                table2.rows[i].cells[4].text = term2_duration[i-1]
-            if i - 1 < len(term2_place):
-                table2.rows[i].cells[7].text = term2_place[i-1]
+        term2_outcomes = [lo.strip() for lo in term2_outcomes_raw.replace('\r\n', '\n').split('\n') if lo.strip()]
+        term2_contents = [ic.strip() for ic in term2_contents_raw.replace('\r\n', '\n').split('\n') if ic.strip()]
+        
+        logger.info(f"Term 2: {len(term2_outcomes)} LOs, {len(term2_contents)} ICs")
+        
+        # Fill existing rows, add more if needed
+        data_row_start = 2
+        for i, (lo, ic) in enumerate(zip(term2_outcomes, term2_contents)):
+            row_idx = data_row_start + i
+            
+            if row_idx >= len(table2.rows):
+                from copy import deepcopy
+                new_row = deepcopy(table2.rows[2]._element)
+                table2._element.append(new_row)
+            
+            row = table2.rows[row_idx]
+            row.cells[0].text = term2_weeks
+            row.cells[1].text = lo
+            row.cells[2].text = term2_duration
+            row.cells[3].text = ic
+            if len(row.cells) > 7:
+                row.cells[7].text = term2_place
+            logger.info(f"  Term 2 Row {row_idx}: {lo[:30]}")
     
     # Fill Term 3 table
-    if len(doc.tables) > 2:
-        table3 = doc.tables[2]
-        term3_weeks = data.get('term3_weeks', '').split('\n')
-        term3_outcomes = data.get('term3_learning_outcomes', '').split('\n')
-        term3_contents = data.get('term3_indicative_contents', '').split('\n')
-        term3_duration = data.get('term3_duration', '').split('\n')
-        term3_place = data.get('term3_learning_place', '').split('\n')
+    if len(doc.tables) > 3:
+        table3 = doc.tables[3]
+        term3_weeks = (data.get('term3_weeks') or '').strip()
+        term3_outcomes_raw = (data.get('term3_learning_outcomes') or '').strip()
+        term3_contents_raw = (data.get('term3_indicative_contents') or '').strip()
+        term3_duration = (data.get('term3_duration') or '').strip()
+        term3_place = (data.get('term3_learning_place') or '').strip()
         
-        for i in range(1, min(len(table3.rows), len(term3_weeks) + 1)):
-            if i - 1 < len(term3_weeks):
-                table3.rows[i].cells[0].text = term3_weeks[i-1]
-            if i - 1 < len(term3_outcomes):
-                table3.rows[i].cells[1].text = term3_outcomes[i-1]
-            if i - 1 < len(term3_contents):
-                table3.rows[i].cells[3].text = term3_contents[i-1]
-            if i - 1 < len(term3_duration):
-                table3.rows[i].cells[4].text = term3_duration[i-1]
-            if i - 1 < len(term3_place):
-                table3.rows[i].cells[7].text = term3_place[i-1]
+        term3_outcomes = [lo.strip() for lo in term3_outcomes_raw.replace('\r\n', '\n').split('\n') if lo.strip()]
+        term3_contents = [ic.strip() for ic in term3_contents_raw.replace('\r\n', '\n').split('\n') if ic.strip()]
+        
+        logger.info(f"Term 3: {len(term3_outcomes)} LOs, {len(term3_contents)} ICs")
+        
+        # Fill existing rows, add more if needed
+        data_row_start = 2
+        for i, (lo, ic) in enumerate(zip(term3_outcomes, term3_contents)):
+            row_idx = data_row_start + i
+            
+            if row_idx >= len(table3.rows):
+                from copy import deepcopy
+                new_row = deepcopy(table3.rows[2]._element)
+                table3._element.append(new_row)
+            
+            row = table3.rows[row_idx]
+            row.cells[0].text = term3_weeks
+            row.cells[1].text = lo
+            row.cells[2].text = term3_duration
+            row.cells[3].text = ic
+            if len(row.cells) > 7:
+                row.cells[7].text = term3_place
+            logger.info(f"  Term 3 Row {row_idx}: {lo[:30]}")
+    
+    logger.info("Scheme of work filled successfully")
     
     # Save to temp file
-    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
-    doc.save(temp_file.name)
-    temp_file.close()
-    return temp_file.name
+    try:
+        temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
+        logger.info(f"Saving to: {temp_file.name}")
+        doc.save(temp_file.name)
+        temp_file.close()
+        
+        if os.path.exists(temp_file.name):
+            size = os.path.getsize(temp_file.name)
+            logger.info(f"Scheme saved successfully: {size} bytes")
+        else:
+            logger.error("Saved file does not exist!")
+        
+        return temp_file.name
+    except Exception as e:
+        logger.error(f"Error saving scheme: {e}")
+        import traceback
+        logger.error(traceback.format_exc())
+        raise

@@ -1,14 +1,15 @@
 // RTB Document Planner - Production Configuration
-console.log('✅ config.js loaded (PRODUCTION-ONLY v2.0)');
+console.log('✅ config.js loaded (PRODUCTION v2.0)');
 
-// FORCE PRODUCTION API - NO LOCAL DEVELOPMENT
-const API_BASE = 'https://leonardus437.pythonanywhere.com';
+// Production API on Render.com
+const API_BASE = 'https://rtb-document-planner.onrender.com';
 
-// Note: You need to upload main_production.py to PythonAnywhere as your main WSGI file
+// Note: Replace with your actual Render.com backend URL
+// Format: https://your-service-name.onrender.com
 
 console.log('🌐 API Base URL:', API_BASE);
-console.log('🚀 Environment: PRODUCTION ONLY');
-console.log('📡 Backend: PythonAnywhere');
+console.log('🚀 Environment: PRODUCTION');
+console.log('📡 Backend: Render.com');
 
 // Test API connection
 async function testAPIConnection() {

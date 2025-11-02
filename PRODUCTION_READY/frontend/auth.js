@@ -6,7 +6,7 @@ if (typeof API_BASE === 'undefined') {
     console.error('⚠️ CRITICAL: API_BASE is not defined! config.js may not have loaded.');
     console.error('This is a script loading order issue - config.js must load BEFORE auth.js');
     // Fallback API_BASE for production
-    window.API_BASE = 'https://leonardus437.pythonanywhere.com';
+    window.API_BASE = 'https://rtb-document-planner.onrender.com';
     console.log('Using fallback API_BASE:', window.API_BASE);
 }
 
@@ -40,7 +40,7 @@ async function registerUser(name, phone, email, institution, password) {
     const userData = { user_id: userId, name, phone, email, institution, password, role: 'user' };
     
     // Ensure API_BASE is available (fallback safety)
-    const apiBase = (typeof API_BASE !== 'undefined') ? API_BASE : (window.API_BASE || 'https://leonardus437.pythonanywhere.com');
+    const apiBase = (typeof API_BASE !== 'undefined') ? API_BASE : (window.API_BASE || 'https://rtb-document-planner.onrender.com');
     
     try {
         const response = await fetch(`${apiBase}/users/register`, {
@@ -78,7 +78,7 @@ async function registerUser(name, phone, email, institution, password) {
 // Login user with robust connection
 async function loginUser(phone, password, remember) {
     // Ensure API_BASE is available
-    const apiBase = (typeof API_BASE !== 'undefined') ? API_BASE : (window.API_BASE || 'https://leonardus437.pythonanywhere.com');
+    const apiBase = (typeof API_BASE !== 'undefined') ? API_BASE : (window.API_BASE || 'https://rtb-document-planner.onrender.com');
     
     console.log('🔐 Login attempt:', { phone, apiBase });
     

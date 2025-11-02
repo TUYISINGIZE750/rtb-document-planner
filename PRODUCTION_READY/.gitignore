@@ -1,5 +1,5 @@
 # Database files
-*.db
+# *.db - Temporarily allowing rtb_planner.db for deployment
 *.sqlite
 *.sqlite3
 

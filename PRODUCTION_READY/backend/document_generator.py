@@ -34,8 +34,35 @@ def generate_session_plan_docx(data):
         return temp_file.name
 
 def generate_scheme_of_work_docx(data):
+    """Generate scheme of work using official RTB template"""
+    logger.info("=== SCHEME GENERATION START ===")
+    logger.info(f"Data keys: {list(data.keys()) if data else 'NO DATA'}")
+    
     try:
-        return fill_scheme_official(data)
+        if not data:
+            raise ValueError("No data provided for scheme generation")
+        
+        logger.info("Calling fill_scheme_official...")
+        file_path = fill_scheme_official(data)
+        
+        if not file_path:
+            raise ValueError("fill_scheme_official returned None")
+        
+        logger.info(f"Scheme document created: {file_path}")
+        
+        import os
+        if not os.path.exists(file_path):
+            raise FileNotFoundError(f"Generated file not found: {file_path}")
+        
+        file_size = os.path.getsize(file_path)
+        logger.info(f"File size: {file_size} bytes")
+        
+        return file_path
+        
     except Exception as e:
-        logger.error(f"Error in fill_scheme_official: {str(e)}")
+        logger.error(f"=== SCHEME GENERATION ERROR ===")
+        logger.error(f"Error type: {type(e).__name__}")
+        logger.error(f"Error message: {str(e)}")
+        import traceback
+        logger.error(f"Traceback: {traceback.format_exc()}")
         raise

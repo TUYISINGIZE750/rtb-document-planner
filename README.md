@@ -10,8 +10,8 @@ Professional TVET Session Plans & Schemes of Work Generator for Rwanda Technical
 - Admin panel for user activation
 
 ## Live Demo
-- Frontend: [Coming Soon]
-- Backend API: [Coming Soon]
+- Frontend: [Your Frontend URL]
+- Backend API: https://rtb-document-planner.onrender.com
 
 ## Tech Stack
 - Backend: FastAPI, SQLAlchemy, Python-DOCX

@@ -35,13 +35,6 @@
         
         <h1><i class="fas fa-chalkboard-teacher"></i> Session Plan Wizard</h1>
         
-        <div id="downloadSection" style="display: none; background: #10b981; color: white; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem; text-align: center;">
-            <p><i class="fas fa-check-circle"></i> <strong>Session plan created successfully!</strong></p>
-            <button id="manualDownloadBtn" class="btn" style="background: white; color: #10b981; margin-top: 0.5rem;">
-                <i class="fas fa-download"></i> Click here if download didn't start
-            </button>
-        </div>
-        
         <form id="sessionForm">
             <div class="form-grid">
                 <div class="form-group">
@@ -130,60 +123,6 @@
                 </select>
             </div>
             
-            <div class="form-group">
-                <label><i class="fas fa-users-cog"></i> Range *</label>
-                <input type="text" name="range" required placeholder="e.g., All learners in Level 4 Programming class">
-            </div>
-            
-            <div class="form-group">
-                <label><i class="fas fa-paperclip"></i> Appendix (Optional)</label>
-                <textarea name="appendix" rows="2" placeholder="e.g., PPT slides, Task sheets, Assessment rubrics"></textarea>
-            </div>
-            
-            <div class="form-group full-width">
-                <label><i class="fas fa-school"></i> School Name *</label>
-                <input type="text" name="school_name" required placeholder="e.g., IPRC Kigali">
-            </div>
-            
-            <div class="form-grid">
-                <div class="form-group">
-                    <label><i class="fas fa-map-marked-alt"></i> Province *</label>
-                    <select name="province" id="provinceSelect" required>
-                        <option value="">Select Province</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-map-marker-alt"></i> District *</label>
-                    <select name="district" id="districtSelect" required>
-                        <option value="">Select District</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-map-pin"></i> Sector *</label>
-                    <select name="sector_location" id="sectorSelect" required>
-                        <option value="">Select Sector</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-location-arrow"></i> Cell *</label>
-                    <select name="cell" id="cellSelect" required>
-                        <option value="">Select Cell</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-home"></i> Village *</label>
-                    <select name="village" id="villageSelect" required>
-                        <option value="">Select Village</option>
-                    </select>
-                </div>
-            </div>
-            
-            <div class="form-group full-width">
-                <label><i class="fas fa-image"></i> School Logo (Optional)</label>
-                <input type="file" name="school_logo" accept="image/png,image/jpeg,image/jpg" id="schoolLogoInput">
-                <small style="color: #6b7280;">Upload your school logo (PNG, JPG). RTB logo will be added automatically.</small>
-            </div>
-            
             <div style="text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 2px solid #e5e7eb;">
                 <button type="button" onclick="goBack()" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i> Back to Home
@@ -200,7 +139,6 @@
     <script src="auth.js"></script>
     <script src="subscription-modal.js"></script>
     <script src="subscription-tracker.js"></script>
-    <script src="location-handler.js"></script>
     <script>
         let currentUser = null;
 
@@ -257,34 +195,13 @@
             }
 
             const formData = new FormData(e.target);
-            
-            // Handle school logo upload
-            const schoolLogoFile = document.getElementById('schoolLogoInput').files[0];
-            let schoolLogoBase64 = '';
-            
-            if (schoolLogoFile) {
-                try {
-                    schoolLogoBase64 = await new Promise((resolve, reject) => {
-                        const reader = new FileReader();
-                        reader.onload = (e) => resolve(e.target.result);
-                        reader.onerror = (e) => reject(e);
-                        reader.readAsDataURL(schoolLogoFile);
-                    });
-                    console.log('School logo loaded:', schoolLogoBase64.substring(0, 50));
-                } catch (error) {
-                    console.error('Error reading logo file:', error);
-                }
-            }
-            
             const data = Object.fromEntries(formData);
             
-            // Add user phone, level, and logo
+            // Add user phone to data
             data.user_phone = currentUser.phone;
-            data.level = data.rqf_level;
-            data.school_logo = schoolLogoBase64;
             
             // Validate required fields
-            const requiredFields = ['sector', 'trade', 'rqf_level', 'trainer_name', 'module_code_title', 'term', 'week', 'date', 'number_of_trainees', 'class_name', 'duration', 'topic_of_session', 'learning_outcomes', 'indicative_contents', 'range', 'school_name', 'province', 'district', 'sector_location', 'cell', 'village'];
+            const requiredFields = ['sector', 'trade', 'rqf_level', 'trainer_name', 'module_code_title', 'term', 'week', 'date', 'number_of_trainees', 'class_name', 'duration', 'topic_of_session', 'learning_outcomes', 'indicative_contents'];
             
             for (const field of requiredFields) {
                 if (!data[field] || data[field].trim() === '') {
@@ -326,70 +243,15 @@
                     console.log('✅ Session plan created:', result);
                     
                     if (result.id) {
-                        console.log('🔽 Triggering download for ID:', result.id);
+                        // Download the document
+                        const link = document.createElement('a');
+                        link.href = `${API_BASE}/session-plans/${result.id}/download?phone=${encodeURIComponent(currentUser.phone)}`;
+                        link.download = `RTB_Session_Plan_${result.id}.docx`;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
                         
-                        // Download the document using fetch + blob
-                        const downloadUrl = `${API_BASE}/session-plans/${result.id}/download?phone=${encodeURIComponent(currentUser.phone)}`;
-                        console.log('📥 Download URL:', downloadUrl);
-                        
-                        // Fetch and download as blob
-                        try {
-                            const downloadResponse = await fetch(downloadUrl);
-                            if (downloadResponse.ok) {
-                                const blob = await downloadResponse.blob();
-                                const url = window.URL.createObjectURL(blob);
-                                const link = document.createElement('a');
-                                link.href = url;
-                                link.download = `RTB_Session_Plan_${result.id}_${new Date().getTime()}.docx`;
-                                document.body.appendChild(link);
-                                link.click();
-                                document.body.removeChild(link);
-                                window.URL.revokeObjectURL(url);
-                                console.log('✅ Download completed via blob');
-                                
-                                // Show success section with manual download option
-                                const downloadSection = document.getElementById('downloadSection');
-                                const manualBtn = document.getElementById('manualDownloadBtn');
-                                downloadSection.style.display = 'block';
-                                manualBtn.onclick = () => {
-                                    const link = document.createElement('a');
-                                    link.href = downloadUrl;
-                                    link.download = `RTB_Session_Plan_${result.id}.docx`;
-                                    link.click();
-                                };
-                                
-                                // Scroll to top to show success message
-                                window.scrollTo(0, 0);
-                            } else {
-                                console.error('❌ Download failed:', downloadResponse.status);
-                                
-                                // Show manual download button
-                                const downloadSection = document.getElementById('downloadSection');
-                                const manualBtn = document.getElementById('manualDownloadBtn');
-                                downloadSection.style.display = 'block';
-                                downloadSection.style.background = '#f59e0b';
-                                downloadSection.querySelector('p').innerHTML = '<i class="fas fa-exclamation-triangle"></i> <strong>Auto-download failed. Click button below:</strong>';
-                                manualBtn.onclick = () => window.open(downloadUrl, '_blank');
-                                window.scrollTo(0, 0);
-                            }
-                        } catch (downloadError) {
-                            console.error('❌ Download error:', downloadError);
-                            // Fallback: direct link
-                            const link = document.createElement('a');
-                            link.href = downloadUrl;
-                            link.download = `RTB_Session_Plan_${result.id}.docx`;
-                            link.target = '_blank';
-                            document.body.appendChild(link);
-                            link.click();
-                            document.body.removeChild(link);
-                            
-                            // Show manual download button as fallback
-                            const downloadSection = document.getElementById('downloadSection');
-                            const manualBtn = document.getElementById('manualDownloadBtn');
-                            downloadSection.style.display = 'block';
-                            manualBtn.onclick = () => window.open(downloadUrl, '_blank');
-                            window.scrollTo(0, 0);
-                        }
+                        alert('✅ Session plan created and downloaded successfully!');
                         
                         // Update download counter
                         updateDownloadCounter();
@@ -397,10 +259,7 @@
                         // Redirect back to dashboard after a delay
                         setTimeout(() => {
                             window.location.href = 'teacher-dashboard.html';
-                        }, 3000);
-                    } else {
-                        console.error('❌ No ID in response:', result);
-                        alert('Session plan created but no ID returned');
+                        }, 2000);
                     }
                 } else {
                     const errorData = await response.json().catch(() => ({ detail: 'Unknown error' }));

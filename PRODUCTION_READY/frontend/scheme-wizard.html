@@ -310,9 +310,11 @@
         
         document.getElementById('wizardForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+            console.log('Form submitted!');
             
             // Check authentication
             const session = getCurrentSession();
+            console.log('Session:', session);
             if (!session) {
                 alert('Please login to create documents');
                 window.location.href = 'login.html';
@@ -330,15 +332,19 @@
                 
                 // Add user phone to data
                 data.user_phone = session.phone;
+                console.log('Scheme data:', data);
                 
                 // First check download limits
+                console.log('Checking download limits...');
                 const canDownload = await checkDownloadLimits('scheme');
+                console.log('Can download:', canDownload);
                 if (!canDownload) {
                     submitBtn.innerHTML = originalText;
                     submitBtn.disabled = false;
                     return;
                 }
                 
+                console.log('Sending request to:', `${API_BASE}/schemes`);
                 const response = await fetch(`${API_BASE}/schemes`, {
                     method: 'POST',
                     mode: 'cors',
@@ -349,19 +355,24 @@
                     },
                     body: JSON.stringify(data)
                 });
+                console.log('Response status:', response.status);
                 
                 if (response.ok) {
                     const scheme = await response.json();
                     console.log('Created scheme:', scheme);
+                    console.log('Scheme ID:', scheme.id);
                     
                     if (scheme && scheme.id) {
                         // Download the document
+                        const downloadUrl = `${API_BASE}/schemes-of-work/${scheme.id}/download?phone=${encodeURIComponent(session.phone)}`;
+                        console.log('Download URL:', downloadUrl);
                         const link = document.createElement('a');
-                        link.href = `${API_BASE}/schemes-of-work/${scheme.id}/download?phone=${encodeURIComponent(session.phone)}`;
+                        link.href = downloadUrl;
                         link.download = `RTB_Scheme_of_Work_${scheme.id}.docx`;
                         document.body.appendChild(link);
                         link.click();
                         document.body.removeChild(link);
+                        console.log('Download triggered');
                         
                         showNotification('Scheme of work created and downloaded successfully!', 'success');
                         
@@ -385,6 +396,7 @@
                 
             } catch (error) {
                 console.error('Error in form submission:', error);
+                console.error('Error stack:', error.stack);
                 showNotification('Connection error. Please try again.', 'error');
             } finally {
                 submitBtn.innerHTML = originalText;

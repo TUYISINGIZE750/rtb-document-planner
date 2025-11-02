@@ -24,8 +24,18 @@ app = Flask(__name__)
 
 CORS(app, origins=["*"])
 
-DATABASE_URL = "sqlite:///./rtb_planner.db"
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+# Use PostgreSQL in production, SQLite for local development
+DATABASE_URL = os.environ.get('DATABASE_URL', 'sqlite:///./rtb_planner.db')
+
+# Fix for Render PostgreSQL URL (postgres:// -> postgresql://)
+if DATABASE_URL.startswith('postgres://'):
+    DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
+
+# Create engine with appropriate settings
+if DATABASE_URL.startswith('postgresql://'):
+    engine = create_engine(DATABASE_URL)
+else:
+    engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
@@ -187,11 +197,65 @@ def home():
         "status": "online",
         "cors": "enabled",
         "environment": "production",
-        "version": "2.4",
-        "deployment": "FORCE_DEPLOY",
+        "version": "2.5",
+        "deployment": "SCHEME_FIX_DEPLOYED",
         "features": ["authentication", "docx_generation", "ai_content"],
         "users_count": users_count
     })
+
+@app.route('/test-scheme', methods=['GET', 'OPTIONS'])
+def test_scheme():
+    """Test endpoint to verify scheme generation works"""
+    if request.method == 'OPTIONS':
+        return '', 204
+    
+    try:
+        test_data = {
+            'province': 'Kigali City',
+            'district': 'Gasabo',
+            'sector': 'ICT',
+            'school': 'Test School',
+            'trainer_name': 'Test Trainer',
+            'department_trade': 'ICT',
+            'module_code_title': 'TEST101',
+            'school_year': '2024-2025',
+            'module_hours': '120',
+            'qualification_title': 'Test Qualification',
+            'terms': 'Term 1',
+            'rqf_level': 'Level 5',
+            'number_of_classes': '1',
+            'class_name': 'Test Class',
+            'term1_weeks': '1-4',
+            'term1_learning_outcomes': 'LO1: Test outcome 1\nLO2: Test outcome 2',
+            'term1_indicative_contents': 'IC1: Test content 1\nIC2: Test content 2',
+            'term1_duration': '40 hours',
+            'term1_learning_place': 'Lab'
+        }
+        
+        logger.info("Testing scheme generation...")
+        file_path = generate_scheme_of_work_docx(test_data)
+        
+        if file_path and os.path.exists(file_path):
+            file_size = os.path.getsize(file_path)
+            os.remove(file_path)
+            return jsonify({
+                "status": "success",
+                "message": "Scheme generation working",
+                "file_size": file_size
+            }), 200
+        else:
+            return jsonify({
+                "status": "error",
+                "message": "File not generated"
+            }), 500
+    except Exception as e:
+        logger.error(f"Test scheme error: {str(e)}")
+        import traceback
+        return jsonify({
+            "status": "error",
+            "message": str(e),
+            "traceback": traceback.format_exc()
+        }), 500
 
 @app.route('/users/register', methods=['POST', 'OPTIONS'])
 def register():
@@ -396,6 +460,7 @@ def download_session_plan(plan_id):
             'appendix': session_plan.appendix or '',
             'school_name': session_plan.school_name or '',
             'school_logo': session_plan.school_logo or '',
+            'school_year': '2024-2025',
             'province': session_plan.province or '',
             'district': session_plan.district or '',
             'sector_location': session_plan.sector_location or '',
@@ -558,7 +623,11 @@ def generate_scheme():
 @app.route('/schemes-of-work/<int:scheme_id>/download', methods=['GET', 'OPTIONS'])
 def download_scheme_of_work(scheme_id):
     if request.method == 'OPTIONS':
-        return '', 204
+        response = jsonify({})
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+        response.headers.add('Access-Control-Allow-Methods', 'GET, OPTIONS')
+        return response, 204
 
     try:
         phone = request.args.get('phone')
@@ -609,11 +678,20 @@ def download_scheme_of_work(scheme_id):
                 'manager_name': scheme.manager_name
             }
 
+            logger.info(f'📄 Generating scheme document for ID: {scheme_id}')
+            logger.info(f'📊 Data keys: {list(data.keys())}')
+            
             file_path = generate_scheme_of_work_docx(data)
-
-            if not file_path or not os.path.exists(file_path):
-                logger.error(f'Document generation failed for scheme {scheme_id}')
-                return jsonify({"detail": "Document generation failed"}), 500
+            
+            logger.info(f'📄 Generated file path: {file_path}')
+            
+            if not file_path:
+                logger.error(f'❌ generate_scheme_of_work_docx returned None')
+                return jsonify({"detail": "Document generation returned no file"}), 500
+                
+            if not os.path.exists(file_path):
+                logger.error(f'❌ Generated file does not exist: {file_path}')
+                return jsonify({"detail": "Generated file not found"}), 500
 
             filename = f"RTB_Scheme_of_Work_{scheme_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.docx"
             logger.info(f'Sending file: {file_path} as {filename}')
@@ -623,19 +701,26 @@ def download_scheme_of_work(scheme_id):
                     file_data = f.read()
 
                 try:
-                    return send_file(
+                    response = send_file(
                         BytesIO(file_data),
                         mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document',
                         as_attachment=True,
                         download_name=filename
                     )
                 except TypeError:
-                    return send_file(
+                    response = send_file(
                         BytesIO(file_data),
                         mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document',
                         as_attachment=True,
                         attachment_filename=filename
                     )
+                
+                # Add CORS and download headers
+                response.headers['Access-Control-Allow-Origin'] = '*'
+                response.headers['Access-Control-Expose-Headers'] = 'Content-Disposition'
+                response.headers['Content-Disposition'] = f'attachment; filename="{filename}"'
+                response.headers['Content-Type'] = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                return response
             except Exception as send_error:
                 logger.error(f'Error sending file: {str(send_error)}')
                 return jsonify({"detail": f"Download failed: {str(send_error)}"}), 500
@@ -650,6 +735,8 @@ def download_scheme_of_work(scheme_id):
             db.close()
     except Exception as e:
         logger.error(f'Scheme download error: {str(e)}')
+        import traceback
+        logger.error(traceback.format_exc())
         return jsonify({"detail": f"Download failed: {str(e)}"}), 500
 
 

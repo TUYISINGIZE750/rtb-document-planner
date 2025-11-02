@@ -65,181 +65,28 @@
         <div id="testResults"></div>
     </div>
 
+    <script src="location-handler.js"></script>
     <script>
-        // Store handler globally and run tests after initialization
-        let locationHandlerInstance = null;
-
-        class LocationHandler {
-            constructor() {
-                this.locations = null;
-                this.loadLocations();
-            }
-
-            async loadLocations() {
-                try {
-                    const response = await fetch('rwanda-locations-json-master/locations.json');
-                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                    this.locations = await response.json();
-                    console.log('✅ Locations loaded:', this.locations.provinces.length, 'provinces');
-                    this.initializeDropdowns();
-                    runTests();
-                } catch (error) {
-                    console.error('❌ Error loading locations:', error);
-                    alert('Failed to load location data.\n\nError: ' + error.message);
-                }
-            }
-
-            initializeDropdowns() {
-                const provinceSelect = document.getElementById('provinceSelect');
-                const districtSelect = document.getElementById('districtSelect');
-                const sectorSelect = document.getElementById('sectorSelect');
-                const cellSelect = document.getElementById('cellSelect');
-                const villageSelect = document.getElementById('villageSelect');
-
-                if (!provinceSelect) return;
-
-                this.populateProvinces();
-                provinceSelect.addEventListener('change', () => this.onProvinceChange());
-                districtSelect.addEventListener('change', () => this.onDistrictChange());
-                sectorSelect.addEventListener('change', () => this.onSectorChange());
-                cellSelect.addEventListener('change', () => this.onCellChange());
-            }
-
-            populateProvinces() {
-                const provinceSelect = document.getElementById('provinceSelect');
-                provinceSelect.innerHTML = '<option value="">Select Province</option>';
-                if (this.locations?.provinces) {
-                    this.locations.provinces.forEach(province => {
-                        const option = document.createElement('option');
-                        option.value = province.name;
-                        option.textContent = province.name;
-                        provinceSelect.appendChild(option);
-                    });
-                }
-            }
-
-            onProvinceChange() {
-                const provinceSelect = document.getElementById('provinceSelect');
-                const districtSelect = document.getElementById('districtSelect');
-                const sectorSelect = document.getElementById('sectorSelect');
-                const cellSelect = document.getElementById('cellSelect');
-                const villageSelect = document.getElementById('villageSelect');
-
-                districtSelect.innerHTML = '<option value="">Select District</option>';
-                sectorSelect.innerHTML = '<option value="">Select Sector</option>';
-                cellSelect.innerHTML = '<option value="">Select Cell</option>';
-                villageSelect.innerHTML = '<option value="">Select Village</option>';
-
-                const selectedProvince = provinceSelect.value;
-                if (!selectedProvince) return;
-
-                const province = this.locations.provinces.find(p => p.name === selectedProvince);
-                if (province?.districts) {
-                    province.districts.forEach(district => {
-                        const option = document.createElement('option');
-                        option.value = district.name;
-                        option.textContent = district.name;
-                        districtSelect.appendChild(option);
-                    });
-                }
-            }
-
-            onDistrictChange() {
-                const provinceSelect = document.getElementById('provinceSelect');
-                const districtSelect = document.getElementById('districtSelect');
-                const sectorSelect = document.getElementById('sectorSelect');
-                const cellSelect = document.getElementById('cellSelect');
-                const villageSelect = document.getElementById('villageSelect');
-
-                sectorSelect.innerHTML = '<option value="">Select Sector</option>';
-                cellSelect.innerHTML = '<option value="">Select Cell</option>';
-                villageSelect.innerHTML = '<option value="">Select Village</option>';
-
-                const selectedProvince = provinceSelect.value;
-                const selectedDistrict = districtSelect.value;
-                if (!selectedProvince || !selectedDistrict) return;
-
-                const province = this.locations.provinces.find(p => p.name === selectedProvince);
-                const district = province?.districts.find(d => d.name === selectedDistrict);
-                if (district?.sectors) {
-                    district.sectors.forEach(sector => {
-                        const option = document.createElement('option');
-                        option.value = sector.name;
-                        option.textContent = sector.name;
-                        sectorSelect.appendChild(option);
-                    });
-                }
-            }
-
-            onSectorChange() {
-                const provinceSelect = document.getElementById('provinceSelect');
-                const districtSelect = document.getElementById('districtSelect');
-                const sectorSelect = document.getElementById('sectorSelect');
-                const cellSelect = document.getElementById('cellSelect');
-                const villageSelect = document.getElementById('villageSelect');
-
-                cellSelect.innerHTML = '<option value="">Select Cell</option>';
-                villageSelect.innerHTML = '<option value="">Select Village</option>';
-
-                const selectedProvince = provinceSelect.value;
-                const selectedDistrict = districtSelect.value;
-                const selectedSector = sectorSelect.value;
-                if (!selectedProvince || !selectedDistrict || !selectedSector) return;
-
-                const province = this.locations.provinces.find(p => p.name === selectedProvince);
-                const district = province?.districts.find(d => d.name === selectedDistrict);
-                const sector = district?.sectors.find(s => s.name === selectedSector);
-                if (sector?.cells) {
-                    sector.cells.forEach(cell => {
-                        const option = document.createElement('option');
-                        option.value = cell.name;
-                        option.textContent = cell.name;
-                        cellSelect.appendChild(option);
-                    });
-                }
-            }
-
-            onCellChange() {
-                const provinceSelect = document.getElementById('provinceSelect');
-                const districtSelect = document.getElementById('districtSelect');
-                const sectorSelect = document.getElementById('sectorSelect');
-                const cellSelect = document.getElementById('cellSelect');
-                const villageSelect = document.getElementById('villageSelect');
-
-                villageSelect.innerHTML = '<option value="">Select Village</option>';
-
-                const selectedProvince = provinceSelect.value;
-                const selectedDistrict = districtSelect.value;
-                const selectedSector = sectorSelect.value;
-                const selectedCell = cellSelect.value;
-                if (!selectedProvince || !selectedDistrict || !selectedSector || !selectedCell) return;
-
-                const province = this.locations.provinces.find(p => p.name === selectedProvince);
-                const district = province?.districts.find(d => d.name === selectedDistrict);
-                const sector = district?.sectors.find(s => s.name === selectedSector);
-                const cell = sector?.cells.find(c => c.name === selectedCell);
-                if (cell?.villages) {
-                    cell.villages.forEach(village => {
-                        const option = document.createElement('option');
-                        option.value = village.name;
-                        option.textContent = village.name;
-                        villageSelect.appendChild(option);
-                    });
-                }
-            }
-        }
+        // Override the LocationHandler to add test logging
+        const originalInit = LocationHandler.prototype.initializeDropdowns;
+        LocationHandler.prototype.initializeDropdowns = function() {
+            originalInit.call(this);
+            runTests();
+        };
 
         function runTests() {
             const results = [];
             const testResults = document.getElementById('testResults');
             
-            if (locationHandlerInstance?.locations) {
+            // Test 1: Check if locations loaded
+            if (window.locationHandler && window.locationHandler.locations) {
                 results.push('✅ locations.json loaded successfully');
-                results.push(`✅ Found ${locationHandlerInstance.locations.provinces.length} provinces`);
+                results.push(`✅ Found ${window.locationHandler.locations.provinces.length} provinces`);
             } else {
                 results.push('❌ Failed to load locations.json');
             }
 
+            // Test 2: Check if province dropdown populated
             const provinceSelect = document.getElementById('provinceSelect');
             if (provinceSelect.options.length > 1) {
                 results.push(`✅ Province dropdown populated (${provinceSelect.options.length - 1} options)`);
@@ -247,12 +94,20 @@
                 results.push('❌ Province dropdown not populated');
             }
 
-            results.push('✅ Event listeners attached (using addEventListener)');
+            // Test 3: Check event listeners
+            const hasListeners = provinceSelect.onchange !== null;
+            if (hasListeners) {
+                results.push('✅ Event listeners attached');
+            } else {
+                results.push('❌ Event listeners not attached');
+            }
 
+            // Display results
             testResults.innerHTML = results.map(r => 
                 `<div class="status ${r.includes('✅') ? 'success' : 'error'}">${r}</div>`
             ).join('');
 
+            // Update status
             const allPassed = results.every(r => r.includes('✅'));
             document.getElementById('testStatus').textContent = allPassed 
                 ? '✅ All tests passed!' 
@@ -286,9 +141,8 @@
             container.style.display = 'block';
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            locationHandlerInstance = new LocationHandler();
-        });
+        // Initialize location handler
+        window.locationHandler = new LocationHandler();
     </script>
 </body>
 </html>
