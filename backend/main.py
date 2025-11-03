@@ -103,8 +103,14 @@ class SchemeOfWork(Base):
     province = Column(String(255))
     district = Column(String(255))
     sector = Column(String(255))
+    sector_location = Column(String(255))
+    cell = Column(String(255))
+    village = Column(String(255))
     school = Column(String(255))
+    school_name = Column(String(500))
+    school_logo = Column(Text)
     department_trade = Column(String(255))
+    trade = Column(String(255))
     qualification_title = Column(String(500))
     rqf_level = Column(String(50))
     module_code_title = Column(String(500))
@@ -115,20 +121,29 @@ class SchemeOfWork(Base):
     class_name = Column(String(255))
     trainer_name = Column(String(255))
     term1_weeks = Column(Text)
+    term1_competence = Column(Text)
     term1_learning_outcomes = Column(Text)
     term1_indicative_contents = Column(Text)
     term1_duration = Column(Text)
     term1_learning_place = Column(Text)
     term2_weeks = Column(Text)
+    term2_competence = Column(Text)
     term2_learning_outcomes = Column(Text)
     term2_indicative_contents = Column(Text)
     term2_duration = Column(Text)
     term2_learning_place = Column(Text)
     term3_weeks = Column(Text)
+    term3_competence = Column(Text)
     term3_learning_outcomes = Column(Text)
     term3_indicative_contents = Column(Text)
     term3_duration = Column(Text)
     term3_learning_place = Column(Text)
+    prepared_by_name = Column(String(255))
+    prepared_by_position = Column(String(255))
+    verified_by_name = Column(String(255))
+    verified_by_position = Column(String(255))
+    approved_by_name = Column(String(255))
+    approved_by_position = Column(String(255))
     dos_name = Column(String(255))
     manager_name = Column(String(255))
     created_at = Column(DateTime(timezone=True), server_default=func.now())
@@ -578,8 +593,14 @@ def generate_scheme():
                 province=data.get('province'),
                 district=data.get('district'),
                 sector=data.get('sector'),
-                school=data.get('school'),
-                department_trade=data.get('department_trade'),
+                sector_location=data.get('sector_location'),
+                cell=data.get('cell'),
+                village=data.get('village'),
+                school=data.get('school') or data.get('school_name'),
+                school_name=data.get('school_name') or data.get('school'),
+                school_logo=data.get('school_logo'),
+                department_trade=data.get('department_trade') or data.get('trade'),
+                trade=data.get('trade') or data.get('department_trade'),
                 qualification_title=data.get('qualification_title'),
                 rqf_level=data.get('rqf_level'),
                 module_code_title=data.get('module_code_title'),
@@ -590,22 +611,31 @@ def generate_scheme():
                 class_name=data.get('class_name'),
                 trainer_name=data.get('trainer_name'),
                 term1_weeks=data.get('term1_weeks'),
+                term1_competence=data.get('term1_competence'),
                 term1_learning_outcomes=data.get('term1_learning_outcomes'),
                 term1_indicative_contents=data.get('term1_indicative_contents'),
                 term1_duration=data.get('term1_duration'),
                 term1_learning_place=data.get('term1_learning_place'),
                 term2_weeks=data.get('term2_weeks'),
+                term2_competence=data.get('term2_competence'),
                 term2_learning_outcomes=data.get('term2_learning_outcomes'),
                 term2_indicative_contents=data.get('term2_indicative_contents'),
                 term2_duration=data.get('term2_duration'),
                 term2_learning_place=data.get('term2_learning_place'),
                 term3_weeks=data.get('term3_weeks'),
+                term3_competence=data.get('term3_competence'),
                 term3_learning_outcomes=data.get('term3_learning_outcomes'),
                 term3_indicative_contents=data.get('term3_indicative_contents'),
                 term3_duration=data.get('term3_duration'),
                 term3_learning_place=data.get('term3_learning_place'),
-                dos_name=data.get('dos_name'),
-                manager_name=data.get('manager_name')
+                prepared_by_name=data.get('prepared_by_name'),
+                prepared_by_position=data.get('prepared_by_position'),
+                verified_by_name=data.get('verified_by_name'),
+                verified_by_position=data.get('verified_by_position'),
+                approved_by_name=data.get('approved_by_name'),
+                approved_by_position=data.get('approved_by_position'),
+                dos_name=data.get('dos_name') or data.get('verified_by_name'),
+                manager_name=data.get('manager_name') or data.get('approved_by_name')
             )
 
             db.add(scheme)
@@ -645,37 +675,39 @@ def download_scheme_of_work(scheme_id):
                 return jsonify({"detail": "User not found"}), 404
 
             data = {
-                'province': scheme.province,
-                'district': scheme.district,
-                'sector': scheme.sector,
-                'school': scheme.school,
-                'department_trade': scheme.department_trade,
-                'qualification_title': scheme.qualification_title,
-                'rqf_level': scheme.rqf_level,
-                'module_code_title': scheme.module_code_title,
-                'school_year': scheme.school_year,
-                'terms': scheme.terms,
-                'module_hours': scheme.module_hours,
-                'number_of_classes': scheme.number_of_classes,
-                'class_name': scheme.class_name,
-                'trainer_name': scheme.trainer_name,
-                'term1_weeks': scheme.term1_weeks,
-                'term1_learning_outcomes': scheme.term1_learning_outcomes,
-                'term1_indicative_contents': scheme.term1_indicative_contents,
-                'term1_duration': scheme.term1_duration,
-                'term1_learning_place': scheme.term1_learning_place,
-                'term2_weeks': scheme.term2_weeks,
-                'term2_learning_outcomes': scheme.term2_learning_outcomes,
-                'term2_indicative_contents': scheme.term2_indicative_contents,
-                'term2_duration': scheme.term2_duration,
-                'term2_learning_place': scheme.term2_learning_place,
-                'term3_weeks': scheme.term3_weeks,
-                'term3_learning_outcomes': scheme.term3_learning_outcomes,
-                'term3_indicative_contents': scheme.term3_indicative_contents,
-                'term3_duration': scheme.term3_duration,
-                'term3_learning_place': scheme.term3_learning_place,
-                'dos_name': scheme.dos_name,
-                'manager_name': scheme.manager_name
+                'province': scheme.province or '',
+                'district': scheme.district or '',
+                'sector': scheme.sector or '',
+                'school': scheme.school or '',
+                'school_name': scheme.school or '',
+                'department_trade': scheme.department_trade or '',
+                'trade': scheme.department_trade or '',
+                'qualification_title': scheme.qualification_title or '',
+                'rqf_level': scheme.rqf_level or '',
+                'module_code_title': scheme.module_code_title or '',
+                'school_year': scheme.school_year or '',
+                'terms': scheme.terms or '',
+                'module_hours': scheme.module_hours or '',
+                'number_of_classes': scheme.number_of_classes or '',
+                'class_name': scheme.class_name or '',
+                'trainer_name': scheme.trainer_name or '',
+                'term1_weeks': scheme.term1_weeks or '',
+                'term1_learning_outcomes': scheme.term1_learning_outcomes or '',
+                'term1_indicative_contents': scheme.term1_indicative_contents or '',
+                'term1_duration': scheme.term1_duration or '',
+                'term1_learning_place': scheme.term1_learning_place or '',
+                'term2_weeks': scheme.term2_weeks or '',
+                'term2_learning_outcomes': scheme.term2_learning_outcomes or '',
+                'term2_indicative_contents': scheme.term2_indicative_contents or '',
+                'term2_duration': scheme.term2_duration or '',
+                'term2_learning_place': scheme.term2_learning_place or '',
+                'term3_weeks': scheme.term3_weeks or '',
+                'term3_learning_outcomes': scheme.term3_learning_outcomes or '',
+                'term3_indicative_contents': scheme.term3_indicative_contents or '',
+                'term3_duration': scheme.term3_duration or '',
+                'term3_learning_place': scheme.term3_learning_place or '',
+                'dos_name': scheme.dos_name or '',
+                'manager_name': scheme.manager_name or ''
             }
 
             logger.info(f'📄 Generating scheme document for ID: {scheme_id}')
@@ -1177,6 +1209,23 @@ def send_personal_notification():
     except Exception as e:
         logger.error(f"Personal notification error: {e}")
         return jsonify({"detail": "Failed to send message"}), 500
+
+@app.route('/settings', methods=['GET', 'OPTIONS'])
+def get_settings():
+    if request.method == 'OPTIONS':
+        return '', 204
+    
+    return jsonify({
+        "session_plan_price": 33,
+        "scheme_price": 79,
+        "weekly_session_bundle": 556,
+        "weekly_scheme_bundle": 777,
+        "monthly_session_bundle": 1109,
+        "monthly_scheme_bundle": 2300,
+        "unlimited_monthly": 5300,
+        "payment_phone": "+250789751597",
+        "payment_name": "TUYISINGIZE Leonard"
+    }), 200
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 10000))
