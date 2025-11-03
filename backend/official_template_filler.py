@@ -565,8 +565,59 @@ def fill_scheme_official(data):
     
     logger.info('Header table added to scheme with no spacing')
     
+    # Add INFO TABLE after school header
+    info_table = doc.add_table(rows=8, cols=4)
+    
+    # Set column widths and formatting
+    for row in info_table.rows:
+        for cell in row.cells:
+            cell._element.get_or_add_tcPr().append(parse_xml(r'<w:tcMar xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:top w:w="50" w:type="dxa"/><w:bottom w:w="50" w:type="dxa"/></w:tcMar>'))
+    
+    # Row 0: Sector / Trainer
+    set_cell_text_with_bold_label(info_table.rows[0].cells[0], "Sector: ", data.get('sector', ''))
+    set_cell_text_with_bold_label(info_table.rows[0].cells[2], "Trainer: ", data.get('trainer_name', ''))
+    
+    # Row 1: Trade / School Year
+    set_cell_text_with_bold_label(info_table.rows[1].cells[0], "Trade: ", data.get('trade', ''))
+    set_cell_text_with_bold_label(info_table.rows[1].cells[2], "School Year: ", data.get('school_year', ''))
+    
+    # Row 2: Qualification Title / Term
+    set_cell_text_with_bold_label(info_table.rows[2].cells[0], "Qualification Title: ", data.get('qualification_title', ''))
+    set_cell_text_with_bold_label(info_table.rows[2].cells[2], "Term: ", data.get('terms', ''))
+    
+    # Row 3: RQF Level / Module details header
+    set_cell_text_with_bold_label(info_table.rows[3].cells[0], "RQF Level: ", data.get('rqf_level', ''))
+    info_table.rows[3].cells[2].text = 'Module details'
+    set_cell_font(info_table.rows[3].cells[2], bold=True)
+    
+    # Row 4: Empty / Module code and title
+    info_table.rows[4].cells[0].text = ''
+    set_cell_text_with_bold_label(info_table.rows[4].cells[2], "Module code and title: ", data.get('module_code_title', ''))
+    
+    # Row 5: Empty / Learning hours
+    info_table.rows[5].cells[0].text = ''
+    set_cell_text_with_bold_label(info_table.rows[5].cells[2], "Learning hours: ", data.get('module_hours', ''))
+    
+    # Row 6: Empty / Number of Classes
+    info_table.rows[6].cells[0].text = ''
+    set_cell_text_with_bold_label(info_table.rows[6].cells[2], "Number of Classes: ", data.get('number_of_classes', ''))
+    
+    # Row 7: Date / Class Name
+    date_value = data.get('date', '').strip()
+    if not date_value:
+        date_value = datetime.now().strftime('%d/%m/%Y')
+    set_cell_text_with_bold_label(info_table.rows[7].cells[0], "Date: ", date_value)
+    set_cell_text_with_bold_label(info_table.rows[7].cells[2], "Class Name: ", data.get('class_name', ''))
+    
+    # Insert info table after school header
+    info_element = info_table._element
+    doc._element.body.insert(1, info_element)
+    
+    logger.info('Info table added after school header')
+    
+    # OLD CODE - Remove this section as we now have proper info table
     # Fill header table (Table 1 now) - Match exact RTB template structure
-    if len(doc.tables) > 1:
+    if False and len(doc.tables) > 1:
         h = doc.tables[1]
         try:
             # Row 0: Sector (cell 1), Trainer (cell 3)
@@ -618,15 +669,17 @@ def fill_scheme_official(data):
             import traceback
             logger.error(traceback.format_exc())
     
-    # Fill Term 1 table
+    # Fill Term 1 table (now at index 2 after school header + info table)
     from docx.oxml.shared import OxmlElement
     def set_cell_background(cell, color):
         shading = OxmlElement('w:shd')
         shading.set(qn('w:fill'), color)
         cell._element.get_or_add_tcPr().append(shading)
     
-    if len(doc.tables) > 2:
-        table1 = doc.tables[2]
+    # Term tables start after: school header (0), info table (1), so Term 1 is at index 2
+    term1_index = 2
+    if len(doc.tables) > term1_index:
+        table1 = doc.tables[term1_index]
         
         # Row 0 and 1 are headers - make them bold with light green
         for row_idx in [0, 1]:
@@ -690,9 +743,10 @@ def fill_scheme_official(data):
             set_cell_font(row.cells[8], bold=False)
             logger.info(f"  Term 1 Row {row_idx}: {lo[:30]}")
     
-    # Fill Term 2 table (part of combined table)
-    if len(doc.tables) > 3:
-        table2 = doc.tables[3]
+    # Fill Term 2 table (part of combined table) - now at index 3
+    term2_index = 3
+    if len(doc.tables) > term2_index:
+        table2 = doc.tables[term2_index]
         
         # Format header rows with light green background and bold
         for row_idx in [0, 1]:
@@ -745,9 +799,10 @@ def fill_scheme_official(data):
             set_cell_font(row.cells[8], bold=False)
             logger.info(f"  Term 2 Row {row_idx}: {lo[:30]}")
     
-    # Fill Term 3 table (part of combined table)
-    if len(doc.tables) > 4:
-        table3 = doc.tables[4]
+    # Fill Term 3 table (part of combined table) - now at index 4
+    term3_index = 4
+    if len(doc.tables) > term3_index:
+        table3 = doc.tables[term3_index]
         
         # Format header rows with light green background and bold
         for row_idx in [0, 1]:
@@ -801,6 +856,29 @@ def fill_scheme_official(data):
             logger.info(f"  Term 3 Row {row_idx}: {lo[:30]}")
     
     logger.info("Scheme of work filled successfully")
+    
+    # Add SIGNATURE TABLE at the end
+    sig_table = doc.add_table(rows=3, cols=2)
+    
+    # Row 0: Prepared by
+    sig_table.rows[0].cells[0].text = 'Prepared by: (Name, position and Signature)'
+    set_cell_font(sig_table.rows[0].cells[0], bold=True)
+    sig_table.rows[0].cells[1].text = f"TRAINER: {data.get('trainer_name', '')}"
+    set_cell_font(sig_table.rows[0].cells[1], bold=False)
+    
+    # Row 1: Verified by
+    sig_table.rows[1].cells[0].text = 'Verified by: (Name, position and Signature)'
+    set_cell_font(sig_table.rows[1].cells[0], bold=True)
+    sig_table.rows[1].cells[1].text = f"DOS: {data.get('dos_name', '')}"
+    set_cell_font(sig_table.rows[1].cells[1], bold=False)
+    
+    # Row 2: Approved by
+    sig_table.rows[2].cells[0].text = 'Approved by: (Name, position and Signature)'
+    set_cell_font(sig_table.rows[2].cells[0], bold=True)
+    sig_table.rows[2].cells[1].text = f"SCHOOL MANAGER: {data.get('manager_name', '')}"
+    set_cell_font(sig_table.rows[2].cells[1], bold=False)
+    
+    logger.info('Signature table added at end')
     
     # Save to temp file
     try:
