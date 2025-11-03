@@ -376,20 +376,24 @@
         }
 
         .dev-avatar {
-            width: 120px;
-            height: 120px;
+            width: 140px;
+            height: 140px;
             background: white;
             border-radius: 50%;
-            margin: -60px auto 1rem;
+            margin: -70px auto 1rem;
             overflow: hidden;
             box-shadow: 0 5px 20px rgba(0,0,0,0.3);
             border: 4px solid white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .dev-avatar img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
+            object-position: center;
         }
 
         .dev-skills {
