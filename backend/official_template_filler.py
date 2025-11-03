@@ -15,6 +15,7 @@ def set_cell_font(cell, font_name='Bookman Old Style', font_size=12, bold=False)
         paragraph.paragraph_format.space_before = Pt(0)
         paragraph.paragraph_format.space_after = Pt(0)
         paragraph.paragraph_format.line_spacing = 1.5
+        paragraph.alignment = WD_ALIGN_PARAGRAPH.LEFT
         
         for run in paragraph.runs:
             run.font.name = font_name
@@ -34,6 +35,7 @@ def set_cell_text_with_bold_label(cell, label, value, font_name='Bookman Old Sty
     p.paragraph_format.space_before = Pt(0)
     p.paragraph_format.space_after = Pt(0)
     p.paragraph_format.line_spacing = 1.5
+    p.alignment = WD_ALIGN_PARAGRAPH.LEFT
     
     label_run = p.add_run(label)
     label_run.font.name = font_name
@@ -268,6 +270,7 @@ def fill_session_plan_official(data):
     p.paragraph_format.space_before = Pt(0)
     p.paragraph_format.space_after = Pt(0)
     p.paragraph_format.line_spacing = 1.5
+    p.alignment = WD_ALIGN_PARAGRAPH.LEFT
     
     r1 = p.add_run("School year: ")
     r1.font.bold = True
@@ -357,6 +360,7 @@ def fill_session_plan_official(data):
     p.paragraph_format.space_before = Pt(0)
     p.paragraph_format.space_after = Pt(0)
     p.paragraph_format.line_spacing = 1.5
+    p.alignment = WD_ALIGN_PARAGRAPH.LEFT
     
     r1 = p.add_run("Trainer's activity: ")
     r1.font.bold = True
@@ -388,6 +392,7 @@ def fill_session_plan_official(data):
     p.paragraph_format.space_before = Pt(0)
     p.paragraph_format.space_after = Pt(0)
     p.paragraph_format.line_spacing = 1.5
+    p.alignment = WD_ALIGN_PARAGRAPH.LEFT
     
     r1 = p.add_run("Step 1:\n")
     r1.font.bold = True
