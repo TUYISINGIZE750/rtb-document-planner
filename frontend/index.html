@@ -6,491 +6,325 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <meta name="version" content="v2.0-minimalist-2025">
     <title>RTB Document Planner - Professional TVET Tools</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: #ffffff;
-            color: #141414;
-            overflow-x: hidden;
+            font-family: 'Roboto', sans-serif;
+            background: #fff;
+            color: #333;
+            line-height: 1.6;
         }
 
-        /* Header */
-        .header {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            padding: 1.5rem 4%;
+        .top-bar {
+            background: #003d82;
+            color: white;
+            padding: 0.75rem 5%;
+            font-size: 0.9rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            z-index: 1000;
-            background: transparent;
-            transition: background 0.3s;
         }
 
-        .header.scrolled {
-            background: rgba(255,255,255,0.98);
-            backdrop-filter: blur(10px);
+        .top-bar a {
+            color: white;
+            text-decoration: none;
+            margin-left: 1.5rem;
+        }
+
+        .header {
+            background: white;
+            padding: 1.25rem 5%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
         }
 
         .logo {
-            font-size: 1.75rem;
+            font-size: 1.5rem;
             font-weight: 700;
-            color: #10b981;
-            letter-spacing: -0.5px;
+            color: #003d82;
         }
 
-        .header.scrolled .logo {
-            color: #10b981;
-        }
-
-        .nav-buttons {
+        .nav {
             display: flex;
-            gap: 1rem;
+            gap: 2rem;
             align-items: center;
         }
 
-        .btn-nav {
-            padding: 0.5rem 1.25rem;
-            border-radius: 0.25rem;
+        .nav a, .nav button {
+            color: #003d82;
             text-decoration: none;
             font-weight: 500;
-            font-size: 0.9rem;
-            transition: all 0.2s;
+            padding: 0.5rem 1rem;
             border: none;
+            background: transparent;
             cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
         }
 
-        .btn-login {
-            background: white;
-            color: #141414;
-            border: 2px solid white;
+        .nav a:hover, .nav button:hover {
+            background: #f0f4f8;
+            border-radius: 0.25rem;
         }
 
-        .header.scrolled .btn-login {
-            background: white;
-            color: #141414;
-            border: 2px solid #e5e7eb;
+        .btn-primary {
+            background: #003d82 !important;
+            color: white !important;
+            border-radius: 0.25rem;
         }
 
-        .btn-login:hover {
-            background: #f9fafb;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        .btn-primary:hover {
+            background: #002a5c !important;
         }
 
-        .btn-register {
-            background: #10b981;
-            color: white;
-        }
-
-        .btn-register:hover {
-            background: #059669;
-        }
-
-        /* Hero Section */
         .hero {
-            position: relative;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-
-        .hero-background {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-        }
-
-        .hero-slide {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            transition: opacity 2s ease-in-out;
-            background-size: cover;
-            background-position: center;
-        }
-
-        .hero-slide.active {
-            opacity: 1;
-        }
-
-        .hero-slide::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.85) 0%, rgba(5, 150, 105, 0.9) 100%);
-        }
-
-        .slide-1 {
-            background-image: url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=1920&q=80');
-        }
-
-        .slide-2 {
-            background-image: url('https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=1920&q=80');
-        }
-
-        .slide-3 {
-            background-image: url('https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=1920&q=80');
-        }
-
-        .slide-4 {
-            background-image: url('https://images.unsplash.com/photo-1509062522246-3755977927d7?w=1920&q=80');
-        }
-
-        .hero-content {
-            position: relative;
+            background: linear-gradient(135deg, #003d82 0%, #0056b3 100%);
+            color: white;
+            padding: 5rem 5%;
             text-align: center;
-            max-width: 900px;
-            padding: 2rem;
-            animation: fadeInUp 1s ease-out;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
 
         .hero h1 {
-            font-size: 4rem;
+            font-size: 3rem;
             font-weight: 700;
-            line-height: 1.1;
-            margin-bottom: 1.5rem;
-            color: white;
-            letter-spacing: -2px;
-            text-shadow: 0 4px 20px rgba(0,0,0,0.3);
-        }
-
-        .hero-highlight {
-            color: #fde047;
+            margin-bottom: 1rem;
         }
 
         .hero p {
-            font-size: 1.5rem;
-            color: white;
-            margin-bottom: 2.5rem;
-            font-weight: 400;
-            line-height: 1.6;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
         }
 
         .hero-buttons {
             display: flex;
             gap: 1rem;
             justify-content: center;
-            flex-wrap: wrap;
         }
 
         .btn-hero {
-            padding: 1rem 2.5rem;
+            padding: 1rem 2rem;
             border-radius: 0.375rem;
             text-decoration: none;
             font-weight: 600;
             font-size: 1.125rem;
             transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            border: none;
-            cursor: pointer;
         }
 
-        .btn-primary {
-            background: #10b981;
-            color: white;
+        .btn-white {
+            background: white;
+            color: #003d82;
         }
 
-        .btn-primary:hover {
-            background: #059669;
+        .btn-white:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
-        .btn-secondary {
-            background: white;
-            color: #141414;
-            border: 2px solid #e5e7eb;
+        .btn-outline {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
         }
 
-        .btn-secondary:hover {
-            border-color: #10b981;
-            color: #10b981;
+        .btn-outline:hover {
+            background: rgba(255,255,255,0.1);
         }
 
-        /* Features Section */
-        .features {
-            padding: 8rem 4%;
-            background: white;
+        .services {
+            padding: 4rem 5%;
+            background: #f8f9fa;
         }
 
-        .section-header {
-            text-align: center;
-            max-width: 700px;
-            margin: 0 auto 5rem;
-        }
-
-        .section-header h2 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            color: #141414;
-            letter-spacing: -1px;
-        }
-
-        .section-header p {
-            font-size: 1.25rem;
-            color: #6b7280;
-            line-height: 1.6;
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 3rem;
-            max-width: 1200px;
+        .container {
+            max-width: 1400px;
             margin: 0 auto;
         }
 
-        .feature-card {
+        .section-title {
             text-align: center;
-            padding: 2rem;
-            transition: transform 0.3s;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .feature-icon {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #10b981, #059669);
-            border-radius: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1.5rem;
-            font-size: 2rem;
-            color: white;
-        }
-
-        .feature-card h3 {
-            font-size: 1.5rem;
-            font-weight: 600;
+            font-size: 2.5rem;
+            color: #003d82;
             margin-bottom: 1rem;
-            color: #141414;
+            font-weight: 700;
         }
 
-        .feature-card p {
-            color: #6b7280;
-            line-height: 1.7;
-            font-size: 1rem;
-        }
-
-        /* Services Section */
-        .services {
-            padding: 8rem 4%;
-            background: #f9fafb;
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.125rem;
+            color: #666;
+            margin-bottom: 3rem;
         }
 
         .services-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
-            gap: 3rem;
-            max-width: 1200px;
-            margin: 3rem auto 0;
+            gap: 2rem;
         }
 
         .service-card {
             background: white;
-            border-radius: 1rem;
+            border-radius: 0.5rem;
             overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             transition: all 0.3s;
-            border: 1px solid #e5e7eb;
         }
 
         .service-card:hover {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 25px 50px rgba(16, 185, 129, 0.2);
-            border-color: #10b981;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,61,130,0.15);
         }
 
-        .service-card:hover .service-image {
-            transform: scale(1.05);
-        }
-
-        .service-image {
-            height: 250px;
-            background: linear-gradient(135deg, #10b981, #059669);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 5rem;
+        .service-header {
+            background: #003d82;
             color: white;
-            transition: transform 0.3s;
-            overflow: hidden;
-        }
-
-        .service-content {
-            padding: 2.5rem;
-        }
-
-        .service-content h3 {
-            font-size: 1.75rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            color: #141414;
-        }
-
-        .service-content p {
-            color: #6b7280;
-            line-height: 1.7;
-            margin-bottom: 1.5rem;
-        }
-
-        .service-content .btn-service {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1.5rem;
-            background: #10b981;
-            color: white;
-            text-decoration: none;
-            border-radius: 0.375rem;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-
-        .service-content .btn-service:hover {
-            background: #059669;
-        }
-
-        /* CTA Section */
-        .cta {
-            padding: 8rem 4%;
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
+            padding: 2rem;
             text-align: center;
         }
 
-        .cta h2 {
+        .service-icon {
             font-size: 3rem;
-            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .service-header h3 {
+            font-size: 1.75rem;
+        }
+
+        .service-body {
+            padding: 2rem;
+        }
+
+        .service-body p {
+            color: #666;
             margin-bottom: 1.5rem;
-            letter-spacing: -1px;
         }
 
-        .cta p {
-            font-size: 1.25rem;
-            margin-bottom: 2.5rem;
-            opacity: 0.95;
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
-            line-height: 1.6;
+        .service-body ul {
+            list-style: none;
+            margin-bottom: 1.5rem;
         }
 
-        .cta .btn-cta {
-            background: white;
-            color: #10b981;
-            padding: 1rem 2.5rem;
-            border-radius: 0.375rem;
+        .service-body ul li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .service-body ul li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #003d82;
+            font-weight: bold;
+        }
+
+        .btn-service {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background: #003d82;
+            color: white;
             text-decoration: none;
+            border-radius: 0.375rem;
             font-weight: 600;
-            font-size: 1.125rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
             transition: all 0.3s;
         }
 
-        .cta .btn-cta:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        .btn-service:hover {
+            background: #002a5c;
         }
 
-        /* Footer */
-        .footer {
-            padding: 3rem 4%;
-            background: #141414;
-            color: #9ca3af;
+        .info-section {
+            padding: 4rem 5%;
+            background: white;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .info-card {
             text-align: center;
+            padding: 2rem;
+            border: 2px solid #e9ecef;
+            border-radius: 0.5rem;
+            transition: all 0.3s;
         }
 
-        .footer-links {
+        .info-card:hover {
+            border-color: #003d82;
+        }
+
+        .info-icon {
+            width: 80px;
+            height: 80px;
+            background: #003d82;
+            color: white;
+            border-radius: 50%;
             display: flex;
+            align-items: center;
             justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 1.5rem;
+        }
+
+        .info-card h3 {
+            font-size: 1.5rem;
+            color: #003d82;
+            margin-bottom: 1rem;
+        }
+
+        .footer {
+            background: #003d82;
+            color: white;
+            padding: 3rem 5% 1rem;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 2rem;
             margin-bottom: 2rem;
-            flex-wrap: wrap;
         }
 
-        .footer-links a {
-            color: #9ca3af;
+        .footer-section h3 {
+            margin-bottom: 1rem;
+        }
+
+        .footer-section a {
+            color: rgba(255,255,255,0.8);
             text-decoration: none;
-            transition: color 0.3s;
+            display: block;
+            margin-bottom: 0.5rem;
         }
 
-        .footer-links a:hover {
-            color: #10b981;
+        .footer-section a:hover {
+            color: white;
         }
 
         .footer-bottom {
+            text-align: center;
             padding-top: 2rem;
-            border-top: 1px solid #374151;
-            font-size: 0.875rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
         }
 
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-
-            .hero p {
-                font-size: 1.125rem;
-            }
-
-            .section-header h2 {
-                font-size: 2rem;
-            }
-
-            .services-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .features-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .cta h2 {
-                font-size: 2rem;
-            }
-        }
-
-        /* Developer Modal */
         .modal {
             display: none;
             position: fixed;
@@ -500,42 +334,27 @@
             height: 100%;
             background: rgba(0,0,0,0.8);
             z-index: 2000;
-            animation: fadeIn 0.3s;
-        }
-
-        .modal.active {
-            display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
+        .modal.active { display: flex; }
 
         .modal-content {
             background: white;
-            border-radius: 1rem;
+            border-radius: 0.5rem;
             max-width: 600px;
             width: 90%;
             max-height: 90vh;
             overflow-y: auto;
-            position: relative;
-            animation: slideUp 0.3s;
-        }
-
-        @keyframes slideUp {
-            from { transform: translateY(50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
         }
 
         .modal-header {
-            background: linear-gradient(135deg, #10b981, #059669);
+            background: #003d82;
             color: white;
             padding: 2rem;
-            border-radius: 1rem 1rem 0 0;
             text-align: center;
+            position: relative;
         }
 
         .modal-close {
@@ -550,12 +369,6 @@
             border-radius: 50%;
             cursor: pointer;
             font-size: 1.5rem;
-            transition: all 0.3s;
-        }
-
-        .modal-close:hover {
-            background: rgba(255,255,255,0.3);
-            transform: rotate(90deg);
         }
 
         .modal-body {
@@ -563,28 +376,16 @@
         }
 
         .dev-avatar {
-            width: 120px;
-            height: 120px;
+            width: 100px;
+            height: 100px;
             background: white;
             border-radius: 50%;
-            margin: -60px auto 1rem;
+            margin: -50px auto 1rem;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 3rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-
-        .dev-info h3 {
-            font-size: 1.75rem;
-            color: #141414;
-            margin-bottom: 0.5rem;
-        }
-
-        .dev-info p {
-            color: #6b7280;
-            line-height: 1.8;
-            margin-bottom: 1rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
         }
 
         .dev-skills {
@@ -595,19 +396,11 @@
         }
 
         .skill-tag {
-            background: #f0fdf4;
-            color: #10b981;
+            background: #e9ecef;
+            color: #003d82;
             padding: 0.5rem 1rem;
             border-radius: 2rem;
             font-size: 0.875rem;
-            font-weight: 500;
-        }
-
-        .dev-contact {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            margin-top: 2rem;
         }
 
         .contact-item {
@@ -615,22 +408,17 @@
             align-items: center;
             gap: 1rem;
             padding: 1rem;
-            background: #f9fafb;
-            border-radius: 0.5rem;
+            background: #f8f9fa;
+            border-radius: 0.375rem;
             text-decoration: none;
-            color: #141414;
-            transition: all 0.3s;
-        }
-
-        .contact-item:hover {
-            background: #f0fdf4;
-            transform: translateX(5px);
+            color: #333;
+            margin-bottom: 1rem;
         }
 
         .contact-icon {
             width: 40px;
             height: 40px;
-            background: #10b981;
+            background: #003d82;
             color: white;
             border-radius: 50%;
             display: flex;
@@ -638,213 +426,196 @@
             justify-content: center;
         }
 
-        /* Smooth Scroll */
-        html {
-            scroll-behavior: smooth;
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            .services-grid { grid-template-columns: 1fr; }
+            .nav { display: none; }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="header" id="header">
-        <div class="logo">RTB Planner</div>
-        <div class="nav-buttons">
-            <a href="register.html" class="btn-nav btn-register">Create Account</a>
-            <a href="login.html" class="btn-nav btn-login">Login</a>
-            <button onclick="openDeveloperModal()" class="btn-nav btn-login">About Developer</button>
+    <div class="top-bar">
+        <div>📞 +250 789 751 597 | ✉️ support@rtb-planner.rw</div>
+        <div>
+            <a href="register.html">Register</a>
+            <a href="login.html">Login</a>
+        </div>
+    </div>
+
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">RTB Document Planner</div>
+            <nav class="nav">
+                <a href="#services">Services</a>
+                <button onclick="openModal()">About Developer</button>
+                <a href="register.html" class="btn-primary">Get Started</a>
+            </nav>
         </div>
     </header>
 
-    <!-- Hero Section -->
     <section class="hero">
-        <div class="hero-background">
-            <div class="hero-slide slide-1 active"></div>
-            <div class="hero-slide slide-2"></div>
-            <div class="hero-slide slide-3"></div>
-            <div class="hero-slide slide-4"></div>
-        </div>
-        <div class="hero-content">
-            <h1>Create <span class="hero-highlight">Professional</span> TVET Documents</h1>
-            <p>Generate RTB-compliant Session Plans and Schemes of Work in minutes with our intuitive platform</p>
+        <div class="container">
+            <h1>Professional TVET Document Generation</h1>
+            <p>Create RTB-compliant Session Plans and Schemes of Work in minutes</p>
             <div class="hero-buttons">
-                <a href="teacher-dashboard.html" class="btn-hero btn-primary">
-                    <span>Start Creating</span>
-                    <span>→</span>
-                </a>
-                <a href="#services" class="btn-hero btn-secondary">Our Services</a>
+                <a href="teacher-dashboard.html" class="btn-hero btn-white">Start Creating</a>
+                <a href="#services" class="btn-hero btn-outline">Learn More</a>
             </div>
         </div>
     </section>
 
-    <!-- Services Section -->
     <section class="services" id="services">
-        <div class="section-header">
-            <h2>Our Services</h2>
-            <p>Comprehensive document generation for TVET educators</p>
-        </div>
-        <div class="services-grid">
-            <div class="service-card">
-                <div class="service-image">📝</div>
-                <div class="service-content">
-                    <h3>Session Plans</h3>
-                    <p>Create detailed, RTB-compliant session plans with learning outcomes, activities, assessments, and resources. AI-powered content generation helps you save time.</p>
-                    <a href="wizard.html" class="btn-service">
-                        <span>Create Session Plan</span>
-                        <span>→</span>
-                    </a>
+        <div class="container">
+            <h2 class="section-title">Our Services</h2>
+            <p class="section-subtitle">Professional document generation for TVET educators</p>
+            
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-header">
+                        <div class="service-icon">📝</div>
+                        <h3>Session Plans</h3>
+                    </div>
+                    <div class="service-body">
+                        <p>Create detailed, RTB-compliant session plans with all required components.</p>
+                        <ul>
+                            <li>Learning outcomes & objectives</li>
+                            <li>Activities & assessments</li>
+                            <li>Resources & references</li>
+                            <li>AI-powered content</li>
+                        </ul>
+                        <a href="wizard.html" class="btn-service">Create Session Plan →</a>
+                    </div>
                 </div>
-            </div>
-            <div class="service-card">
-                <div class="service-image">📋</div>
-                <div class="service-content">
-                    <h3>Schemes of Work</h3>
-                    <p>Generate comprehensive schemes of work for entire modules with term-by-term breakdown, learning outcomes, and professional formatting.</p>
-                    <a href="scheme-wizard.html" class="btn-service">
-                        <span>Create Scheme</span>
-                        <span>→</span>
-                    </a>
+
+                <div class="service-card">
+                    <div class="service-header">
+                        <div class="service-icon">📋</div>
+                        <h3>Schemes of Work</h3>
+                    </div>
+                    <div class="service-body">
+                        <p>Generate comprehensive schemes of work for entire modules.</p>
+                        <ul>
+                            <li>Term-by-term breakdown</li>
+                            <li>Learning outcomes mapping</li>
+                            <li>Duration planning</li>
+                            <li>Professional formatting</li>
+                        </ul>
+                        <a href="scheme-wizard.html" class="btn-service">Create Scheme →</a>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Developer Modal -->
-    <div class="modal" id="developerModal">
+    <section class="info-section">
+        <div class="container">
+            <h2 class="section-title">Why Choose Us?</h2>
+            <div class="info-grid">
+                <div class="info-card">
+                    <div class="info-icon">✓</div>
+                    <h3>RTB Compliant</h3>
+                    <p>All documents follow official Rwanda Technical Board standards</p>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon">⚡</div>
+                    <h3>Fast & Easy</h3>
+                    <p>Create professional documents in minutes</p>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon">📱</div>
+                    <h3>Mobile Friendly</h3>
+                    <p>Works on all devices</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="modal" id="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <button class="modal-close" onclick="closeDeveloperModal()">×</button>
-                <div class="dev-avatar">👨‍💻</div>
+                <button class="modal-close" onclick="closeModal()">×</button>
+                <div class="dev-avatar">👨💻</div>
                 <h2>Meet the Developer</h2>
             </div>
             <div class="modal-body">
-                <div class="dev-info">
-                    <h3>TUYISINGIZE Leonardus</h3>
-                    <p><strong>Full-Stack Developer & TVET Specialist</strong></p>
-                    <p>Passionate about creating innovative solutions for education technology. Specialized in building professional tools that empower TVET educators across Rwanda.</p>
-                    
-                    <div class="dev-skills">
-                        <span class="skill-tag">Python</span>
-                        <span class="skill-tag">JavaScript</span>
-                        <span class="skill-tag">Flask</span>
-                        <span class="skill-tag">React</span>
-                        <span class="skill-tag">SQL</span>
-                        <span class="skill-tag">UI/UX Design</span>
-                    </div>
-
-                    <p><strong>About This Project:</strong></p>
-                    <p>RTB Document Planner was developed to streamline the document creation process for TVET educators, ensuring compliance with Rwanda Technical Board standards while saving valuable time.</p>
+                <h3>TUYISINGIZE Leonardus</h3>
+                <p><strong>Full-Stack Developer & TVET Specialist</strong></p>
+                <p>Passionate about creating innovative solutions for education technology.</p>
+                
+                <div class="dev-skills">
+                    <span class="skill-tag">Python</span>
+                    <span class="skill-tag">JavaScript</span>
+                    <span class="skill-tag">Flask</span>
+                    <span class="skill-tag">React</span>
                 </div>
 
-                <div class="dev-contact">
-                    <a href="tel:+250789751597" class="contact-item">
-                        <div class="contact-icon">📞</div>
-                        <div>
-                            <strong>Phone</strong><br>
-                            <span>+250 789 751 597</span>
-                        </div>
-                    </a>
-                    <a href="mailto:tuyisingize750@gmail.com" class="contact-item">
-                        <div class="contact-icon">✉️</div>
-                        <div>
-                            <strong>Email</strong><br>
-                            <span>tuyisingize750@gmail.com</span>
-                        </div>
-                    </a>
-                    <a href="https://github.com/TUYISINGIZE750" target="_blank" class="contact-item">
-                        <div class="contact-icon">👨‍💻</div>
-                        <div>
-                            <strong>GitHub</strong><br>
-                            <span>@TUYISINGIZE750</span>
-                        </div>
-                    </a>
-                </div>
+                <a href="tel:+250789751597" class="contact-item">
+                    <div class="contact-icon">📞</div>
+                    <div><strong>Phone</strong><br>+250 789 751 597</div>
+                </a>
+                <a href="mailto:tuyisingize750@gmail.com" class="contact-item">
+                    <div class="contact-icon">✉️</div>
+                    <div><strong>Email</strong><br>tuyisingize750@gmail.com</div>
+                </a>
             </div>
         </div>
     </div>
 
-    <!-- Footer -->
     <footer class="footer">
-        <div class="footer-links">
-            <a href="register.html">Register</a>
-            <a href="login.html">Login</a>
-            <a href="teacher-dashboard.html">Dashboard</a>
-            <a href="direct-login.html">Admin</a>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>RTB Document Planner</h3>
+                <p>Professional TVET tools for Rwanda</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <a href="register.html">Register</a>
+                <a href="login.html">Login</a>
+                <a href="teacher-dashboard.html">Dashboard</a>
+            </div>
+            <div class="footer-section">
+                <h3>Services</h3>
+                <a href="wizard.html">Session Plans</a>
+                <a href="scheme-wizard.html">Schemes of Work</a>
+            </div>
         </div>
         <div class="footer-bottom">
-            <p>© 2025 RTB Document Planner. Professional TVET Tools for Rwanda. | v2.0 Minimalist</p>
+            <p>© 2025 RTB Document Planner. Professional TVET Tools for Rwanda.</p>
         </div>
     </footer>
 
     <script>
-        // Header scroll effect
-        window.addEventListener('scroll', () => {
-            const header = document.getElementById('header');
-            if (window.scrollY > 50) {
-                header.classList.add('scrolled');
-            } else {
-                header.classList.remove('scrolled');
-            }
-        });
-
-        // Check existing session and redirect
         function checkExistingSession() {
             try {
                 const session = localStorage.getItem('rtb_auth_session');
                 if (session) {
-                    const sessionData = JSON.parse(session);
-                    if (sessionData && sessionData.name) {
-                        if (sessionData.role === 'admin') {
-                            window.location.replace('admin.html');
-                        } else {
-                            window.location.replace('teacher-dashboard.html');
-                        }
+                    const data = JSON.parse(session);
+                    if (data && data.name) {
+                        window.location.replace(data.role === 'admin' ? 'admin.html' : 'teacher-dashboard.html');
                     }
                 }
-            } catch (e) {
-                console.log('No active session');
-            }
+            } catch (e) {}
         }
 
-        document.addEventListener('DOMContentLoaded', checkExistingSession);
-
-        // Background Slideshow
-        let currentSlide = 0;
-        const slides = document.querySelectorAll('.hero-slide');
-        const totalSlides = slides.length;
-
-        function nextSlide() {
-            slides[currentSlide].classList.remove('active');
-            currentSlide = (currentSlide + 1) % totalSlides;
-            slides[currentSlide].classList.add('active');
-        }
-
-        // Change slide every 5 seconds
-        setInterval(nextSlide, 5000);
-
-        // Developer Modal Functions
-        function openDeveloperModal() {
-            document.getElementById('developerModal').classList.add('active');
+        function openModal() {
+            document.getElementById('modal').classList.add('active');
             document.body.style.overflow = 'hidden';
         }
 
-        function closeDeveloperModal() {
-            document.getElementById('developerModal').classList.remove('active');
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
             document.body.style.overflow = 'auto';
         }
 
-        // Close modal on outside click
-        document.getElementById('developerModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeDeveloperModal();
-            }
+        document.getElementById('modal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
         });
 
-        // Close modal on Escape key
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeDeveloperModal();
-            }
+            if (e.key === 'Escape') closeModal();
         });
+
+        document.addEventListener('DOMContentLoaded', checkExistingSession);
     </script>
 </body>
 </html>
