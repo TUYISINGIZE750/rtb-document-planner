@@ -106,29 +106,29 @@
             <form id="wizardForm">
                 <!-- Step 1: Institution -->
                 <div class="step-content active" data-step="1">
-                    <h2>Institutional & Module Information</h2>
-                    <p class="step-description">Basic details about your institution and module</p>
+                    <h2>School Details & Module Information</h2>
+                    <p class="step-description">School information and module details</p>
+                    
+                    <div class="form-group full-width"><label>School Logo (Optional)</label><input type="file" id="schoolLogo" accept="image/*" onchange="handleLogoUpload(event)"></div>
+                    <div class="form-group full-width"><label>School Name</label><input type="text" name="school_name" placeholder="e.g., IPRC Kigali" required></div>
                     
                     <div class="form-grid">
                         <div class="form-group"><label>Province</label><select name="province" id="provinceSelect" required><option value="">Select Province</option></select></div>
                         <div class="form-group"><label>District</label><select name="district" id="districtSelect" required><option value="">Select District</option></select></div>
-                        <div class="form-group"><label>Sector (Location)</label><select name="sector_location" id="sectorSelect" required><option value="">Select Sector</option></select></div>
+                        <div class="form-group"><label>Sector</label><select name="sector_location" id="sectorSelect" required><option value="">Select Sector</option></select></div>
                         <div class="form-group"><label>Cell</label><select name="cell" id="cellSelect" required><option value="">Select Cell</option></select></div>
                         <div class="form-group"><label>Village</label><select name="village" id="villageSelect" required><option value="">Select Village</option></select></div>
                         <div class="form-group"><label>Sector (Trade)</label><input type="text" name="sector" placeholder="e.g., ICT & MULTIMEDIA" required></div>
-                        <div class="form-group"><label>School</label><input type="text" name="school" placeholder="e.g., IPRC Kigali" required></div>
-                        <div class="form-group"><label>Department/Trade</label><input type="text" name="trade" placeholder="e.g., Software Development" required></div>
+                        <div class="form-group"><label>Trade</label><input type="text" name="trade" placeholder="e.g., Software Development" required></div>
                         <div class="form-group"><label>Qualification Title</label><input type="text" name="qualification_title" placeholder="e.g., Diploma in Software Development" required></div>
-                        <div class="form-group"><label>RQF Level</label><select name="rqf_level" required><option value="">Select</option><option value="Level 1">Level 1</option><option value="Level 2">Level 2</option><option value="Level 3">Level 3</option><option value="Level 4">Level 4</option><option value="Level 5">Level 5</option></select></div>
+                        <div class="form-group"><label>RQF Level</label><select name="rqf_level" required><option value="">Select</option><option value="Level 4">Level 4</option><option value="Level 5">Level 5</option></select></div>
                         <div class="form-group"><label>Module Code & Title</label><input type="text" name="module_code_title" placeholder="e.g., CSA-M01: C Programming" required></div>
                         <div class="form-group"><label>School Year</label><input type="text" name="school_year" placeholder="e.g., 2024-2025" required></div>
                         <div class="form-group"><label>Term(s)</label><input type="text" name="terms" placeholder="e.g., Term 1, 2, 3" required></div>
                         <div class="form-group"><label>Module Hours</label><input type="number" name="module_hours" placeholder="e.g., 120" required></div>
                         <div class="form-group"><label>Number of Classes</label><input type="number" name="number_of_classes" placeholder="e.g., 3" required></div>
                         <div class="form-group"><label>Class Name</label><input type="text" name="class_name" placeholder="e.g., L4CSA-A" required></div>
-                        <div class="form-group"><label>Cohort Size</label><input type="number" name="cohort_size" placeholder="e.g., 30" required></div>
                         <div class="form-group"><label>Trainer Name</label><input type="text" name="trainer_name" placeholder="e.g., John Doe" required></div>
-                        <div class="form-group"><label>Trainer Position</label><input type="text" name="trainer_position" placeholder="e.g., Senior Instructor" required></div>
                     </div>
                     <div class="btn-group"><button type="button" class="btn btn-primary" onclick="nextStep()">Next <i class="fas fa-arrow-right"></i></button></div>
                 </div>
@@ -156,11 +156,11 @@
                     <h2>Term 1 Planning</h2>
                     <p class="step-description">Define learning outcomes and content for Term 1</p>
                     
-                    <div class="form-group"><label>Weeks & Dates</label><input type="text" name="term1_weeks" placeholder="e.g., Week 1-12 (Jan-Mar 2025)" required></div>
-                    <div class="form-group"><label>Learning Outcomes (LOs)</label><textarea name="term1_learning_outcomes" rows="4" placeholder="LO1: First outcome&#10;LO2: Second outcome" required></textarea></div>
-                    <div class="form-group"><label>Duration (hours)</label><input type="text" name="term1_duration" placeholder="e.g., 40 hours" required></div>
-                    <div class="form-group"><label>Indicative Content (ICs)</label><textarea name="term1_indicative_contents" rows="4" placeholder="IC1: First content&#10;IC2: Second content" required></textarea></div>
-                    <div class="form-group"><label>Learning Place</label><input type="text" name="term1_learning_place" placeholder="e.g., Classroom, Workshop, Lab" required></div>
+                    <div class="form-group"><label>Weeks</label><input type="text" name="term1_weeks" placeholder="e.g., 1-12" required></div>
+                    <div class="form-group"><label>Competence Code and Name</label><input type="text" name="term1_competence" placeholder="e.g., C1: Programming Fundamentals" required></div>
+                    <div class="form-group"><label>Learning Outcomes (one per line)</label><textarea name="term1_learning_outcomes" rows="4" placeholder="LO1: Understand basic programming concepts&#10;LO2: Write simple programs" required></textarea></div>
+                    <div class="form-group"><label>Duration</label><input type="text" name="term1_duration" placeholder="e.g., 40 hours" required></div>
+                    <div class="form-group full-width"><label>Indicative Content (one per line)</label><textarea name="term1_indicative_contents" rows="4" placeholder="IC1.1: Variables and data types&#10;IC1.2: Control structures&#10;IC1.3: Functions" required></textarea></div>
                     
                     <div class="btn-group"><button type="button" class="btn btn-secondary" onclick="prevStep()"><i class="fas fa-arrow-left"></i> Previous</button><button type="button" class="btn btn-primary" onclick="nextStep()">Next <i class="fas fa-arrow-right"></i></button></div>
                 </div>
@@ -170,11 +170,11 @@
                     <h2>Term 2 Planning</h2>
                     <p class="step-description">Define learning outcomes and content for Term 2</p>
                     
-                    <div class="form-group"><label>Weeks & Dates</label><input type="text" name="term2_weeks" placeholder="e.g., Week 13-24 (Apr-Jun 2025)" required></div>
-                    <div class="form-group"><label>Learning Outcomes (LOs)</label><textarea name="term2_learning_outcomes" rows="4" placeholder="LO3: Third outcome&#10;LO4: Fourth outcome" required></textarea></div>
-                    <div class="form-group"><label>Duration (hours)</label><input type="text" name="term2_duration" placeholder="e.g., 40 hours" required></div>
-                    <div class="form-group"><label>Indicative Content (ICs)</label><textarea name="term2_indicative_contents" rows="4" placeholder="IC3: Third content&#10;IC4: Fourth content" required></textarea></div>
-                    <div class="form-group"><label>Learning Place</label><input type="text" name="term2_learning_place" placeholder="e.g., Classroom, Workshop, Lab" required></div>
+                    <div class="form-group"><label>Weeks</label><input type="text" name="term2_weeks" placeholder="e.g., 13-24" required></div>
+                    <div class="form-group"><label>Competence Code and Name</label><input type="text" name="term2_competence" placeholder="e.g., C2: Advanced Programming" required></div>
+                    <div class="form-group"><label>Learning Outcomes (one per line)</label><textarea name="term2_learning_outcomes" rows="4" placeholder="LO3: Apply advanced concepts&#10;LO4: Develop complex programs" required></textarea></div>
+                    <div class="form-group"><label>Duration</label><input type="text" name="term2_duration" placeholder="e.g., 40 hours" required></div>
+                    <div class="form-group full-width"><label>Indicative Content (one per line)</label><textarea name="term2_indicative_contents" rows="4" placeholder="IC2.1: Object-oriented programming&#10;IC2.2: Data structures&#10;IC2.3: Algorithms" required></textarea></div>
                     
                     <div class="btn-group"><button type="button" class="btn btn-secondary" onclick="prevStep()"><i class="fas fa-arrow-left"></i> Previous</button><button type="button" class="btn btn-primary" onclick="nextStep()">Next <i class="fas fa-arrow-right"></i></button></div>
                 </div>
@@ -184,11 +184,11 @@
                     <h2>Term 3 Planning</h2>
                     <p class="step-description">Define learning outcomes and content for Term 3</p>
                     
-                    <div class="form-group"><label>Weeks & Dates</label><input type="text" name="term3_weeks" placeholder="e.g., Week 25-36 (Jul-Sep 2025)" required></div>
-                    <div class="form-group"><label>Learning Outcomes (LOs)</label><textarea name="term3_learning_outcomes" rows="4" placeholder="LO5: Fifth outcome&#10;LO6: Sixth outcome" required></textarea></div>
-                    <div class="form-group"><label>Duration (hours)</label><input type="text" name="term3_duration" placeholder="e.g., 40 hours" required></div>
-                    <div class="form-group"><label>Indicative Content (ICs)</label><textarea name="term3_indicative_contents" rows="4" placeholder="IC5: Fifth content&#10;IC6: Sixth content" required></textarea></div>
-                    <div class="form-group"><label>Learning Place</label><input type="text" name="term3_learning_place" placeholder="e.g., Classroom, Workshop, Lab" required></div>
+                    <div class="form-group"><label>Weeks</label><input type="text" name="term3_weeks" placeholder="e.g., 25-36" required></div>
+                    <div class="form-group"><label>Competence Code and Name</label><input type="text" name="term3_competence" placeholder="e.g., C3: Project Development" required></div>
+                    <div class="form-group"><label>Learning Outcomes (one per line)</label><textarea name="term3_learning_outcomes" rows="4" placeholder="LO5: Design complete projects&#10;LO6: Implement solutions" required></textarea></div>
+                    <div class="form-group"><label>Duration</label><input type="text" name="term3_duration" placeholder="e.g., 40 hours" required></div>
+                    <div class="form-group full-width"><label>Indicative Content (one per line)</label><textarea name="term3_indicative_contents" rows="4" placeholder="IC3.1: Project planning&#10;IC3.2: Implementation&#10;IC3.3: Testing and deployment" required></textarea></div>
                     
                     <div class="btn-group"><button type="button" class="btn btn-secondary" onclick="prevStep()"><i class="fas fa-arrow-left"></i> Previous</button><button type="button" class="btn btn-primary" onclick="nextStep()">Next <i class="fas fa-arrow-right"></i></button></div>
                 </div>
@@ -208,12 +208,16 @@
                 
                 <!-- Step 7: Sign-Offs -->
                 <div class="step-content" data-step="7">
-                    <h2>Sign-Offs</h2>
-                    <p class="step-description">Approval and verification details</p>
+                    <h2>Approvals</h2>
+                    <p class="step-description">Names and positions for approval signatures</p>
                     
                     <div class="form-grid">
-                        <div class="form-group"><label>Director of Studies (DOS) Name</label><input type="text" name="dos_name" placeholder="e.g., Jane Smith" required></div>
-                        <div class="form-group"><label>School Manager Name</label><input type="text" name="manager_name" placeholder="e.g., Robert Johnson" required></div>
+                        <div class="form-group"><label>Prepared by (Name)</label><input type="text" name="prepared_by_name" placeholder="Trainer name" required></div>
+                        <div class="form-group"><label>Position</label><input type="text" name="prepared_by_position" placeholder="e.g., Trainer" required></div>
+                        <div class="form-group"><label>Verified by (Name)</label><input type="text" name="verified_by_name" placeholder="DOS name" required></div>
+                        <div class="form-group"><label>Position</label><input type="text" name="verified_by_position" placeholder="e.g., Director of Studies" required></div>
+                        <div class="form-group"><label>Approved by (Name)</label><input type="text" name="approved_by_name" placeholder="Manager name" required></div>
+                        <div class="form-group"><label>Position</label><input type="text" name="approved_by_position" placeholder="e.g., School Manager" required></div>
                     </div>
                     
                     <div class="btn-group"><button type="button" class="btn btn-secondary" onclick="prevStep()"><i class="fas fa-arrow-left"></i> Previous</button><button type="button" class="btn btn-primary" onclick="nextStep()">Next <i class="fas fa-arrow-right"></i></button></div>
@@ -248,6 +252,19 @@
         if (!canAccessUserPages()) {
             alert('Please login to access the Scheme of Work Wizard');
             window.location.replace('login.html');
+        }
+        
+        let schoolLogoBase64 = '';
+        
+        function handleLogoUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    schoolLogoBase64 = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
         }
         
         let currentStep = 1;
@@ -328,8 +345,11 @@
                 const formData = new FormData(e.target);
                 const data = Object.fromEntries(formData);
                 
-                // Add user phone to data
+                // Add user phone and school logo
                 data.user_phone = session.phone;
+                if (schoolLogoBase64) {
+                    data.school_logo = schoolLogoBase64;
+                }
                 
                 // First check download limits
                 const canDownload = await checkDownloadLimits('scheme');

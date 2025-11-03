@@ -497,9 +497,12 @@ def fill_scheme_official(data):
     logger.info(f"Scheme template loaded, tables: {len(doc.tables)}")
     
     # Add school header at top
-    school_name = data.get('school', '')
+    school_name = data.get('school_name', '') or data.get('school', '')
     province = data.get('province', '')
     district = data.get('district', '')
+    sector_loc = data.get('sector_location', '')
+    cell_loc = data.get('cell', '')
+    village = data.get('village', '')
     
     header_table = doc.add_table(rows=1, cols=3)
     header_table.alignment = WD_ALIGN_PARAGRAPH.CENTER
@@ -532,20 +535,44 @@ def fill_scheme_official(data):
     name_run.font.size = Pt(14)
     name_run.font.name = 'Bookman Old Style'
     
-    location_text = f"{province} - {district}"
+    location_text = f"{province} - {district} - {sector_loc} - {cell_loc} - {village}"
     loc_run = center_para.add_run(location_text)
     loc_run.font.size = Pt(10)
     loc_run.font.name = 'Bookman Old Style'
+    loc_run.font.bold = True
     
-    # RIGHT: School logo placeholder
+    # RIGHT: School logo
     right_cell = header_table.rows[0].cells[2]
     right_para = right_cell.paragraphs[0]
     right_para.alignment = WD_ALIGN_PARAGRAPH.RIGHT
     right_para.paragraph_format.space_before = Pt(0)
     right_para.paragraph_format.space_after = Pt(0)
-    right_run = right_para.add_run('SCHOOL\nLOGO')
-    right_run.font.size = Pt(10)
-    right_run.font.name = 'Bookman Old Style'
+    
+    school_logo_base64 = data.get('school_logo', '')
+    if school_logo_base64 and 'base64' in school_logo_base64:
+        try:
+            logo_data = school_logo_base64.split(',')[1] if ',' in school_logo_base64 else school_logo_base64
+            logo_bytes = base64.b64decode(logo_data)
+            temp_logo = tempfile.NamedTemporaryFile(delete=False, suffix='.png')
+            temp_logo.write(logo_bytes)
+            temp_logo.close()
+            
+            right_run = right_para.add_run()
+            right_run.add_picture(temp_logo.name, width=Inches(1.2))
+            
+            try:
+                os.remove(temp_logo.name)
+            except:
+                pass
+        except Exception as e:
+            logger.error(f"Logo error: {e}")
+            right_run = right_para.add_run('SCHOOL\nLOGO')
+            right_run.font.size = Pt(10)
+            right_run.font.name = 'Bookman Old Style'
+    else:
+        right_run = right_para.add_run('SCHOOL\nLOGO')
+        right_run.font.size = Pt(10)
+        right_run.font.name = 'Bookman Old Style'
     
     # Move header table to beginning
     header_element = header_table._element
@@ -691,13 +718,14 @@ def fill_scheme_official(data):
                 set_cell_font(cell, bold=True)
         
         term1_weeks = (data.get('term1_weeks') or '').strip()
+        term1_competence = (data.get('term1_competence') or '').strip()
         term1_outcomes_raw = (data.get('term1_learning_outcomes') or '').strip()
         term1_contents_raw = (data.get('term1_indicative_contents') or '').strip()
         term1_duration = (data.get('term1_duration') or '').strip()
-        term1_activities = (data.get('term1_learning_activities') or '').strip()
-        term1_resources = (data.get('term1_resources') or '').strip()
-        term1_assessment = (data.get('term1_assessment') or '').strip()
-        term1_place = (data.get('term1_learning_place') or 'Workshop').strip()
+        term1_activities = 'Practical exercises, Group work, Demonstrations'
+        term1_resources = 'Textbooks, Computers, Tools, Materials'
+        term1_assessment = 'Observation, Practical tests, Written tests'
+        term1_place = 'Workshop'
         
         # Split by newline and filter empty lines
         term1_outcomes = [lo.strip() for lo in term1_outcomes_raw.replace('\r\n', '\n').split('\n') if lo.strip()]
@@ -758,13 +786,14 @@ def fill_scheme_official(data):
                 set_cell_font(cell, bold=True)
         
         term2_weeks = (data.get('term2_weeks') or '').strip()
+        term2_competence = (data.get('term2_competence') or '').strip()
         term2_outcomes_raw = (data.get('term2_learning_outcomes') or '').strip()
         term2_contents_raw = (data.get('term2_indicative_contents') or '').strip()
         term2_duration = (data.get('term2_duration') or '').strip()
-        term2_activities = (data.get('term2_learning_activities') or '').strip()
-        term2_resources = (data.get('term2_resources') or '').strip()
-        term2_assessment = (data.get('term2_assessment') or '').strip()
-        term2_place = (data.get('term2_learning_place') or 'Workshop').strip()
+        term2_activities = 'Practical exercises, Group work, Demonstrations'
+        term2_resources = 'Textbooks, Computers, Tools, Materials'
+        term2_assessment = 'Observation, Practical tests, Written tests'
+        term2_place = 'Workshop'
         
         term2_outcomes = [lo.strip() for lo in term2_outcomes_raw.replace('\r\n', '\n').split('\n') if lo.strip()]
         term2_contents = [ic.strip() for ic in term2_contents_raw.replace('\r\n', '\n').split('\n') if ic.strip()]
@@ -814,13 +843,14 @@ def fill_scheme_official(data):
                 set_cell_font(cell, bold=True)
         
         term3_weeks = (data.get('term3_weeks') or '').strip()
+        term3_competence = (data.get('term3_competence') or '').strip()
         term3_outcomes_raw = (data.get('term3_learning_outcomes') or '').strip()
         term3_contents_raw = (data.get('term3_indicative_contents') or '').strip()
         term3_duration = (data.get('term3_duration') or '').strip()
-        term3_activities = (data.get('term3_learning_activities') or '').strip()
-        term3_resources = (data.get('term3_resources') or '').strip()
-        term3_assessment = (data.get('term3_assessment') or '').strip()
-        term3_place = (data.get('term3_learning_place') or 'Workshop').strip()
+        term3_activities = 'Practical exercises, Group work, Demonstrations'
+        term3_resources = 'Textbooks, Computers, Tools, Materials'
+        term3_assessment = 'Observation, Practical tests, Written tests'
+        term3_place = 'Workshop'
         
         term3_outcomes = [lo.strip() for lo in term3_outcomes_raw.replace('\r\n', '\n').split('\n') if lo.strip()]
         term3_contents = [ic.strip() for ic in term3_contents_raw.replace('\r\n', '\n').split('\n') if ic.strip()]
@@ -866,19 +896,25 @@ def fill_scheme_official(data):
     # Row 0: Prepared by
     sig_table.rows[0].cells[0].text = 'Prepared by: (Name, position and Signature)'
     set_cell_font(sig_table.rows[0].cells[0], bold=True)
-    sig_table.rows[0].cells[1].text = f"TRAINER: {data.get('trainer_name', '')}"
+    prepared_name = data.get('prepared_by_name', '') or data.get('trainer_name', '')
+    prepared_pos = data.get('prepared_by_position', '') or 'Trainer'
+    sig_table.rows[0].cells[1].text = f"{prepared_name}, {prepared_pos}"
     set_cell_font(sig_table.rows[0].cells[1], bold=False)
     
     # Row 1: Verified by
     sig_table.rows[1].cells[0].text = 'Verified by: (Name, position and Signature)'
     set_cell_font(sig_table.rows[1].cells[0], bold=True)
-    sig_table.rows[1].cells[1].text = f"DOS: {data.get('dos_name', '')}"
+    verified_name = data.get('verified_by_name', '') or data.get('dos_name', '')
+    verified_pos = data.get('verified_by_position', '') or 'Director of Studies'
+    sig_table.rows[1].cells[1].text = f"{verified_name}, {verified_pos}"
     set_cell_font(sig_table.rows[1].cells[1], bold=False)
     
     # Row 2: Approved by
     sig_table.rows[2].cells[0].text = 'Approved by: (Name, position and Signature)'
     set_cell_font(sig_table.rows[2].cells[0], bold=True)
-    sig_table.rows[2].cells[1].text = f"SCHOOL MANAGER: {data.get('manager_name', '')}"
+    approved_name = data.get('approved_by_name', '') or data.get('manager_name', '')
+    approved_pos = data.get('approved_by_position', '') or 'School Manager'
+    sig_table.rows[2].cells[1].text = f"{approved_name}, {approved_pos}"
     set_cell_font(sig_table.rows[2].cells[1], bold=False)
     
     logger.info('Signature table added at end')
