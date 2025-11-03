@@ -10,13 +10,11 @@ from datetime import datetime
 import base64
 
 def set_cell_font(cell, font_name='Bookman Old Style', font_size=12, bold=False):
-    """Set font for all paragraphs and runs in a cell with tight spacing"""
+    """Set font for all paragraphs and runs in a cell with 1.5 line spacing"""
     for paragraph in cell.paragraphs:
-        # Remove ALL spacing
         paragraph.paragraph_format.space_before = Pt(0)
         paragraph.paragraph_format.space_after = Pt(0)
-        paragraph.paragraph_format.line_spacing = Pt(font_size)  # Exact line height = font size
-        paragraph.paragraph_format.line_spacing_rule = 0  # Exact spacing
+        paragraph.paragraph_format.line_spacing = 1.5
         
         for run in paragraph.runs:
             run.font.name = font_name
@@ -30,14 +28,12 @@ def set_cell_font(cell, font_name='Bookman Old Style', font_size=12, bold=False)
             run.font.bold = bold
 
 def set_cell_text_with_bold_label(cell, label, value, font_name='Bookman Old Style', font_size=12):
-    """Set cell text with bold label and normal value - tight spacing"""
+    """Set cell text with bold label and normal value - 1.5 line spacing"""
     cell.text = ''
     p = cell.paragraphs[0] if cell.paragraphs else cell.add_paragraph()
-    # Remove ALL spacing
     p.paragraph_format.space_before = Pt(0)
     p.paragraph_format.space_after = Pt(0)
-    p.paragraph_format.line_spacing = Pt(font_size)  # Exact line height
-    p.paragraph_format.line_spacing_rule = 0  # Exact spacing
+    p.paragraph_format.line_spacing = 1.5
     
     label_run = p.add_run(label)
     label_run.font.name = font_name
@@ -154,8 +150,7 @@ def fill_session_plan_official(data):
     left_para.alignment = WD_ALIGN_PARAGRAPH.LEFT
     left_para.paragraph_format.space_before = Pt(0)
     left_para.paragraph_format.space_after = Pt(0)
-    left_para.paragraph_format.line_spacing = Pt(9)
-    left_para.paragraph_format.line_spacing_rule = 0
+    left_para.paragraph_format.line_spacing = 1.5
     left_run = left_para.add_run('RWANDA\nTVET BOARD')
     left_run.font.bold = True
     left_run.font.size = Pt(9)
@@ -167,8 +162,7 @@ def fill_session_plan_official(data):
     center_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
     center_para.paragraph_format.space_before = Pt(0)
     center_para.paragraph_format.space_after = Pt(0)
-    center_para.paragraph_format.line_spacing = Pt(11)
-    center_para.paragraph_format.line_spacing_rule = 0
+    center_para.paragraph_format.line_spacing = 1.5
     
     name_run = center_para.add_run(school_name + '\n')
     name_run.font.bold = True
@@ -187,8 +181,7 @@ def fill_session_plan_official(data):
     right_para.alignment = WD_ALIGN_PARAGRAPH.RIGHT
     right_para.paragraph_format.space_before = Pt(0)
     right_para.paragraph_format.space_after = Pt(0)
-    right_para.paragraph_format.line_spacing = Pt(10)
-    right_para.paragraph_format.line_spacing_rule = 0
+    right_para.paragraph_format.line_spacing = 1.5
     
     school_logo_base64 = data.get('school_logo', '')
     if school_logo_base64 and 'base64' in school_logo_base64:
@@ -276,8 +269,7 @@ def fill_session_plan_official(data):
     p = cell.paragraphs[0]
     p.paragraph_format.space_before = Pt(0)
     p.paragraph_format.space_after = Pt(0)
-    p.paragraph_format.line_spacing = Pt(12)
-    p.paragraph_format.line_spacing_rule = 0
+    p.paragraph_format.line_spacing = 1.5
     
     r1 = p.add_run("School year: ")
     r1.font.bold = True
@@ -366,8 +358,7 @@ def fill_session_plan_official(data):
     p = cell.paragraphs[0]
     p.paragraph_format.space_before = Pt(0)
     p.paragraph_format.space_after = Pt(0)
-    p.paragraph_format.line_spacing = Pt(12)
-    p.paragraph_format.line_spacing_rule = 0
+    p.paragraph_format.line_spacing = 1.5
     
     r1 = p.add_run("Trainer's activity: ")
     r1.font.bold = True
@@ -398,8 +389,7 @@ def fill_session_plan_official(data):
     p = cell.paragraphs[0]
     p.paragraph_format.space_before = Pt(0)
     p.paragraph_format.space_after = Pt(0)
-    p.paragraph_format.line_spacing = Pt(12)
-    p.paragraph_format.line_spacing_rule = 0
+    p.paragraph_format.line_spacing = 1.5
     
     r1 = p.add_run("Step 1:\n")
     r1.font.bold = True
