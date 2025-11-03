@@ -437,8 +437,10 @@ def fill_session_plan_official(data):
         table.rows[16].cells[5].text = "5 min"
         set_cell_font(table.rows[16].cells[5])
     
-    # Row 17: Assessment - bold header
+    # Row 17: Assessment - bold header with default value
     assessment = data.get('assessment_details', '').strip()
+    if not assessment:
+        assessment = "Formative assessment through observation, practical exercises, and Q&A sessions"
     table.rows[17].cells[0].text = assessment
     set_cell_font(table.rows[17].cells[0])
     table.rows[17].cells[3].text = "Assessment sheets"
