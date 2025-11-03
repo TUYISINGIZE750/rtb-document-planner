@@ -593,47 +593,48 @@ def fill_scheme_official(data):
     # Row 3: RQF Level (cols 0-2, rowspan 4) | Module details header (cols 3-5)
     # First merge vertically for RQF Level (rows 3-6, col 0)
     info_table.rows[3].cells[0].merge(info_table.rows[6].cells[0])
-    # Then merge horizontally for Module details header
-    info_table.rows[3].cells[1].merge(info_table.rows[3].cells[3])
+    # Then merge horizontally for Module details header (2 columns)
+    info_table.rows[3].cells[1].merge(info_table.rows[3].cells[2])
     set_cell_text_with_bold_label(info_table.rows[3].cells[0], "RQF Level: ", data.get('rqf_level', ''))
-    info_table.rows[3].cells[1].text = 'Module details'
-    set_cell_font(info_table.rows[3].cells[1], bold=True)
+    # Center-align Module details
+    module_details_cell = info_table.rows[3].cells[1]
+    module_details_para = module_details_cell.paragraphs[0]
+    module_details_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    module_details_para.text = 'Module details'
+    set_cell_font(module_details_cell, bold=True)
     
-    # Row 4: (RQF merged) | Module code and title (cols 1-2) | value (cols 3-5)
-    info_table.rows[4].cells[1].merge(info_table.rows[4].cells[2])
-    info_table.rows[4].cells[3].merge(info_table.rows[4].cells[5])
+    # Row 4: (RQF merged) | Module code and title label | value (cols 3-5)
     info_table.rows[4].cells[1].text = 'Module code and title:'
     set_cell_font(info_table.rows[4].cells[1], bold=True)
-    info_table.rows[4].cells[3].text = data.get('module_code_title', '')
-    set_cell_font(info_table.rows[4].cells[3], bold=False)
+    info_table.rows[4].cells[2].merge(info_table.rows[4].cells[5])
+    info_table.rows[4].cells[2].text = data.get('module_code_title', '')
+    set_cell_font(info_table.rows[4].cells[2], bold=False)
     
-    # Row 5: (RQF merged) | Learning hours (cols 1-2) | value (cols 3-5)
-    info_table.rows[5].cells[1].merge(info_table.rows[5].cells[2])
-    info_table.rows[5].cells[3].merge(info_table.rows[5].cells[5])
+    # Row 5: (RQF merged) | Learning hours label | value (cols 3-5)
     info_table.rows[5].cells[1].text = 'Learning hours:'
     set_cell_font(info_table.rows[5].cells[1], bold=True)
-    info_table.rows[5].cells[3].text = data.get('module_hours', '')
-    set_cell_font(info_table.rows[5].cells[3], bold=False)
+    info_table.rows[5].cells[2].merge(info_table.rows[5].cells[5])
+    info_table.rows[5].cells[2].text = data.get('module_hours', '')
+    set_cell_font(info_table.rows[5].cells[2], bold=False)
     
-    # Row 6: (RQF merged) | Number of Classes (cols 1-2) | value (cols 3-5)
-    info_table.rows[6].cells[1].merge(info_table.rows[6].cells[2])
-    info_table.rows[6].cells[3].merge(info_table.rows[6].cells[5])
+    # Row 6: (RQF merged) | Number of Classes label | value (cols 3-5)
     info_table.rows[6].cells[1].text = 'Number of Classes:'
     set_cell_font(info_table.rows[6].cells[1], bold=True)
-    info_table.rows[6].cells[3].text = data.get('number_of_classes', '')
-    set_cell_font(info_table.rows[6].cells[3], bold=False)
+    info_table.rows[6].cells[2].merge(info_table.rows[6].cells[5])
+    info_table.rows[6].cells[2].text = data.get('number_of_classes', '')
+    set_cell_font(info_table.rows[6].cells[2], bold=False)
     
-    # Row 7: Date (cols 0-2) | Class Name (cols 3-4) | value (col 5)
+    # Row 7: Date (cols 0-2) | Class Name label | value (cols 3-5)
     info_table.rows[7].cells[0].merge(info_table.rows[7].cells[2])
-    info_table.rows[7].cells[3].merge(info_table.rows[7].cells[4])
     date_value = data.get('date', '').strip()
     if not date_value:
         date_value = datetime.now().strftime('%d/%m/%Y')
     set_cell_text_with_bold_label(info_table.rows[7].cells[0], "Date: ", date_value)
     info_table.rows[7].cells[3].text = 'Class Name:'
     set_cell_font(info_table.rows[7].cells[3], bold=True)
-    info_table.rows[7].cells[5].text = data.get('class_name', '')
-    set_cell_font(info_table.rows[7].cells[5], bold=False)
+    info_table.rows[7].cells[4].merge(info_table.rows[7].cells[5])
+    info_table.rows[7].cells[4].text = data.get('class_name', '')
+    set_cell_font(info_table.rows[7].cells[4], bold=False)
     
     # 3. TERM 1 TABLE (matching official RTB structure)
     # Create table with proper structure: 2 header rows + data rows
