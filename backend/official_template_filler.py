@@ -10,11 +10,14 @@ from datetime import datetime
 import base64
 
 def set_cell_font(cell, font_name='Bookman Old Style', font_size=12, bold=False):
-    """Set font for all paragraphs and runs in a cell"""
+    """Set font for all paragraphs and runs in a cell with tight spacing"""
     for paragraph in cell.paragraphs:
+        # Remove ALL spacing
         paragraph.paragraph_format.space_before = Pt(0)
         paragraph.paragraph_format.space_after = Pt(0)
-        paragraph.paragraph_format.line_spacing = 1.0
+        paragraph.paragraph_format.line_spacing = Pt(font_size)  # Exact line height = font size
+        paragraph.paragraph_format.line_spacing_rule = 0  # Exact spacing
+        
         for run in paragraph.runs:
             run.font.name = font_name
             run.font.size = Pt(font_size)
@@ -27,19 +30,23 @@ def set_cell_font(cell, font_name='Bookman Old Style', font_size=12, bold=False)
             run.font.bold = bold
 
 def set_cell_text_with_bold_label(cell, label, value, font_name='Bookman Old Style', font_size=12):
-    """Set cell text with bold label and normal value"""
+    """Set cell text with bold label and normal value - tight spacing"""
     cell.text = ''
     p = cell.paragraphs[0] if cell.paragraphs else cell.add_paragraph()
+    # Remove ALL spacing
     p.paragraph_format.space_before = Pt(0)
     p.paragraph_format.space_after = Pt(0)
-    p.paragraph_format.line_spacing = 1.0
+    p.paragraph_format.line_spacing = Pt(font_size)  # Exact line height
+    p.paragraph_format.line_spacing_rule = 0  # Exact spacing
     
     label_run = p.add_run(label)
     label_run.font.name = font_name
     label_run.font.size = Pt(font_size)
     label_run.font.bold = True
     
-    value_run = p.add_run(value.strip())
+    # Clean value - remove extra spaces
+    clean_value = ' '.join(value.split())
+    value_run = p.add_run(clean_value)
     value_run.font.name = font_name
     value_run.font.size = Pt(font_size)
     value_run.font.bold = False
@@ -147,7 +154,8 @@ def fill_session_plan_official(data):
     left_para.alignment = WD_ALIGN_PARAGRAPH.LEFT
     left_para.paragraph_format.space_before = Pt(0)
     left_para.paragraph_format.space_after = Pt(0)
-    left_para.paragraph_format.line_spacing = 1.0
+    left_para.paragraph_format.line_spacing = Pt(9)
+    left_para.paragraph_format.line_spacing_rule = 0
     left_run = left_para.add_run('RWANDA\nTVET BOARD')
     left_run.font.bold = True
     left_run.font.size = Pt(9)
@@ -159,7 +167,8 @@ def fill_session_plan_official(data):
     center_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
     center_para.paragraph_format.space_before = Pt(0)
     center_para.paragraph_format.space_after = Pt(0)
-    center_para.paragraph_format.line_spacing = 1.0
+    center_para.paragraph_format.line_spacing = Pt(11)
+    center_para.paragraph_format.line_spacing_rule = 0
     
     name_run = center_para.add_run(school_name + '\n')
     name_run.font.bold = True
@@ -178,7 +187,8 @@ def fill_session_plan_official(data):
     right_para.alignment = WD_ALIGN_PARAGRAPH.RIGHT
     right_para.paragraph_format.space_before = Pt(0)
     right_para.paragraph_format.space_after = Pt(0)
-    right_para.paragraph_format.line_spacing = 1.0
+    right_para.paragraph_format.line_spacing = Pt(10)
+    right_para.paragraph_format.line_spacing_rule = 0
     
     school_logo_base64 = data.get('school_logo', '')
     if school_logo_base64 and 'base64' in school_logo_base64:
@@ -266,7 +276,8 @@ def fill_session_plan_official(data):
     p = cell.paragraphs[0]
     p.paragraph_format.space_before = Pt(0)
     p.paragraph_format.space_after = Pt(0)
-    p.paragraph_format.line_spacing = 1.0
+    p.paragraph_format.line_spacing = Pt(12)
+    p.paragraph_format.line_spacing_rule = 0
     
     r1 = p.add_run("School year: ")
     r1.font.bold = True
@@ -350,16 +361,28 @@ def fill_session_plan_official(data):
         set_cell_font(table.rows[9].cells[5], bold=True)
     
     # Row 10: Introduction
-    set_cell_text_with_bold_label(table.rows[10].cells[0], "Trainer's activity: ", f"{intro}\n\n")
     cell = table.rows[10].cells[0]
+    cell.text = ''
     p = cell.paragraphs[0]
-    r = p.add_run("Learner's activity: ")
-    r.font.bold = True
-    r.font.name = 'Bookman Old Style'
-    r.font.size = Pt(12)
-    r2 = p.add_run("Participate actively and ask questions")
+    p.paragraph_format.space_before = Pt(0)
+    p.paragraph_format.space_after = Pt(0)
+    p.paragraph_format.line_spacing = Pt(12)
+    p.paragraph_format.line_spacing_rule = 0
+    
+    r1 = p.add_run("Trainer's activity: ")
+    r1.font.bold = True
+    r1.font.name = 'Bookman Old Style'
+    r1.font.size = Pt(12)
+    r2 = p.add_run(' '.join(intro.split()) + '\n\n')
     r2.font.name = 'Bookman Old Style'
     r2.font.size = Pt(12)
+    r3 = p.add_run("Learner's activity: ")
+    r3.font.bold = True
+    r3.font.name = 'Bookman Old Style'
+    r3.font.size = Pt(12)
+    r4 = p.add_run("Participate actively and ask questions")
+    r4.font.name = 'Bookman Old Style'
+    r4.font.size = Pt(12)
     table.rows[10].cells[3].text = all_resources
     set_cell_font(table.rows[10].cells[3])
     if len(table.rows[10].cells) > 5:
@@ -373,6 +396,11 @@ def fill_session_plan_official(data):
     cell = table.rows[12].cells[0]
     cell.text = ''
     p = cell.paragraphs[0]
+    p.paragraph_format.space_before = Pt(0)
+    p.paragraph_format.space_after = Pt(0)
+    p.paragraph_format.line_spacing = Pt(12)
+    p.paragraph_format.line_spacing_rule = 0
+    
     r1 = p.add_run("Step 1:\n")
     r1.font.bold = True
     r1.font.name = 'Bookman Old Style'
@@ -381,7 +409,7 @@ def fill_session_plan_official(data):
     r2.font.bold = True
     r2.font.name = 'Bookman Old Style'
     r2.font.size = Pt(12)
-    r3 = p.add_run(f"{dev}\n\n")
+    r3 = p.add_run(' '.join(dev.split()) + '\n\n')
     r3.font.name = 'Bookman Old Style'
     r3.font.size = Pt(12)
     r4 = p.add_run("Learner's activity: ")
