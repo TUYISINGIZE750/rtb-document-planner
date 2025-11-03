@@ -70,30 +70,22 @@
             </div>
             <div class="step-item" onclick="goToStep(2)">
                 <div class="step-number">2</div>
-                <div class="step-title">Module Overview</div>
+                <div class="step-title">Term 1</div>
             </div>
             <div class="step-item" onclick="goToStep(3)">
                 <div class="step-number">3</div>
-                <div class="step-title">Term 1</div>
+                <div class="step-title">Term 2</div>
             </div>
             <div class="step-item" onclick="goToStep(4)">
                 <div class="step-number">4</div>
-                <div class="step-title">Term 2</div>
+                <div class="step-title">Term 3</div>
             </div>
             <div class="step-item" onclick="goToStep(5)">
                 <div class="step-number">5</div>
-                <div class="step-title">Term 3</div>
+                <div class="step-title">Sign-Offs</div>
             </div>
             <div class="step-item" onclick="goToStep(6)">
                 <div class="step-number">6</div>
-                <div class="step-title">Assessment</div>
-            </div>
-            <div class="step-item" onclick="goToStep(7)">
-                <div class="step-number">7</div>
-                <div class="step-title">Sign-Offs</div>
-            </div>
-            <div class="step-item" onclick="goToStep(8)">
-                <div class="step-number">8</div>
                 <div class="step-title">Review</div>
             </div>
         </div>
@@ -268,7 +260,7 @@
         }
         
         let currentStep = 1;
-        const totalSteps = 8;
+        const totalSteps = 6;
         
         function goToStep(step) {
             if (step < 1 || step > totalSteps) return;
@@ -278,7 +270,7 @@
             document.querySelectorAll('.step-item')[step - 1].classList.add('active');
             currentStep = step;
             updateProgress();
-            if (step === 8) showReview();
+            if (step === 6) showReview();
         }
         
         function nextStep() {
