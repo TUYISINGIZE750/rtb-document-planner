@@ -530,6 +530,7 @@ def fill_scheme_official(data):
     loc_run = center_para.add_run(location_text)
     loc_run.font.size = Pt(10)
     loc_run.font.name = 'Bookman Old Style'
+    loc_run.font.bold = True
     
     right_cell = header_table.rows[0].cells[2]
     right_para = right_cell.paragraphs[0]
@@ -590,39 +591,51 @@ def fill_scheme_official(data):
     set_cell_text_with_bold_label(info_table.rows[2].cells[0], "Qualification Title: ", data.get('qualification_title', ''))
     set_cell_text_with_bold_label(info_table.rows[2].cells[3], "Term: ", data.get('terms', ''))
     
-    # Row 3: RQF Level (cols 0-2, rowspan 4) | Module details header (cols 3-5)
+    # Row 3: RQF Level (cols 0-2, rowspan 4) | Module details (cols 3-5, rowspan 4)
     # First merge vertically for RQF Level (rows 3-6, col 0)
     info_table.rows[3].cells[0].merge(info_table.rows[6].cells[0])
-    # Then merge horizontally for Module details header (2 columns)
-    info_table.rows[3].cells[1].merge(info_table.rows[3].cells[2])
+    # Merge Module details cell vertically (rows 3-6) and horizontally (cols 1-5)
+    info_table.rows[3].cells[1].merge(info_table.rows[6].cells[5])
     set_cell_text_with_bold_label(info_table.rows[3].cells[0], "RQF Level: ", data.get('rqf_level', ''))
-    # Center-align Module details
+    
+    # Center-align and format Module details to span entire right section
     module_details_cell = info_table.rows[3].cells[1]
     module_details_para = module_details_cell.paragraphs[0]
     module_details_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    module_details_para.text = 'Module details'
-    set_cell_font(module_details_cell, bold=True)
     
-    # Row 4: (RQF merged) | Module code and title label | value (cols 3-5)
-    info_table.rows[4].cells[1].text = 'Module code and title:'
-    set_cell_font(info_table.rows[4].cells[1], bold=True)
-    info_table.rows[4].cells[2].merge(info_table.rows[4].cells[5])
-    info_table.rows[4].cells[2].text = data.get('module_code_title', '')
-    set_cell_font(info_table.rows[4].cells[2], bold=False)
+    # Add Module details header
+    run1 = module_details_para.add_run('Module details\n\n')
+    run1.font.bold = True
+    run1.font.name = 'Bookman Old Style'
+    run1.font.size = Pt(12)
     
-    # Row 5: (RQF merged) | Learning hours label | value (cols 3-5)
-    info_table.rows[5].cells[1].text = 'Learning hours:'
-    set_cell_font(info_table.rows[5].cells[1], bold=True)
-    info_table.rows[5].cells[2].merge(info_table.rows[5].cells[5])
-    info_table.rows[5].cells[2].text = data.get('module_hours', '')
-    set_cell_font(info_table.rows[5].cells[2], bold=False)
+    # Add module information
+    run2 = module_details_para.add_run('Module code and title: ')
+    run2.font.bold = True
+    run2.font.name = 'Bookman Old Style'
+    run2.font.size = Pt(12)
+    run3 = module_details_para.add_run(data.get('module_code_title', '') + '\n')
+    run3.font.bold = False
+    run3.font.name = 'Bookman Old Style'
+    run3.font.size = Pt(12)
     
-    # Row 6: (RQF merged) | Number of Classes label | value (cols 3-5)
-    info_table.rows[6].cells[1].text = 'Number of Classes:'
-    set_cell_font(info_table.rows[6].cells[1], bold=True)
-    info_table.rows[6].cells[2].merge(info_table.rows[6].cells[5])
-    info_table.rows[6].cells[2].text = data.get('number_of_classes', '')
-    set_cell_font(info_table.rows[6].cells[2], bold=False)
+    run4 = module_details_para.add_run('Learning hours: ')
+    run4.font.bold = True
+    run4.font.name = 'Bookman Old Style'
+    run4.font.size = Pt(12)
+    run5 = module_details_para.add_run(data.get('module_hours', '') + '\n')
+    run5.font.bold = False
+    run5.font.name = 'Bookman Old Style'
+    run5.font.size = Pt(12)
+    
+    run6 = module_details_para.add_run('Number of Classes: ')
+    run6.font.bold = True
+    run6.font.name = 'Bookman Old Style'
+    run6.font.size = Pt(12)
+    run7 = module_details_para.add_run(data.get('number_of_classes', ''))
+    run7.font.bold = False
+    run7.font.name = 'Bookman Old Style'
+    run7.font.size = Pt(12)
     
     # Row 7: Date (cols 0-2) | Class Name label | value (cols 3-5)
     info_table.rows[7].cells[0].merge(info_table.rows[7].cells[2])
