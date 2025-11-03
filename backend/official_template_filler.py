@@ -147,9 +147,10 @@ def fill_session_plan_official(data):
     left_para.alignment = WD_ALIGN_PARAGRAPH.LEFT
     left_para.paragraph_format.space_before = Pt(0)
     left_para.paragraph_format.space_after = Pt(0)
+    left_para.paragraph_format.line_spacing = 1.0
     left_run = left_para.add_run('RWANDA\nTVET BOARD')
     left_run.font.bold = True
-    left_run.font.size = Pt(12)
+    left_run.font.size = Pt(9)
     left_run.font.name = 'Bookman Old Style'
     
     # CENTER: School info
@@ -158,15 +159,16 @@ def fill_session_plan_official(data):
     center_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
     center_para.paragraph_format.space_before = Pt(0)
     center_para.paragraph_format.space_after = Pt(0)
+    center_para.paragraph_format.line_spacing = 1.0
     
     name_run = center_para.add_run(school_name + '\n')
     name_run.font.bold = True
-    name_run.font.size = Pt(14)
+    name_run.font.size = Pt(11)
     name_run.font.name = 'Bookman Old Style'
     
     location_text = f"{province} - {district} - {sector_loc} - {cell_loc} - {village}"
     loc_run = center_para.add_run(location_text)
-    loc_run.font.size = Pt(10)
+    loc_run.font.size = Pt(8)
     loc_run.font.name = 'Bookman Old Style'
     loc_run.font.bold = True
     
@@ -176,6 +178,7 @@ def fill_session_plan_official(data):
     right_para.alignment = WD_ALIGN_PARAGRAPH.RIGHT
     right_para.paragraph_format.space_before = Pt(0)
     right_para.paragraph_format.space_after = Pt(0)
+    right_para.paragraph_format.line_spacing = 1.0
     
     school_logo_base64 = data.get('school_logo', '')
     if school_logo_base64 and 'base64' in school_logo_base64:
@@ -187,7 +190,7 @@ def fill_session_plan_official(data):
             temp_logo.close()
             
             right_run = right_para.add_run()
-            right_run.add_picture(temp_logo.name, width=Inches(1.2))
+            right_run.add_picture(temp_logo.name, width=Inches(0.8))
             
             try:
                 os.remove(temp_logo.name)
@@ -201,7 +204,7 @@ def fill_session_plan_official(data):
             right_run.font.name = 'Bookman Old Style'
     else:
         right_run = right_para.add_run('SCHOOL\nLOGO')
-        right_run.font.size = Pt(10)
+        right_run.font.size = Pt(8)
         right_run.font.name = 'Bookman Old Style'
     
     # Move header table to beginning
