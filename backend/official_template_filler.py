@@ -353,7 +353,7 @@ def fill_session_plan_official(data):
     if len(table.rows[9].cells) > 5:
         set_cell_font(table.rows[9].cells[5], bold=True)
     
-    # Row 10: Introduction
+    # Row 10: Introduction - format as list
     cell = table.rows[10].cells[0]
     cell.text = ''
     p = cell.paragraphs[0]
@@ -362,13 +362,19 @@ def fill_session_plan_official(data):
     p.paragraph_format.line_spacing = 1.5
     p.alignment = WD_ALIGN_PARAGRAPH.LEFT
     
-    r1 = p.add_run("Trainer's activity: ")
+    r1 = p.add_run("Trainer's activity:\n")
     r1.font.bold = True
     r1.font.name = 'Bookman Old Style'
     r1.font.size = Pt(12)
-    r2 = p.add_run(intro + '\n\n')
-    r2.font.name = 'Bookman Old Style'
-    r2.font.size = Pt(12)
+    
+    # Split intro into sentences and format as list
+    intro_lines = [s.strip() for s in intro.split('.') if s.strip()]
+    for i, line in enumerate(intro_lines, 1):
+        r = p.add_run(f"{chr(105+i-1)}. {line}.\n")
+        r.font.name = 'Bookman Old Style'
+        r.font.size = Pt(12)
+    
+    p.add_run('\n')
     r3 = p.add_run("Learner's activity: ")
     r3.font.bold = True
     r3.font.name = 'Bookman Old Style'
@@ -385,7 +391,7 @@ def fill_session_plan_official(data):
     # Row 11: Bold header
     set_cell_font(table.rows[11].cells[0], bold=True)
     
-    # Row 12: Development
+    # Row 12: Development - format as list
     cell = table.rows[12].cells[0]
     cell.text = ''
     p = cell.paragraphs[0]
@@ -394,17 +400,19 @@ def fill_session_plan_official(data):
     p.paragraph_format.line_spacing = 1.5
     p.alignment = WD_ALIGN_PARAGRAPH.LEFT
     
-    r1 = p.add_run("Step 1:\n")
+    r1 = p.add_run("Trainer's activity:\n")
     r1.font.bold = True
     r1.font.name = 'Bookman Old Style'
     r1.font.size = Pt(12)
-    r2 = p.add_run("Trainer's activity: ")
-    r2.font.bold = True
-    r2.font.name = 'Bookman Old Style'
-    r2.font.size = Pt(12)
-    r3 = p.add_run(dev + '\n\n')
-    r3.font.name = 'Bookman Old Style'
-    r3.font.size = Pt(12)
+    
+    # Split development into steps/sentences and format as list
+    dev_lines = [s.strip() for s in dev.split('.') if s.strip()]
+    for i, line in enumerate(dev_lines, 1):
+        r = p.add_run(f"{chr(105+i-1)}. {line}.\n")
+        r.font.name = 'Bookman Old Style'
+        r.font.size = Pt(12)
+    
+    p.add_run('\n')
     r4 = p.add_run("Learner's activity: ")
     r4.font.bold = True
     r4.font.name = 'Bookman Old Style'
