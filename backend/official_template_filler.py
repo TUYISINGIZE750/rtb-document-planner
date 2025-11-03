@@ -2,6 +2,7 @@
 from docx import Document
 from docx.shared import Pt, RGBColor, Inches
 from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.oxml import parse_xml
 import os
 import tempfile
 from datetime import datetime
@@ -134,10 +135,17 @@ def fill_session_plan_official(data):
     header_table = doc.add_table(rows=1, cols=3)
     header_table.alignment = WD_ALIGN_PARAGRAPH.CENTER
     
+    # Remove spacing from header table
+    for row in header_table.rows:
+        for cell in row.cells:
+            cell._element.get_or_add_tcPr().append(parse_xml(r'<w:tcMar xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:top w:w="0" w:type="dxa"/><w:bottom w:w="0" w:type="dxa"/></w:tcMar>'))
+    
     # LEFT: RTB Logo
     left_cell = header_table.rows[0].cells[0]
     left_para = left_cell.paragraphs[0]
     left_para.alignment = WD_ALIGN_PARAGRAPH.LEFT
+    left_para.paragraph_format.space_before = Pt(0)
+    left_para.paragraph_format.space_after = Pt(0)
     left_run = left_para.add_run('RWANDA\nTVET BOARD')
     left_run.font.bold = True
     left_run.font.size = Pt(12)
@@ -147,6 +155,8 @@ def fill_session_plan_official(data):
     center_cell = header_table.rows[0].cells[1]
     center_para = center_cell.paragraphs[0]
     center_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    center_para.paragraph_format.space_before = Pt(0)
+    center_para.paragraph_format.space_after = Pt(0)
     
     name_run = center_para.add_run(school_name + '\n')
     name_run.font.bold = True
@@ -162,6 +172,8 @@ def fill_session_plan_official(data):
     right_cell = header_table.rows[0].cells[2]
     right_para = right_cell.paragraphs[0]
     right_para.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+    right_para.paragraph_format.space_before = Pt(0)
+    right_para.paragraph_format.space_after = Pt(0)
     
     school_logo_base64 = data.get('school_logo', '')
     if school_logo_base64 and 'base64' in school_logo_base64:
@@ -193,7 +205,23 @@ def fill_session_plan_official(data):
     # Move header table to beginning
     header_element = header_table._element
     doc._element.body.insert(0, header_element)
-    logger.info('✅ Header table added at top')
+    
+    # Remove any paragraphs between header and main table
+    body = doc._element.body
+    elements_to_remove = []
+    found_header = False
+    for i, element in enumerate(body):
+        if element.tag.endswith('tbl') and not found_header:
+            found_header = True
+        elif found_header and element.tag.endswith('p'):
+            elements_to_remove.append(element)
+        elif found_header and element.tag.endswith('tbl'):
+            break
+    
+    for element in elements_to_remove:
+        body.remove(element)
+    
+    logger.info('✅ Header table added at top with no spacing')
     
     # Main session plan table (first table after moving header)
     table = doc.tables[1]
@@ -444,9 +472,81 @@ def fill_scheme_official(data):
     doc = Document(template_path)
     logger.info(f"Scheme template loaded, tables: {len(doc.tables)}")
     
-    # Fill header table (Table 0) - Match exact RTB template structure
-    if len(doc.tables) > 0:
-        h = doc.tables[0]
+    # Add school header at top
+    school_name = data.get('school', '')
+    province = data.get('province', '')
+    district = data.get('district', '')
+    
+    header_table = doc.add_table(rows=1, cols=3)
+    header_table.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    
+    # Remove spacing from header table
+    for row in header_table.rows:
+        for cell in row.cells:
+            cell._element.get_or_add_tcPr().append(parse_xml(r'<w:tcMar xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:top w:w="0" w:type="dxa"/><w:bottom w:w="0" w:type="dxa"/></w:tcMar>'))
+    
+    # LEFT: RTB Logo
+    left_cell = header_table.rows[0].cells[0]
+    left_para = left_cell.paragraphs[0]
+    left_para.alignment = WD_ALIGN_PARAGRAPH.LEFT
+    left_para.paragraph_format.space_before = Pt(0)
+    left_para.paragraph_format.space_after = Pt(0)
+    left_run = left_para.add_run('RWANDA\nTVET BOARD')
+    left_run.font.bold = True
+    left_run.font.size = Pt(12)
+    left_run.font.name = 'Bookman Old Style'
+    
+    # CENTER: School info
+    center_cell = header_table.rows[0].cells[1]
+    center_para = center_cell.paragraphs[0]
+    center_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    center_para.paragraph_format.space_before = Pt(0)
+    center_para.paragraph_format.space_after = Pt(0)
+    
+    name_run = center_para.add_run(school_name + '\n')
+    name_run.font.bold = True
+    name_run.font.size = Pt(14)
+    name_run.font.name = 'Bookman Old Style'
+    
+    location_text = f"{province} - {district}"
+    loc_run = center_para.add_run(location_text)
+    loc_run.font.size = Pt(10)
+    loc_run.font.name = 'Bookman Old Style'
+    
+    # RIGHT: School logo placeholder
+    right_cell = header_table.rows[0].cells[2]
+    right_para = right_cell.paragraphs[0]
+    right_para.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+    right_para.paragraph_format.space_before = Pt(0)
+    right_para.paragraph_format.space_after = Pt(0)
+    right_run = right_para.add_run('SCHOOL\nLOGO')
+    right_run.font.size = Pt(10)
+    right_run.font.name = 'Bookman Old Style'
+    
+    # Move header table to beginning
+    header_element = header_table._element
+    doc._element.body.insert(0, header_element)
+    
+    # Remove any paragraphs between header and main table
+    body = doc._element.body
+    elements_to_remove = []
+    found_header = False
+    for i, element in enumerate(body):
+        if element.tag.endswith('tbl') and not found_header:
+            found_header = True
+        elif found_header and element.tag.endswith('p'):
+            elements_to_remove.append(element)
+        elif found_header and element.tag.endswith('tbl'):
+            break
+    
+    for element in elements_to_remove:
+        body.remove(element)
+    
+    logger.info('Header table added to scheme with no spacing')
+    
+    # Fill header table (Table 1 now) - Match exact RTB template structure
+    if len(doc.tables) > 1:
+        h = doc.tables[1]
         try:
             # Row 0: Sector (cell 1), Trainer (cell 3)
             h.rows[0].cells[1].text = data.get('sector') or ''
@@ -483,8 +583,8 @@ def fill_scheme_official(data):
             logger.error(traceback.format_exc())
     
     # Fill Term 1 table
-    if len(doc.tables) > 1:
-        table1 = doc.tables[1]
+    if len(doc.tables) > 2:
+        table1 = doc.tables[2]
         term1_weeks = (data.get('term1_weeks') or '').strip()
         term1_outcomes_raw = (data.get('term1_learning_outcomes') or '').strip()
         term1_contents_raw = (data.get('term1_indicative_contents') or '').strip()
@@ -519,8 +619,8 @@ def fill_scheme_official(data):
             logger.info(f"  Term 1 Row {row_idx}: {lo[:30]}")
     
     # Fill Term 2 table
-    if len(doc.tables) > 2:
-        table2 = doc.tables[2]
+    if len(doc.tables) > 3:
+        table2 = doc.tables[3]
         term2_weeks = (data.get('term2_weeks') or '').strip()
         term2_outcomes_raw = (data.get('term2_learning_outcomes') or '').strip()
         term2_contents_raw = (data.get('term2_indicative_contents') or '').strip()
@@ -552,8 +652,8 @@ def fill_scheme_official(data):
             logger.info(f"  Term 2 Row {row_idx}: {lo[:30]}")
     
     # Fill Term 3 table
-    if len(doc.tables) > 3:
-        table3 = doc.tables[3]
+    if len(doc.tables) > 4:
+        table3 = doc.tables[4]
         term3_weeks = (data.get('term3_weeks') or '').strip()
         term3_outcomes_raw = (data.get('term3_learning_outcomes') or '').strip()
         term3_contents_raw = (data.get('term3_indicative_contents') or '').strip()
