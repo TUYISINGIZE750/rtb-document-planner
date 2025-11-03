@@ -584,7 +584,10 @@ def fill_scheme_official(data):
             set_cell_font(h.rows[6].cells[3], bold=False)
             
             # Row 7: Date (cell 1), Class Name (cell 3)
-            h.rows[7].cells[1].text = datetime.now().strftime('%d/%m/%Y')
+            date_value = data.get('date', '').strip()
+            if not date_value:
+                date_value = datetime.now().strftime('%d/%m/%Y')
+            h.rows[7].cells[1].text = date_value
             set_cell_font(h.rows[7].cells[1], bold=False)
             h.rows[7].cells[3].text = data.get('class_name') or ''
             set_cell_font(h.rows[7].cells[3], bold=False)
@@ -596,25 +599,29 @@ def fill_scheme_official(data):
             logger.error(traceback.format_exc())
     
     # Fill Term 1 table
+    from docx.oxml.shared import OxmlElement
+    def set_cell_background(cell, color):
+        shading = OxmlElement('w:shd')
+        shading.set(qn('w:fill'), color)
+        cell._element.get_or_add_tcPr().append(shading)
+    
     if len(doc.tables) > 2:
         table1 = doc.tables[2]
-        
-        # Format header rows with light green background and bold
-        from docx.oxml.shared import OxmlElement
-        def set_cell_background(cell, color):
-            shading = OxmlElement('w:shd')
-            shading.set(qn('w:fill'), color)
-            cell._element.get_or_add_tcPr().append(shading)
         
         # Row 0 and 1 are headers - make them bold with light green
         for row_idx in [0, 1]:
             for cell in table1.rows[row_idx].cells:
                 set_cell_background(cell, 'D4EDDA')  # Light green
                 set_cell_font(cell, bold=True)
+        
         term1_weeks = (data.get('term1_weeks') or '').strip()
         term1_outcomes_raw = (data.get('term1_learning_outcomes') or '').strip()
         term1_contents_raw = (data.get('term1_indicative_contents') or '').strip()
         term1_duration = (data.get('term1_duration') or '').strip()
+        term1_activities = (data.get('term1_learning_activities') or '').strip()
+        term1_resources = (data.get('term1_resources') or '').strip()
+        term1_assessment = (data.get('term1_assessment') or '').strip()
+        term1_place = (data.get('term1_learning_place') or 'Workshop').strip()
         
         # Split by newline and filter empty lines
         term1_outcomes = [lo.strip() for lo in term1_outcomes_raw.replace('\r\n', '\n').split('\n') if lo.strip()]
@@ -634,21 +641,36 @@ def fill_scheme_official(data):
                 table1._element.append(new_row)
             
             row = table1.rows[row_idx]
-            # Weeks column
+            # Col 0: Weeks
             row.cells[0].text = term1_weeks
             set_cell_font(row.cells[0], bold=False)
-            # Learning outcome
+            # Col 1: Learning outcome
             row.cells[1].text = lo
             set_cell_font(row.cells[1], bold=False)
-            # Duration
+            # Col 2: Duration
             row.cells[2].text = term1_duration
             set_cell_font(row.cells[2], bold=False)
-            # Indicative content
+            # Col 3: Indicative content
             row.cells[3].text = ic
             set_cell_font(row.cells[3], bold=False)
+            # Col 4: Learning Activities
+            row.cells[4].text = term1_activities
+            set_cell_font(row.cells[4], bold=False)
+            # Col 5: Resources
+            row.cells[5].text = term1_resources
+            set_cell_font(row.cells[5], bold=False)
+            # Col 6: Assessment
+            row.cells[6].text = term1_assessment
+            set_cell_font(row.cells[6], bold=False)
+            # Col 7: Learning Place
+            row.cells[7].text = term1_place
+            set_cell_font(row.cells[7], bold=False)
+            # Col 8: Observation (leave empty)
+            row.cells[8].text = ''
+            set_cell_font(row.cells[8], bold=False)
             logger.info(f"  Term 1 Row {row_idx}: {lo[:30]}")
     
-    # Fill Term 2 table
+    # Fill Term 2 table (part of combined table)
     if len(doc.tables) > 3:
         table2 = doc.tables[3]
         
@@ -657,10 +679,15 @@ def fill_scheme_official(data):
             for cell in table2.rows[row_idx].cells:
                 set_cell_background(cell, 'D4EDDA')
                 set_cell_font(cell, bold=True)
+        
         term2_weeks = (data.get('term2_weeks') or '').strip()
         term2_outcomes_raw = (data.get('term2_learning_outcomes') or '').strip()
         term2_contents_raw = (data.get('term2_indicative_contents') or '').strip()
         term2_duration = (data.get('term2_duration') or '').strip()
+        term2_activities = (data.get('term2_learning_activities') or '').strip()
+        term2_resources = (data.get('term2_resources') or '').strip()
+        term2_assessment = (data.get('term2_assessment') or '').strip()
+        term2_place = (data.get('term2_learning_place') or 'Workshop').strip()
         
         term2_outcomes = [lo.strip() for lo in term2_outcomes_raw.replace('\r\n', '\n').split('\n') if lo.strip()]
         term2_contents = [ic.strip() for ic in term2_contents_raw.replace('\r\n', '\n').split('\n') if ic.strip()]
@@ -686,9 +713,19 @@ def fill_scheme_official(data):
             set_cell_font(row.cells[2], bold=False)
             row.cells[3].text = ic
             set_cell_font(row.cells[3], bold=False)
+            row.cells[4].text = term2_activities
+            set_cell_font(row.cells[4], bold=False)
+            row.cells[5].text = term2_resources
+            set_cell_font(row.cells[5], bold=False)
+            row.cells[6].text = term2_assessment
+            set_cell_font(row.cells[6], bold=False)
+            row.cells[7].text = term2_place
+            set_cell_font(row.cells[7], bold=False)
+            row.cells[8].text = ''
+            set_cell_font(row.cells[8], bold=False)
             logger.info(f"  Term 2 Row {row_idx}: {lo[:30]}")
     
-    # Fill Term 3 table
+    # Fill Term 3 table (part of combined table)
     if len(doc.tables) > 4:
         table3 = doc.tables[4]
         
@@ -697,10 +734,15 @@ def fill_scheme_official(data):
             for cell in table3.rows[row_idx].cells:
                 set_cell_background(cell, 'D4EDDA')
                 set_cell_font(cell, bold=True)
+        
         term3_weeks = (data.get('term3_weeks') or '').strip()
         term3_outcomes_raw = (data.get('term3_learning_outcomes') or '').strip()
         term3_contents_raw = (data.get('term3_indicative_contents') or '').strip()
         term3_duration = (data.get('term3_duration') or '').strip()
+        term3_activities = (data.get('term3_learning_activities') or '').strip()
+        term3_resources = (data.get('term3_resources') or '').strip()
+        term3_assessment = (data.get('term3_assessment') or '').strip()
+        term3_place = (data.get('term3_learning_place') or 'Workshop').strip()
         
         term3_outcomes = [lo.strip() for lo in term3_outcomes_raw.replace('\r\n', '\n').split('\n') if lo.strip()]
         term3_contents = [ic.strip() for ic in term3_contents_raw.replace('\r\n', '\n').split('\n') if ic.strip()]
@@ -726,6 +768,16 @@ def fill_scheme_official(data):
             set_cell_font(row.cells[2], bold=False)
             row.cells[3].text = ic
             set_cell_font(row.cells[3], bold=False)
+            row.cells[4].text = term3_activities
+            set_cell_font(row.cells[4], bold=False)
+            row.cells[5].text = term3_resources
+            set_cell_font(row.cells[5], bold=False)
+            row.cells[6].text = term3_assessment
+            set_cell_font(row.cells[6], bold=False)
+            row.cells[7].text = term3_place
+            set_cell_font(row.cells[7], bold=False)
+            row.cells[8].text = ''
+            set_cell_font(row.cells[8], bold=False)
             logger.info(f"  Term 3 Row {row_idx}: {lo[:30]}")
     
     logger.info("Scheme of work filled successfully")
