@@ -529,6 +529,13 @@ def fill_scheme_official(data):
     from docx import Document as NewDocument
     doc = NewDocument()
     
+    # Set page orientation to LANDSCAPE
+    from docx.enum.section import WD_ORIENT
+    section = doc.sections[0]
+    section.orientation = WD_ORIENT.LANDSCAPE
+    section.page_width = Inches(11.69)
+    section.page_height = Inches(8.27)
+    
     school_name = data.get('school_name', '') or data.get('school', '')
     province = data.get('province', '')
     district = data.get('district', '')
@@ -951,7 +958,7 @@ def fill_scheme_official(data):
     set_cell_font(sig_table.rows[2].cells[1], bold=False)
     
     # Save document
-    logger.info('Scheme of work created with proper table structure')
+    logger.info('Scheme of work created with proper table structure in LANDSCAPE orientation')
     try:
         temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
         logger.info(f"Saving to: {temp_file.name}")
