@@ -535,20 +535,31 @@ def fill_scheme_official(data):
     right_para = right_cell.paragraphs[0]
     right_para.alignment = WD_ALIGN_PARAGRAPH.RIGHT
     school_logo_base64 = data.get('school_logo', '')
-    if school_logo_base64 and 'base64' in school_logo_base64:
+    if school_logo_base64 and ('base64' in school_logo_base64 or school_logo_base64.startswith('data:image')):
         try:
-            logo_data = school_logo_base64.split(',')[1] if ',' in school_logo_base64 else school_logo_base64
+            # Extract base64 data
+            if 'base64,' in school_logo_base64:
+                logo_data = school_logo_base64.split('base64,')[1]
+            elif ',' in school_logo_base64:
+                logo_data = school_logo_base64.split(',')[1]
+            else:
+                logo_data = school_logo_base64
+            
             logo_bytes = base64.b64decode(logo_data)
             temp_logo = tempfile.NamedTemporaryFile(delete=False, suffix='.png')
             temp_logo.write(logo_bytes)
             temp_logo.close()
+            
             right_run = right_para.add_run()
             right_run.add_picture(temp_logo.name, width=Inches(1.2))
+            
             try:
                 os.remove(temp_logo.name)
             except:
                 pass
-        except:
+            logger.info('School logo added to scheme')
+        except Exception as e:
+            logger.error(f"Logo error: {e}")
             right_run = right_para.add_run('SCHOOL\nLOGO')
             right_run.font.size = Pt(10)
             right_run.font.name = 'Bookman Old Style'
@@ -557,61 +568,61 @@ def fill_scheme_official(data):
         right_run.font.size = Pt(10)
         right_run.font.name = 'Bookman Old Style'
     
-    # 2. INFO TABLE (8 rows x 4 columns)
-    info_table = doc.add_table(rows=8, cols=4)
+    # 2. INFO TABLE (8 rows x 6 columns) - Matching official RTB structure
+    info_table = doc.add_table(rows=8, cols=6)
     info_table.style = 'Table Grid'
     
-    # Row 0: Sector (span 2) / Trainer (span 2)
-    info_table.rows[0].cells[0].merge(info_table.rows[0].cells[1])
-    info_table.rows[0].cells[2].merge(info_table.rows[0].cells[3])
+    # Row 0: Sector (cols 0-2) | Trainer (cols 3-5)
+    info_table.rows[0].cells[0].merge(info_table.rows[0].cells[2])
+    info_table.rows[0].cells[3].merge(info_table.rows[0].cells[5])
     set_cell_text_with_bold_label(info_table.rows[0].cells[0], "Sector: ", data.get('sector', ''))
-    set_cell_text_with_bold_label(info_table.rows[0].cells[2], "Trainer: ", data.get('trainer_name', ''))
+    set_cell_text_with_bold_label(info_table.rows[0].cells[3], "Trainer: ", data.get('trainer_name', ''))
     
-    # Row 1: Trade (span 2) / School Year (span 2)
-    info_table.rows[1].cells[0].merge(info_table.rows[1].cells[1])
-    info_table.rows[1].cells[2].merge(info_table.rows[1].cells[3])
+    # Row 1: Trade (cols 0-2) | School Year (cols 3-5)
+    info_table.rows[1].cells[0].merge(info_table.rows[1].cells[2])
+    info_table.rows[1].cells[3].merge(info_table.rows[1].cells[5])
     set_cell_text_with_bold_label(info_table.rows[1].cells[0], "Trade: ", data.get('trade', ''))
-    set_cell_text_with_bold_label(info_table.rows[1].cells[2], "School Year: ", data.get('school_year', ''))
+    set_cell_text_with_bold_label(info_table.rows[1].cells[3], "School Year: ", data.get('school_year', ''))
     
-    # Row 2: Qualification Title (span 2) / Term (span 2)
-    info_table.rows[2].cells[0].merge(info_table.rows[2].cells[1])
-    info_table.rows[2].cells[2].merge(info_table.rows[2].cells[3])
+    # Row 2: Qualification Title (cols 0-2) | Term (cols 3-5)
+    info_table.rows[2].cells[0].merge(info_table.rows[2].cells[2])
+    info_table.rows[2].cells[3].merge(info_table.rows[2].cells[5])
     set_cell_text_with_bold_label(info_table.rows[2].cells[0], "Qualification Title: ", data.get('qualification_title', ''))
-    set_cell_text_with_bold_label(info_table.rows[2].cells[2], "Term: ", data.get('terms', ''))
+    set_cell_text_with_bold_label(info_table.rows[2].cells[3], "Term: ", data.get('terms', ''))
     
-    # Row 3: RQF Level (span 2) / Module details (span 2)
-    info_table.rows[3].cells[0].merge(info_table.rows[3].cells[1])
-    info_table.rows[3].cells[2].merge(info_table.rows[3].cells[3])
+    # Row 3: RQF Level (cols 0-2) | Module details header (cols 3-5)
+    info_table.rows[3].cells[0].merge(info_table.rows[3].cells[2])
+    info_table.rows[3].cells[3].merge(info_table.rows[3].cells[5])
     set_cell_text_with_bold_label(info_table.rows[3].cells[0], "RQF Level: ", data.get('rqf_level', ''))
-    info_table.rows[3].cells[2].text = 'Module details'
-    set_cell_font(info_table.rows[3].cells[2], bold=True)
+    info_table.rows[3].cells[3].text = 'Module details'
+    set_cell_font(info_table.rows[3].cells[3], bold=True)
     
-    # Row 4: Empty (span 2) / Module code and title (span 2)
-    info_table.rows[4].cells[0].merge(info_table.rows[4].cells[1])
-    info_table.rows[4].cells[2].merge(info_table.rows[4].cells[3])
+    # Row 4: Empty (cols 0-2) | Module code and title (cols 3-5)
+    info_table.rows[4].cells[0].merge(info_table.rows[4].cells[2])
+    info_table.rows[4].cells[3].merge(info_table.rows[4].cells[5])
     info_table.rows[4].cells[0].text = ''
-    set_cell_text_with_bold_label(info_table.rows[4].cells[2], "Module code and title: ", data.get('module_code_title', ''))
+    set_cell_text_with_bold_label(info_table.rows[4].cells[3], "Module code and title: ", data.get('module_code_title', ''))
     
-    # Row 5: Empty (span 2) / Learning hours (span 2)
-    info_table.rows[5].cells[0].merge(info_table.rows[5].cells[1])
-    info_table.rows[5].cells[2].merge(info_table.rows[5].cells[3])
+    # Row 5: Empty (cols 0-2) | Learning hours (cols 3-5)
+    info_table.rows[5].cells[0].merge(info_table.rows[5].cells[2])
+    info_table.rows[5].cells[3].merge(info_table.rows[5].cells[5])
     info_table.rows[5].cells[0].text = ''
-    set_cell_text_with_bold_label(info_table.rows[5].cells[2], "Learning hours: ", data.get('module_hours', ''))
+    set_cell_text_with_bold_label(info_table.rows[5].cells[3], "Learning hours: ", data.get('module_hours', ''))
     
-    # Row 6: Empty (span 2) / Number of Classes (span 2)
-    info_table.rows[6].cells[0].merge(info_table.rows[6].cells[1])
-    info_table.rows[6].cells[2].merge(info_table.rows[6].cells[3])
+    # Row 6: Empty (cols 0-2) | Number of Classes (cols 3-5)
+    info_table.rows[6].cells[0].merge(info_table.rows[6].cells[2])
+    info_table.rows[6].cells[3].merge(info_table.rows[6].cells[5])
     info_table.rows[6].cells[0].text = ''
-    set_cell_text_with_bold_label(info_table.rows[6].cells[2], "Number of Classes: ", data.get('number_of_classes', ''))
+    set_cell_text_with_bold_label(info_table.rows[6].cells[3], "Number of Classes: ", data.get('number_of_classes', ''))
     
-    # Row 7: Date (span 2) / Class Name (span 2)
-    info_table.rows[7].cells[0].merge(info_table.rows[7].cells[1])
-    info_table.rows[7].cells[2].merge(info_table.rows[7].cells[3])
+    # Row 7: Date (cols 0-2) | Class Name (cols 3-5)
+    info_table.rows[7].cells[0].merge(info_table.rows[7].cells[2])
+    info_table.rows[7].cells[3].merge(info_table.rows[7].cells[5])
     date_value = data.get('date', '').strip()
     if not date_value:
         date_value = datetime.now().strftime('%d/%m/%Y')
     set_cell_text_with_bold_label(info_table.rows[7].cells[0], "Date: ", date_value)
-    set_cell_text_with_bold_label(info_table.rows[7].cells[2], "Class Name: ", data.get('class_name', ''))
+    set_cell_text_with_bold_label(info_table.rows[7].cells[3], "Class Name: ", data.get('class_name', ''))
     
     # 3. TERM 1 TABLE (matching official RTB structure)
     # Create table with proper structure: 2 header rows + data rows
