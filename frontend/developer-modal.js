@@ -6,7 +6,7 @@ function showDeveloperModal() {
                 <div class="developer-modal-header">
                     <button class="developer-modal-close" onclick="closeDeveloperModal()">×</button>
                     <div class="developer-avatar">
-                        <img src="developer-photo.jpg" alt="Leonard TUYISINGIZE" style="width: 100%; height: 100%; object-fit: cover;">
+                        <i class="fas fa-user-tie"></i>
                     </div>
                     <h2>Leonard TUYISINGIZE</h2>
                     <p>Full-Stack Software Developer</p>
