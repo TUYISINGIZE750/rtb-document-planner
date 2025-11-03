@@ -496,7 +496,10 @@ def fill_scheme_official(data):
     doc = Document(template_path)
     logger.info(f"Scheme template loaded, tables: {len(doc.tables)}")
     
-    # Add school header at top
+    # Create new document from scratch
+    from docx import Document as NewDocument
+    doc = NewDocument()
+    
     school_name = data.get('school_name', '') or data.get('school', '')
     province = data.get('province', '')
     district = data.get('district', '')
@@ -504,50 +507,33 @@ def fill_scheme_official(data):
     cell_loc = data.get('cell', '')
     village = data.get('village', '')
     
+    # 1. SCHOOL HEADER TABLE (3 columns)
     header_table = doc.add_table(rows=1, cols=3)
     header_table.alignment = WD_ALIGN_PARAGRAPH.CENTER
     
-    # Remove spacing from header table
-    for row in header_table.rows:
-        for cell in row.cells:
-            cell._element.get_or_add_tcPr().append(parse_xml(r'<w:tcMar xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:top w:w="0" w:type="dxa"/><w:bottom w:w="0" w:type="dxa"/></w:tcMar>'))
-    
-    # LEFT: RTB Logo
     left_cell = header_table.rows[0].cells[0]
     left_para = left_cell.paragraphs[0]
     left_para.alignment = WD_ALIGN_PARAGRAPH.LEFT
-    left_para.paragraph_format.space_before = Pt(0)
-    left_para.paragraph_format.space_after = Pt(0)
     left_run = left_para.add_run('RWANDA\nTVET BOARD')
     left_run.font.bold = True
     left_run.font.size = Pt(12)
     left_run.font.name = 'Bookman Old Style'
     
-    # CENTER: School info
     center_cell = header_table.rows[0].cells[1]
     center_para = center_cell.paragraphs[0]
     center_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    center_para.paragraph_format.space_before = Pt(0)
-    center_para.paragraph_format.space_after = Pt(0)
-    
     name_run = center_para.add_run(school_name + '\n')
     name_run.font.bold = True
     name_run.font.size = Pt(14)
     name_run.font.name = 'Bookman Old Style'
-    
     location_text = f"{province} - {district} - {sector_loc} - {cell_loc} - {village}"
     loc_run = center_para.add_run(location_text)
     loc_run.font.size = Pt(10)
     loc_run.font.name = 'Bookman Old Style'
-    loc_run.font.bold = True
     
-    # RIGHT: School logo
     right_cell = header_table.rows[0].cells[2]
     right_para = right_cell.paragraphs[0]
     right_para.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-    right_para.paragraph_format.space_before = Pt(0)
-    right_para.paragraph_format.space_after = Pt(0)
-    
     school_logo_base64 = data.get('school_logo', '')
     if school_logo_base64 and 'base64' in school_logo_base64:
         try:
@@ -556,16 +542,13 @@ def fill_scheme_official(data):
             temp_logo = tempfile.NamedTemporaryFile(delete=False, suffix='.png')
             temp_logo.write(logo_bytes)
             temp_logo.close()
-            
             right_run = right_para.add_run()
             right_run.add_picture(temp_logo.name, width=Inches(1.2))
-            
             try:
                 os.remove(temp_logo.name)
             except:
                 pass
-        except Exception as e:
-            logger.error(f"Logo error: {e}")
+        except:
             right_run = right_para.add_run('SCHOOL\nLOGO')
             right_run.font.size = Pt(10)
             right_run.font.name = 'Bookman Old Style'
@@ -574,79 +557,140 @@ def fill_scheme_official(data):
         right_run.font.size = Pt(10)
         right_run.font.name = 'Bookman Old Style'
     
-    # Move header table to beginning
-    header_element = header_table._element
-    doc._element.body.insert(0, header_element)
-    
-    # Remove any paragraphs between header and main table
-    body = doc._element.body
-    elements_to_remove = []
-    found_header = False
-    for i, element in enumerate(body):
-        if element.tag.endswith('tbl') and not found_header:
-            found_header = True
-        elif found_header and element.tag.endswith('p'):
-            elements_to_remove.append(element)
-        elif found_header and element.tag.endswith('tbl'):
-            break
-    
-    for element in elements_to_remove:
-        body.remove(element)
-    
-    logger.info('Header table added to scheme with no spacing')
-    
-    # Add INFO TABLE after school header
+    # 2. INFO TABLE (8 rows x 4 columns)
     info_table = doc.add_table(rows=8, cols=4)
+    info_table.style = 'Table Grid'
     
-    # Set column widths and formatting
-    for row in info_table.rows:
-        for cell in row.cells:
-            cell._element.get_or_add_tcPr().append(parse_xml(r'<w:tcMar xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:top w:w="50" w:type="dxa"/><w:bottom w:w="50" w:type="dxa"/></w:tcMar>'))
-    
-    # Row 0: Sector / Trainer
+    # Row 0: Sector (span 2) / Trainer (span 2)
+    info_table.rows[0].cells[0].merge(info_table.rows[0].cells[1])
+    info_table.rows[0].cells[2].merge(info_table.rows[0].cells[3])
     set_cell_text_with_bold_label(info_table.rows[0].cells[0], "Sector: ", data.get('sector', ''))
     set_cell_text_with_bold_label(info_table.rows[0].cells[2], "Trainer: ", data.get('trainer_name', ''))
     
-    # Row 1: Trade / School Year
+    # Row 1: Trade (span 2) / School Year (span 2)
+    info_table.rows[1].cells[0].merge(info_table.rows[1].cells[1])
+    info_table.rows[1].cells[2].merge(info_table.rows[1].cells[3])
     set_cell_text_with_bold_label(info_table.rows[1].cells[0], "Trade: ", data.get('trade', ''))
     set_cell_text_with_bold_label(info_table.rows[1].cells[2], "School Year: ", data.get('school_year', ''))
     
-    # Row 2: Qualification Title / Term
+    # Row 2: Qualification Title (span 2) / Term (span 2)
+    info_table.rows[2].cells[0].merge(info_table.rows[2].cells[1])
+    info_table.rows[2].cells[2].merge(info_table.rows[2].cells[3])
     set_cell_text_with_bold_label(info_table.rows[2].cells[0], "Qualification Title: ", data.get('qualification_title', ''))
     set_cell_text_with_bold_label(info_table.rows[2].cells[2], "Term: ", data.get('terms', ''))
     
-    # Row 3: RQF Level / Module details header
+    # Row 3: RQF Level (span 2) / Module details (span 2)
+    info_table.rows[3].cells[0].merge(info_table.rows[3].cells[1])
+    info_table.rows[3].cells[2].merge(info_table.rows[3].cells[3])
     set_cell_text_with_bold_label(info_table.rows[3].cells[0], "RQF Level: ", data.get('rqf_level', ''))
     info_table.rows[3].cells[2].text = 'Module details'
     set_cell_font(info_table.rows[3].cells[2], bold=True)
     
-    # Row 4: Empty / Module code and title
+    # Row 4: Empty (span 2) / Module code and title (span 2)
+    info_table.rows[4].cells[0].merge(info_table.rows[4].cells[1])
+    info_table.rows[4].cells[2].merge(info_table.rows[4].cells[3])
     info_table.rows[4].cells[0].text = ''
     set_cell_text_with_bold_label(info_table.rows[4].cells[2], "Module code and title: ", data.get('module_code_title', ''))
     
-    # Row 5: Empty / Learning hours
+    # Row 5: Empty (span 2) / Learning hours (span 2)
+    info_table.rows[5].cells[0].merge(info_table.rows[5].cells[1])
+    info_table.rows[5].cells[2].merge(info_table.rows[5].cells[3])
     info_table.rows[5].cells[0].text = ''
     set_cell_text_with_bold_label(info_table.rows[5].cells[2], "Learning hours: ", data.get('module_hours', ''))
     
-    # Row 6: Empty / Number of Classes
+    # Row 6: Empty (span 2) / Number of Classes (span 2)
+    info_table.rows[6].cells[0].merge(info_table.rows[6].cells[1])
+    info_table.rows[6].cells[2].merge(info_table.rows[6].cells[3])
     info_table.rows[6].cells[0].text = ''
     set_cell_text_with_bold_label(info_table.rows[6].cells[2], "Number of Classes: ", data.get('number_of_classes', ''))
     
-    # Row 7: Date / Class Name
+    # Row 7: Date (span 2) / Class Name (span 2)
+    info_table.rows[7].cells[0].merge(info_table.rows[7].cells[1])
+    info_table.rows[7].cells[2].merge(info_table.rows[7].cells[3])
     date_value = data.get('date', '').strip()
     if not date_value:
         date_value = datetime.now().strftime('%d/%m/%Y')
     set_cell_text_with_bold_label(info_table.rows[7].cells[0], "Date: ", date_value)
     set_cell_text_with_bold_label(info_table.rows[7].cells[2], "Class Name: ", data.get('class_name', ''))
     
-    # Insert info table after school header
-    info_element = info_table._element
-    doc._element.body.insert(1, info_element)
+    # 3. TERM 1 TABLE (matching official RTB structure)
+    # Create table with proper structure: 2 header rows + data rows
+    term1_table = doc.add_table(rows=2, cols=9)
+    term1_table.style = 'Table Grid'
     
-    logger.info('Info table added after school header')
+    # Header Row 0: Weeks | Competence (colspan 3) | Activities | Resources | Assessment | Place | Observation
+    term1_table.rows[0].cells[0].merge(term1_table.rows[1].cells[0])  # Weeks spans 2 rows
+    term1_table.rows[0].cells[1].merge(term1_table.rows[0].cells[3])  # Competence spans 3 cols
+    term1_table.rows[0].cells[4].merge(term1_table.rows[1].cells[4])  # Activities spans 2 rows
+    term1_table.rows[0].cells[5].merge(term1_table.rows[1].cells[5])  # Resources spans 2 rows
+    term1_table.rows[0].cells[6].merge(term1_table.rows[1].cells[6])  # Assessment spans 2 rows
+    term1_table.rows[0].cells[7].merge(term1_table.rows[1].cells[7])  # Place spans 2 rows
+    term1_table.rows[0].cells[8].merge(term1_table.rows[1].cells[8])  # Observation spans 2 rows
     
-    # OLD CODE - Remove this section as we now have proper info table
-    # Fill header table (Table 1 now) - Match exact RTB template structure
+    # Set header texts and formatting
+    term1_table.rows[0].cells[0].text = 'Weeks'
+    term1_table.rows[0].cells[1].text = 'Competence code and name'
+    term1_table.rows[0].cells[4].text = 'Learning Activities'
+    term1_table.rows[0].cells[5].text = 'Resources (Equipment, tools, and materials)'
+    term1_table.rows[0].cells[6].text = 'Evidences of formative assessment'
+    term1_table.rows[0].cells[7].text = 'Learning Place'
+    term1_table.rows[0].cells[8].text = 'Observation'
+    
+    # Header Row 1: LO | Duration | IC (under Competence)
+    term1_table.rows[1].cells[1].text = 'Learning outcome (LO)'
+    term1_table.rows[1].cells[2].text = 'Duration'
+    term1_table.rows[1].cells[3].text = 'Indicative content (IC)'
+    
+    # Apply light green background and bold to headers
+    from docx.oxml.shared import OxmlElement
+    def set_cell_background(cell, color):
+        shading = OxmlElement('w:shd')
+        shading.set(qn('w:fill'), color)
+        cell._element.get_or_add_tcPr().append(shading)
+    
+    for row_idx in [0, 1]:
+        for cell in term1_table.rows[row_idx].cells:
+            set_cell_background(cell, 'D4EDDA')
+            set_cell_font(cell, bold=True)
+    
+    # Add data rows for Term 1
+    term1_weeks = data.get('term1_weeks', '')
+    term1_competence = data.get('term1_competence', '')
+    term1_outcomes_raw = data.get('term1_learning_outcomes', '')
+    term1_contents_raw = data.get('term1_indicative_contents', '')
+    term1_duration = data.get('term1_duration', '')
+    
+    term1_outcomes = [lo.strip() for lo in term1_outcomes_raw.replace('\r\n', '\n').split('\n') if lo.strip()]
+    term1_contents = [ic.strip() for ic in term1_contents_raw.replace('\r\n', '\n').split('\n') if ic.strip()]
+    
+    # Add rows for each LO/IC pair
+    for i, (lo, ic) in enumerate(zip(term1_outcomes, term1_contents)):
+        row = term1_table.add_row()
+        row.cells[0].text = term1_weeks if i == 0 else ''
+        row.cells[1].text = lo
+        row.cells[2].text = term1_duration
+        row.cells[3].text = ic
+        row.cells[4].text = 'Practical exercises, Group work, Demonstrations'
+        row.cells[5].text = 'Textbooks, Computers, Tools, Materials'
+        row.cells[6].text = 'Observation, Practical tests, Written tests'
+        row.cells[7].text = 'Workshop'
+        row.cells[8].text = ''
+        for cell in row.cells:
+            set_cell_font(cell, bold=False)
+    
+    # Add integrated assessment row
+    assess_row = term1_table.add_row()
+    assess_row.cells[0].text = ''
+    assess_row.cells[1].text = f'Integrated Assessment (for {term1_competence})'
+    assess_row.cells[2].text = ''
+    assess_row.cells[3].text = ''
+    assess_row.cells[4].text = ''
+    assess_row.cells[5].text = ''
+    assess_row.cells[6].text = ''
+    assess_row.cells[7].text = ''
+    assess_row.cells[8].text = ''
+    set_cell_font(assess_row.cells[1], bold=True)
+    
     if False and len(doc.tables) > 1:
         h = doc.tables[1]
         try:
@@ -699,199 +743,123 @@ def fill_scheme_official(data):
             import traceback
             logger.error(traceback.format_exc())
     
-    # Fill Term 1 table (now at index 2 after school header + info table)
-    from docx.oxml.shared import OxmlElement
-    def set_cell_background(cell, color):
-        shading = OxmlElement('w:shd')
-        shading.set(qn('w:fill'), color)
-        cell._element.get_or_add_tcPr().append(shading)
+    # 4. TERM 2 TABLE (same structure as Term 1)
+    term2_table = doc.add_table(rows=2, cols=9)
+    term2_table.style = 'Table Grid'
     
-    # Term tables start after: school header (0), info table (1), so Term 1 is at index 2
-    term1_index = 2
-    if len(doc.tables) > term1_index:
-        table1 = doc.tables[term1_index]
-        
-        # Row 0 and 1 are headers - make them bold with light green
-        for row_idx in [0, 1]:
-            for cell in table1.rows[row_idx].cells:
-                set_cell_background(cell, 'D4EDDA')  # Light green
-                set_cell_font(cell, bold=True)
-        
-        term1_weeks = (data.get('term1_weeks') or '').strip()
-        term1_competence = (data.get('term1_competence') or '').strip()
-        term1_outcomes_raw = (data.get('term1_learning_outcomes') or '').strip()
-        term1_contents_raw = (data.get('term1_indicative_contents') or '').strip()
-        term1_duration = (data.get('term1_duration') or '').strip()
-        term1_activities = 'Practical exercises, Group work, Demonstrations'
-        term1_resources = 'Textbooks, Computers, Tools, Materials'
-        term1_assessment = 'Observation, Practical tests, Written tests'
-        term1_place = 'Workshop'
-        
-        # Split by newline and filter empty lines
-        term1_outcomes = [lo.strip() for lo in term1_outcomes_raw.replace('\r\n', '\n').split('\n') if lo.strip()]
-        term1_contents = [ic.strip() for ic in term1_contents_raw.replace('\r\n', '\n').split('\n') if ic.strip()]
-        
-        logger.info(f"Term 1: {len(term1_outcomes)} LOs, {len(term1_contents)} ICs")
-        
-        # Keep existing rows and fill them, add more if needed
-        data_row_start = 2
-        for i, (lo, ic) in enumerate(zip(term1_outcomes, term1_contents)):
-            row_idx = data_row_start + i
-            
-            # Add row if needed
-            if row_idx >= len(table1.rows):
-                from copy import deepcopy
-                new_row = deepcopy(table1.rows[2]._element)
-                table1._element.append(new_row)
-            
-            row = table1.rows[row_idx]
-            # Col 0: Weeks
-            row.cells[0].text = term1_weeks
-            set_cell_font(row.cells[0], bold=False)
-            # Col 1: Learning outcome
-            row.cells[1].text = lo
-            set_cell_font(row.cells[1], bold=False)
-            # Col 2: Duration
-            row.cells[2].text = term1_duration
-            set_cell_font(row.cells[2], bold=False)
-            # Col 3: Indicative content
-            row.cells[3].text = ic
-            set_cell_font(row.cells[3], bold=False)
-            # Col 4: Learning Activities
-            row.cells[4].text = term1_activities
-            set_cell_font(row.cells[4], bold=False)
-            # Col 5: Resources
-            row.cells[5].text = term1_resources
-            set_cell_font(row.cells[5], bold=False)
-            # Col 6: Assessment
-            row.cells[6].text = term1_assessment
-            set_cell_font(row.cells[6], bold=False)
-            # Col 7: Learning Place
-            row.cells[7].text = term1_place
-            set_cell_font(row.cells[7], bold=False)
-            # Col 8: Observation (leave empty)
-            row.cells[8].text = ''
-            set_cell_font(row.cells[8], bold=False)
-            logger.info(f"  Term 1 Row {row_idx}: {lo[:30]}")
+    # Header setup for Term 2
+    term2_table.rows[0].cells[0].merge(term2_table.rows[1].cells[0])
+    term2_table.rows[0].cells[1].merge(term2_table.rows[0].cells[3])
+    term2_table.rows[0].cells[4].merge(term2_table.rows[1].cells[4])
+    term2_table.rows[0].cells[5].merge(term2_table.rows[1].cells[5])
+    term2_table.rows[0].cells[6].merge(term2_table.rows[1].cells[6])
+    term2_table.rows[0].cells[7].merge(term2_table.rows[1].cells[7])
+    term2_table.rows[0].cells[8].merge(term2_table.rows[1].cells[8])
     
-    # Fill Term 2 table (part of combined table) - now at index 3
-    term2_index = 3
-    if len(doc.tables) > term2_index:
-        table2 = doc.tables[term2_index]
-        
-        # Format header rows with light green background and bold
-        for row_idx in [0, 1]:
-            for cell in table2.rows[row_idx].cells:
-                set_cell_background(cell, 'D4EDDA')
-                set_cell_font(cell, bold=True)
-        
-        term2_weeks = (data.get('term2_weeks') or '').strip()
-        term2_competence = (data.get('term2_competence') or '').strip()
-        term2_outcomes_raw = (data.get('term2_learning_outcomes') or '').strip()
-        term2_contents_raw = (data.get('term2_indicative_contents') or '').strip()
-        term2_duration = (data.get('term2_duration') or '').strip()
-        term2_activities = 'Practical exercises, Group work, Demonstrations'
-        term2_resources = 'Textbooks, Computers, Tools, Materials'
-        term2_assessment = 'Observation, Practical tests, Written tests'
-        term2_place = 'Workshop'
-        
-        term2_outcomes = [lo.strip() for lo in term2_outcomes_raw.replace('\r\n', '\n').split('\n') if lo.strip()]
-        term2_contents = [ic.strip() for ic in term2_contents_raw.replace('\r\n', '\n').split('\n') if ic.strip()]
-        
-        logger.info(f"Term 2: {len(term2_outcomes)} LOs, {len(term2_contents)} ICs")
-        
-        # Fill existing rows, add more if needed
-        data_row_start = 2
-        for i, (lo, ic) in enumerate(zip(term2_outcomes, term2_contents)):
-            row_idx = data_row_start + i
-            
-            if row_idx >= len(table2.rows):
-                from copy import deepcopy
-                new_row = deepcopy(table2.rows[2]._element)
-                table2._element.append(new_row)
-            
-            row = table2.rows[row_idx]
-            row.cells[0].text = term2_weeks
-            set_cell_font(row.cells[0], bold=False)
-            row.cells[1].text = lo
-            set_cell_font(row.cells[1], bold=False)
-            row.cells[2].text = term2_duration
-            set_cell_font(row.cells[2], bold=False)
-            row.cells[3].text = ic
-            set_cell_font(row.cells[3], bold=False)
-            row.cells[4].text = term2_activities
-            set_cell_font(row.cells[4], bold=False)
-            row.cells[5].text = term2_resources
-            set_cell_font(row.cells[5], bold=False)
-            row.cells[6].text = term2_assessment
-            set_cell_font(row.cells[6], bold=False)
-            row.cells[7].text = term2_place
-            set_cell_font(row.cells[7], bold=False)
-            row.cells[8].text = ''
-            set_cell_font(row.cells[8], bold=False)
-            logger.info(f"  Term 2 Row {row_idx}: {lo[:30]}")
+    term2_table.rows[0].cells[0].text = 'Weeks'
+    term2_table.rows[0].cells[1].text = 'Competence code and name'
+    term2_table.rows[0].cells[4].text = 'Learning Activities'
+    term2_table.rows[0].cells[5].text = 'Resources (Equipment, tools, and materials)'
+    term2_table.rows[0].cells[6].text = 'Evidences of formative assessment'
+    term2_table.rows[0].cells[7].text = 'Learning Place'
+    term2_table.rows[0].cells[8].text = 'Observation'
+    term2_table.rows[1].cells[1].text = 'Learning outcome (LO)'
+    term2_table.rows[1].cells[2].text = 'Duration'
+    term2_table.rows[1].cells[3].text = 'Indicative content (IC)'
     
-    # Fill Term 3 table (part of combined table) - now at index 4
-    term3_index = 4
-    if len(doc.tables) > term3_index:
-        table3 = doc.tables[term3_index]
-        
-        # Format header rows with light green background and bold
-        for row_idx in [0, 1]:
-            for cell in table3.rows[row_idx].cells:
-                set_cell_background(cell, 'D4EDDA')
-                set_cell_font(cell, bold=True)
-        
-        term3_weeks = (data.get('term3_weeks') or '').strip()
-        term3_competence = (data.get('term3_competence') or '').strip()
-        term3_outcomes_raw = (data.get('term3_learning_outcomes') or '').strip()
-        term3_contents_raw = (data.get('term3_indicative_contents') or '').strip()
-        term3_duration = (data.get('term3_duration') or '').strip()
-        term3_activities = 'Practical exercises, Group work, Demonstrations'
-        term3_resources = 'Textbooks, Computers, Tools, Materials'
-        term3_assessment = 'Observation, Practical tests, Written tests'
-        term3_place = 'Workshop'
-        
-        term3_outcomes = [lo.strip() for lo in term3_outcomes_raw.replace('\r\n', '\n').split('\n') if lo.strip()]
-        term3_contents = [ic.strip() for ic in term3_contents_raw.replace('\r\n', '\n').split('\n') if ic.strip()]
-        
-        logger.info(f"Term 3: {len(term3_outcomes)} LOs, {len(term3_contents)} ICs")
-        
-        # Fill existing rows, add more if needed
-        data_row_start = 2
-        for i, (lo, ic) in enumerate(zip(term3_outcomes, term3_contents)):
-            row_idx = data_row_start + i
-            
-            if row_idx >= len(table3.rows):
-                from copy import deepcopy
-                new_row = deepcopy(table3.rows[2]._element)
-                table3._element.append(new_row)
-            
-            row = table3.rows[row_idx]
-            row.cells[0].text = term3_weeks
-            set_cell_font(row.cells[0], bold=False)
-            row.cells[1].text = lo
-            set_cell_font(row.cells[1], bold=False)
-            row.cells[2].text = term3_duration
-            set_cell_font(row.cells[2], bold=False)
-            row.cells[3].text = ic
-            set_cell_font(row.cells[3], bold=False)
-            row.cells[4].text = term3_activities
-            set_cell_font(row.cells[4], bold=False)
-            row.cells[5].text = term3_resources
-            set_cell_font(row.cells[5], bold=False)
-            row.cells[6].text = term3_assessment
-            set_cell_font(row.cells[6], bold=False)
-            row.cells[7].text = term3_place
-            set_cell_font(row.cells[7], bold=False)
-            row.cells[8].text = ''
-            set_cell_font(row.cells[8], bold=False)
-            logger.info(f"  Term 3 Row {row_idx}: {lo[:30]}")
+    for row_idx in [0, 1]:
+        for cell in term2_table.rows[row_idx].cells:
+            set_cell_background(cell, 'D4EDDA')
+            set_cell_font(cell, bold=True)
     
-    logger.info("Scheme of work filled successfully")
+    term2_weeks = data.get('term2_weeks', '')
+    term2_competence = data.get('term2_competence', '')
+    term2_outcomes_raw = data.get('term2_learning_outcomes', '')
+    term2_contents_raw = data.get('term2_indicative_contents', '')
+    term2_duration = data.get('term2_duration', '')
+    term2_outcomes = [lo.strip() for lo in term2_outcomes_raw.replace('\r\n', '\n').split('\n') if lo.strip()]
+    term2_contents = [ic.strip() for ic in term2_contents_raw.replace('\r\n', '\n').split('\n') if ic.strip()]
     
-    # Add SIGNATURE TABLE at the end
+    for i, (lo, ic) in enumerate(zip(term2_outcomes, term2_contents)):
+        row = term2_table.add_row()
+        row.cells[0].text = term2_weeks if i == 0 else ''
+        row.cells[1].text = lo
+        row.cells[2].text = term2_duration
+        row.cells[3].text = ic
+        row.cells[4].text = 'Practical exercises, Group work, Demonstrations'
+        row.cells[5].text = 'Textbooks, Computers, Tools, Materials'
+        row.cells[6].text = 'Observation, Practical tests, Written tests'
+        row.cells[7].text = 'Workshop'
+        row.cells[8].text = ''
+        for cell in row.cells:
+            set_cell_font(cell, bold=False)
+    
+    assess_row = term2_table.add_row()
+    assess_row.cells[1].text = f'Integrated Assessment (for {term2_competence})'
+    set_cell_font(assess_row.cells[1], bold=True)
+    
+    if False and len(doc.tables) > 3:
+        table2 = doc.tables[3]
+        
+        pass
+    
+    # 5. TERM 3 TABLE (same structure)
+    term3_table = doc.add_table(rows=2, cols=9)
+    term3_table.style = 'Table Grid'
+    
+    term3_table.rows[0].cells[0].merge(term3_table.rows[1].cells[0])
+    term3_table.rows[0].cells[1].merge(term3_table.rows[0].cells[3])
+    term3_table.rows[0].cells[4].merge(term3_table.rows[1].cells[4])
+    term3_table.rows[0].cells[5].merge(term3_table.rows[1].cells[5])
+    term3_table.rows[0].cells[6].merge(term3_table.rows[1].cells[6])
+    term3_table.rows[0].cells[7].merge(term3_table.rows[1].cells[7])
+    term3_table.rows[0].cells[8].merge(term3_table.rows[1].cells[8])
+    
+    term3_table.rows[0].cells[0].text = 'Weeks'
+    term3_table.rows[0].cells[1].text = 'Competence code and name'
+    term3_table.rows[0].cells[4].text = 'Learning Activities'
+    term3_table.rows[0].cells[5].text = 'Resources (Equipment, tools, and materials)'
+    term3_table.rows[0].cells[6].text = 'Evidences of formative assessment'
+    term3_table.rows[0].cells[7].text = 'Learning Place'
+    term3_table.rows[0].cells[8].text = 'Observation'
+    term3_table.rows[1].cells[1].text = 'Learning outcome (LO)'
+    term3_table.rows[1].cells[2].text = 'Duration'
+    term3_table.rows[1].cells[3].text = 'Indicative content (IC)'
+    
+    for row_idx in [0, 1]:
+        for cell in term3_table.rows[row_idx].cells:
+            set_cell_background(cell, 'D4EDDA')
+            set_cell_font(cell, bold=True)
+    
+    term3_weeks = data.get('term3_weeks', '')
+    term3_competence = data.get('term3_competence', '')
+    term3_outcomes_raw = data.get('term3_learning_outcomes', '')
+    term3_contents_raw = data.get('term3_indicative_contents', '')
+    term3_duration = data.get('term3_duration', '')
+    term3_outcomes = [lo.strip() for lo in term3_outcomes_raw.replace('\r\n', '\n').split('\n') if lo.strip()]
+    term3_contents = [ic.strip() for ic in term3_contents_raw.replace('\r\n', '\n').split('\n') if ic.strip()]
+    
+    for i, (lo, ic) in enumerate(zip(term3_outcomes, term3_contents)):
+        row = term3_table.add_row()
+        row.cells[0].text = term3_weeks if i == 0 else ''
+        row.cells[1].text = lo
+        row.cells[2].text = term3_duration
+        row.cells[3].text = ic
+        row.cells[4].text = 'Practical exercises, Group work, Demonstrations'
+        row.cells[5].text = 'Textbooks, Computers, Tools, Materials'
+        row.cells[6].text = 'Observation, Practical tests, Written tests'
+        row.cells[7].text = 'Workshop'
+        row.cells[8].text = ''
+        for cell in row.cells:
+            set_cell_font(cell, bold=False)
+    
+    assess_row = term3_table.add_row()
+    assess_row.cells[1].text = f'Integrated Assessment (for {term3_competence})'
+    set_cell_font(assess_row.cells[1], bold=True)
+    
+    # 6. SIGNATURE TABLE
     sig_table = doc.add_table(rows=3, cols=2)
+    sig_table.style = 'Table Grid'
     
     # Row 0: Prepared by
     sig_table.rows[0].cells[0].text = 'Prepared by: (Name, position and Signature)'
@@ -917,9 +885,8 @@ def fill_scheme_official(data):
     sig_table.rows[2].cells[1].text = f"{approved_name}, {approved_pos}"
     set_cell_font(sig_table.rows[2].cells[1], bold=False)
     
-    logger.info('Signature table added at end')
-    
-    # Save to temp file
+    # Save document
+    logger.info('Scheme of work created with proper table structure')
     try:
         temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
         logger.info(f"Saving to: {temp_file.name}")
