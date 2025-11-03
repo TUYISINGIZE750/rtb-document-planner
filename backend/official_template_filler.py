@@ -3,6 +3,7 @@ from docx import Document
 from docx.shared import Pt, RGBColor, Inches
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml import parse_xml
+from docx.oxml.ns import qn
 import os
 import tempfile
 from datetime import datetime
@@ -550,31 +551,43 @@ def fill_scheme_official(data):
         try:
             # Row 0: Sector (cell 1), Trainer (cell 3)
             h.rows[0].cells[1].text = data.get('sector') or ''
+            set_cell_font(h.rows[0].cells[1], bold=False)
             h.rows[0].cells[3].text = data.get('trainer_name') or ''
+            set_cell_font(h.rows[0].cells[3], bold=False)
             
             # Row 1: Trade (cell 1), School Year (cell 3)
             h.rows[1].cells[1].text = data.get('department_trade') or data.get('trade') or ''
+            set_cell_font(h.rows[1].cells[1], bold=False)
             h.rows[1].cells[3].text = data.get('school_year') or ''
+            set_cell_font(h.rows[1].cells[3], bold=False)
             
             # Row 2: Qualification (cell 1), Term (cell 3)
             h.rows[2].cells[1].text = data.get('qualification_title') or ''
+            set_cell_font(h.rows[2].cells[1], bold=False)
             h.rows[2].cells[3].text = data.get('terms') or ''
+            set_cell_font(h.rows[2].cells[3], bold=False)
             
             # Row 3: RQF Level (cell 1)
             h.rows[3].cells[1].text = data.get('rqf_level') or ''
+            set_cell_font(h.rows[3].cells[1], bold=False)
             
             # Row 4: Module code and title (cell 3)
             h.rows[4].cells[3].text = data.get('module_code_title') or ''
+            set_cell_font(h.rows[4].cells[3], bold=False)
             
             # Row 5: Learning hours (cell 3)
             h.rows[5].cells[3].text = data.get('module_hours') or ''
+            set_cell_font(h.rows[5].cells[3], bold=False)
             
             # Row 6: Number of Classes (cell 3)
             h.rows[6].cells[3].text = data.get('number_of_classes') or ''
+            set_cell_font(h.rows[6].cells[3], bold=False)
             
             # Row 7: Date (cell 1), Class Name (cell 3)
             h.rows[7].cells[1].text = datetime.now().strftime('%d/%m/%Y')
+            set_cell_font(h.rows[7].cells[1], bold=False)
             h.rows[7].cells[3].text = data.get('class_name') or ''
+            set_cell_font(h.rows[7].cells[3], bold=False)
             
             logger.info("Header table filled successfully")
         except Exception as e:
@@ -585,6 +598,19 @@ def fill_scheme_official(data):
     # Fill Term 1 table
     if len(doc.tables) > 2:
         table1 = doc.tables[2]
+        
+        # Format header rows with light green background and bold
+        from docx.oxml.shared import OxmlElement
+        def set_cell_background(cell, color):
+            shading = OxmlElement('w:shd')
+            shading.set(qn('w:fill'), color)
+            cell._element.get_or_add_tcPr().append(shading)
+        
+        # Row 0 and 1 are headers - make them bold with light green
+        for row_idx in [0, 1]:
+            for cell in table1.rows[row_idx].cells:
+                set_cell_background(cell, 'D4EDDA')  # Light green
+                set_cell_font(cell, bold=True)
         term1_weeks = (data.get('term1_weeks') or '').strip()
         term1_outcomes_raw = (data.get('term1_learning_outcomes') or '').strip()
         term1_contents_raw = (data.get('term1_indicative_contents') or '').strip()
@@ -625,6 +651,12 @@ def fill_scheme_official(data):
     # Fill Term 2 table
     if len(doc.tables) > 3:
         table2 = doc.tables[3]
+        
+        # Format header rows with light green background and bold
+        for row_idx in [0, 1]:
+            for cell in table2.rows[row_idx].cells:
+                set_cell_background(cell, 'D4EDDA')
+                set_cell_font(cell, bold=True)
         term2_weeks = (data.get('term2_weeks') or '').strip()
         term2_outcomes_raw = (data.get('term2_learning_outcomes') or '').strip()
         term2_contents_raw = (data.get('term2_indicative_contents') or '').strip()
@@ -659,6 +691,12 @@ def fill_scheme_official(data):
     # Fill Term 3 table
     if len(doc.tables) > 4:
         table3 = doc.tables[4]
+        
+        # Format header rows with light green background and bold
+        for row_idx in [0, 1]:
+            for cell in table3.rows[row_idx].cells:
+                set_cell_background(cell, 'D4EDDA')
+                set_cell_font(cell, bold=True)
         term3_weeks = (data.get('term3_weeks') or '').strip()
         term3_outcomes_raw = (data.get('term3_learning_outcomes') or '').strip()
         term3_contents_raw = (data.get('term3_indicative_contents') or '').strip()
