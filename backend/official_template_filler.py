@@ -311,10 +311,31 @@ def fill_session_plan_official(data):
     set_cell_text_with_bold_label(table.rows[6].cells[0], "Range: ", range_val)
     set_cell_text_with_bold_label(table.rows[6].cells[2], "Duration of the session: ", data.get('duration', '').strip())
     
-    # Row 7: Objectives
+    # Row 7: Objectives - format as list
     objectives = data.get('objectives', '').strip()
     logger.info(f"📝 Filling objectives: {objectives[:100] if objectives else 'EMPTY'}")
-    set_cell_text_with_bold_label(table.rows[7].cells[0], "Objectives:\n", objectives)
+    cell = table.rows[7].cells[0]
+    cell.text = ''
+    p = cell.paragraphs[0]
+    p.paragraph_format.space_before = Pt(0)
+    p.paragraph_format.space_after = Pt(0)
+    p.paragraph_format.line_spacing = 1.5
+    
+    # Add bold "Objectives:" label
+    r1 = p.add_run("Objectives:\n")
+    r1.font.bold = True
+    r1.font.name = 'Bookman Old Style'
+    r1.font.size = Pt(12)
+    
+    # Split objectives into lines and format each
+    obj_lines = [line.strip() for line in objectives.split('\n') if line.strip()]
+    for i, obj in enumerate(obj_lines, 1):
+        # Remove existing numbering if present
+        obj_clean = obj.lstrip('0123456789.-) ')
+        r2 = p.add_run(f"{i}. {obj_clean}\n")
+        r2.font.name = 'Bookman Old Style'
+        r2.font.size = Pt(12)
+        r2.font.bold = False
     
     # Row 8: Facilitation techniques
     facilitation = data.get('facilitation_techniques', '').strip()
@@ -383,7 +404,7 @@ def fill_session_plan_official(data):
     # Row 11: Bold header
     set_cell_font(table.rows[11].cells[0], bold=True)
     
-    # Row 12: Development
+    # Row 12: Development - format steps as list
     cell = table.rows[12].cells[0]
     cell.text = ''
     p = cell.paragraphs[0]
@@ -391,17 +412,40 @@ def fill_session_plan_official(data):
     p.paragraph_format.space_after = Pt(0)
     p.paragraph_format.line_spacing = 1.5
     
-    r1 = p.add_run("Step 1:\n")
-    r1.font.bold = True
-    r1.font.name = 'Bookman Old Style'
-    r1.font.size = Pt(12)
-    r2 = p.add_run("Trainer's activity: ")
-    r2.font.bold = True
-    r2.font.name = 'Bookman Old Style'
-    r2.font.size = Pt(12)
-    r3 = p.add_run(' '.join(dev.split()) + '\n\n')
-    r3.font.name = 'Bookman Old Style'
-    r3.font.size = Pt(12)
+    # Split development into steps if multiple lines
+    dev_lines = [line.strip() for line in dev.split('\n') if line.strip()]
+    
+    if len(dev_lines) > 1:
+        # Multiple steps - format as numbered list
+        for i, step in enumerate(dev_lines, 1):
+            step_clean = step.lstrip('0123456789.-) ')
+            r1 = p.add_run(f"Step {i}:\n")
+            r1.font.bold = True
+            r1.font.name = 'Bookman Old Style'
+            r1.font.size = Pt(12)
+            r2 = p.add_run("Trainer's activity: ")
+            r2.font.bold = True
+            r2.font.name = 'Bookman Old Style'
+            r2.font.size = Pt(12)
+            r3 = p.add_run(step_clean + '\n')
+            r3.font.name = 'Bookman Old Style'
+            r3.font.size = Pt(12)
+            if i < len(dev_lines):
+                p.add_run('\n')
+    else:
+        # Single step
+        r1 = p.add_run("Step 1:\n")
+        r1.font.bold = True
+        r1.font.name = 'Bookman Old Style'
+        r1.font.size = Pt(12)
+        r2 = p.add_run("Trainer's activity: ")
+        r2.font.bold = True
+        r2.font.name = 'Bookman Old Style'
+        r2.font.size = Pt(12)
+        r3 = p.add_run(' '.join(dev.split()) + '\n\n')
+        r3.font.name = 'Bookman Old Style'
+        r3.font.size = Pt(12)
+    
     r4 = p.add_run("Learner's activity: ")
     r4.font.bold = True
     r4.font.name = 'Bookman Old Style'
