@@ -7,6 +7,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="subscription-modal.css">
     <link rel="stylesheet" href="upgrade-modal.css">
+    <link rel="stylesheet" href="developer-modal.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
@@ -305,6 +306,15 @@
                     <i class="fas fa-crown"></i> View Plans
                 </button>
             </div>
+            
+            <div class="action-card">
+                <i class="fas fa-user-tie"></i>
+                <h2>About Developer</h2>
+                <p>Meet the developer behind this platform and explore custom software solutions</p>
+                <button onclick="showDeveloperModal()" class="btn" style="background: #6366f1;">
+                    <i class="fas fa-info-circle"></i> View Profile
+                </button>
+            </div>
         </div>
     </div>
 
@@ -318,6 +328,7 @@
     <script src="subscription-modal.js"></script>
     <script src="subscription-tracker.js"></script>
     <script src="upgrade-modal.js"></script>
+    <script src="developer-modal.js"></script>
     <script>
         let currentLimits = null;
 

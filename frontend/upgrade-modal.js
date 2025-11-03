@@ -11,35 +11,58 @@ function showUpgradeModal() {
                 
                 <div class="upgrade-modal-body">
                     <div class="upgrade-plan-card">
-                        <h3><i class="fas fa-star"></i> Premium Plan</h3>
-                        <div class="upgrade-price">5,000 RWF <span>/ month</span></div>
+                        <h3><i class="fas fa-file-alt"></i> Pay Per Document</h3>
+                        <ul class="upgrade-features">
+                            <li><i class="fas fa-check-circle"></i> 1 Session Plan = <strong>33 RWF</strong></li>
+                            <li><i class="fas fa-check-circle"></i> 1 Scheme of Work = <strong>79 RWF</strong></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="upgrade-plan-card">
+                        <h3><i class="fas fa-calendar-week"></i> Weekly Bundles</h3>
+                        <ul class="upgrade-features">
+                            <li><i class="fas fa-check-circle"></i> 15 Session Plans = <strong>556 RWF</strong></li>
+                            <li><i class="fas fa-check-circle"></i> 5 Schemes of Work = <strong>777 RWF</strong></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="upgrade-plan-card">
+                        <h3><i class="fas fa-calendar-alt"></i> Monthly Bundles</h3>
+                        <ul class="upgrade-features">
+                            <li><i class="fas fa-check-circle"></i> 30 Session Plans = <strong>1,109 RWF</strong></li>
+                            <li><i class="fas fa-check-circle"></i> 15 Schemes of Work = <strong>2,300 RWF</strong></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="upgrade-plan-card" style="border: 3px solid #10b981; background: linear-gradient(135deg, #f0fdf4, #dcfce7);">
+                        <h3><i class="fas fa-crown"></i> Unlimited Access</h3>
+                        <div class="upgrade-price">5,300 RWF <span>/ month</span></div>
                         <ul class="upgrade-features">
                             <li><i class="fas fa-check-circle"></i> Unlimited Session Plans</li>
                             <li><i class="fas fa-check-circle"></i> Unlimited Schemes of Work</li>
                             <li><i class="fas fa-check-circle"></i> Priority Support</li>
                             <li><i class="fas fa-check-circle"></i> All Future Features</li>
-                            <li><i class="fas fa-check-circle"></i> No Ads</li>
                         </ul>
                     </div>
                     
                     <div class="upgrade-instructions">
-                        <h4><i class="fas fa-info-circle"></i> How to Upgrade</h4>
+                        <h4><i class="fas fa-info-circle"></i> How to Purchase</h4>
                         <ol class="upgrade-steps">
                             <li>
                                 <span class="upgrade-step-number">1</span>
-                                <span>Send <strong>5,000 RWF</strong> via Mobile Money to the number below</span>
+                                <span>Choose your plan and send payment via <strong>MTN/Airtel Mobile Money</strong></span>
                             </li>
                             <li>
                                 <span class="upgrade-step-number">2</span>
-                                <span>Contact us with your payment confirmation and phone number</span>
+                                <span>Send to: <strong>+250 789 751 597</strong> (TUYISINGIZE Leonard)</span>
                             </li>
                             <li>
                                 <span class="upgrade-step-number">3</span>
-                                <span>Your account will be upgraded within <strong>24 hours</strong></span>
+                                <span>Contact us with payment confirmation and your registered phone number</span>
                             </li>
                             <li>
                                 <span class="upgrade-step-number">4</span>
-                                <span>Enjoy unlimited access to all features!</span>
+                                <span>Your account will be activated within <strong>24 hours</strong></span>
                             </li>
                         </ol>
                     </div>
@@ -48,14 +71,19 @@ function showUpgradeModal() {
                         <h4><i class="fas fa-phone-alt"></i> Payment & Support Contact</h4>
                         <div class="upgrade-contact-info">
                             <div class="upgrade-contact-item">
+                                <i class="fas fa-user"></i>
+                                <strong>Name:</strong>
+                                <span>TUYISINGIZE Leonard</span>
+                            </div>
+                            <div class="upgrade-contact-item">
                                 <i class="fas fa-mobile-alt"></i>
-                                <strong>Phone:</strong>
+                                <strong>MoMo:</strong>
                                 <span>+250 789 751 597</span>
                             </div>
                             <div class="upgrade-contact-item">
                                 <i class="fas fa-envelope"></i>
                                 <strong>Email:</strong>
-                                <span>tuyisingize750@gmail.com</span>
+                                <span>leotuyi100@outlook.com</span>
                             </div>
                             <div class="upgrade-contact-item">
                                 <i class="fas fa-money-bill-wave"></i>
