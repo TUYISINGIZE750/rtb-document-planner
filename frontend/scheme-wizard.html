@@ -355,23 +355,38 @@
                     console.log('Created scheme:', scheme);
                     
                     if (scheme && scheme.id) {
-                        // Download the document
-                        const link = document.createElement('a');
-                        link.href = `${API_BASE}/schemes-of-work/${scheme.id}/download?phone=${encodeURIComponent(session.phone)}`;
-                        link.download = `RTB_Scheme_of_Work_${scheme.id}.docx`;
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
+                        // Download the document using fetch to get blob
+                        const downloadUrl = `${API_BASE}/schemes-of-work/${scheme.id}/download?phone=${encodeURIComponent(session.phone)}`;
                         
-                        showNotification('Scheme of work created and downloaded successfully!', 'success');
-                        
-                        // Update download counter
-                        updateDownloadCounter();
-                        
-                        // Redirect back to dashboard after a delay
-                        setTimeout(() => {
-                            window.location.href = 'teacher-dashboard.html';
-                        }, 2000);
+                        try {
+                            const downloadResponse = await fetch(downloadUrl);
+                            if (downloadResponse.ok) {
+                                const blob = await downloadResponse.blob();
+                                const url = window.URL.createObjectURL(blob);
+                                const link = document.createElement('a');
+                                link.href = url;
+                                link.download = `RTB_Scheme_of_Work_${data.module_code_title || scheme.id}.docx`;
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
+                                window.URL.revokeObjectURL(url);
+                                
+                                showNotification('Scheme of work created and downloaded successfully!', 'success');
+                                
+                                // Update download counter
+                                updateDownloadCounter();
+                                
+                                // Redirect back to dashboard after a delay
+                                setTimeout(() => {
+                                    window.location.href = 'teacher-dashboard.html';
+                                }, 2000);
+                            } else {
+                                showNotification('Document created but download failed. Please try from dashboard.', 'error');
+                            }
+                        } catch (downloadError) {
+                            console.error('Download error:', downloadError);
+                            showNotification('Document created but download failed. Please try from dashboard.', 'error');
+                        }
                     }
                 } else {
                     const errorData = await response.json().catch(() => ({ detail: 'Unknown error' }));
