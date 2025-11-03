@@ -6,7 +6,7 @@ function showDeveloperModal() {
                 <div class="developer-modal-header">
                     <button class="developer-modal-close" onclick="closeDeveloperModal()">×</button>
                     <div class="developer-avatar">
-                        <i class="fas fa-user-tie"></i>
+                        <img src="developer-photo.jpg" alt="Leonard TUYISINGIZE" style="width: 100%; height: 100%; object-fit: cover;">
                     </div>
                     <h2>Leonard TUYISINGIZE</h2>
                     <p>Full-Stack Software Developer</p>
@@ -50,14 +50,6 @@ function showDeveloperModal() {
                             <strong>Specialization:</strong>
                             <span>Full-Stack Development</span>
                         </div>
-                    </div>
-                    
-                    <div class="developer-skills">
-                        <span class="developer-skill-tag"><i class="fas fa-laptop-code"></i> Web Development</span>
-                        <span class="developer-skill-tag"><i class="fas fa-mobile-alt"></i> Mobile Apps</span>
-                        <span class="developer-skill-tag"><i class="fas fa-database"></i> Database Design</span>
-                        <span class="developer-skill-tag"><i class="fas fa-cloud"></i> Cloud Solutions</span>
-                        <span class="developer-skill-tag"><i class="fas fa-cogs"></i> Custom Software</span>
                     </div>
                     
                     <div class="developer-cta">

@@ -376,16 +376,20 @@
         }
 
         .dev-avatar {
-            width: 100px;
-            height: 100px;
+            width: 120px;
+            height: 120px;
             background: white;
             border-radius: 50%;
-            margin: -50px auto 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            margin: -60px auto 1rem;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            border: 4px solid white;
+        }
+
+        .dev-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .dev-skills {
@@ -534,7 +538,9 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button class="modal-close" onclick="closeModal()">×</button>
-                <div class="dev-avatar">👨💻</div>
+                <div class="dev-avatar">
+                    <img src="developer-photo.jpg" alt="Leonard TUYISINGIZE">
+                </div>
                 <h2>Meet the Developer</h2>
             </div>
             <div class="modal-body">
@@ -550,14 +556,6 @@
                     for companies or personnel. Whether you need a business management system, 
                     educational platform, or any custom software solution, don't hesitate to reach me.
                 </p>
-                
-                <div class="dev-skills">
-                    <span class="skill-tag">Web Development</span>
-                    <span class="skill-tag">Mobile Apps</span>
-                    <span class="skill-tag">Database Design</span>
-                    <span class="skill-tag">Cloud Solutions</span>
-                    <span class="skill-tag">Custom Software</span>
-                </div>
 
                 <a href="tel:+250789751597" class="contact-item">
                     <div class="contact-icon">📞</div>
