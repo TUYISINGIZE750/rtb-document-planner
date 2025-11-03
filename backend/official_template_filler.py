@@ -726,11 +726,11 @@ def fill_scheme_official(data):
             set_cell_font(cell, bold=True)
     
     # Add data rows for Term 1
-    term1_weeks = data.get('term1_weeks', '')
-    term1_competence = data.get('term1_competence', '')
-    term1_outcomes_raw = data.get('term1_learning_outcomes', '')
-    term1_contents_raw = data.get('term1_indicative_contents', '')
-    term1_duration = data.get('term1_duration', '')
+    term1_weeks = data.get('term1_weeks', '') or ''
+    term1_competence = data.get('term1_competence', '') or 'Competence 1'
+    term1_outcomes_raw = data.get('term1_learning_outcomes', '') or ''
+    term1_contents_raw = data.get('term1_indicative_contents', '') or ''
+    term1_duration = data.get('term1_duration', '') or ''
     
     term1_outcomes = [lo.strip() for lo in term1_outcomes_raw.replace('\r\n', '\n').split('\n') if lo.strip()]
     term1_contents = [ic.strip() for ic in term1_contents_raw.replace('\r\n', '\n').split('\n') if ic.strip()]
@@ -844,11 +844,11 @@ def fill_scheme_official(data):
             set_cell_background(cell, 'D4EDDA')
             set_cell_font(cell, bold=True)
     
-    term2_weeks = data.get('term2_weeks', '')
-    term2_competence = data.get('term2_competence', '')
-    term2_outcomes_raw = data.get('term2_learning_outcomes', '')
-    term2_contents_raw = data.get('term2_indicative_contents', '')
-    term2_duration = data.get('term2_duration', '')
+    term2_weeks = data.get('term2_weeks', '') or ''
+    term2_competence = data.get('term2_competence', '') or 'Competence 2'
+    term2_outcomes_raw = data.get('term2_learning_outcomes', '') or ''
+    term2_contents_raw = data.get('term2_indicative_contents', '') or ''
+    term2_duration = data.get('term2_duration', '') or ''
     term2_outcomes = [lo.strip() for lo in term2_outcomes_raw.replace('\r\n', '\n').split('\n') if lo.strip()]
     term2_contents = [ic.strip() for ic in term2_contents_raw.replace('\r\n', '\n').split('\n') if ic.strip()]
     
@@ -903,11 +903,11 @@ def fill_scheme_official(data):
             set_cell_background(cell, 'D4EDDA')
             set_cell_font(cell, bold=True)
     
-    term3_weeks = data.get('term3_weeks', '')
-    term3_competence = data.get('term3_competence', '')
-    term3_outcomes_raw = data.get('term3_learning_outcomes', '')
-    term3_contents_raw = data.get('term3_indicative_contents', '')
-    term3_duration = data.get('term3_duration', '')
+    term3_weeks = data.get('term3_weeks', '') or ''
+    term3_competence = data.get('term3_competence', '') or 'Competence 3'
+    term3_outcomes_raw = data.get('term3_learning_outcomes', '') or ''
+    term3_contents_raw = data.get('term3_indicative_contents', '') or ''
+    term3_duration = data.get('term3_duration', '') or ''
     term3_outcomes = [lo.strip() for lo in term3_outcomes_raw.replace('\r\n', '\n').split('\n') if lo.strip()]
     term3_contents = [ic.strip() for ic in term3_contents_raw.replace('\r\n', '\n').split('\n') if ic.strip()]
     
