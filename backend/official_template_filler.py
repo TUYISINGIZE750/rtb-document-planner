@@ -203,13 +203,13 @@ def fill_session_plan_official(data):
     set_cell_text_with_bold_label(table.rows[0].cells[0], "Sector: ", data.get('sector', '').strip())
     set_cell_text_with_bold_label(table.rows[0].cells[1], "Trade: ", data.get('trade', '').strip())
     set_cell_text_with_bold_label(table.rows[0].cells[4], "Level: ", data.get('level', 'Level 4').strip())
-    set_cell_text_with_bold_label(table.rows[0].cells[6], "Date: ", data.get('date', '').strip())
+    set_cell_text_with_bold_label(table.rows[0].cells[5], "Date: ", data.get('date', '').strip())
     
     # Row 1: Bold headers
     set_cell_text_with_bold_label(table.rows[1].cells[0], "Trainer name: ", data.get('trainer_name', '').strip())
     
-    # School year and term in cell 6
-    cell = table.rows[1].cells[6]
+    # School year and term in cell 5
+    cell = table.rows[1].cells[5]
     cell.text = ''
     p = cell.paragraphs[0]
     p.paragraph_format.space_before = Pt(0)
@@ -235,8 +235,8 @@ def fill_session_plan_official(data):
     # Row 2: Bold headers
     set_cell_text_with_bold_label(table.rows[2].cells[0], "Module (Code&Name): ", data.get('module_code_title', '').strip())
     set_cell_text_with_bold_label(table.rows[2].cells[1], "Week: ", data.get('week', '1').strip())
-    set_cell_text_with_bold_label(table.rows[2].cells[5], "No. Trainees: ", data.get('number_of_trainees', '').strip())
-    set_cell_text_with_bold_label(table.rows[2].cells[6], "Class(es): ", data.get('class_name', '').strip())
+    set_cell_text_with_bold_label(table.rows[2].cells[4], "No. Trainees: ", data.get('number_of_trainees', '').strip())
+    set_cell_text_with_bold_label(table.rows[2].cells[5], "Class(es): ", data.get('class_name', '').strip())
     
     # Row 3: Learning Outcome
     set_cell_font(table.rows[3].cells[0], bold=True)
@@ -294,7 +294,8 @@ def fill_session_plan_official(data):
     # Row 9: Bold headers
     set_cell_font(table.rows[9].cells[0], bold=True)
     set_cell_font(table.rows[9].cells[3], bold=True)
-    set_cell_font(table.rows[9].cells[7], bold=True)
+    if len(table.rows[9].cells) > 5:
+        set_cell_font(table.rows[9].cells[5], bold=True)
     
     # Row 10: Introduction
     set_cell_text_with_bold_label(table.rows[10].cells[0], "Trainer's activity: ", f"{intro}\n\n")
@@ -309,8 +310,9 @@ def fill_session_plan_official(data):
     r2.font.size = Pt(12)
     table.rows[10].cells[3].text = all_resources
     set_cell_font(table.rows[10].cells[3])
-    table.rows[10].cells[7].text = "5 min"
-    set_cell_font(table.rows[10].cells[7])
+    if len(table.rows[10].cells) > 5:
+        table.rows[10].cells[5].text = "5 min"
+        set_cell_font(table.rows[10].cells[5])
     
     # Row 11: Bold header
     set_cell_font(table.rows[11].cells[0], bold=True)
@@ -339,8 +341,9 @@ def fill_session_plan_official(data):
     r5.font.size = Pt(12)
     table.rows[12].cells[3].text = all_resources
     set_cell_font(table.rows[12].cells[3])
-    table.rows[12].cells[7].text = "30 min"
-    set_cell_font(table.rows[12].cells[7])
+    if len(table.rows[12].cells) > 5:
+        table.rows[12].cells[5].text = "30 min"
+        set_cell_font(table.rows[12].cells[5])
     
     # Row 15: Bold header
     set_cell_font(table.rows[15].cells[0], bold=True)
@@ -349,8 +352,9 @@ def fill_session_plan_official(data):
     set_cell_text_with_bold_label(table.rows[16].cells[0], "Summary: ", conclusion)
     table.rows[16].cells[3].text = all_resources
     set_cell_font(table.rows[16].cells[3])
-    table.rows[16].cells[7].text = "5 min"
-    set_cell_font(table.rows[16].cells[7])
+    if len(table.rows[16].cells) > 5:
+        table.rows[16].cells[5].text = "5 min"
+        set_cell_font(table.rows[16].cells[5])
     
     # Row 17: Assessment - bold header
     assessment = data.get('assessment_details', '').strip()
@@ -358,8 +362,9 @@ def fill_session_plan_official(data):
     set_cell_font(table.rows[17].cells[0])
     table.rows[17].cells[3].text = "Assessment sheets"
     set_cell_font(table.rows[17].cells[3])
-    table.rows[17].cells[7].text = "5 min"
-    set_cell_font(table.rows[17].cells[7])
+    if len(table.rows[17].cells) > 5:
+        table.rows[17].cells[5].text = "5 min"
+        set_cell_font(table.rows[17].cells[5])
     
     # Row 19: References
     references = data.get('references', '').strip()
