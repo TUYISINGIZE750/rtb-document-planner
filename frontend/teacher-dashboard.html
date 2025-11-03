@@ -6,6 +6,7 @@
     <title>Teacher Dashboard - RTB Document Planner</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="subscription-modal.css">
+    <link rel="stylesheet" href="upgrade-modal.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
@@ -300,7 +301,7 @@
                 <i class="fas fa-crown"></i>
                 <h2>Upgrade Account</h2>
                 <p>Get unlimited downloads, priority support, and access to premium features</p>
-                <button onclick="showSubscriptionModal()" class="btn upgrade-btn">
+                <button onclick="showUpgradeModal()" class="btn upgrade-btn">
                     <i class="fas fa-crown"></i> View Plans
                 </button>
             </div>
@@ -316,6 +317,7 @@
     <script src="auth.js"></script>
     <script src="subscription-modal.js"></script>
     <script src="subscription-tracker.js"></script>
+    <script src="upgrade-modal.js"></script>
     <script>
         let currentLimits = null;
 
@@ -418,13 +420,13 @@
                 const schemeRemaining = Math.max(0, currentLimits.schemes_limit - currentLimits.schemes_downloaded);
                 
                 if (sessionRemaining === 0) {
-                    sessionBtn.disabled = true;
                     sessionBtn.innerHTML = '<i class="fas fa-lock"></i> Upgrade Required';
+                    sessionBtn.onclick = function() { showUpgradeModal(); };
                 }
                 
                 if (schemeRemaining === 0) {
-                    schemeBtn.disabled = true;
                     schemeBtn.innerHTML = '<i class="fas fa-lock"></i> Upgrade Required';
+                    schemeBtn.onclick = function() { showUpgradeModal(); };
                 }
             }
         }
@@ -441,7 +443,7 @@
             if (!currentLimits.is_premium) {
                 const sessionRemaining = Math.max(0, currentLimits.session_plans_limit - currentLimits.session_plans_downloaded);
                 if (sessionRemaining === 0) {
-                    showSubscriptionModal('session_plans');
+                    showUpgradeModal();
                     return;
                 }
             }
@@ -456,7 +458,7 @@
             if (!currentLimits.is_premium) {
                 const schemeRemaining = Math.max(0, currentLimits.schemes_limit - currentLimits.schemes_downloaded);
                 if (schemeRemaining === 0) {
-                    showSubscriptionModal('schemes');
+                    showUpgradeModal();
                     return;
                 }
             }
