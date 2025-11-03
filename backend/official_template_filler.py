@@ -168,6 +168,7 @@ def fill_session_plan_official(data):
     loc_run = center_para.add_run(location_text)
     loc_run.font.size = Pt(10)
     loc_run.font.name = 'Bookman Old Style'
+    loc_run.font.bold = True
     
     # RIGHT: School logo
     right_cell = header_table.rows[0].cells[2]
