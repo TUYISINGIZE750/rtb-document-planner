@@ -589,7 +589,6 @@ def fill_scheme_official(data):
         term1_outcomes_raw = (data.get('term1_learning_outcomes') or '').strip()
         term1_contents_raw = (data.get('term1_indicative_contents') or '').strip()
         term1_duration = (data.get('term1_duration') or '').strip()
-        term1_place = (data.get('term1_learning_place') or '').strip()
         
         # Split by newline and filter empty lines
         term1_outcomes = [lo.strip() for lo in term1_outcomes_raw.replace('\r\n', '\n').split('\n') if lo.strip()]
@@ -604,18 +603,23 @@ def fill_scheme_official(data):
             
             # Add row if needed
             if row_idx >= len(table1.rows):
-                # Copy structure from row 2 (first data row)
                 from copy import deepcopy
                 new_row = deepcopy(table1.rows[2]._element)
                 table1._element.append(new_row)
             
             row = table1.rows[row_idx]
+            # Weeks column
             row.cells[0].text = term1_weeks
+            set_cell_font(row.cells[0], bold=False)
+            # Learning outcome
             row.cells[1].text = lo
+            set_cell_font(row.cells[1], bold=False)
+            # Duration
             row.cells[2].text = term1_duration
+            set_cell_font(row.cells[2], bold=False)
+            # Indicative content
             row.cells[3].text = ic
-            if len(row.cells) > 7:
-                row.cells[7].text = term1_place
+            set_cell_font(row.cells[3], bold=False)
             logger.info(f"  Term 1 Row {row_idx}: {lo[:30]}")
     
     # Fill Term 2 table
@@ -625,7 +629,6 @@ def fill_scheme_official(data):
         term2_outcomes_raw = (data.get('term2_learning_outcomes') or '').strip()
         term2_contents_raw = (data.get('term2_indicative_contents') or '').strip()
         term2_duration = (data.get('term2_duration') or '').strip()
-        term2_place = (data.get('term2_learning_place') or '').strip()
         
         term2_outcomes = [lo.strip() for lo in term2_outcomes_raw.replace('\r\n', '\n').split('\n') if lo.strip()]
         term2_contents = [ic.strip() for ic in term2_contents_raw.replace('\r\n', '\n').split('\n') if ic.strip()]
@@ -644,11 +647,13 @@ def fill_scheme_official(data):
             
             row = table2.rows[row_idx]
             row.cells[0].text = term2_weeks
+            set_cell_font(row.cells[0], bold=False)
             row.cells[1].text = lo
+            set_cell_font(row.cells[1], bold=False)
             row.cells[2].text = term2_duration
+            set_cell_font(row.cells[2], bold=False)
             row.cells[3].text = ic
-            if len(row.cells) > 7:
-                row.cells[7].text = term2_place
+            set_cell_font(row.cells[3], bold=False)
             logger.info(f"  Term 2 Row {row_idx}: {lo[:30]}")
     
     # Fill Term 3 table
@@ -658,7 +663,6 @@ def fill_scheme_official(data):
         term3_outcomes_raw = (data.get('term3_learning_outcomes') or '').strip()
         term3_contents_raw = (data.get('term3_indicative_contents') or '').strip()
         term3_duration = (data.get('term3_duration') or '').strip()
-        term3_place = (data.get('term3_learning_place') or '').strip()
         
         term3_outcomes = [lo.strip() for lo in term3_outcomes_raw.replace('\r\n', '\n').split('\n') if lo.strip()]
         term3_contents = [ic.strip() for ic in term3_contents_raw.replace('\r\n', '\n').split('\n') if ic.strip()]
@@ -677,11 +681,13 @@ def fill_scheme_official(data):
             
             row = table3.rows[row_idx]
             row.cells[0].text = term3_weeks
+            set_cell_font(row.cells[0], bold=False)
             row.cells[1].text = lo
+            set_cell_font(row.cells[1], bold=False)
             row.cells[2].text = term3_duration
+            set_cell_font(row.cells[2], bold=False)
             row.cells[3].text = ic
-            if len(row.cells) > 7:
-                row.cells[7].text = term3_place
+            set_cell_font(row.cells[3], bold=False)
             logger.info(f"  Term 3 Row {row_idx}: {lo[:30]}")
     
     logger.info("Scheme of work filled successfully")
