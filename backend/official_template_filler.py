@@ -223,7 +223,26 @@ def fill_session_plan_official(data):
     for element in elements_to_remove:
         body.remove(element)
     
-    logger.info('✅ Header table added at top with no spacing')
+    # Prevent page break between header and main table
+    from docx.oxml.shared import OxmlElement
+    from docx.oxml.ns import qn
+    
+    # Set keep_together for header table
+    for row in header_table.rows:
+        tr = row._element
+        trPr = tr.get_or_add_trPr()
+        cantSplit = OxmlElement('w:cantSplit')
+        trPr.append(cantSplit)
+    
+    # Set keep_with_next for header table to keep it with main table
+    header_para = header_table._element.getparent()
+    if header_para is not None:
+        pPr = header_para.get_or_add_pPr() if hasattr(header_para, 'get_or_add_pPr') else None
+        if pPr is not None:
+            keepNext = OxmlElement('w:keepNext')
+            pPr.append(keepNext)
+    
+    logger.info('✅ Header table added at top with no spacing and no page break')
     
     # Main session plan table (first table after moving header)
     table = doc.tables[1]
