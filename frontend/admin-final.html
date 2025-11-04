@@ -573,9 +573,10 @@
                     })
                 });
                 if (!response.ok) throw new Error('Message failed');
+                const result = await response.json();
                 elements.messageBody.value = '';
                 closeModal('messageModal');
-                showToast('Message sent', 'success');
+                showToast('Message sent - Teacher can reply via notification bell', 'success');
             } catch (error) {
                 showToast(error.message || 'Unable to send message', 'error');
             } finally {

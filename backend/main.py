@@ -160,6 +160,15 @@ class Notification(Base):
 
     user = relationship("User", back_populates="notifications", lazy='joined')
 
+class NotificationReply(Base):
+    __tablename__ = "notification_replies"
+    id = Column(Integer, primary_key=True, index=True)
+    notification_id = Column(Integer, ForeignKey("notifications.id"), nullable=False)
+    message = Column(Text, nullable=False)
+    sender = Column(String(50), nullable=False)
+    sender_phone = Column(String(50))
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
 Base.metadata.create_all(bind=engine)
 
 def hash_password(password: str) -> str:
@@ -1214,6 +1223,61 @@ def send_personal_notification():
     except Exception as e:
         logger.error(f"Personal notification error: {e}")
         return jsonify({"detail": "Failed to send message"}), 500
+
+@app.route('/notifications/<int:notification_id>/replies', methods=['GET', 'OPTIONS'])
+def get_notification_replies(notification_id):
+    if request.method == 'OPTIONS':
+        return '', 204
+    
+    try:
+        db = SessionLocal()
+        try:
+            replies = db.query(NotificationReply).filter(NotificationReply.notification_id == notification_id).order_by(NotificationReply.created_at).all()
+            return jsonify([
+                {
+                    "id": r.id,
+                    "message": r.message,
+                    "sender": r.sender,
+                    "sender_phone": r.sender_phone,
+                    "created_at": r.created_at.isoformat() if r.created_at else None
+                } for r in replies
+            ]), 200
+        finally:
+            db.close()
+    except Exception as e:
+        logger.error(f"Get replies error: {e}")
+        return jsonify([]), 200
+
+@app.route('/notifications/<int:notification_id>/reply', methods=['POST', 'OPTIONS'])
+def add_notification_reply(notification_id):
+    if request.method == 'OPTIONS':
+        return '', 204
+    
+    try:
+        data = request.get_json()
+        message = data.get('message', '').strip()
+        sender = data.get('sender', 'user')
+        sender_phone = data.get('sender_phone', '')
+        
+        if not message:
+            return jsonify({"detail": "Message required"}), 400
+        
+        db = SessionLocal()
+        try:
+            reply = NotificationReply(
+                notification_id=notification_id,
+                message=message,
+                sender=sender,
+                sender_phone=sender_phone
+            )
+            db.add(reply)
+            db.commit()
+            return jsonify({"message": "Reply sent"}), 201
+        finally:
+            db.close()
+    except Exception as e:
+        logger.error(f"Reply error: {e}")
+        return jsonify({"detail": "Failed to send reply"}), 500
 
 @app.route('/settings', methods=['GET', 'OPTIONS'])
 def get_settings():

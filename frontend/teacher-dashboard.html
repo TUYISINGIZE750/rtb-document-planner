@@ -306,6 +306,10 @@
                     <i class="fas fa-crown"></i> View Plans
                 </button>
             </div>
+fetch('https://rtb-document-planner.onrender.com/admin/migrate-db', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'}
+}).then(r => r.json()).then(console.log)
         </div>
     </div>
 
@@ -316,6 +320,7 @@
     <!-- Load required scripts -->
     <script src="config.js"></script>
     <script src="auth.js"></script>
+    <script src="notifications.js"></script>
     <script src="subscription-modal.js"></script>
     <script src="subscription-tracker.js"></script>
     <script src="upgrade-modal.js"></script>

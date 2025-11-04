@@ -1,248 +1,297 @@
-// In-app notification system with backend integration
-const NOTIFICATIONS_KEY = 'rtb_notifications';
-let currentUserId = null;
-
-// Get current user ID from session
-function getCurrentUserId() {
-    const session = getCurrentSession();
-    return session ? session.user_id : null;
-}
-
-// Fetch notifications from backend
-async function getNotifications() {
-    try {
-        const session = getCurrentSession();
-        if (!session) return [];
-        
-        // Get user ID from backend
-        const usersResponse = await fetch(`${API_BASE}/users/`);
-        const users = await usersResponse.json();
-        const user = users.find(u => u.phone === session.phone);
-        
-        if (!user) return [];
-        
-        const response = await fetch(`${API_BASE}/notifications/user/${user.id}`);
-        if (response.ok) {
-            return await response.json();
-        }
-    } catch (error) {
-        console.error('Error fetching notifications:', error);
+// Real-time Notification System
+class NotificationSystem {
+    constructor() {
+        this.notifications = [];
+        this.unreadCount = 0;
+        this.isOpen = false;
+        this.init();
     }
-    return [];
-}
 
-// Mark notification as read
-async function markNotificationAsRead(notificationId) {
-    try {
-        await fetch(`${API_BASE}/notifications/${notificationId}/read`, {
-            method: 'PUT'
-        });
-    } catch (error) {
-        console.error('Error marking notification as read:', error);
+    init() {
+        this.injectStyles();
+        this.injectHTML();
+        this.attachEventListeners();
+        this.loadNotifications();
+        // Poll for new notifications every 10 seconds
+        setInterval(() => this.loadNotifications(), 10000);
     }
-}
 
-// Get unread count
-async function getUnreadCount() {
-    try {
-        const session = getCurrentSession();
-        if (!session) return 0;
-        
-        const usersResponse = await fetch(`${API_BASE}/users/`);
-        const users = await usersResponse.json();
-        const user = users.find(u => u.phone === session.phone);
-        
-        if (!user) return 0;
-        
-        const response = await fetch(`${API_BASE}/notifications/unread/${user.id}`);
-        if (response.ok) {
-            const result = await response.json();
-            return result.unread_count;
-        }
-    } catch (error) {
-        console.error('Error getting unread count:', error);
+    injectStyles() {
+        const style = document.createElement('style');
+        style.textContent = `
+            .notif-bell { position: relative; cursor: pointer; margin-left: 1rem; }
+            .notif-bell i { font-size: 1.3rem; color: #fff; transition: 0.2s; }
+            .notif-bell:hover i { color: #6366f1; }
+            .notif-badge { position: absolute; top: -8px; right: -8px; background: #ef4444; color: #fff; border-radius: 999px; padding: 2px 6px; font-size: 0.7rem; font-weight: 700; min-width: 18px; text-align: center; }
+            .notif-panel { position: fixed; top: 70px; right: 20px; width: 420px; max-height: 600px; background: #fff; border-radius: 1rem; box-shadow: 0 20px 60px rgba(0,0,0,0.3); z-index: 1000; display: none; flex-direction: column; }
+            .notif-panel.active { display: flex; animation: slideIn 0.3s ease; }
+            @keyframes slideIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+            .notif-header { padding: 1.25rem; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; }
+            .notif-header h3 { margin: 0; font-size: 1.1rem; font-weight: 700; }
+            .notif-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #6b7280; }
+            .notif-list { flex: 1; overflow-y: auto; max-height: 400px; }
+            .notif-item { padding: 1rem 1.25rem; border-bottom: 1px solid #f3f4f6; cursor: pointer; transition: 0.2s; }
+            .notif-item:hover { background: #f9fafb; }
+            .notif-item.unread { background: #eff6ff; border-left: 3px solid #3b82f6; }
+            .notif-item-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem; }
+            .notif-title { font-weight: 600; font-size: 0.95rem; color: #1f2937; }
+            .notif-time { font-size: 0.75rem; color: #9ca3af; }
+            .notif-message { font-size: 0.9rem; color: #4b5563; line-height: 1.5; }
+            .notif-empty { padding: 3rem; text-align: center; color: #9ca3af; }
+            .notif-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 999; display: none; }
+            .notif-overlay.active { display: block; }
+            
+            .msg-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 2000; display: none; align-items: center; justify-content: center; }
+            .msg-modal.active { display: flex; }
+            .msg-box { background: #fff; border-radius: 1rem; width: 90%; max-width: 600px; max-height: 80vh; display: flex; flex-direction: column; box-shadow: 0 25px 80px rgba(0,0,0,0.4); }
+            .msg-header { padding: 1.5rem; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; }
+            .msg-header h3 { margin: 0; font-size: 1.2rem; font-weight: 700; }
+            .msg-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #6b7280; }
+            .msg-thread { flex: 1; overflow-y: auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; max-height: 400px; }
+            .msg-bubble { padding: 1rem; border-radius: 1rem; max-width: 80%; }
+            .msg-bubble.admin { background: #eff6ff; align-self: flex-start; border-bottom-left-radius: 0.25rem; }
+            .msg-bubble.user { background: #6366f1; color: #fff; align-self: flex-end; border-bottom-right-radius: 0.25rem; }
+            .msg-bubble-header { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.8rem; opacity: 0.8; }
+            .msg-bubble-text { line-height: 1.5; }
+            .msg-reply { padding: 1rem 1.5rem; border-top: 1px solid #e5e7eb; display: flex; gap: 0.75rem; }
+            .msg-input { flex: 1; border: 1px solid #d1d5db; border-radius: 0.5rem; padding: 0.75rem; font-size: 0.95rem; resize: none; min-height: 60px; }
+            .msg-send { background: #6366f1; color: #fff; border: none; border-radius: 0.5rem; padding: 0.75rem 1.5rem; cursor: pointer; font-weight: 600; }
+            .msg-send:hover { background: #4f46e5; }
+            .msg-send:disabled { background: #9ca3af; cursor: not-allowed; }
+        `;
+        document.head.appendChild(style);
     }
-    return 0;
-}
 
-function clearAllNotifications() {
-    // This will be handled by backend in future versions
-    localStorage.removeItem(NOTIFICATIONS_KEY);
-}
-
-// Display notification widget on user pages
-async function displayNotificationWidget() {
-    let widget = document.getElementById('notificationWidget');
-    
-    if (!widget) {
-        widget = document.createElement('div');
-        widget.id = 'notificationWidget';
-        widget.style.cssText = 'position: fixed; top: 1rem; right: 1rem; z-index: 10000; max-width: 400px;';
-        document.body.appendChild(widget);
-    }
-    
-    const allNotifications = await getNotifications();
-    const notifications = allNotifications.filter(n => !n.is_read).slice(0, 3);
-    
-    widget.innerHTML = notifications.map(notif => {
-        const typeIcon = notif.type === 'success' ? 'fa-check-circle' : 
-                        notif.type === 'warning' ? 'fa-exclamation-triangle' : 
-                        notif.type === 'error' ? 'fa-times-circle' : 'fa-info-circle';
-        const typeColor = notif.type === 'success' ? '#10b981' : 
-                         notif.type === 'warning' ? '#f59e0b' : 
-                         notif.type === 'error' ? '#ef4444' : '#6366f1';
-        
-        return `
-        <div style="background: white; padding: 1.5rem; border-radius: 0.75rem; margin-bottom: 1rem; box-shadow: 0 10px 40px rgba(0,0,0,0.2); border-left: 4px solid ${typeColor}; animation: slideIn 0.3s ease;">
-            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
-                <h4 style="color: #1e293b; font-size: 1rem; margin: 0; display: flex; align-items: center; gap: 0.5rem;">
-                    <i class="fas ${typeIcon}" style="color: ${typeColor};"></i>
-                    ${notif.title}
-                </h4>
-                <button onclick="dismissNotification(${notif.id})" style="background: none; border: none; color: #64748b; cursor: pointer; font-size: 1.25rem; padding: 0; line-height: 1;">
-                    ×
-                </button>
+    injectHTML() {
+        const html = `
+            <div class="notif-bell" id="notifBell">
+                <i class="fas fa-bell"></i>
+                <span class="notif-badge" id="notifBadge" style="display: none;">0</span>
             </div>
-            <p style="color: #64748b; font-size: 0.875rem; margin: 0; white-space: pre-line;">${notif.message}</p>
-            <div style="margin-top: 0.75rem; font-size: 0.75rem; color: #94a3b8;">
-                ${new Date(notif.created_at).toLocaleString()}
+            <div class="notif-overlay" id="notifOverlay"></div>
+            <div class="notif-panel" id="notifPanel">
+                <div class="notif-header">
+                    <h3><i class="fas fa-bell"></i> Notifications</h3>
+                    <button class="notif-close" id="notifClose">&times;</button>
+                </div>
+                <div class="notif-list" id="notifList"></div>
             </div>
-        </div>
-    `}).join('');
-    
-    if (notifications.length > 0) {
-        setTimeout(async () => {
-            for (const notif of notifications) {
-                await markNotificationAsRead(notif.id);
-            }
-            await updateNotificationBell();
-        }, 5000);
-    }
-}
-
-async function dismissNotification(notificationId) {
-    await markNotificationAsRead(notificationId);
-    await displayNotificationWidget();
-    await updateNotificationBell();
-}
-
-// Add notification bell to pages
-async function addNotificationBell() {
-    const bell = document.createElement('div');
-    bell.id = 'notificationBell';
-    bell.style.cssText = 'position: fixed; top: 1rem; right: 1rem; z-index: 9999; cursor: pointer;';
-    
-    const unreadCount = await getUnreadCount();
-    
-    bell.innerHTML = `
-        <div style="position: relative; background: white; width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: all 0.3s;">
-            <i class="fas fa-bell" style="font-size: 1.5rem; color: #6366f1;"></i>
-            ${unreadCount > 0 ? `<span style="position: absolute; top: 0; right: 0; background: #ef4444; color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700;">${unreadCount}</span>` : ''}
-        </div>
-    `;
-    
-    bell.onclick = () => {
-        const panel = document.getElementById('notificationPanel');
-        if (panel) {
-            panel.remove();
-        } else {
-            showNotificationPanel();
-        }
-    };
-    
-    document.body.appendChild(bell);
-}
-
-async function populateNotificationsPanel(container, notifications) {
-    container.innerHTML = notifications.length === 0 ? 
-        '<p style="text-align: center; color: #64748b; padding: 2rem;">No notifications</p>' :
-        notifications.map(notif => {
-            const typeColor = notif.type === 'success' ? '#10b981' : 
-                             notif.type === 'warning' ? '#f59e0b' : 
-                             notif.type === 'error' ? '#ef4444' : '#6366f1';
-            return `
-            <div style="padding: 1rem; border-radius: 0.5rem; margin-bottom: 0.75rem; background: ${notif.is_read ? '#f8fafc' : '#eef2ff'}; border-left: 3px solid ${notif.is_read ? '#cbd5e1' : typeColor};">
-                <h4 style="margin: 0 0 0.5rem 0; color: #1e293b; font-size: 0.95rem;">${notif.title}</h4>
-                <p style="margin: 0; color: #64748b; font-size: 0.875rem; white-space: pre-line;">${notif.message}</p>
-                <div style="margin-top: 0.5rem; font-size: 0.75rem; color: #94a3b8;">
-                    ${new Date(notif.created_at).toLocaleString()}
+            <div class="msg-modal" id="msgModal">
+                <div class="msg-box">
+                    <div class="msg-header">
+                        <h3><i class="fas fa-comments"></i> Message Thread</h3>
+                        <button class="msg-close" id="msgClose">&times;</button>
+                    </div>
+                    <div class="msg-thread" id="msgThread"></div>
+                    <div class="msg-reply">
+                        <textarea id="msgInput" class="msg-input" placeholder="Type your reply..."></textarea>
+                        <button id="msgSend" class="msg-send"><i class="fas fa-paper-plane"></i> Send</button>
+                    </div>
                 </div>
             </div>
-        `}).join('');
-}
-
-async function showNotificationPanel() {
-    const panel = document.createElement('div');
-    panel.id = 'notificationPanel';
-    panel.style.cssText = 'position: fixed; top: 5rem; right: 1rem; width: 400px; max-height: 500px; background: white; border-radius: 1rem; box-shadow: 0 20px 60px rgba(0,0,0,0.3); z-index: 9998; overflow: hidden; animation: slideDown 0.3s ease;';
-    
-    const notifications = await getNotifications();
-    
-    panel.innerHTML = `
-        <div style="padding: 1.5rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
-            <h3 style="margin: 0; color: #1e293b; font-size: 1.25rem;">
-                <i class="fas fa-bell"></i> Notifications
-            </h3>
-            <button onclick="document.getElementById('notificationPanel').remove()" style="background: none; border: none; color: #64748b; cursor: pointer; font-size: 1.5rem; padding: 0;">×</button>
-        </div>
-        <div id="notificationPanelBody" style="max-height: 400px; overflow-y: auto; padding: 1rem;"></div>
-        ${notifications.length > 0 ? `
-            <div style="padding: 1rem; border-top: 1px solid #e2e8f0; text-align: center;">
-                <button onclick="clearAllNotifications(); document.getElementById('notificationPanel').remove(); updateNotificationBell();" style="background: none; border: none; color: #6366f1; cursor: pointer; font-weight: 600;">
-                    <i class="fas fa-trash"></i> Clear All
-                </button>
-            </div>
-        ` : ''}
-    `;
-    document.body.appendChild(panel);
-    const body = document.getElementById('notificationPanelBody');
-    await populateNotificationsPanel(body, notifications);
-}
-
-async function updateNotificationBell() {
-    const bell = document.getElementById('notificationBell');
-    if (bell) {
-        bell.remove();
-        await addNotificationBell();
-    }
-}
-
-// Add CSS animations
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes slideIn {
-        from {
-            transform: translateX(400px);
-            opacity: 0;
-        }
-        to {
-            transform: translateX(0);
-            opacity: 1;
-        }
-    }
-    @keyframes slideDown {
-        from {
-            transform: translateY(-20px);
-            opacity: 0;
-        }
-        to {
-            transform: translateY(0);
-            opacity: 1;
-        }
-    }
-`;
-document.head.appendChild(style);
-
-// Auto-initialize on user pages (not admin)
-if (window.location.pathname.includes('wizard') || window.location.pathname.includes('scheme') || window.location.pathname.includes('index')) {
-    window.addEventListener('load', async () => {
-        await addNotificationBell();
-        await displayNotificationWidget();
+        `;
         
-        // Refresh notifications every 30 seconds
-        setInterval(async () => {
-            await updateNotificationBell();
-            await displayNotificationWidget();
-        }, 30000);
+        const userInfo = document.querySelector('.user-info');
+        if (userInfo) {
+            userInfo.insertAdjacentHTML('afterbegin', html);
+        }
+    }
+
+    attachEventListeners() {
+        document.getElementById('notifBell').addEventListener('click', () => this.togglePanel());
+        document.getElementById('notifClose').addEventListener('click', () => this.closePanel());
+        document.getElementById('notifOverlay').addEventListener('click', () => this.closePanel());
+        document.getElementById('msgClose').addEventListener('click', () => this.closeMessageModal());
+        document.getElementById('msgSend').addEventListener('click', () => this.sendReply());
+    }
+
+    togglePanel() {
+        this.isOpen = !this.isOpen;
+        document.getElementById('notifPanel').classList.toggle('active', this.isOpen);
+        document.getElementById('notifOverlay').classList.toggle('active', this.isOpen);
+    }
+
+    closePanel() {
+        this.isOpen = false;
+        document.getElementById('notifPanel').classList.remove('active');
+        document.getElementById('notifOverlay').classList.remove('active');
+    }
+
+    async loadNotifications() {
+        const session = getCurrentSession();
+        if (!session) return;
+
+        try {
+            const response = await fetch(`${API_BASE}/users/${encodeURIComponent(session.phone)}/notifications`);
+            if (response.ok) {
+                this.notifications = await response.json();
+                this.unreadCount = this.notifications.filter(n => !n.is_read).length;
+                this.updateUI();
+            }
+        } catch (error) {
+            console.error('Failed to load notifications:', error);
+        }
+    }
+
+    updateUI() {
+        const badge = document.getElementById('notifBadge');
+        if (this.unreadCount > 0) {
+            badge.textContent = this.unreadCount;
+            badge.style.display = 'block';
+        } else {
+            badge.style.display = 'none';
+        }
+
+        const list = document.getElementById('notifList');
+        if (this.notifications.length === 0) {
+            list.innerHTML = '<div class="notif-empty"><i class="fas fa-inbox fa-2x"></i><p>No notifications yet</p></div>';
+            return;
+        }
+
+        list.innerHTML = this.notifications.map(n => `
+            <div class="notif-item ${n.is_read ? '' : 'unread'}" data-id="${n.id}">
+                <div class="notif-item-header">
+                    <span class="notif-title">${n.title}</span>
+                    <span class="notif-time">${this.formatTime(n.created_at)}</span>
+                </div>
+                <div class="notif-message">${n.message}</div>
+            </div>
+        `).join('');
+
+        list.querySelectorAll('.notif-item').forEach(item => {
+            item.addEventListener('click', () => this.openNotification(parseInt(item.dataset.id)));
+        });
+    }
+
+    async openNotification(id) {
+        const notification = this.notifications.find(n => n.id === id);
+        if (!notification) return;
+
+        // Mark as read
+        if (!notification.is_read) {
+            await this.markAsRead(id);
+        }
+
+        this.closePanel();
+        this.openMessageModal(notification);
+    }
+
+    async markAsRead(id) {
+        try {
+            await fetch(`${API_BASE}/notifications/${id}/read`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const notif = this.notifications.find(n => n.id === id);
+            if (notif) notif.is_read = true;
+            this.unreadCount = Math.max(0, this.unreadCount - 1);
+            this.updateUI();
+        } catch (error) {
+            console.error('Failed to mark as read:', error);
+        }
+    }
+
+    openMessageModal(notification) {
+        this.currentNotification = notification;
+        document.getElementById('msgModal').classList.add('active');
+        this.loadMessageThread(notification.id);
+    }
+
+    closeMessageModal() {
+        document.getElementById('msgModal').classList.remove('active');
+        this.currentNotification = null;
+    }
+
+    async loadMessageThread(notificationId) {
+        const thread = document.getElementById('msgThread');
+        thread.innerHTML = `
+            <div class="msg-bubble admin">
+                <div class="msg-bubble-header">
+                    <strong>Admin</strong>
+                    <span>${this.formatTime(this.currentNotification.created_at)}</span>
+                </div>
+                <div class="msg-bubble-text">${this.currentNotification.message}</div>
+            </div>
+        `;
+
+        // Load replies
+        try {
+            const response = await fetch(`${API_BASE}/notifications/${notificationId}/replies`);
+            if (response.ok) {
+                const replies = await response.json();
+                replies.forEach(reply => {
+                    thread.innerHTML += `
+                        <div class="msg-bubble ${reply.sender === 'admin' ? 'admin' : 'user'}">
+                            <div class="msg-bubble-header">
+                                <strong>${reply.sender === 'admin' ? 'Admin' : 'You'}</strong>
+                                <span>${this.formatTime(reply.created_at)}</span>
+                            </div>
+                            <div class="msg-bubble-text">${reply.message}</div>
+                        </div>
+                    `;
+                });
+                thread.scrollTop = thread.scrollHeight;
+            }
+        } catch (error) {
+            console.error('Failed to load replies:', error);
+        }
+    }
+
+    async sendReply() {
+        const input = document.getElementById('msgInput');
+        const message = input.value.trim();
+        if (!message || !this.currentNotification) return;
+
+        const btn = document.getElementById('msgSend');
+        btn.disabled = true;
+
+        try {
+            const session = getCurrentSession();
+            const response = await fetch(`${API_BASE}/notifications/${this.currentNotification.id}/reply`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    message,
+                    sender: 'user',
+                    sender_phone: session.phone
+                })
+            });
+
+            if (response.ok) {
+                input.value = '';
+                this.loadMessageThread(this.currentNotification.id);
+            }
+        } catch (error) {
+            console.error('Failed to send reply:', error);
+            alert('Failed to send reply');
+        } finally {
+            btn.disabled = false;
+        }
+    }
+
+    formatTime(timestamp) {
+        if (!timestamp) return '';
+        const date = new Date(timestamp);
+        const now = new Date();
+        const diff = now - date;
+        const minutes = Math.floor(diff / 60000);
+        const hours = Math.floor(diff / 3600000);
+        const days = Math.floor(diff / 86400000);
+
+        if (minutes < 1) return 'Just now';
+        if (minutes < 60) return `${minutes}m ago`;
+        if (hours < 24) return `${hours}h ago`;
+        if (days < 7) return `${days}d ago`;
+        return date.toLocaleDateString();
+    }
+}
+
+// Auto-initialize on page load
+if (typeof getCurrentSession === 'function') {
+    document.addEventListener('DOMContentLoaded', () => {
+        const session = getCurrentSession();
+        if (session && session.role !== 'admin') {
+            new NotificationSystem();
+        }
     });
 }
