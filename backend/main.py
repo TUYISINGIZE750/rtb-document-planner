@@ -573,6 +573,7 @@ def generate_scheme():
 
     try:
         data = request.get_json()
+        logger.info(f"Received scheme data: {list(data.keys()) if data else 'None'}")
         user_phone = data.get('user_phone')
         format_type = data.get('format', 'docx')
 
@@ -648,7 +649,10 @@ def generate_scheme():
         finally:
             db.close()
     except Exception as e:
-        return jsonify({"detail": "Generation failed"}), 500
+        logger.error(f"Scheme generation error: {str(e)}")
+        import traceback
+        logger.error(traceback.format_exc())
+        return jsonify({"detail": f"Generation failed: {str(e)}"}), 500
 
 @app.route('/schemes-of-work/<int:scheme_id>/download', methods=['GET', 'OPTIONS'])
 def download_scheme_of_work(scheme_id):
