@@ -687,7 +687,17 @@ def fill_scheme_official(data):
     info_table.rows[7].cells[4].text = data.get('class_name', '')
     set_cell_font(info_table.rows[7].cells[4], bold=False)
     
-    # 3. TERM 1 TABLE (matching official RTB structure)
+    # 3. TERM 1 LABEL
+    term1_heading = doc.add_paragraph()
+    term1_heading.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    term1_run = term1_heading.add_run('TERM 1')
+    term1_run.font.bold = True
+    term1_run.font.size = Pt(14)
+    term1_run.font.name = 'Bookman Old Style'
+    term1_heading.paragraph_format.space_before = Pt(12)
+    term1_heading.paragraph_format.space_after = Pt(6)
+    
+    # TERM 1 TABLE (matching official RTB structure)
     # Create table with proper structure: 2 header rows + data rows
     term1_table = doc.add_table(rows=2, cols=9)
     term1_table.style = 'Table Grid'
@@ -817,7 +827,17 @@ def fill_scheme_official(data):
             import traceback
             logger.error(traceback.format_exc())
     
-    # 4. TERM 2 TABLE (same structure as Term 1)
+    # 4. TERM 2 LABEL
+    term2_heading = doc.add_paragraph()
+    term2_heading.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    term2_run = term2_heading.add_run('TERM 2')
+    term2_run.font.bold = True
+    term2_run.font.size = Pt(14)
+    term2_run.font.name = 'Bookman Old Style'
+    term2_heading.paragraph_format.space_before = Pt(12)
+    term2_heading.paragraph_format.space_after = Pt(6)
+    
+    # TERM 2 TABLE (same structure as Term 1)
     term2_table = doc.add_table(rows=2, cols=9)
     term2_table.style = 'Table Grid'
     
@@ -877,7 +897,17 @@ def fill_scheme_official(data):
         
         pass
     
-    # 5. TERM 3 TABLE (same structure)
+    # 5. TERM 3 LABEL
+    term3_heading = doc.add_paragraph()
+    term3_heading.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    term3_run = term3_heading.add_run('TERM 3')
+    term3_run.font.bold = True
+    term3_run.font.size = Pt(14)
+    term3_run.font.name = 'Bookman Old Style'
+    term3_heading.paragraph_format.space_before = Pt(12)
+    term3_heading.paragraph_format.space_after = Pt(6)
+    
+    # TERM 3 TABLE (same structure)
     term3_table = doc.add_table(rows=2, cols=9)
     term3_table.style = 'Table Grid'
     
