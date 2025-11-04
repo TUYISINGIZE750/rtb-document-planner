@@ -4,6 +4,10 @@ class NotificationSystem {
         this.notifications = [];
         this.unreadCount = 0;
         this.isOpen = false;
+        this.isMessageModalOpen = false;
+        this.currentNotification = null;
+        this.pollInterval = null;
+        this.messagePollInterval = null;
         this.init();
     }
 
@@ -12,8 +16,8 @@ class NotificationSystem {
         this.injectHTML();
         this.attachEventListeners();
         this.loadNotifications();
-        // Poll for new notifications every 10 seconds
-        setInterval(() => this.loadNotifications(), 10000);
+        // Poll for new notifications every 5 seconds
+        this.pollInterval = setInterval(() => this.loadNotifications(), 5000);
     }
 
     injectStyles() {
@@ -22,7 +26,10 @@ class NotificationSystem {
             .notif-bell { position: relative; cursor: pointer; margin-left: 1rem; }
             .notif-bell i { font-size: 1.3rem; color: #fff; transition: 0.2s; }
             .notif-bell:hover i { color: #6366f1; }
-            .notif-badge { position: absolute; top: -8px; right: -8px; background: #ef4444; color: #fff; border-radius: 999px; padding: 2px 6px; font-size: 0.7rem; font-weight: 700; min-width: 18px; text-align: center; }
+            .notif-bell.has-new i { animation: bellRing 0.5s ease; }
+            @keyframes bellRing { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(-15deg); } 75% { transform: rotate(15deg); } }
+            .notif-badge { position: absolute; top: -8px; right: -8px; background: #ef4444; color: #fff; border-radius: 999px; padding: 2px 6px; font-size: 0.7rem; font-weight: 700; min-width: 18px; text-align: center; animation: pulse 2s infinite; }
+            @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
             .notif-panel { position: fixed; top: 70px; right: 20px; width: 420px; max-height: 600px; background: #fff; border-radius: 1rem; box-shadow: 0 20px 60px rgba(0,0,0,0.3); z-index: 1000; display: none; flex-direction: column; }
             .notif-panel.active { display: flex; animation: slideIn 0.3s ease; }
             @keyframes slideIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
@@ -103,6 +110,14 @@ class NotificationSystem {
         document.getElementById('notifOverlay').addEventListener('click', () => this.closePanel());
         document.getElementById('msgClose').addEventListener('click', () => this.closeMessageModal());
         document.getElementById('msgSend').addEventListener('click', () => this.sendReply());
+        
+        // Support Enter key to send (Shift+Enter for new line)
+        document.getElementById('msgInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                this.sendReply();
+            }
+        });
     }
 
     togglePanel() {
@@ -124,8 +139,18 @@ class NotificationSystem {
         try {
             const response = await fetch(`${API_BASE}/users/${encodeURIComponent(session.phone)}/notifications`);
             if (response.ok) {
-                this.notifications = await response.json();
+                const newNotifications = await response.json();
+                const oldUnreadCount = this.unreadCount;
+                this.notifications = newNotifications;
                 this.unreadCount = this.notifications.filter(n => !n.is_read).length;
+                
+                // Trigger bell animation if new unread messages
+                if (this.unreadCount > oldUnreadCount) {
+                    const bell = document.getElementById('notifBell');
+                    bell.classList.add('has-new');
+                    setTimeout(() => bell.classList.remove('has-new'), 500);
+                }
+                
                 this.updateUI();
             }
         } catch (error) {
@@ -193,17 +218,33 @@ class NotificationSystem {
 
     openMessageModal(notification) {
         this.currentNotification = notification;
+        this.isMessageModalOpen = true;
         document.getElementById('msgModal').classList.add('active');
         this.loadMessageThread(notification.id);
+        // Start real-time polling for new replies every 3 seconds
+        this.messagePollInterval = setInterval(() => {
+            if (this.isMessageModalOpen && this.currentNotification) {
+                this.loadMessageThread(this.currentNotification.id, true);
+            }
+        }, 3000);
     }
 
     closeMessageModal() {
+        this.isMessageModalOpen = false;
         document.getElementById('msgModal').classList.remove('active');
         this.currentNotification = null;
+        // Stop real-time polling
+        if (this.messagePollInterval) {
+            clearInterval(this.messagePollInterval);
+            this.messagePollInterval = null;
+        }
     }
 
-    async loadMessageThread(notificationId) {
+    async loadMessageThread(notificationId, silent = false) {
         const thread = document.getElementById('msgThread');
+        const previousScrollHeight = thread.scrollHeight;
+        const wasAtBottom = thread.scrollTop + thread.clientHeight >= previousScrollHeight - 50;
+        
         thread.innerHTML = `
             <div class="msg-bubble admin">
                 <div class="msg-bubble-header">
@@ -230,10 +271,13 @@ class NotificationSystem {
                         </div>
                     `;
                 });
-                thread.scrollTop = thread.scrollHeight;
+                // Auto-scroll to bottom if user was already at bottom or if new message
+                if (wasAtBottom || !silent) {
+                    thread.scrollTop = thread.scrollHeight;
+                }
             }
         } catch (error) {
-            console.error('Failed to load replies:', error);
+            if (!silent) console.error('Failed to load replies:', error);
         }
     }
 
@@ -244,6 +288,7 @@ class NotificationSystem {
 
         const btn = document.getElementById('msgSend');
         btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
 
         try {
             const session = getCurrentSession();
@@ -259,13 +304,17 @@ class NotificationSystem {
 
             if (response.ok) {
                 input.value = '';
-                this.loadMessageThread(this.currentNotification.id);
+                // Immediately reload thread to show new reply
+                await this.loadMessageThread(this.currentNotification.id);
+            } else {
+                throw new Error('Failed to send');
             }
         } catch (error) {
             console.error('Failed to send reply:', error);
-            alert('Failed to send reply');
+            alert('Failed to send reply. Please try again.');
         } finally {
             btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-paper-plane"></i> Send';
         }
     }
 
