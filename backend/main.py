@@ -1249,6 +1249,7 @@ def migrate_database():
                 ('school_name', 'VARCHAR(500)'),
                 ('school_logo', 'TEXT'),
                 ('department_trade', 'VARCHAR(255)'),
+                ('trade', 'VARCHAR(255)'),
                 ('qualification_title', 'VARCHAR(500)'),
                 ('rqf_level', 'VARCHAR(50)'),
                 ('module_code_title', 'VARCHAR(500)'),
