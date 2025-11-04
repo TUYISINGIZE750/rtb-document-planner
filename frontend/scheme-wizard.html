@@ -127,6 +127,20 @@
                 
                 <!-- Step 2: Term 1 -->
                 <div class="step-content" data-step="2">
+                    <h2>Term 1 Planning</h2>
+                    <p class="step-description">Define learning outcomes and content for Term 1</p>
+                    
+                    <div class="form-group"><label>Weeks</label><input type="text" name="term1_weeks" placeholder="e.g., 1-12" required></div>
+                    <div class="form-group"><label>Competence Code and Name</label><input type="text" name="term1_competence" placeholder="e.g., C1: Programming Fundamentals" required></div>
+                    <div class="form-group"><label>Learning Outcomes (one per line)</label><textarea name="term1_learning_outcomes" rows="4" placeholder="LO1: Understand basic programming concepts&#10;LO2: Write simple programs" required></textarea></div>
+                    <div class="form-group"><label>Duration</label><input type="text" name="term1_duration" placeholder="e.g., 40 hours" required></div>
+                    <div class="form-group full-width"><label>Indicative Content (one per line)</label><textarea name="term1_indicative_contents" rows="4" placeholder="IC1.1: Variables and data types&#10;IC1.2: Control structures&#10;IC1.3: Functions" required></textarea></div>
+                    
+                    <div class="btn-group"><button type="button" class="btn btn-secondary" onclick="prevStep()"><i class="fas fa-arrow-left"></i> Previous</button><button type="button" class="btn btn-primary" onclick="nextStep()">Next <i class="fas fa-arrow-right"></i></button></div>
+                </div>
+                
+                <!-- Step 5: Term 3 -->
+                <div class="step-content" data-step="3">
                     <h2>Term 2 Planning</h2>
                     <p class="step-description">Define learning outcomes and content for Term 2</p>
                     
@@ -139,8 +153,8 @@
                     <div class="btn-group"><button type="button" class="btn btn-secondary" onclick="prevStep()"><i class="fas fa-arrow-left"></i> Previous</button><button type="button" class="btn btn-primary" onclick="nextStep()">Next <i class="fas fa-arrow-right"></i></button></div>
                 </div>
                 
-                <!-- Step 5: Term 3 -->
-                <div class="step-content" data-step="3">
+                <!-- Step 5: Sign-Offs -->
+                <div class="step-content" data-step="4">
                     <h2>Term 3 Planning</h2>
                     <p class="step-description">Define learning outcomes and content for Term 3</p>
                     
@@ -153,8 +167,7 @@
                     <div class="btn-group"><button type="button" class="btn btn-secondary" onclick="prevStep()"><i class="fas fa-arrow-left"></i> Previous</button><button type="button" class="btn btn-primary" onclick="nextStep()">Next <i class="fas fa-arrow-right"></i></button></div>
                 </div>
                 
-                <!-- Step 5: Sign-Offs -->
-                <div class="step-content" data-step="4">
+                <div class="step-content" data-step="5">
                     <h2>Approvals</h2>
                     <p class="step-description">Names and positions for approval signatures</p>
                     
