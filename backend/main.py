@@ -212,10 +212,11 @@ def home():
         "status": "online",
         "cors": "enabled",
         "environment": "production",
-        "version": "2.5",
-        "deployment": "SCHEME_FIX_DEPLOYED",
+        "version": "2.6",
+        "deployment": "DB_MIGRATION_READY",
         "features": ["authentication", "docx_generation", "ai_content"],
-        "users_count": users_count
+        "users_count": users_count,
+        "migration_endpoint": "/admin/migrate-db"
     })
 
 @app.route('/test-scheme', methods=['GET', 'OPTIONS'])
@@ -1230,6 +1231,40 @@ def get_settings():
         "payment_phone": "+250789751597",
         "payment_name": "TUYISINGIZE Leonard"
     }), 200
+
+@app.route('/admin/migrate-db', methods=['POST', 'OPTIONS'])
+def migrate_database():
+    """Add missing sector_location column to schemes_of_work table"""
+    if request.method == 'OPTIONS':
+        return '', 204
+    
+    try:
+        from sqlalchemy import text
+        db = SessionLocal()
+        try:
+            # Check if column exists
+            result = db.execute(text("""
+                SELECT column_name 
+                FROM information_schema.columns 
+                WHERE table_name='schemes_of_work' AND column_name='sector_location'
+            """))
+            
+            if result.fetchone():
+                return jsonify({"message": "Column already exists"}), 200
+            
+            # Add column
+            db.execute(text("""
+                ALTER TABLE schemes_of_work 
+                ADD COLUMN sector_location VARCHAR(255)
+            """))
+            db.commit()
+            
+            return jsonify({"message": "Migration successful - sector_location column added"}), 200
+        finally:
+            db.close()
+    except Exception as e:
+        logger.error(f"Migration error: {e}")
+        return jsonify({"detail": f"Migration failed: {str(e)}"}), 500
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 10000))
