@@ -84,56 +84,80 @@
         
         .status-cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 3rem;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
         }
         
         .status-card {
             background: white;
-            border-radius: 1rem;
-            padding: 2rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            text-align: center;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border: 1px solid rgba(99,102,241,0.1);
+            transition: all 0.3s;
+        }
+        
+        .status-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(99,102,241,0.15);
         }
         
         .status-card.premium {
-            background: linear-gradient(135deg, #10b981, #059669);
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
+            border: none;
         }
         
         .status-card.warning {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
             color: white;
+            border: none;
+        }
+        
+        .status-card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
         }
         
         .status-card i {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
+            font-size: 1.5rem;
             color: #6366f1;
+            background: rgba(99,102,241,0.1);
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
         }
         
         .status-card.premium i,
         .status-card.warning i {
             color: white;
+            background: rgba(255,255,255,0.2);
         }
         
         .status-card h3 {
-            color: #1e293b;
-            margin-bottom: 0.5rem;
-            font-size: 1.125rem;
+            color: #64748b;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
         
         .status-card.premium h3,
         .status-card.warning h3 {
-            color: white;
+            color: rgba(255,255,255,0.9);
         }
         
         .status-number {
             font-size: 2rem;
             font-weight: 700;
-            color: #6366f1;
-            margin-bottom: 0.5rem;
+            color: #1e293b;
+            line-height: 1;
         }
         
         .status-card.premium .status-number,
@@ -141,18 +165,29 @@
             color: white;
         }
         
+        .status-label {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-top: 0.5rem;
+        }
+        
+        .status-card.premium .status-label,
+        .status-card.warning .status-label {
+            color: rgba(255,255,255,0.8);
+        }
+        
         .progress-bar {
             width: 100%;
-            height: 8px;
+            height: 6px;
             background: #e2e8f0;
-            border-radius: 4px;
+            border-radius: 3px;
             overflow: hidden;
             margin-top: 1rem;
         }
         
         .progress-fill {
             height: 100%;
-            background: #6366f1;
+            background: linear-gradient(90deg, #6366f1, #8b5cf6);
             transition: width 0.3s;
         }
         
@@ -162,49 +197,82 @@
         
         .action-cards { 
             display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
-            gap: 2rem; 
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            gap: 1.25rem; 
         }
         
         .action-card { 
             background: white; 
-            border-radius: 1rem; 
-            padding: 2rem; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
-            transition: transform 0.3s; 
-            text-align: center;
+            border-radius: 16px; 
+            padding: 1.75rem; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08); 
+            border: 1px solid rgba(99,102,241,0.1);
+            transition: all 0.3s; 
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .action-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #6366f1, #8b5cf6);
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+        
+        .action-card:hover::before {
+            transform: scaleX(1);
         }
         
         .action-card:hover { 
-            transform: translateY(-5px); 
+            transform: translateY(-4px); 
+            box-shadow: 0 8px 24px rgba(99,102,241,0.15);
+        }
+        
+        .action-card-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(139,92,246,0.1));
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.25rem;
         }
         
         .action-card i { 
-            font-size: 3rem; 
+            font-size: 1.75rem; 
             color: #6366f1; 
-            margin-bottom: 1rem; 
+            margin: 0;
         }
         
         .action-card h2 { 
             color: #1e293b; 
-            margin-bottom: 1rem; 
-            font-size: 1.25rem;
+            margin-bottom: 0.75rem; 
+            font-size: 1.125rem;
+            font-weight: 600;
         }
         
         .action-card p { 
             color: #64748b; 
-            margin-bottom: 1.5rem; 
-            line-height: 1.5;
+            margin-bottom: 1.25rem; 
+            line-height: 1.6;
+            font-size: 0.9rem;
         }
         
         .btn { 
-            background: #6366f1; 
+            background: linear-gradient(135deg, #6366f1, #8b5cf6); 
             color: white; 
             border: none; 
-            padding: 0.875rem 1.5rem; 
-            border-radius: 0.5rem; 
+            padding: 0.75rem 1.25rem; 
+            border-radius: 10px; 
             cursor: pointer; 
-            font-size: 1rem; 
+            font-size: 0.9rem; 
             width: 100%; 
             font-weight: 600;
             transition: all 0.2s;
@@ -212,25 +280,28 @@
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
+            box-shadow: 0 4px 12px rgba(99,102,241,0.3);
         }
         
         .btn:hover { 
-            background: #5855eb; 
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99,102,241,0.4);
         }
         
         .btn:disabled {
             background: #9ca3af;
             cursor: not-allowed;
             transform: none;
+            box-shadow: none;
         }
         
         .upgrade-btn {
-            background: #10b981;
+            background: linear-gradient(135deg, #10b981, #059669);
+            box-shadow: 0 4px 12px rgba(16,185,129,0.3);
         }
         
         .upgrade-btn:hover {
-            background: #059669;
+            box-shadow: 0 6px 20px rgba(16,185,129,0.4);
         }
         
         .footer {
@@ -281,7 +352,9 @@
 
         <div class="action-cards">
             <div class="action-card">
-                <i class="fas fa-chalkboard-teacher"></i>
+                <div class="action-card-icon">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                </div>
                 <h2>Session Plan Wizard</h2>
                 <p>Create RTB-formatted session plans with step-by-step guidance and all required components</p>
                 <button onclick="createSessionPlan()" class="btn" id="sessionPlanBtn">
@@ -290,7 +363,9 @@
             </div>
 
             <div class="action-card">
-                <i class="fas fa-clipboard-list"></i>
+                <div class="action-card-icon">
+                    <i class="fas fa-clipboard-list"></i>
+                </div>
                 <h2>Scheme of Work Wizard</h2>
                 <p>Generate comprehensive schemes of work for your modules with professional formatting</p>
                 <button onclick="createScheme()" class="btn" id="schemeBtn">
@@ -299,7 +374,9 @@
             </div>
 
             <div class="action-card">
-                <i class="fas fa-crown"></i>
+                <div class="action-card-icon">
+                    <i class="fas fa-crown"></i>
+                </div>
                 <h2>Upgrade Account</h2>
                 <p>Get unlimited downloads, priority support, and access to premium features</p>
                 <button onclick="showUpgradeModal()" class="btn upgrade-btn">
@@ -358,22 +435,28 @@
             if (currentLimits.is_premium) {
                 statusCards.innerHTML = `
                     <div class="status-card premium">
-                        <i class="fas fa-crown"></i>
-                        <h3>Premium Account</h3>
+                        <div class="status-card-header">
+                            <i class="fas fa-crown"></i>
+                            <h3>Premium</h3>
+                        </div>
                         <div class="status-number">∞</div>
-                        <p>Unlimited Downloads Available</p>
+                        <div class="status-label">Unlimited Access</div>
                     </div>
                     <div class="status-card">
-                        <i class="fas fa-file-alt"></i>
-                        <h3>Session Plans Created</h3>
+                        <div class="status-card-header">
+                            <i class="fas fa-file-alt"></i>
+                            <h3>Session Plans</h3>
+                        </div>
                         <div class="status-number">${currentLimits.session_plans_downloaded}</div>
-                        <p>Total documents created</p>
+                        <div class="status-label">Documents Created</div>
                     </div>
                     <div class="status-card">
-                        <i class="fas fa-clipboard-list"></i>
-                        <h3>Schemes Created</h3>
+                        <div class="status-card-header">
+                            <i class="fas fa-clipboard-list"></i>
+                            <h3>Schemes</h3>
+                        </div>
                         <div class="status-number">${currentLimits.schemes_downloaded}</div>
-                        <p>Total documents created</p>
+                        <div class="status-label">Documents Created</div>
                     </div>
                 `;
             } else {
@@ -387,28 +470,34 @@
                 
                 statusCards.innerHTML = `
                     <div class="status-card ${sessionRemaining === 0 ? 'warning' : ''}">
-                        <i class="fas fa-file-alt"></i>
-                        <h3>Session Plans</h3>
+                        <div class="status-card-header">
+                            <i class="fas fa-file-alt"></i>
+                            <h3>Session Plans</h3>
+                        </div>
                         <div class="status-number">${sessionRemaining}</div>
-                        <p>Free downloads remaining</p>
+                        <div class="status-label">Remaining</div>
                         <div class="progress-bar">
                             <div class="progress-fill" style="width: ${sessionPercent}%"></div>
                         </div>
                     </div>
                     <div class="status-card ${schemeRemaining === 0 ? 'warning' : ''}">
-                        <i class="fas fa-clipboard-list"></i>
-                        <h3>Schemes of Work</h3>
+                        <div class="status-card-header">
+                            <i class="fas fa-clipboard-list"></i>
+                            <h3>Schemes</h3>
+                        </div>
                         <div class="status-number">${schemeRemaining}</div>
-                        <p>Free downloads remaining</p>
+                        <div class="status-label">Remaining</div>
                         <div class="progress-bar">
                             <div class="progress-fill" style="width: ${schemePercent}%"></div>
                         </div>
                     </div>
                     <div class="status-card">
-                        <i class="fas fa-download"></i>
-                        <h3>Total Downloads</h3>
+                        <div class="status-card-header">
+                            <i class="fas fa-download"></i>
+                            <h3>Total</h3>
+                        </div>
                         <div class="status-number">${currentLimits.session_plans_downloaded + currentLimits.schemes_downloaded}</div>
-                        <p>Documents created so far</p>
+                        <div class="status-label">Created</div>
                     </div>
                 `;
             }
