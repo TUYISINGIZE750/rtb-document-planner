@@ -1279,6 +1279,74 @@ def add_notification_reply(notification_id):
         logger.error(f"Reply error: {e}")
         return jsonify({"detail": "Failed to send reply"}), 500
 
+@app.route('/admin/conversations', methods=['GET', 'OPTIONS'])
+def get_admin_conversations():
+    """Get all conversations with unread status for admin"""
+    if request.method == 'OPTIONS':
+        return '', 204
+    
+    try:
+        db = SessionLocal()
+        try:
+            # Get all notifications with their latest replies
+            notifications = db.query(Notification).join(User).order_by(Notification.created_at.desc()).all()
+            
+            conversations = []
+            for notif in notifications:
+                # Get latest reply
+                latest_reply = db.query(NotificationReply).filter(
+                    NotificationReply.notification_id == notif.id
+                ).order_by(NotificationReply.created_at.desc()).first()
+                
+                # Check if there are unread replies from user
+                unread_user_replies = db.query(NotificationReply).filter(
+                    NotificationReply.notification_id == notif.id,
+                    NotificationReply.sender == 'user'
+                ).count()
+                
+                conversations.append({
+                    "notification_id": notif.id,
+                    "user_phone": notif.user.phone,
+                    "user_name": notif.user.name,
+                    "last_message": latest_reply.message if latest_reply else notif.message,
+                    "last_message_time": latest_reply.created_at if latest_reply else notif.created_at,
+                    "has_unread": unread_user_replies > 0
+                })
+            
+            return jsonify(conversations), 200
+        finally:
+            db.close()
+    except Exception as e:
+        logger.error(f"Get conversations error: {e}")
+        return jsonify([]), 200
+
+@app.route('/notifications/<int:notification_id>', methods=['GET', 'OPTIONS'])
+def get_notification(notification_id):
+    """Get a single notification by ID"""
+    if request.method == 'OPTIONS':
+        return '', 204
+    
+    try:
+        db = SessionLocal()
+        try:
+            notification = db.query(Notification).filter(Notification.id == notification_id).first()
+            if not notification:
+                return jsonify({"detail": "Notification not found"}), 404
+            
+            return jsonify({
+                "id": notification.id,
+                "title": notification.title,
+                "message": notification.message,
+                "type": notification.type,
+                "is_read": notification.is_read,
+                "created_at": notification.created_at.isoformat() if notification.created_at else None
+            }), 200
+        finally:
+            db.close()
+    except Exception as e:
+        logger.error(f"Get notification error: {e}")
+        return jsonify({"detail": "Failed to get notification"}), 500
+
 @app.route('/settings', methods=['GET', 'OPTIONS'])
 def get_settings():
     if request.method == 'OPTIONS':

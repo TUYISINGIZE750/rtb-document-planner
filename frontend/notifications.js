@@ -30,9 +30,9 @@ class NotificationSystem {
             @keyframes bellRing { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(-15deg); } 75% { transform: rotate(15deg); } }
             .notif-badge { position: absolute; top: -8px; right: -8px; background: #ef4444; color: #fff; border-radius: 999px; padding: 2px 6px; font-size: 0.7rem; font-weight: 700; min-width: 18px; text-align: center; animation: pulse 2s infinite; }
             @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
-            .notif-panel { position: fixed; top: 70px; right: 20px; width: 420px; max-height: 600px; background: #fff; border-radius: 1rem; box-shadow: 0 20px 60px rgba(0,0,0,0.3); z-index: 1000; display: none; flex-direction: column; }
-            .notif-panel.active { display: flex; animation: slideIn 0.3s ease; }
-            @keyframes slideIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+            .notif-panel { position: fixed; bottom: 80px; right: 20px; width: 420px; max-height: 600px; background: #fff; border-radius: 1rem; box-shadow: 0 20px 60px rgba(0,0,0,0.3); z-index: 1000; display: none; flex-direction: column; }
+            .notif-panel.active { display: flex; animation: slideInBottom 0.3s ease; }
+            @keyframes slideInBottom { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
             .notif-header { padding: 1.25rem; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; }
             .notif-header h3 { margin: 0; font-size: 1.1rem; font-weight: 700; }
             .notif-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #6b7280; }
