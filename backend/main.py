@@ -1234,7 +1234,7 @@ def get_settings():
 
 @app.route('/admin/migrate-db', methods=['POST', 'OPTIONS'])
 def migrate_database():
-    """Add missing sector_location column to schemes_of_work table"""
+    """Add ALL missing columns to schemes_of_work table"""
     if request.method == 'OPTIONS':
         return '', 204
     
@@ -1242,28 +1242,41 @@ def migrate_database():
         from sqlalchemy import text
         db = SessionLocal()
         try:
-            # Check if column exists
-            result = db.execute(text("""
-                SELECT column_name 
-                FROM information_schema.columns 
-                WHERE table_name='schemes_of_work' AND column_name='sector_location'
-            """))
+            columns_to_add = [
+                ('sector_location', 'VARCHAR(255)'),
+                ('cell', 'VARCHAR(255)'),
+                ('village', 'VARCHAR(255)')
+            ]
             
-            if result.fetchone():
-                return jsonify({"message": "Column already exists"}), 200
+            added = []
+            for col_name, col_type in columns_to_add:
+                # Check if column exists
+                result = db.execute(text(f"""
+                    SELECT column_name 
+                    FROM information_schema.columns 
+                    WHERE table_name='schemes_of_work' AND column_name='{col_name}'
+                """))
+                
+                if not result.fetchone():
+                    # Add column
+                    db.execute(text(f"""
+                        ALTER TABLE schemes_of_work 
+                        ADD COLUMN {col_name} {col_type}
+                    """))
+                    added.append(col_name)
             
-            # Add column
-            db.execute(text("""
-                ALTER TABLE schemes_of_work 
-                ADD COLUMN sector_location VARCHAR(255)
-            """))
             db.commit()
             
-            return jsonify({"message": "Migration successful - sector_location column added"}), 200
+            if added:
+                return jsonify({"message": f"Migration successful - added columns: {', '.join(added)}"}), 200
+            else:
+                return jsonify({"message": "All columns already exist"}), 200
         finally:
             db.close()
     except Exception as e:
         logger.error(f"Migration error: {e}")
+        import traceback
+        logger.error(traceback.format_exc())
         return jsonify({"detail": f"Migration failed: {str(e)}"}), 500
 
 if __name__ == '__main__':
