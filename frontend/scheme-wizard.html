@@ -274,12 +274,12 @@
             const reviewHTML = `
                 <h3 style="margin-bottom: 1rem; color: #1e293b;">Scheme of Work Summary</h3>
                 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; font-size: 0.875rem;">
-                    <div><strong>School:</strong> ${data.school}</div>
-                    <div><strong>Sector:</strong> ${data.sector}</div>
-                    <div><strong>Module:</strong> ${data.module_code_title}</div>
-                    <div><strong>Level:</strong> ${data.rqf_level}</div>
-                    <div><strong>Trainer:</strong> ${data.trainer_name}</div>
-                    <div><strong>Year:</strong> ${data.school_year}</div>
+                    <div><strong>School:</strong> ${data.school_name || ''}</div>
+                    <div><strong>Sector:</strong> ${data.sector || ''}</div>
+                    <div><strong>Module:</strong> ${data.module_code_title || ''}</div>
+                    <div><strong>Level:</strong> ${data.rqf_level || ''}</div>
+                    <div><strong>Trainer:</strong> ${data.trainer_name || ''}</div>
+                    <div><strong>Year:</strong> ${data.school_year || ''}</div>
                 </div>
             `;
             document.getElementById('reviewContent').innerHTML = reviewHTML;
